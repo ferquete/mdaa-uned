@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* Estética Geist */
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Paleta Geist Modo Claro */
+  --color-geist-bg: #ffffff;
+  --color-geist-fg: #000000;
+  --color-geist-sidebar: #fafafa;
+  --color-geist-border: #eaeaea;
+  --color-geist-accents-1: #fafafa;
+  --color-geist-accents-2: #eaeaea;
+  --color-geist-accents-3: #999999;
+  --color-geist-accents-4: #888888;
+  --color-geist-accents-5: #666666;
+  --color-geist-accents-6: #444444;
+  --color-geist-accents-7: #333333;
+  --color-geist-accents-8: #111111;
+  
+  --color-geist-success: #0070f3;
+  --color-geist-error: #ee0000;
+  --color-geist-warning: #f5a623;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Modo Oscuro Geist (Skills.sh) */
+.dark {
+  --color-geist-bg: #000000;
+  --color-geist-fg: #ffffff;
+  --color-geist-sidebar: #111111;
+  --color-geist-border: #333333;
+  --color-geist-accents-1: #111111;
+  --color-geist-accents-2: #333333;
+  --color-geist-accents-3: #666666;
+  --color-geist-accents-4: #888888;
+  --color-geist-accents-5: #a1a1a1;
+  --color-geist-accents-6: #ededed;
+  --color-geist-accents-7: #fafafa;
+  --color-geist-accents-8: #ffffff;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-geist-bg text-geist-fg font-sans antialiased transition-colors duration-200;
+    margin: 0;
+  }
+
+  /* Personalización de la barra de scroll */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-geist-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-geist-accents-2 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-geist-accents-3;
+  }
+}
+
+@layer components {
+  .geist-input {
+    @apply block w-full px-0 py-2 bg-transparent border-0 border-b border-geist-border text-geist-fg focus:ring-0 focus:border-geist-fg sm:text-sm transition-all duration-200 placeholder:text-geist-accents-4;
+  }
+  
+  .geist-button-primary {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-fg bg-geist-fg text-geist-bg text-sm font-medium rounded-md hover:bg-transparent hover:text-geist-fg transition-all duration-200 active:scale-[0.98];
+  }
+  
+  .geist-button-secondary {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-border bg-transparent text-geist-fg text-sm font-medium rounded-md hover:border-geist-fg transition-all duration-200 active:scale-[0.98];
+  }
+
+  .geist-button-error {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-error bg-geist-error text-white text-sm font-medium rounded-md hover:opacity-90 transition-all duration-200 active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .mda-text {
+    display: inline-block;
+    /* Comienza centrada gracias al contenedor flex justify-center */
+  }
+
+  .audio-text {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    color: var(--color-geist-accents-5); /* Gris oscuro */
+    overflow: hidden;
+    white-space: nowrap;
+    padding-right: 0.1em; /* Evita que la 'o' se corte */
+    filter: blur(15px);
+    animation: 
+      reveal-space 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards,
+      reveal-content 4s ease-out 0.5s forwards;
+  }
+
+  @keyframes reveal-space {
+    to { 
+      max-width: 500px; 
+      margin-left: 0.3em; 
+    }
+  }
+
+  @keyframes reveal-content {
+    to { 
+      opacity: 1; 
+      filter: blur(0); 
+    }
+  }
+
+  /* Transiciones de Página */
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .page-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .page-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

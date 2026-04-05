@@ -1,0 +1,74 @@
+{
+  "entities": [
+    {
+      "name": "Blog",
+      "features": [
+        {
+          "name": "title",
+          "many": false,
+          "type": "String"
+        },
+        {
+          "name": "date",
+          "many": false,
+          "type": "complex.Date"
+        },
+        {
+          "name": "posts",
+          "many": true,
+          "type": "Post"
+        }
+      ]
+    },
+    {
+      "name": "HasAuthor",
+      "features": [
+        {
+          "name": "author",
+          "many": false,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Post",
+      "extends": "HasAuthor",
+      "features": [
+        {
+          "name": "title",
+          "many": false,
+          "type": "String"
+        },
+        {
+          "name": "content",
+          "many": false,
+          "type": "String"
+        },
+        {
+          "name": "comments",
+          "many": true,
+          "type": "Comment"
+        }
+      ]
+    },
+    {
+      "name": "Comment",
+      "extends": "HasAuthor",
+      "features": [
+        {
+          "name": "content",
+          "many": false,
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "datatypes": [
+    "String",
+    "Int",
+    "Decimal",
+    "Int",
+    "Decimal",
+    "Date"
+  ]
+}

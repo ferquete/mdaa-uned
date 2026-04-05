@@ -1,0 +1,73 @@
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: base-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: basedb
+      MARIADB_USER: devuser
+      MARIADB_PASSWORD: devpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - base-mariadb-data:/var/lib/mysql
+      - ./init_db/mariadb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - base-network
+
+  adminer:
+    image: adminer:latest
+    container_name: base-adminer
+    ports:
+      - "8082:8080"
+    networks:
+      - base-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: base-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - base-redis-data:/data
+    networks:
+      - base-network
+
+  mailhog:
+    image: mailhog/mailhog
+    platform: linux/amd64
+    container_name: base-mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - base-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: base-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: mariadb
+      KC_DB_URL: jdbc:mariadb://mariadb:3306/basedb
+      KC_DB_USERNAME: devuser
+      KC_DB_PASSWORD: devpassword
+    command: ["start-dev --import-realm"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./volumenes/keycloak/realm-basedb.json:/opt/keycloak/data/import/realm-basedb.json:ro
+      - ./volumenes/keycloak/themes:/opt/keycloak/themes
+    depends_on:
+      - mariadb
+    networks:
+      - base-network
+
+networks:
+  base-network:
+    driver: bridge
+
+volumes:
+  base-mariadb-data:
+  base-redis-data:

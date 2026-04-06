@@ -106,7 +106,7 @@ const register = async () => {
           <div class="space-y-2">
             <label for="lastName" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Apellidos</label>
             <input v-model="lastName" id="lastName" name="lastName" type="text" required class="geist-input" placeholder="Ej. Pérez">
-            <p v-if="lastName.length > 0 && !isLastNameValid" class="text-[9px] text-geist-error mt-1 uppercase font-bold tracking-wider">Máximo 30 carácteres.</p>
+            <p v-if="lastName.length > 0 && !isLastNameValid" class="text-[9px] text-geist-error mt-1 uppercase font-bold tracking-wider">2 a 30 caracteres.</p>
           </div>
         </div>
         <div class="space-y-2">
@@ -117,7 +117,7 @@ const register = async () => {
         <div class="space-y-2">
           <label for="password" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Contraseña</label>
           <input v-model="password" id="password" name="password" type="password" required class="geist-input" placeholder="••••••••">
-          <p v-if="password.length > 0 && !isPasswordValid" class="text-[9px] text-geist-error mt-1 uppercase font-bold tracking-wider">8 a 20 carácteres.</p>
+          <p v-if="password.length > 0 && !isPasswordValid" class="text-[9px] text-geist-error mt-1 uppercase font-bold tracking-wider">8 a 20 caracteres.</p>
         </div>
       </div>
 

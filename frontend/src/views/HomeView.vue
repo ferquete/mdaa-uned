@@ -10,6 +10,7 @@ import type { Project } from '../types'
 import ProjectCard from '../components/ProjectCard.vue'
 import DeleteConfirmModal from '../components/DeleteConfirmModal.vue'
 import BaseButton from '../components/base/BaseButton.vue'
+import SoundWaveAnimation from '../components/SoundWaveAnimation.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -107,9 +108,15 @@ const editProject = (id: number) => {
             <BaseButton variant="secondary" @click="register">Crear una Cuenta</BaseButton>
           </div>
           
-          <p class="text-[10px] uppercase tracking-[0.2em] font-medium text-geist-accents-4">
-            Versión Música Electrónica
-          </p>
+          <div class="space-y-4 w-full">
+            <p class="text-[10px] uppercase tracking-[0.2em] font-medium text-geist-accents-4">
+              Versión Música Electrónica
+            </p>
+            <!-- Animación de Ondas (Integrada) -->
+            <div class="w-full max-w-md mx-auto h-24 opacity-60">
+              <SoundWaveAnimation />
+            </div>
+          </div>
         </div>
 
         <!-- Vista Dashboard (Usuario autenticado) -->

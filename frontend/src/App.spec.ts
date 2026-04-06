@@ -7,8 +7,7 @@ import { createPinia, setActivePinia } from 'pinia'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', name: 'home', component: { template: '<div>Home</div>' } },
-    { path: '/about', name: 'about', component: { template: '<div>About</div>' } }
+    { path: '/', name: 'home', component: { template: '<div>Home</div>' } }
   ]
 })
 

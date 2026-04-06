@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import keycloak from '../plugins/keycloak';
-import apiClient from '../api/apiClient';
+import keycloak from '@/app/plugins/keycloak';
+import apiClient from '@/shared/api/apiClient';
 
 export interface User {
   id: number;

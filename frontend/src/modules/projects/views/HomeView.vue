@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import keycloak from '../plugins/keycloak'
-import { useProjectStore } from '../stores/projectStore'
-import { useUserStore } from '../stores/userStore'
-import type { Project } from '../types'
+import keycloak from '@/app/plugins/keycloak'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
+import { useUserStore } from '@/modules/auth/stores/userStore'
+import type { Project } from '@/shared/types'
 
-// Componentes
-import ProjectCard from '../components/ProjectCard.vue'
-import DeleteConfirmModal from '../components/DeleteConfirmModal.vue'
-import BaseButton from '../components/base/BaseButton.vue'
-import SoundWaveAnimation from '../components/SoundWaveAnimation.vue'
+// Componentes (Auto-importados por unplugin-vue-components)
 
 const router = useRouter()
 const userStore = useUserStore()

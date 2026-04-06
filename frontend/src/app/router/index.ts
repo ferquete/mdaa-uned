@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
+import HomeView from '@/modules/projects/views/HomeView.vue'
+import RegisterView from '@/modules/auth/views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,24 +19,24 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       meta: { requiresAuth: true },
-      component: () => import('../views/ProfileView.vue')
+      component: () => import('@/modules/profile/views/ProfileView.vue')
     },
     {
       path: '/projects/new',
       name: 'create-project',
       meta: { requiresAuth: true },
-      component: () => import('../views/CreateProjectView.vue')
+      component: () => import('@/modules/projects/views/CreateProjectView.vue')
     },
     {
       path: '/projects/:id/edit',
       name: 'edit-project',
       meta: { requiresAuth: true },
-      component: () => import('../views/CreateProjectView.vue')
+      component: () => import('@/modules/projects/views/CreateProjectView.vue')
     }
   ]
 })
 
-import keycloak from '../plugins/keycloak'
+import keycloak from '@/app/plugins/keycloak'
 
 router.beforeEach((to, _from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);

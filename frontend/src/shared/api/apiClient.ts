@@ -1,4 +1,4 @@
-import keycloak from '../plugins/keycloak';
+import keycloak from '@/app/plugins/keycloak';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 

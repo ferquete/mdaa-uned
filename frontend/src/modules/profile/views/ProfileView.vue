@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useUserStore } from '../stores/userStore';
-import { useToastStore } from '../stores/toastStore';
+import { useUserStore } from '@/modules/auth/stores/userStore';
+import { useToastStore } from '@/shared/stores/toastStore';
 import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();

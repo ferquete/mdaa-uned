@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useProjectStore } from '../stores/projectStore'
-import { useToastStore } from '../stores/toastStore'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
+import { useToastStore } from '@/shared/stores/toastStore'
 
 const router = useRouter()
 const route = useRoute()

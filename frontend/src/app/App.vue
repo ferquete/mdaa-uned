@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
-import keycloak from './plugins/keycloak'
-import { useUserStore } from './stores/userStore'
-import ToastContainer from './components/ToastContainer.vue'
+import keycloak from '@/app/plugins/keycloak'
+import { useUserStore } from '@/modules/auth/stores/userStore'
  
 const userStore = useUserStore()
 const isDarkMode = ref(true) // Skills.sh (Geist) es oscuro por defecto

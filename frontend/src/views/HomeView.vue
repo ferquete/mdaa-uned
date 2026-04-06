@@ -76,10 +76,10 @@ const editProject = (id: number) => {
 </script>
 
 <template>
-  <div class="h-screen pt-12 pb-6 px-6 max-w-6xl mx-auto flex flex-col overflow-hidden text-geist-fg">
+  <div class="min-h-[calc(100vh-theme(spacing.12))] px-6 max-w-6xl mx-auto flex flex-col text-geist-fg">
     
     <!-- Contenido Scrollable (Cargando, Landing o Dashboard) -->
-    <div class="flex-1 overflow-y-auto scrollbar-hide pr-2">
+    <div class="flex-1 flex flex-col min-h-0">
       
       <!-- Estado de Carga -->
       <div v-if="isLoading" class="h-full flex items-center justify-center">
@@ -92,7 +92,7 @@ const editProject = (id: number) => {
 
       <div v-else class="w-full">
         <!-- Vista Landing (Usuario no autenticado) -->
-        <div v-if="!isAuthenticated" class="mt-8 md:mt-24 flex flex-col items-center text-center space-y-12">
+        <div v-if="!isAuthenticated" class="flex-1 flex flex-col items-center justify-center text-center space-y-12 py-12 md:py-24">
           <div class="space-y-4">
             <h1 class="flex justify-center items-baseline text-5xl md:text-7xl font-black tracking-tighter leading-tight">
               <span class="mda-text">MDA</span><span class="audio-text">Audio</span>
@@ -113,14 +113,14 @@ const editProject = (id: number) => {
         </div>
 
         <!-- Vista Dashboard (Usuario autenticado) -->
-        <div v-else class="space-y-12 pt-4">
+        <div v-else class="h-[calc(100vh-theme(spacing.12))] overflow-y-auto scrollbar-hide space-y-12 pt-8 px-2">
           <header class="space-y-2">
             <h1 class="text-3xl font-bold tracking-tighter">Tus Proyectos</h1>
             <p class="text-geist-accents-5 text-sm font-medium">Gestiona y crea tus espacios de trabajo.</p>
           </header>
 
           <!-- Grid de Proyectos -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
             
             <!-- Botón Crear Nuevo Proyecto -->
             <button 

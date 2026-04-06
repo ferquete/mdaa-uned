@@ -47,7 +47,7 @@ onMounted(async () => {
   <div class="min-h-screen transition-colors duration-200">
     
     <!-- Navbar Global (Solo Autenticados) -->
-    <nav v-if="isAuthenticated" class="fixed top-0 w-full py-4 px-8 flex justify-between items-center max-w-6xl left-1/2 -translate-x-1/2 z-40">
+    <nav v-if="isAuthenticated" class="fixed top-0 w-full py-4 px-8 flex justify-between items-center max-w-screen-2xl left-1/2 -translate-x-1/2 z-40">
       <div class="flex items-center gap-2">
         <div class="w-2 h-2 bg-geist-fg rounded-full"></div>
         <router-link to="/" class="text-sm font-bold tracking-tighter uppercase">MDA Audio</router-link>

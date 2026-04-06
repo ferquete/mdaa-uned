@@ -74,8 +74,8 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-12">
+  <div class="pt-8 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <div class="max-w-md mx-auto w-full space-y-12">
       <div>
         <h2 class="text-center text-4xl font-black tracking-tighter text-geist-fg">
           {{ isEditMode ? 'Editar Proyecto.' : 'Nuevo Proyecto.' }}

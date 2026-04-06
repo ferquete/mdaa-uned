@@ -6,6 +6,6 @@ describe('AboutView', () => {
   it('renders properly', () => {
     const wrapper = mount(AboutView)
     expect(wrapper.text()).toContain('Sobre este proyecto')
-    expect(wrapper.text()).toContain('Este es un proyecto base')
+    expect(wrapper.text()).toContain('MDA Audio')
   })
 })

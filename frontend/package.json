@@ -11,6 +11,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@he-tree/vue": "^2.10.2",
     "@tailwindcss/vite": "^4.2.2",
     "autoprefixer": "^10.4.27",
     "keycloak-js": "^22.0.1",
@@ -19,6 +20,7 @@
     "tailwindcss": "^4.2.2",
     "three": "^0.183.2",
     "vue": "^3.5.30",
+    "vue-resizable-panels": "^0.0.1",
     "vue-router": "^5.0.4"
   },
   "devDependencies": {

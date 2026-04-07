@@ -1,0 +1,24 @@
+MDAA_CIM ComplexSystem {
+    CIM_GENERADOR RackPrincipal {
+        OSCILADOR OsciladorMaestro {
+            descripcion "Generador de señal principal con modulación"
+            entradas "LFO1, ADRS1"
+            salidas "Bus Estéreo 1"
+            MODIFICADOR FiltroPasoBajo {
+                descripcion "Filtro para suavizar armónicos"
+                entradas "Bus Estéreo 1"
+                salidas "Bus Estéreo 1"
+                MODIFICADOR Resonancia {
+                    descripcion "Control de resonancia interno"
+                    entradas "Control"
+                    salidas "Control"
+                }
+            }
+        }
+        MODIFICADOR ReverbGlobal {
+            descripcion "Reverberación de sala para todo el generador"
+            entradas "Bus Estéreo 1"
+            salidas "Salida Master"
+        }
+    }
+}

@@ -1,0 +1,9 @@
+MDAA_CIM SimpleSystem {
+    CIM_GENERADOR Gen1 {
+        OSCILADOR Osc1 {
+            descripcion "Oscilador de onda senoidal base"
+            entradas "Ninguna"
+            salidas "Salida Mono"
+        }
+    }
+}

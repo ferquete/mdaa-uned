@@ -5,7 +5,8 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "vue-resizable-panels": ["node_modules/vue-resizable-panels/dist/types/index.d.ts"]
     },
 
     /* Linting */

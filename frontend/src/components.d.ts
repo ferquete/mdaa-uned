@@ -11,12 +11,17 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddNodeModal: typeof import('./modules/projects/components/AddNodeModal.vue')['default']
     BaseButton: typeof import('./shared/components/base/BaseButton.vue')['default']
+    BaseModal: typeof import('./shared/components/BaseModal.vue')['default']
+    ConfirmDeleteModal: typeof import('./modules/projects/components/ConfirmDeleteModal.vue')['default']
     DeleteConfirmModal: typeof import('./modules/projects/components/DeleteConfirmModal.vue')['default']
     ProjectCard: typeof import('./modules/projects/components/ProjectCard.vue')['default']
+    ProjectTreeView: typeof import('./modules/projects/components/ProjectTreeView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SoundWaveAnimation: typeof import('./shared/components/ui/SoundWaveAnimation.vue')['default']
     ToastContainer: typeof import('./shared/components/ui/ToastContainer.vue')['default']
+    TreeNode: typeof import('./modules/projects/components/TreeNode.vue')['default']
   }
 }

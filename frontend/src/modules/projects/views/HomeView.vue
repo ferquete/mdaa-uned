@@ -70,6 +70,10 @@ const confirmDelete = async () => {
 const editProject = (id: number) => {
   router.push(`/projects/${id}/edit`)
 }
+
+const openProject = (id: number) => {
+  router.push(`/projects/${id}`)
+}
 </script>
 
 <template>
@@ -146,6 +150,7 @@ const editProject = (id: number) => {
               v-for="project in projectStore.projects" 
               :key="project.id"
               :project="project"
+              @click="openProject(project.id)"
               @edit="editProject(project.id)"
               @delete="openDeleteConfirm(project)"
             />

@@ -7,7 +7,7 @@ interface Props {
 
 defineProps<Props>();
 
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(['edit', 'delete', 'click']);
 
 const handleEdit = () => {
   emit('edit');
@@ -21,6 +21,7 @@ const handleDelete = () => {
 <template>
   <div 
     class="aspect-square p-6 rounded-xl border border-geist-border bg-geist-bg hover:border-geist-fg shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group relative cursor-pointer"
+    @click="$emit('click')"
   >
     <!-- Acciones Rápidas (Lápiz y Aspa) -->
     <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">

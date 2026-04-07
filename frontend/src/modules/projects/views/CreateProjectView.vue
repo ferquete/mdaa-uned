@@ -51,6 +51,14 @@ const isFormValid = computed(() => {
   return isNameValid.value && isDescriptionValid.value && isGenreValid.value
 })
 
+const handleCancel = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+}
+
 const handleSubmit = async () => {
   if (!isFormValid.value) return
   
@@ -65,7 +73,7 @@ const handleSubmit = async () => {
   
   if (result.success) {
     toastStore.addToast(isEditMode.value ? 'Proyecto actualizado' : 'Proyecto creado con éxito', 'success')
-    router.push('/')
+    handleCancel()
   } else {
     toastStore.addToast(result.message || 'Error al procesar el proyecto', 'error')
     isSubmitting.value = false
@@ -147,7 +155,7 @@ const handleSubmit = async () => {
           </button>
           <button 
             type="button" 
-            @click="router.push('/')" 
+            @click="handleCancel" 
             class="geist-button-secondary w-full"
           >
             Cancelar

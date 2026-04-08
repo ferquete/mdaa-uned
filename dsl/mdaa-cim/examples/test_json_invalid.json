@@ -1,0 +1,28 @@
+{
+  "$type": "Document",
+  "generators": [
+    {
+      "$type": "AudioGenerator",
+      "id": "duplicate-id",
+      "name": "Generator 1",
+      "description": "Validation from JSON works properly",
+      "inputs": "Digital input data stream",
+      "outputs": "Analog audio signal out",
+      "params": "Volume, Pan, Resonance",
+      "refs": [],
+      "rels": []
+    },
+    {
+      "$type": "AudioGenerator",
+      "id": "duplicate-id",
+      "name": "ThisNameIsWayTooLongForTheLimitOfTwentyCharacters",
+      "description": "Short description is too short",
+      "inputs": "Inputs",
+      "outputs": "Outputs",
+      "params": "Params",
+      "refs": [],
+      "rels": []
+    }
+  ],
+  "modificators": []
+}

@@ -1,0 +1,20 @@
+AudioGenerator {
+    id "gen1"
+    name "ThisNameIsWayTooLongForTheLimitOfTwentyCharacters"
+    description "Short"
+    inputs "Inputs"
+    outputs "Outputs"
+    params "Params"
+    ref []
+    rel []
+}
+
+Modificator {
+    id "gen1"
+    name "Duplicate ID"
+    description "Another short description"
+    inputs "I"
+    outputs "O"
+    params "P"
+    ref []
+}

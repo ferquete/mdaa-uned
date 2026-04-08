@@ -1,34 +1,56 @@
 grammar MdaAudioCim
 
-entry MDAA_CIM:
-    'MDAA_CIM' name=ID '{'
-        (generadores+=CIM_GENERADORES)*
+entry Document:
+    (generators+=AudioGenerator | modificators+=Modificator)*;
+
+interface Base {
+    id: string
+    name: string
+    description: string
+    inputs: string
+    outputs: string
+    params: string
+    refs: Ref[]
+}
+
+interface AudioGenerator extends Base {
+    rels: Ref[]
+}
+
+interface Modificator extends Base {}
+
+AudioGenerator returns AudioGenerator:
+    'AudioGenerator' '{'
+        'id' id=STRING
+        'name' name=STRING
+        'description' description=STRING
+        'inputs' inputs=STRING
+        'outputs' outputs=STRING
+        'params' params=STRING
+        'ref' '[' (refs+=Ref (',' refs+=Ref)*)? ']'
+        'rel' '[' (rels+=Ref (',' rels+=Ref)*)? ']'
     '}';
 
-CIM_GENERADORES:
-    'CIM_GENERADOR' name=ID '{'
-        (osciladores+=OSCILADOR | modificadores+=MODIFICADOR)*
+Modificator returns Modificator:
+    'Modificator' '{'
+        'id' id=STRING
+        'name' name=STRING
+        'description' description=STRING
+        'inputs' inputs=STRING
+        'outputs' outputs=STRING
+        'params' params=STRING
+        'ref' '[' (refs+=Ref (',' refs+=Ref)*)? ']'
     '}';
 
-OSCILADOR:
-    'OSCILADOR' name=ID '{'
-        'descripcion' descripcion=STRING
-        'entradas' entradas=STRING
-        'salidas' salidas=STRING
-        (modificadores+=MODIFICADOR)*
+Ref:
+    '{'
+        'id' id=[Base:STRING]
+        'description' description=STRING
     '}';
 
-MODIFICADOR:
-    'MODIFICADOR' name=ID '{'
-        'descripcion' descripcion=STRING
-        'entradas' entradas=STRING
-        'salidas' salidas=STRING
-        (modificadores+=MODIFICADOR)*
-    '}';
-
-hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 
+hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

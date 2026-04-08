@@ -1,0 +1,55 @@
+quiero cambiar la gramática de langium de 
+
+mdaa-cim
+, y también su validación, ahora tendrá la siguiente estructura:
+
+# Objetos reutilizables 
+
+## Objeto llamaremos Base
+Contendrán los siguientes elementos:
+   - id: String que debe ser único entre todos los atributos "id" del documento.Longitud entre 1 y 30 caracteres.
+   - name: String. Obligatorio con longitud entre 1 y 20 caracteres
+   - description: String, obligatorio de 10 a 300 caracteres.
+   - inputs: String, obligatorio de 10 a 300 caracteres.
+   - outputs: String, obligatorio de 10 a 300 caracteres.
+   - params: String, obligatorio de 10 a 300 caracteres.
+   - ref: Array [] que contendrá objetos del tipo Ref (que comentaremos mas adelante). Puede ser un array vacio
+
+## Objeto llamado Ref
+Contendrá los siguientes valores:
+  - id: String que debe existir en alguno de los objetos Base (o heredados de él) que tengamso en el documento
+  - description: String, obligatorio de 10 a 300 caracteres.
+
+## Objeto AudioGenerator
+Hereda todo del objeto Base, y además incluye lo siguiente:
+  - rel: Array [] que contendrá objetos del tipo Ref. Puede ser un array vacio
+
+## Objeto Modificator
+Hereda todo del objeto Base, sin incluir nada mas
+  
+
+# Estructura:
+
+Un documento o está vacio, o tiene 1:N objetos AudioGenerator y 0:R objetos de tipo Modificator. Te pongo un ejemplo de un seudocodigo incompleto en json, para que veas lo que va a ser :
+
+{
+   [
+      {"id":"11111111",
+        "name": "UnGenerador",
+         "description": "....",
+         "inputs": "....",
+         "outputs": "....",
+         "params": "....",   
+         "ref": [
+               "id": "333",
+               "description": "...."
+         ],
+          "rel": ...
+      }
+    ]
+}
+
+
+   
+   
+   

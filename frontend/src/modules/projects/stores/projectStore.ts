@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import apiClient from '@/shared/api/apiClient';
-import type { Project, Genre } from '@/shared/types';
+import type { Project, Genre, CimMachine } from '@/shared/types';
 
 export const useProjectStore = defineStore('project', () => {
   const projects = ref<Project[]>([]);
@@ -10,41 +10,68 @@ export const useProjectStore = defineStore('project', () => {
   const error = ref<string | null>(null);
 
   // Estados para el Dashboard
-  const analysisNodes = ref<{ id: string, text: string }[]>([]);
-  const selectedNodeId = ref<string | null>(null);
+  const machines = ref<CimMachine[]>([]);
+  const selectedNodeId = ref<string | number | null>(null);
 
   /**
-   * Añade un nuevo nodo de análisis con validación.
+   * Carga las máquinas de un proyecto desde el backend.
    */
-  function addAnalysisNode(nameCandidate: string) {
-    if (analysisNodes.value.length >= 10) return;
+  async function fetchMachines(projectId: number) {
+    loading.value = true;
+    try {
+      const data = await apiClient.get<CimMachine[]>(`/api/v1/projects/${projectId}/machines`);
+      machines.value = data;
+    } catch (err: any) {
+      console.error('Error al cargar máquinas:', err);
+      machines.value = [];
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  /**
+   * Añade una nueva máquina persistente vinculada al proyecto.
+   */
+  async function addAnalysisNode(projectId: number, nameCandidate: string) {
+    if (machines.value.length >= 10) return;
 
     const name = nameCandidate.trim();
     if (!name) return;
 
-    const newNode = {
-      id: `analisis-${Date.now()}`,
-      text: name
-    };
-
-    analysisNodes.value.push(newNode);
-    selectedNodeId.value = newNode.id;
+    try {
+      const newMachine = await apiClient.post<CimMachine>(`/api/v1/projects/${projectId}/machines`, { 
+        name 
+      });
+      machines.value.push(newMachine);
+      selectedNodeId.value = newMachine.id;
+      return { success: true, machine: newMachine };
+    } catch (err: any) {
+      console.error('Error al crear máquina:', err);
+      return { success: false, message: err.message };
+    }
   }
 
   /**
-   * Elimina un nodo de análisis por su ID.
+   * Elimina una máquina del backend por su ID.
    */
-  function deleteAnalysisNode(id: string) {
-    analysisNodes.value = analysisNodes.value.filter(n => n.id !== id);
-    if (selectedNodeId.value === id) {
-      selectedNodeId.value = null;
+  async function deleteAnalysisNode(id: number) {
+    try {
+      await apiClient.delete(`/api/v1/machines/${id}`);
+      machines.value = machines.value.filter(m => m.id !== id);
+      if (selectedNodeId.value === id) {
+        selectedNodeId.value = null;
+      }
+      return { success: true };
+    } catch (err: any) {
+      console.error('Error al eliminar máquina:', err);
+      return { success: false, message: err.message };
     }
   }
 
   /**
    * Selecciona un nodo para su edición.
    */
-  function selectNode(id: string | null) {
+  function selectNode(id: string | number | null) {
     selectedNodeId.value = id;
   }
 
@@ -53,8 +80,8 @@ export const useProjectStore = defineStore('project', () => {
    */
   const selectedNode = computed(() => {
     if (!selectedNodeId.value) return null;
-    // Buscar en nodos dinámicos
-    return analysisNodes.value.find(n => n.id === selectedNodeId.value) || null;
+    // Buscar en la lista de máquinas persistentes
+    return machines.value.find(m => m.id === selectedNodeId.value) || null;
   });
 
   /**
@@ -166,9 +193,10 @@ export const useProjectStore = defineStore('project', () => {
     deleteProject,
     fetchProjectById,
     updateProject,
-    analysisNodes,
+    machines,
     selectedNodeId,
     selectedNode,
+    fetchMachines,
     addAnalysisNode,
     deleteAnalysisNode,
     selectNode

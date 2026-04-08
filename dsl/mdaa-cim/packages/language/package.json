@@ -31,7 +31,8 @@
         "build": "echo 'No build step'",
         "build:clean": "npm run clean && npm run build",
         "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
+        "langium:watch": "langium generate --watch",
+        "validate:json": "node ./out/scripts/validate-json.js"
     },
     "dependencies": {
         "langium": "~4.2.0"

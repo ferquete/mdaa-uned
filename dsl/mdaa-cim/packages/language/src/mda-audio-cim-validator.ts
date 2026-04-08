@@ -1,52 +1,95 @@
 import { type ValidationAcceptor, type ValidationChecks, AstUtils } from 'langium';
-import { type MdaAudioCimAstType, type MDAA_CIM, isCIM_GENERADORES, isOSCILADOR, isMODIFICADOR } from './generated/ast.js';
+import { type MdaAudioCimAstType, type Document, isBase, isAudioGenerator, isRef, type Base } from './generated/ast.js';
 import type { MdaAudioCimServices } from './mda-audio-cim-module.js';
 
 /**
- * Register custom validation checks.
+ * Registra los chequeos de validación personalizados.
  */
 export function registerValidationChecks(services: MdaAudioCimServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.MdaAudioCimValidator;
     const checks: ValidationChecks<MdaAudioCimAstType> = {
-        MDAA_CIM: [validator.checkAtLeastOneOscillator, validator.checkUniqueIds]
+        Document: [validator.checkUniqueIds],
+        AudioGenerator: [validator.checkBaseProperties, validator.checkRefProperties],
+        Modificator: [validator.checkBaseProperties, validator.checkRefProperties],
+        Ref: validator.checkRefDescription
     };
     registry.register(checks, validator);
 }
 
 /**
- * Implementation of custom validations.
+ * Implementación de validaciones personalizadas.
  */
 export class MdaAudioCimValidator {
 
     /**
-     * Verifica que el documento contenga al menos un OSCILADOR.
+     * Verifica que todos los IDs sean únicos en todo el documento.
      */
-    checkAtLeastOneOscillator(model: MDAA_CIM, accept: ValidationAcceptor): void {
-        const allNodes = AstUtils.streamAllContents(model);
-        const hasOscillator = allNodes.some(node => isOSCILADOR(node));
+    checkUniqueIds(doc: Document, accept: ValidationAcceptor): void {
+        const reportedIds = new Set<string>();
+        const allBaseNodes = AstUtils.streamAllContents(doc).filter(isBase);
         
-        if (!hasOscillator) {
-            accept('error', 'El documento debe contener al menos un OSCILADOR.', { node: model, property: 'name' });
+        for (const node of allBaseNodes) {
+            if (reportedIds.has(node.id)) {
+                accept('error', `El ID '${node.id}' ya está en uso. Los IDs deben ser únicos en todo el documento.`, { node, property: 'id' });
+            } else {
+                reportedIds.add(node.id);
+            }
         }
     }
 
     /**
-     * Verifica que todos los IDs sean únicos en todo el documento.
+     * Verifica las propiedades comunes de Base (id, name, description, inputs, outputs, params).
      */
-    checkUniqueIds(model: MDAA_CIM, accept: ValidationAcceptor): void {
-        const reportedIds = new Set<string>();
-        const allNodes = AstUtils.streamAllContents(model);
+    checkBaseProperties(node: Base, accept: ValidationAcceptor): void {
+        // Validar id: 1-30 caracteres
+        this.checkStringLength(node, 'id', node.id, 1, 30, accept);
         
-        for (const node of allNodes) {
-            if (isCIM_GENERADORES(node) || isOSCILADOR(node) || isMODIFICADOR(node)) {
-                const nameNode = node as { name: string };
-                if (reportedIds.has(nameNode.name)) {
-                    accept('error', `El ID '${nameNode.name}' ya está en uso. Los IDs deben ser únicos en todo el documento.`, { node, property: 'name' });
-                } else {
-                    reportedIds.add(nameNode.name);
-                }
-            }
+        // Validar name: 1-20 caracteres
+        this.checkStringLength(node, 'name', node.name, 1, 20, accept);
+        
+        // Validar description: 10-300 caracteres
+        this.checkStringLength(node, 'description', node.description, 10, 300, accept);
+        
+        // Validar inputs: 10-300 caracteres
+        this.checkStringLength(node, 'inputs', node.inputs, 10, 300, accept);
+        
+        // Validar outputs: 10-300 caracteres
+        this.checkStringLength(node, 'outputs', node.outputs, 10, 300, accept);
+        
+        // Validar params: 10-300 caracteres
+        this.checkStringLength(node, 'params', node.params, 10, 300, accept);
+    }
+
+    /**
+     * Verifica que las referencias (rel y ref) tengan descriptions válidas.
+     */
+    checkRefProperties(node: Base, accept: ValidationAcceptor): void {
+        if (node.refs) {
+            node.refs.forEach(ref => this.checkRefDescription(ref, accept));
+        }
+        if (isAudioGenerator(node) && node.rels) {
+            node.rels.forEach(rel => this.checkRefDescription(rel, accept));
+        }
+    }
+
+    /**
+     * Verifica la longitud de la descripción de un Ref.
+     */
+    checkRefDescription(ref: any, accept: ValidationAcceptor): void {
+        if (isRef(ref)) {
+            this.checkStringLength(ref, 'description', ref.description, 10, 300, accept);
+        }
+    }
+
+    /**
+     * Función auxiliar para validar la longitud de una cadena.
+     */
+    private checkStringLength(node: any, property: string, value: string, min: number, max: number, accept: ValidationAcceptor): void {
+        if (!value) {
+            accept('error', `El campo '${property}' es obligatorio.`, { node, property });
+        } else if (value.length < min || value.length > max) {
+            accept('error', `El campo '${property}' debe tener entre ${min} y ${max} caracteres. Longitud actual: ${value.length}.`, { node, property });
         }
     }
 }

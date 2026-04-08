@@ -1,0 +1,134 @@
+{
+  "$type": "Document",
+  "generators": [
+    {
+      "$type": "AudioGenerator",
+      "id": "osc-main-01",
+      "name": "Main Oscillator",
+      "description": "Primary high-fidelity oscillator for lead sounds and basslines.",
+      "inputs": "None - Internal Waveform Generator",
+      "outputs": "Clean Waveform Output (Sine, Saw, Square)",
+      "params": "Frequency, Waveform, Pulse Width, Fine-tune",
+      "refs": [
+        { "$type": "Ref", "id": "filter-lpf-01", "description": "Route to main filter for spectral shaping" },
+        { "$type": "Ref", "id": "env-adsr-01", "description": "Modulate amplitude via ADSR envelope" },
+        { "$type": "Ref", "id": "delay-stereo-01", "description": "Add spatial dimension via stereo delay" }
+      ],
+      "rels": [
+        { "$type": "Ref", "id": "noise-white-01", "description": "Combined output with noise generator" },
+        { "$type": "Ref", "id": "sampler-drums-01", "description": "Sync signal for drum pattern timing" },
+        { "$type": "Ref", "id": "reverb-hall-01", "description": "Final dry/wet mix in the hall reverb" }
+      ]
+    },
+    {
+      "$type": "AudioGenerator",
+      "id": "noise-white-01",
+      "name": "White Noise Gen",
+      "description": "Generates wide-band white noise for percussive textures and risers.",
+      "inputs": "External Trigger for sync pulses",
+      "outputs": "Broad-spectrum White Noise Channel",
+      "params": "Density, Color, Stereo Spread, Gain",
+      "refs": [
+        { "$type": "Ref", "id": "filter-lpf-01", "description": "Filter high frequencies for wind effects" },
+        { "$type": "Ref", "id": "reverb-hall-01", "description": "Create ambient noise floors" },
+        { "$type": "Ref", "id": "comp-master-01", "description": "Glue noise with main output" }
+      ],
+      "rels": [
+        { "$type": "Ref", "id": "osc-main-01", "description": "FM modulation carrier source" },
+        { "$type": "Ref", "id": "env-adsr-01", "description": "Gated noise bursts using envelope" },
+        { "$type": "Ref", "id": "delay-stereo-01", "description": "Ping-pong delay for texture" }
+      ]
+    },
+    {
+      "$type": "AudioGenerator",
+      "id": "sampler-drums-01",
+      "name": "Drum Sampler",
+      "description": "Multi-sample drum engine for realistic acoustic and electronic percussion.",
+      "inputs": "MIDI Input / Sample Loading trigger",
+      "outputs": "Individual Out / Stereo Sum Output",
+      "params": "Pitch, Decay, Sample Select, Velocity",
+      "refs": [
+        { "$type": "Ref", "id": "comp-master-01", "description": "Punchy drum compression settings" },
+        { "$type": "Ref", "id": "filter-lpf-01", "description": "Dynamic filter for drum sweeps" },
+        { "$type": "Ref", "id": "env-adsr-01", "description": "Custom decay curves for percussive hits" }
+      ],
+      "rels": [
+        { "$type": "Ref", "id": "delay-stereo-01", "description": "Rhythmic delay reflections" },
+        { "$type": "Ref", "id": "reverb-hall-01", "description": "Snare and kick spatialization" },
+        { "$type": "Ref", "id": "osc-main-01", "description": "Sub-oscillator layering for kicks" }
+      ]
+    }
+  ],
+  "modificators": [
+    {
+      "$type": "Modificator",
+      "id": "filter-lpf-01",
+      "name": "Low Pass Filter",
+      "description": "Resonant 24dB/octave Ladder Filter for subtractive synthesis.",
+      "inputs": "Audio Signal Input Bus",
+      "outputs": "Filtered Audio Stream",
+      "params": "Cutoff, Resonance, Drive, Slope",
+      "refs": [
+        { "$type": "Ref", "id": "osc-main-01", "description": "Source oscillator for filtering" },
+        { "$type": "Ref", "id": "env-adsr-01", "description": "Filter envelope modulation source" },
+        { "$type": "Ref", "id": "reverb-hall-01", "description": "Post-filter reverb processing" }
+      ]
+    },
+    {
+      "$type": "Modificator",
+      "id": "env-adsr-01",
+      "name": "ADSR Envelope",
+      "description": "Standard 4-stage envelope generator for modulation control.",
+      "inputs": "Gate / Trigger Pulse Signal",
+      "outputs": "Control Voltage Output Stream",
+      "params": "Attack, Decay, Sustain, Release",
+      "refs": [
+        { "$type": "Ref", "id": "osc-main-01", "description": "Amplify control for main oscillator" },
+        { "$type": "Ref", "id": "filter-lpf-01", "description": "Modulate cutoff frequency dynamically" },
+        { "$type": "Ref", "id": "sampler-drums-01", "description": "Volume shaping for drum samples" }
+      ]
+    },
+    {
+      "$type": "Modificator",
+      "id": "delay-stereo-01",
+      "name": "Stereo Delay",
+      "description": "High-quality digital delay with feedback and modulation.",
+      "inputs": "Stereo Left/Right Audio Input",
+      "outputs": "Delayed Stereo Signal Stack",
+      "params": "Time, Feedback, Mix, Modulation Depth",
+      "refs": [
+        { "$type": "Ref", "id": "osc-main-01", "description": "Echoes for lead synth lines" },
+        { "$type": "Ref", "id": "sampler-drums-01", "description": "Rhythmic ping-pong for percussion" },
+        { "$type": "Ref", "id": "comp-master-01", "description": "Compression on the delay tail" }
+      ]
+    },
+    {
+      "$type": "Modificator",
+      "id": "reverb-hall-01",
+      "name": "Hall Reverb",
+      "description": "Lush algorithmic reverb simulating large concert spaces.",
+      "inputs": "Mono or Stereo Audio Input",
+      "outputs": "Space-enhanced Signal Mix",
+      "params": "Size, Decay Time, Pre-delay, Damping",
+      "refs": [
+        { "$type": "Ref", "id": "osc-main-01", "description": "Atmospheric pads spatialization" },
+        { "$type": "Ref", "id": "noise-white-01", "description": "Diffused noise floor creation" },
+        { "$type": "Ref", "id": "filter-lpf-01", "description": "Smoothing out filter resonances" }
+      ]
+    },
+    {
+      "$type": "Modificator",
+      "id": "comp-master-01",
+      "name": "Master Compressor",
+      "description": "Dynamics processor for glue and peak control in the final mix.",
+      "inputs": "Main Stereo Mixing Bus",
+      "outputs": "Compressed and Levelled Audio",
+      "params": "Threshold, Ratio, Attack, Release, Gain",
+      "refs": [
+        { "$type": "Ref", "id": "sampler-drums-01", "description": "Tightening the percussive peaks" },
+        { "$type": "Ref", "id": "osc-main-01", "description": "Ensuring consistent synth levels" },
+        { "$type": "Ref", "id": "delay-stereo-01", "description": "Level control for heavy feedback" }
+      ]
+    }
+  ]
+}

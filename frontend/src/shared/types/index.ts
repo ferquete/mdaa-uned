@@ -36,3 +36,13 @@ export interface ApiResult<T = any> {
   data?: T;
   message?: string;
 }
+
+/**
+ * Interfaz que representa una máquina CIM persistida en base de datos.
+ */
+export interface CimMachine {
+  id: number;
+  idProyect: number;
+  name: string;
+  machine: string; // JSON String
+}

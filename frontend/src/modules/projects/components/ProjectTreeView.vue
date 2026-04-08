@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import TreeNode from '@/modules/projects/components/TreeNode.vue'
 import AddNodeModal from '@/modules/projects/components/AddNodeModal.vue'
 import ConfirmDeleteModal from '@/modules/projects/components/ConfirmDeleteModal.vue'
@@ -15,10 +16,14 @@ interface TreeNodeType {
 }
 
 const store = useProjectStore()
+const route = useRoute()
 const showAddModal = ref(false)
 const showDeleteModal = ref(false)
 const pendingParentId = ref<string | number | null>(null)
 const nodeToDelete = ref<TreeNodeType | null>(null)
+
+// Extraemos el ID del proyecto de la ruta actual
+const projectId = computed(() => Number(route.params.id))
 
 const treeData = computed<TreeNodeType[]>(() => [
   {
@@ -32,9 +37,10 @@ const treeData = computed<TreeNodeType[]>(() => [
         text: 'Análisis', 
         icon: 'fa-solid fa-microscope',
         open: true,
-        showAdd: store.analysisNodes.length < 10,
-        children: store.analysisNodes.map(node => ({
-          ...node,
+        showAdd: store.machines.length < 10,
+        children: store.machines.map(m => ({
+          id: m.id,
+          text: m.name,
           icon: 'fa-solid fa-cube',
           canDelete: true
         }))
@@ -52,9 +58,9 @@ const handleAddChild = (parentId: string | number) => {
   }
 }
 
-const confirmAddNode = (name: string) => {
-  if (pendingParentId.value === 'analisis') {
-    store.addAnalysisNode(name)
+const confirmAddNode = async (name: string) => {
+  if (pendingParentId.value === 'analisis' && projectId.value) {
+    await store.addAnalysisNode(projectId.value, name)
   }
   pendingParentId.value = null
   showAddModal.value = false
@@ -65,9 +71,9 @@ const handleDeleteNode = (node: TreeNodeType) => {
   showDeleteModal.value = true
 }
 
-const confirmDeleteNode = () => {
+const confirmDeleteNode = async () => {
   if (nodeToDelete.value) {
-    store.deleteAnalysisNode(nodeToDelete.value.id.toString())
+    await store.deleteAnalysisNode(Number(nodeToDelete.value.id))
     showDeleteModal.value = false
     nodeToDelete.value = null
   }
@@ -75,8 +81,7 @@ const confirmDeleteNode = () => {
 
 const handleSelect = (node: TreeNodeType) => {
   // Solo permitimos seleccionar nodos hijos de análisis por ahora
-  // O los nodos principales si se desea
-  store.selectNode(node.id.toString())
+  store.selectNode(node.id)
 }
 </script>
 
@@ -105,7 +110,7 @@ const handleSelect = (node: TreeNodeType) => {
     <!-- Modals -->
     <AddNodeModal 
       :show="showAddModal" 
-      :existing-names="store.analysisNodes.map(n => n.text)"
+      :existing-names="store.machines.map(m => m.name)"
       @close="showAddModal = false" 
       @confirm="confirmAddNode"
     />

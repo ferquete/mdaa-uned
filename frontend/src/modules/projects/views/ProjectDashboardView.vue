@@ -1,9 +1,19 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
 const store = useProjectStore()
+const route = useRoute()
+
+onMounted(async () => {
+  const projectId = Number(route.params.id)
+  if (projectId) {
+    await store.fetchMachines(projectId)
+  }
+})
 </script>
 
 <template>
@@ -29,14 +39,14 @@ const store = useProjectStore()
               <div class="flex items-center gap-2 text-xs font-mono text-geist-accents-5">
                 <span>Análisis</span>
                 <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                <span class="text-geist-fg font-bold">{{ store.selectedNode.text }}</span>
+                <span class="text-geist-fg font-bold">{{ store.selectedNode.name }}</span>
               </div>
             </div>
 
             <!-- Editor Placeholder -->
             <div class="flex-1 flex items-center justify-center p-8">
               <div v-if="store.selectedNode" class="text-center animate-in fade-in duration-500">
-                <h2 class="text-4xl font-bold tracking-tighter mb-4">{{ store.selectedNode.text }}</h2>
+                <h2 class="text-4xl font-bold tracking-tighter mb-4">{{ store.selectedNode.name }}</h2>
                 <p class="text-geist-accents-5 font-mono text-sm max-w-md mx-auto">
                   Este es el espacio de trabajo para el nodo de análisis. Próximamente podrás definir generadores y osciladores aquí.
                 </p>

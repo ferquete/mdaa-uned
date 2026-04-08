@@ -28,3 +28,13 @@ CREATE TABLE IF NOT EXISTS projects (
 -- El external_id debe coincidir con el UUID que usemos en Keycloak
 INSERT INTO users (external_id, first_name, last_name, email)
 VALUES ('59cd8c60-9936-4f34-8b8a-54d622e4989f', 'Usuario', 'Test', 'test@uned.es');
+
+-- Creación de la tabla cim_machines
+CREATE TABLE IF NOT EXISTS cim_machines (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_proyect BIGINT NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    machine LONGTEXT NOT NULL CHECK (JSON_VALID(machine)),
+    CONSTRAINT fk_proyect_machine FOREIGN KEY (id_proyect) REFERENCES projects(id) ON DELETE CASCADE,
+    CONSTRAINT chk_cim_machine_name_min CHECK (CHAR_LENGTH(name) >= 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

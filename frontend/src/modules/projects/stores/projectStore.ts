@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import apiClient from '@/shared/api/apiClient';
-import type { Project, Genre, CimMachine } from '@/shared/types';
+import type { Project, CimMachine } from '@/shared/types';
 
 export const useProjectStore = defineStore('project', () => {
   const projects = ref<Project[]>([]);
-  const genres = ref<Genre[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -85,18 +84,6 @@ export const useProjectStore = defineStore('project', () => {
   });
 
   /**
-   * Carga los géneros disponibles desde la API.
-   */
-  async function fetchGenres() {
-    try {
-      const data = await apiClient.get<Genre[]>('/api/v1/projects/genres');
-      genres.value = data;
-    } catch (err: any) {
-      console.error('Error al cargar géneros:', err);
-    }
-  }
-
-  /**
    * Carga todos los proyectos del usuario.
    */
   async function fetchProjects() {
@@ -115,11 +102,11 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Crea un nuevo proyecto.
    */
-  async function createProject(name: string, description: string, genre: string) {
+  async function createProject(name: string, description: string) {
     loading.value = true;
     try {
       const newProject = await apiClient.post<Project>('/api/v1/projects', { 
-        name, description, genre 
+        name, description 
       });
       projects.value.unshift(newProject);
       return { success: true, project: newProject };
@@ -164,10 +151,10 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Actualiza un proyecto existente.
    */
-  const updateProject = async (id: number, name: string, description: string, genre: string) => {
+  const updateProject = async (id: number, name: string, description: string) => {
     try {
       const updatedProject = await apiClient.put<Project>(`/api/v1/projects/${id}`, { 
-        name, description, genre 
+        name, description 
       });
       
       const index = projects.value.findIndex(p => p.id === id);
@@ -184,11 +171,9 @@ export const useProjectStore = defineStore('project', () => {
 
   return {
     projects,
-    genres,
     loading,
     error,
     fetchProjects,
-    fetchGenres,
     createProject,
     deleteProject,
     fetchProjectById,

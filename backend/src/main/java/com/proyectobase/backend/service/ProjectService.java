@@ -1,7 +1,6 @@
 package com.proyectobase.backend.service;
 
 import com.proyectobase.backend.domain.Project;
-import com.proyectobase.backend.domain.ProjectGenre;
 import com.proyectobase.backend.repository.ProjectRepository;
 import com.proyectobase.backend.repository.UserRepository;
 import com.proyectobase.backend.web.dto.CreateProjectRequest;
@@ -68,7 +67,6 @@ public class ProjectService {
                             Project project = Project.builder()
                                     .name(request.getName())
                                     .description(request.getDescription())
-                                    .genre(ProjectGenre.valueOf(request.getGenre()))
                                     .userId(user.getId())
                                     .build();
                                     
@@ -130,7 +128,6 @@ public class ProjectService {
                             // Actualización de campos
                             project.setName(request.getName());
                             project.setDescription(request.getDescription());
-                            project.setGenre(ProjectGenre.valueOf(request.getGenre()));
                             
                             return projectRepository.save(project)
                                     .map(this::mapToResponse);
@@ -177,7 +174,6 @@ public class ProjectService {
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
-                .genre(project.getGenre() != null ? project.getGenre().name() : null)
                 .createdAt(project.getCreatedAt())
                 .build();
     }

@@ -24,8 +24,4 @@ public class CreateProjectRequest {
     /** Descripción opcional (max 200 caracteres) */
     @Size(max = 200, message = "La descripción no puede superar los 200 caracteres")
     private String description;
-
-    /** Género musical seleccionado */
-    @NotBlank(message = "El género del proyecto es obligatorio")
-    private String genre;
 }

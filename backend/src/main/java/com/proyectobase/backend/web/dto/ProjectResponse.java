@@ -18,6 +18,5 @@ public class ProjectResponse {
     private Long id;
     private String name;
     private String description;
-    private String genre;
     private LocalDateTime createdAt;
 }

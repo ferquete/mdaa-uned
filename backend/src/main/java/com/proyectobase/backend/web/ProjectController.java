@@ -1,8 +1,6 @@
 package com.proyectobase.backend.web;
 
-import com.proyectobase.backend.domain.ProjectGenre;
-import com.proyectobase.backend.service.ProjectService;
-import com.proyectobase.backend.web.dto.CreateProjectRequest;
+import com.proyectobase.backend.service.ProjectService;import com.proyectobase.backend.web.dto.CreateProjectRequest;
 import com.proyectobase.backend.web.dto.ProjectResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +10,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Controlador REST para proyectos (Reactivo).
@@ -28,20 +21,6 @@ import java.util.stream.Collectors;
 public class ProjectController {
 
     private final ProjectService projectService;
-
-    /**
-     * Obtiene la lista de géneros musicales disponibles con su descripción.
-     * @return Lista de mapas conteniendo el nombre técnico y la descripción amigable.
-     */
-    @GetMapping("/genres")
-    public List<Map<String, String>> getGenres() {
-        return Arrays.stream(ProjectGenre.values())
-                .map(genre -> Map.of(
-                        "name", genre.name(),
-                        "description", genre.getDescription()
-                ))
-                .collect(Collectors.toList());
-    }
 
     /**
      * Lista todos los proyectos del usuario autenticado.

@@ -5,16 +5,7 @@ export interface Project {
   id: number;
   name: string;
   description: string;
-  genre: string;
   createdAt: string;
-}
-
-/**
- * Interfaz que representa un género musical disponible.
- */
-export interface Genre {
-  name: string;
-  description: string;
 }
 
 /**

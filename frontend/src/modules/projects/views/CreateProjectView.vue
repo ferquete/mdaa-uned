@@ -12,12 +12,10 @@ const toastStore = useToastStore()
 const projectId = ref<number | null>(null)
 const name = ref('')
 const description = ref('')
-const genre = ref('')
 const isSubmitting = ref(false)
 const isEditMode = computed(() => projectId.value !== null)
 
 onMounted(async () => {
-  await projectStore.fetchGenres()
   
   // Detectar modo edición
   if (route.params.id) {
@@ -26,7 +24,6 @@ onMounted(async () => {
     if (project) {
       name.value = project.name
       description.value = project.description || ''
-      genre.value = project.genre
     } else {
       toastStore.addToast('No se pudo cargar el proyecto para editar', 'error')
       router.push('/')
@@ -43,12 +40,8 @@ const isDescriptionValid = computed(() => {
   return description.value.length <= 200
 })
 
-const isGenreValid = computed(() => {
-  return genre.value !== ''
-})
-
 const isFormValid = computed(() => {
-  return isNameValid.value && isDescriptionValid.value && isGenreValid.value
+  return isNameValid.value && isDescriptionValid.value
 })
 
 const handleCancel = () => {
@@ -66,9 +59,9 @@ const handleSubmit = async () => {
   
   let result
   if (isEditMode.value && projectId.value) {
-    result = await projectStore.updateProject(projectId.value, name.value, description.value, genre.value)
+    result = await projectStore.updateProject(projectId.value, name.value, description.value)
   } else {
-    result = await projectStore.createProject(name.value, description.value, genre.value)
+    result = await projectStore.createProject(name.value, description.value)
   }
   
   if (result.success) {
@@ -128,21 +121,6 @@ const handleSubmit = async () => {
             </div>
           </div>
 
-          <!-- Género -->
-          <div class="space-y-2">
-            <label for="genre" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Género Musical</label>
-            <select 
-              v-model="genre" 
-              id="genre" 
-              required 
-              class="geist-input appearance-none bg-geist-bg"
-            >
-              <option value="" disabled selected>Selecciona un género...</option>
-              <option v-for="g in projectStore.genres" :key="g.name" :value="g.name">
-                {{ g.description }}
-              </option>
-            </select>
-          </div>
         </div>
 
         <div class="flex flex-col gap-4">
@@ -165,14 +143,3 @@ const handleSubmit = async () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Eliminar el estilo por defecto del select en algunos navegadores */
-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
-}
-</style>

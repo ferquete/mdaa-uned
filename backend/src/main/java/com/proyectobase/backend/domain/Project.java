@@ -30,10 +30,6 @@ public class Project {
     /** Descripción opcional */
     private String description;
 
-    /** Género musical seleccionado */
-    @Column("genre")
-    private ProjectGenre genre;
-
     /** Usuario propietario del proyecto */
     @Column("user_id")
     private Long userId;

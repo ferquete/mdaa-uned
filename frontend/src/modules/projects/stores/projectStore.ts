@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import apiClient from '@/shared/api/apiClient';
-import type { Project, CimMachine } from '@/shared/types';
+import type { Project, CimMachine, CimDocument } from '@/shared/types';
 
 export const useProjectStore = defineStore('project', () => {
   const projects = ref<Project[]>([]);
@@ -31,21 +31,40 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Añade una nueva máquina persistente vinculada al proyecto.
    */
-  async function addAnalysisNode(projectId: number, nameCandidate: string) {
+  async function addAnalysisNode(projectId: number, name: string, description: string) {
     if (machines.value.length >= 10) return;
-
-    const name = nameCandidate.trim();
-    if (!name) return;
 
     try {
       const newMachine = await apiClient.post<CimMachine>(`/api/v1/projects/${projectId}/machines`, { 
-        name 
+        name,
+        description
       });
       machines.value.push(newMachine);
       selectedNodeId.value = newMachine.id;
       return { success: true, machine: newMachine };
     } catch (err: any) {
       console.error('Error al crear máquina:', err);
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Actualiza una máquina existente.
+   */
+  async function updateAnalysisNode(machineId: number, name: string, description: string) {
+    try {
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, { 
+        name,
+        description
+      });
+      
+      const index = machines.value.findIndex(m => m.id === machineId);
+      if (index !== -1) {
+        machines.value[index] = updatedMachine;
+      }
+      return { success: true, machine: updatedMachine };
+    } catch (err: any) {
+      console.error('Error al actualizar máquina:', err);
       return { success: false, message: err.message };
     }
   }
@@ -169,6 +188,21 @@ export const useProjectStore = defineStore('project', () => {
     }
   }
 
+  /**
+   * Parsea los datos de una máquina de string JSON a CimDocument.
+   */
+  function parseMachineData(machineStr: string): CimDocument {
+    try {
+      if (!machineStr || machineStr.trim() === '' || machineStr === '{}') {
+        return { $type: 'Document', generators: [], modificators: [] };
+      }
+      return JSON.parse(machineStr) as CimDocument;
+    } catch (err) {
+      console.error('Error parseando datos de máquina:', err);
+      return { $type: 'Document', generators: [], modificators: [] };
+    }
+  }
+
   return {
     projects,
     loading,
@@ -183,7 +217,9 @@ export const useProjectStore = defineStore('project', () => {
     selectedNode,
     fetchMachines,
     addAnalysisNode,
+    updateAnalysisNode,
     deleteAnalysisNode,
-    selectNode
+    selectNode,
+    parseMachineData
   };
 });

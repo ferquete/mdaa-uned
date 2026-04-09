@@ -53,6 +53,22 @@ public class CimMachineController {
     }
 
     /**
+     * Actualiza una máquina existente por su ID.
+     * @param token Token JWT del usuario
+     * @param machineId ID de la máquina a actualizar
+     * @param request Datos de la máquina (nombre, descripción)
+     * @return Mono con la máquina actualizada
+     */
+    @PutMapping("/machines/{machineId}")
+    public Mono<CimMachineResponse> updateMachine(
+            JwtAuthenticationToken token,
+            @PathVariable Long machineId,
+            @Valid @RequestBody CimMachineRequest request) {
+        String externalId = token.getName();
+        return cimMachineService.updateMachine(externalId, machineId, request);
+    }
+
+    /**
      * Elimina una máquina por su ID.
      * @param token Token JWT del usuario
      * @param machineId ID de la máquina a eliminar

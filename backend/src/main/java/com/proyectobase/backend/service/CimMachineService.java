@@ -45,10 +45,33 @@ public class CimMachineService {
                     CimMachine machine = CimMachine.builder()
                             .idProyect(projectId)
                             .name(request.getName())
+                            .description(request.getDescription())
                             .machine("{}")
                             .build();
                     return cimMachineRepository.save(machine);
                 })
+                .map(this::mapToResponse);
+    }
+
+    /**
+     * Actualiza una máquina existente.
+     * @param externalId ID de Keycloak del usuario
+     * @param machineId ID de la máquina a actualizar
+     * @param request Nuevos datos de la máquina
+     * @return Mono con la máquina actualizada
+     */
+    @Transactional
+    public Mono<CimMachineResponse> updateMachine(String externalId, Long machineId, CimMachineRequest request) {
+        log.info("Actualizando máquina {} con nuevo nombre '{}' por usuario {}", machineId, request.getName(), externalId);
+
+        return cimMachineRepository.findById(machineId)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Máquina no encontrada")))
+                .flatMap(machine -> verifyProjectOwnership(externalId, machine.getIdProyect())
+                        .flatMap(projId -> {
+                            machine.setName(request.getName());
+                            machine.setDescription(request.getDescription());
+                            return cimMachineRepository.save(machine);
+                        }))
                 .map(this::mapToResponse);
     }
 
@@ -116,6 +139,7 @@ public class CimMachineService {
                 .id(machine.getId())
                 .idProyect(machine.getIdProyect())
                 .name(machine.getName())
+                .description(machine.getDescription())
                 .machine(machine.getMachine())
                 .build();
     }

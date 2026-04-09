@@ -9,6 +9,7 @@ interface TreeNodeType {
   open?: boolean
   showAdd?: boolean
   canDelete?: boolean
+  canEdit?: boolean
 }
 
 const props = defineProps<{
@@ -22,6 +23,7 @@ const emit = defineEmits<{
   (e: 'add-child', nodeId: string | number): void
   (e: 'select', node: TreeNodeType): void
   (e: 'delete-node', node: TreeNodeType): void
+  (e: 'edit-node', node: TreeNodeType): void
 }>()
 
 const isSelected = computed(() => props.node.id === props.selectedId)
@@ -45,6 +47,11 @@ const handleAddChild = (e: Event) => {
 const handleDelete = (e: Event) => {
   e.stopPropagation()
   emit('delete-node', props.node)
+}
+
+const handleEdit = (e: Event) => {
+  e.stopPropagation()
+  emit('edit-node', props.node)
 }
 
 // Calculamos el desplazamiento del contenido basado en el nivel
@@ -98,6 +105,16 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
 
       <!-- Action Buttons (Pushed to the far right) -->
       <div class="ml-auto flex items-center gap-1 pl-2">
+        <!-- Edit Button -->
+        <button 
+          v-if="node.canEdit"
+          class="flex items-center justify-center w-5 h-5 rounded-md hover:bg-geist-accents-2 text-geist-accents-5 transition-all border border-transparent hover:border-geist-accents-3 cursor-pointer"
+          @click="handleEdit"
+          title="Editar máquina"
+        >
+          <i class="fa-solid fa-pencil text-[10px]"></i>
+        </button>
+
         <!-- Plus Button -->
         <button 
           v-if="showAddButton"
@@ -119,7 +136,7 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
         </button>
 
         <!-- Selection Indicator -->
-        <div v-if="isSelected && !showAddButton && !node.canDelete" class="w-1.5 h-1.5 rounded-full bg-geist-fg"></div>
+        <div v-if="isSelected && !showAddButton && !node.canDelete && !node.canEdit" class="w-1.5 h-1.5 rounded-full bg-geist-fg"></div>
       </div>
     </div>
 
@@ -135,6 +152,7 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
         @add-child="$emit('add-child', $event)"
         @select="$emit('select', $event)"
         @delete-node="$emit('delete-node', $event)"
+        @edit-node="$emit('edit-node', $event)"
       />
     </div>
   </div>

@@ -29,6 +29,9 @@ public class CimMachine {
     /** Nombre de la máquina */
     private String name;
 
+    /** Descripción de la máquina */
+    private String description;
+
     /** Definición de la máquina en formato JSON DSL */
     private String machine;
 }

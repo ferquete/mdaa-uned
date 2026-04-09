@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS cim_machines (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_proyect BIGINT NOT NULL,
     name VARCHAR(20) NOT NULL,
+    description VARCHAR(600) NOT NULL,
     machine LONGTEXT NOT NULL CHECK (JSON_VALID(machine)),
     CONSTRAINT fk_proyect_machine FOREIGN KEY (id_proyect) REFERENCES projects(id) ON DELETE CASCADE,
     CONSTRAINT chk_cim_machine_name_min CHECK (CHAR_LENGTH(name) >= 1)

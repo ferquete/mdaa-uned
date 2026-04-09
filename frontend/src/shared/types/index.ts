@@ -35,5 +35,35 @@ export interface CimMachine {
   id: number;
   idProyect: number;
   name: string;
+  description: string;
   machine: string; // JSON String
+}
+
+/**
+ * Interfaces para el DSL CIM (basado en la gramática Langium)
+ */
+
+export interface CimBaseComponent {
+  id: string;
+  name: string;
+  description: string;
+  inputs?: string;
+  outputs?: string;
+  params?: string;
+  $type?: string;
+}
+
+export interface CimGenerator extends CimBaseComponent {
+  refs?: any[];
+  rels?: any[];
+}
+
+export interface CimModificator extends CimBaseComponent {
+  refs?: any[];
+}
+
+export interface CimDocument {
+  $type: 'Document';
+  generators: CimGenerator[];
+  modificators: CimModificator[];
 }

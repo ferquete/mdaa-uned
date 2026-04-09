@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
@@ -7,6 +7,7 @@ import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
 const store = useProjectStore()
 const route = useRoute()
+const showDescription = ref(true)
 
 onMounted(async () => {
   const projectId = Number(route.params.id)
@@ -14,10 +15,14 @@ onMounted(async () => {
     await store.fetchMachines(projectId)
   }
 })
+
+const toggleDescription = () => {
+  showDescription.value = !showDescription.value
+}
 </script>
 
 <template>
-  <div class="project-dashboard flex flex-col h-screen bg-geist-bg">
+  <div class="project-dashboard flex flex-col h-[calc(100vh-3rem)] bg-geist-bg">
     <!-- Splitter Container -->
     <main class="flex-1 overflow-hidden">
       <PanelGroup direction="horizontal">
@@ -34,29 +39,59 @@ onMounted(async () => {
         <!-- Main Area: Editor -->
         <Panel :min-size="40">
           <div class="h-full bg-geist-bg flex flex-col">
-            <!-- Breadcrumbs / Header area sutil -->
-            <div v-if="store.selectedNode" class="p-4 border-b border-geist-border flex items-center justify-between">
-              <div class="flex items-center gap-2 text-xs font-mono text-geist-accents-5">
-                <span>Análisis</span>
-                <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                <span class="text-geist-fg font-bold">{{ store.selectedNode.name }}</span>
+            <!-- Header area sutil: Breadcrumbs + Description -->
+            <div v-if="store.selectedNode" class="flex flex-col border-b border-geist-border bg-geist-accents-1/30">
+              <div class="p-4 flex items-center justify-between h-12">
+                <div class="flex items-center gap-2 text-xs font-mono text-geist-accents-5">
+                  <span class="opacity-50">Análisis</span>
+                  <i class="fa-solid fa-chevron-right text-[8px] opacity-30"></i>
+                  <span class="text-geist-fg font-bold tracking-tight">{{ store.selectedNode.name }}</span>
+                </div>
+                
+                <button 
+                  v-if="store.selectedNode.description"
+                  @click="toggleDescription"
+                  class="flex items-center gap-2 px-2 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold transition-all hover:bg-geist-accents-2"
+                  :class="showDescription ? 'text-geist-fg' : 'text-geist-accents-5'"
+                >
+                  <i class="fa-solid fa-circle-info text-[12px]"></i>
+                  {{ showDescription ? 'Ocultar Info' : 'Ver Info' }}
+                  <i class="fa-solid fa-chevron-down text-[8px] transition-transform duration-300" :class="{ 'rotate-180': showDescription }"></i>
+                </button>
               </div>
+
+              <!-- Collapsible Description -->
+              <transition name="expand">
+                <div v-if="showDescription && store.selectedNode.description" class="px-4 pb-4 overflow-hidden">
+                  <div class="p-4 bg-geist-bg border border-geist-border rounded-lg shadow-sm">
+                    <p class="text-xs text-geist-accents-5 leading-relaxed font-mono whitespace-pre-wrap">
+                      {{ store.selectedNode.description }}
+                    </p>
+                  </div>
+                </div>
+              </transition>
             </div>
 
-            <!-- Editor Placeholder -->
-            <div class="flex-1 flex items-center justify-center p-8">
-              <div v-if="store.selectedNode" class="text-center animate-in fade-in duration-500">
-                <h2 class="text-4xl font-bold tracking-tighter mb-4">{{ store.selectedNode.name }}</h2>
-                <p class="text-geist-accents-5 font-mono text-sm max-w-md mx-auto">
-                  Este es el espacio de trabajo para el nodo de análisis. Próximamente podrás definir generadores y osciladores aquí.
-                </p>
-              </div>
-              <div v-else class="text-center">
-                <div class="w-12 h-12 rounded-2xl bg-geist-accents-1 flex items-center justify-center mx-auto mb-4 border border-geist-border">
-                  <i class="fa-solid fa-mouse-pointer text-geist-accents-4"></i>
+            <!-- Editor Workspace Area -->
+            <div class="flex-1 overflow-y-auto p-8 relative">
+              <div class="min-h-full flex items-center justify-center">
+                <div v-if="store.selectedNode" class="text-center animate-in fade-in duration-500 py-8">
+                  <div class="mb-6 opacity-20">
+                    <i class="fa-solid fa-microchip text-6xl"></i>
+                  </div>
+                  <h2 class="text-4xl font-bold tracking-tighter mb-4">{{ store.selectedNode.name }}</h2>
+                  <p class="text-geist-accents-5 font-mono text-sm max-w-md mx-auto">
+                    Este es el espacio de trabajo para el nodo de análisis. Próximamente podrás definir generadores y osciladores aquí.
+                  </p>
                 </div>
-                <h3 class="text-lg font-medium text-geist-fg mb-1">Área de Trabajo</h3>
-                <p class="text-sm text-geist-accents-4">Seleccione un nodo del explorador para comenzar.</p>
+                
+                <div v-else class="text-center">
+                  <div class="w-12 h-12 rounded-2xl bg-geist-accents-1 flex items-center justify-center mx-auto mb-4 border border-geist-border">
+                    <i class="fa-solid fa-mouse-pointer text-geist-accents-4"></i>
+                  </div>
+                  <h3 class="text-lg font-medium text-geist-fg mb-1">Área de Trabajo</h3>
+                  <p class="text-sm text-geist-accents-4">Seleccione un nodo del explorador para comenzar.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -67,22 +102,18 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.project-dashboard-container {
-  height: calc(100vh - 3rem);
-  width: 100%;
-  overflow: hidden;
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 200px;
+  opacity: 1;
 }
 
-.resize-handle {
-  width: 4px;
-  cursor: col-resize;
-  display: flex;
-  justify-content: center;
-  z-index: 10;
-}
-
-/* Transiciones para suavizar el redimensionado */
-:deep(.resizable-panel-group) {
-  transition: all 0.1s ease;
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+  padding-bottom: 0 !important;
+  transform: translateY(-4px);
 }
 </style>

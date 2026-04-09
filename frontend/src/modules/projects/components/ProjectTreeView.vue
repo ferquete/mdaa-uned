@@ -21,6 +21,7 @@ const showAddModal = ref(false)
 const showDeleteModal = ref(false)
 const pendingParentId = ref<string | number | null>(null)
 const nodeToDelete = ref<TreeNodeType | null>(null)
+const nodeToEdit = ref<any | null>(null)
 
 // Extraemos el ID del proyecto de la ruta actual
 const projectId = computed(() => Number(route.params.id))
@@ -38,12 +39,47 @@ const treeData = computed<TreeNodeType[]>(() => [
         icon: 'fa-solid fa-microscope',
         open: true,
         showAdd: store.machines.length < 10,
-        children: store.machines.map(m => ({
-          id: m.id,
-          text: m.name,
-          icon: 'fa-solid fa-cube',
-          canDelete: true
-        }))
+        children: store.machines.map(m => {
+          const doc = store.parseMachineData(m.machine);
+          const children: TreeNodeType[] = [];
+
+          // Agrupación de Generadores
+          if (doc.generators.length > 0) {
+            children.push({
+              id: `m-${m.id}-generators`,
+              text: 'Generadores',
+              icon: 'fa-solid fa-volume-high',
+              children: doc.generators.map(g => ({
+                id: `m-${m.id}-g-${g.id}`,
+                text: g.name,
+                icon: 'fa-solid fa-wave-square'
+              }))
+            });
+          }
+
+          // Agrupación de Modificadores
+          if (doc.modificators.length > 0) {
+            children.push({
+              id: `m-${m.id}-modificators`,
+              text: 'Modificadores',
+              icon: 'fa-solid fa-sliders',
+              children: doc.modificators.map(mod => ({
+                id: `m-${m.id}-mod-${mod.id}`,
+                text: mod.name,
+                icon: 'fa-solid fa-wand-magic-sparkles'
+              }))
+            });
+          }
+
+          return {
+            id: m.id,
+            text: m.name,
+            icon: 'fa-solid fa-microchip',
+            canDelete: true,
+            canEdit: true,
+            children
+          };
+        })
       },
       { id: 'diseno', text: 'Diseño', icon: 'fa-solid fa-pen-nib' },
       { id: 'implementacion', text: 'Implementación', icon: 'fa-solid fa-code' },
@@ -54,16 +90,35 @@ const treeData = computed<TreeNodeType[]>(() => [
 const handleAddChild = (parentId: string | number) => {
   if (parentId === 'analisis') {
     pendingParentId.value = parentId
+    nodeToEdit.value = null
     showAddModal.value = true
   }
 }
 
-const confirmAddNode = async (name: string) => {
-  if (pendingParentId.value === 'analisis' && projectId.value) {
-    await store.addAnalysisNode(projectId.value, name)
+const handleEditNode = (node: TreeNodeType) => {
+  const machine = store.machines.find(m => m.id === node.id)
+  if (machine) {
+    nodeToEdit.value = machine
+    showAddModal.value = true
   }
+}
+
+const confirmAddNode = async (name: string, description: string) => {
+  if (nodeToEdit.value) {
+    await store.updateAnalysisNode(nodeToEdit.value.id, name, description)
+  } else if (pendingParentId.value === 'analisis' && projectId.value) {
+    await store.addAnalysisNode(projectId.value, name, description)
+  }
+  
   pendingParentId.value = null
+  nodeToEdit.value = null
   showAddModal.value = false
+}
+
+const handleCloseAddModal = () => {
+  showAddModal.value = false
+  nodeToEdit.value = null
+  pendingParentId.value = null
 }
 
 const handleDeleteNode = (node: TreeNodeType) => {
@@ -104,6 +159,7 @@ const handleSelect = (node: TreeNodeType) => {
         @add-child="handleAddChild"
         @select="handleSelect"
         @delete-node="handleDeleteNode"
+        @edit-node="handleEditNode"
       />
     </div>
 
@@ -111,7 +167,8 @@ const handleSelect = (node: TreeNodeType) => {
     <AddNodeModal 
       :show="showAddModal" 
       :existing-names="store.machines.map(m => m.name)"
-      @close="showAddModal = false" 
+      :initial-data="nodeToEdit ? { name: nodeToEdit.name, description: nodeToEdit.description } : null"
+      @close="handleCloseAddModal" 
       @confirm="confirmAddNode"
     />
 

@@ -23,6 +23,7 @@ const adjacencyMap = new Map<string, Set<string>>()
 // Colores según requerimiento
 const REL_COLOR = 0x0070f3 // Azul
 const REF_COLOR = 0xff0000 // Rojo
+const MOD_COLOR = 0x059669 // Verde Esmeralda más oscuro
 
 // Helper para crear texturas de texto para Sprites (Dinámico y sin difuminado)
 const createTextTexture = (text: string) => {
@@ -73,27 +74,57 @@ const createTextTexture = (text: string) => {
 }
 
 // Helper para crear un "cable" 3D entre dos puntos
-const createCable = (start: THREE.Vector3, end: THREE.Vector3, color: number, sourceId: string, targetId: string) => {
+const createCable = (start: THREE.Vector3, end: THREE.Vector3, color: number, sourceId: string, targetId: string, dashed = false) => {
+  const group = new THREE.Group()
   const distance = start.distanceTo(end)
-  const radius = 0.04
-  const geometry = new THREE.CylinderGeometry(radius, radius, distance, 6)
-  const material = new THREE.MeshPhongMaterial({ 
-    color: color,
-    emissive: color,
-    emissiveIntensity: 0.5,
-    transparent: true,
-    opacity: 0.6
-  })
+  const radius = 0.05
   
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.userData = { type: 'cable', sourceId, targetId }
+  if (!dashed) {
+    const geometry = new THREE.CylinderGeometry(radius, radius, distance, 6)
+    const material = new THREE.MeshPhongMaterial({ 
+      color: color,
+      emissive: color,
+      emissiveIntensity: 0.5,
+      transparent: true,
+      opacity: 0.6
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.position.copy(new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5))
+    mesh.lookAt(end)
+    mesh.rotateX(Math.PI / 2)
+    group.add(mesh)
+  } else {
+    // Crear cable segmentado (gordo y discontinuo)
+    const segmentLen = 0.4
+    const gapLen = 0.2
+    const totalLen = segmentLen + gapLen
+    const numSegments = Math.floor(distance / totalLen)
+    
+    for (let i = 0; i < numSegments; i++) {
+      const tStart = (i * totalLen) / distance
+      const tEnd = (i * totalLen + segmentLen) / distance
+      const pStart = new THREE.Vector3().lerpVectors(start, end, tStart)
+      const pEnd = new THREE.Vector3().lerpVectors(start, end, tEnd)
+      
+      const segmentDist = pStart.distanceTo(pEnd)
+      const geometry = new THREE.CylinderGeometry(radius, radius, segmentDist, 6)
+      const material = new THREE.MeshPhongMaterial({ 
+        color: color,
+        emissive: color,
+        emissiveIntensity: 0.5,
+        transparent: true,
+        opacity: 0.8
+      })
+      const mesh = new THREE.Mesh(geometry, material)
+      mesh.position.copy(new THREE.Vector3().addVectors(pStart, pEnd).multiplyScalar(0.5))
+      mesh.lookAt(pEnd)
+      mesh.rotateX(Math.PI / 2)
+      group.add(mesh)
+    }
+  }
   
-  const middle = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5)
-  mesh.position.copy(middle)
-  mesh.lookAt(end)
-  mesh.rotateX(Math.PI / 2)
-  
-  return mesh
+  group.userData = { type: 'cable', sourceId, targetId }
+  return group
 }
 
 const initScene = () => {
@@ -130,7 +161,7 @@ const initScene = () => {
   directionalLight.position.set(10, 20, 10)
   scene.add(directionalLight)
 
-  const hLight = new THREE.HemisphereLight(0x0070f3, 0x00dfd8, 0.6)
+  const hLight = new THREE.HemisphereLight(0x0070f3, 0x059669, 0.6)
   scene.add(hLight)
 
   // Raycaster
@@ -186,11 +217,16 @@ const updateVisuals = () => {
   objects.traverse((obj) => {
     if (obj instanceof THREE.Mesh || obj instanceof THREE.Sprite || obj instanceof THREE.LineSegments) {
       let isRelated = false
-      const node = obj.userData.nodeId ? obj : (obj.parent?.userData.nodeId ? obj.parent : null)
-      const nodeId = node?.userData.nodeId
+      
+      // Buscar metadatos en el propio objeto o en su padre (para cables segmentados y grupos de nodos)
+      const data = { ...obj.parent?.userData, ...obj.userData }
+      const nodeId = data.nodeId
+      const sourceId = data.sourceId
+      const targetId = data.targetId
+      const type = data.type
 
       if (!id) {
-        // Estado normal
+        // Estado normal: todo visible
         isRelated = true
       } else {
         // Verificar relación
@@ -198,22 +234,18 @@ const updateVisuals = () => {
           isRelated = true
         } else if (nodeId && adjacencyMap.get(id)?.has(nodeId)) {
           isRelated = true
-        } else if (obj.userData.type === 'cable') {
-          const { sourceId, targetId } = obj.userData
-          if (sourceId === id || targetId === id) isRelated = true
-        } else if (obj.userData.type === 'connector') {
-          const { sourceId, targetId } = obj.userData
+        } else if (type === 'cable' || type === 'connector') {
           if (sourceId === id || targetId === id) isRelated = true
         }
       }
 
-      const opacity = isRelated ? 1 : 0.1
+      const opacity = isRelated ? 1 : 0.12
       if (obj.material) {
         const mat = obj.material as any
         mat.transparent = true
         mat.opacity = opacity
         if (mat.emissive) {
-          mat.emissiveIntensity = isRelated ? 1 : 0
+          mat.emissiveIntensity = isRelated ? 0.3 : 0
         }
       }
     }
@@ -282,23 +314,27 @@ const renderMachine = () => {
       const geometry = new THREE.SphereGeometry(0.8, 32, 32)
       
       const material = new THREE.MeshStandardMaterial({ 
-        color: isGenerator ? 0x0070f3 : 0x00dfd8,
+        color: isGenerator ? 0x0070f3 : MOD_COLOR,
         metalness: 0,
         roughness: 1,
+        transparent: true,
         emissiveIntensity: 0
       })
       
       const mesh = new THREE.Mesh(geometry, material)
+      mesh.userData = { nodeId: node.id, type: 'node' }
       nodeGroup.add(mesh)
       
       // Borde brillante
       const wireGeo = new THREE.EdgesGeometry(geometry)
       const wireMat = new THREE.LineBasicMaterial({ 
-        color: isGenerator ? 0x00aaff : 0x00ffcc,
+        color: isGenerator ? 0x00aaff : 0x059669,
         transparent: true,
         opacity: 0.8
       })
-      nodeGroup.add(new THREE.LineSegments(wireGeo, wireMat))
+      const wireframe = new THREE.LineSegments(wireGeo, wireMat)
+      wireframe.userData = { nodeId: node.id, type: 'node_wire' }
+      nodeGroup.add(wireframe)
       
       // Etiqueta de Texto (Sprite Dinámico)
       const labelData = createTextTexture(node.name || node.id)
@@ -309,6 +345,7 @@ const renderMachine = () => {
           depthTest: false 
         })
         const sprite = new THREE.Sprite(spriteMat)
+        sprite.userData = { nodeId: node.id, type: 'label' }
         sprite.position.y = 1.8
         const aspectRatio = labelData.width / labelData.height
         const baseHeight = 0.8
@@ -331,7 +368,7 @@ const renderMachine = () => {
       const start = nodePositions.get(sourceId)
       const end = nodePositions.get(targetIdStr)
       if (start && end) {
-        const cable = createCable(start, end, color, sourceId, targetIdStr)
+        const cable = createCable(start, end, color, sourceId, targetIdStr, color === REF_COLOR)
         objects.add(cable)
         
         // Puntero de dirección
@@ -418,7 +455,7 @@ watch(() => props.machineJson, () => {
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Generadores</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 bg-[#00dfd8] rounded-full shadow-[0_0_8px_#00dfd8]"></div>
+        <div class="w-3 h-3 bg-[#059669] rounded-full shadow-[0_0_8px_#059669]"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Modificadores</span>
       </div>
       
@@ -429,7 +466,7 @@ watch(() => props.machineJson, () => {
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Relación (rel)</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0.5 bg-[#ff0000] rounded-full"></div>
+        <div class="w-4 h-0 border-t-2 border-[#ff0000] border-dashed"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Referencia (ref)</span>
       </div>
     </div>

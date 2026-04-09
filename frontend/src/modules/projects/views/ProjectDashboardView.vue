@@ -5,9 +5,13 @@ import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
+import MachineVisualizer3D from '@/modules/projects/components/MachineVisualizer3D.vue'
+import MachineVisualizer2D from '@/modules/projects/components/MachineVisualizer2D.vue'
+
 const store = useProjectStore()
 const route = useRoute()
 const showDescription = ref(false)
+const visualizerMode = ref<'2D' | '3D'>('2D')
 
 onMounted(async () => {
   const projectId = Number(route.params.id)
@@ -48,6 +52,27 @@ const toggleDescription = () => {
                   <span class="text-geist-fg font-bold tracking-tight">{{ store.selectedNode.name }}</span>
                 </div>
                 
+                <div class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
+                  <button 
+                    @click="visualizerMode = '2D'"
+                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                    :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                  >
+                    <i class="fa-solid fa-diagram-project"></i>
+                    2D
+                  </button>
+                  <button 
+                    @click="visualizerMode = '3D'"
+                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                    :class="visualizerMode === '3D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                  >
+                    <i class="fa-solid fa-cube"></i>
+                    3D
+                  </button>
+                </div>
+
+                <div class="w-px h-4 bg-geist-border mx-2"></div>
+
                 <button 
                   v-if="store.selectedNode.description"
                   @click="toggleDescription"
@@ -75,8 +100,9 @@ const toggleDescription = () => {
             <!-- Editor Workspace Area Principal -->
             <div class="flex-1 relative overflow-hidden bg-geist-bg">
               <div v-if="store.selectedNode" class="w-full h-full animate-in fade-in duration-700">
-                <!-- El visualizador 3D ahora es el contenido principal -->
-                <MachineVisualizer3D :machine-json="store.selectedNode.machine" />
+                <!-- El visualizador condicionado por el modo -->
+                <MachineVisualizer2D v-if="visualizerMode === '2D'" :machine-json="store.selectedNode.machine" />
+                <MachineVisualizer3D v-else :machine-json="store.selectedNode.machine" />
               </div>
               
               <div v-else class="w-full h-full flex items-center justify-center">
@@ -85,7 +111,7 @@ const toggleDescription = () => {
                     <i class="fa-solid fa-mouse-pointer text-geist-accents-4"></i>
                   </div>
                   <h3 class="text-lg font-medium text-geist-fg mb-1">Área de Trabajo</h3>
-                  <p class="text-sm text-geist-accents-4 font-mono">Seleccione una máquina para comenzar la exploración 3D.</p>
+                  <p class="text-sm text-geist-accents-4 font-mono">Seleccione una máquina para comenzar la exploración.</p>
                 </div>
               </div>
             </div>

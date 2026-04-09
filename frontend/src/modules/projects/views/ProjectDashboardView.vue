@@ -7,11 +7,20 @@ import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
 import MachineVisualizer3D from '@/modules/projects/components/MachineVisualizer3D.vue'
 import MachineVisualizer2D from '@/modules/projects/components/MachineVisualizer2D.vue'
+import NodeEditor from '@/modules/projects/components/NodeEditor.vue'
 
 const store = useProjectStore()
 const route = useRoute()
 const showDescription = ref(false)
 const visualizerMode = ref<'2D' | '3D'>('2D')
+
+const treeRef = ref<InstanceType<typeof ProjectTreeView> | null>(null)
+
+const editSelectedMachine = () => {
+  if (store.selectedNode && treeRef.value) {
+    treeRef.value.editNode({ id: store.selectedNode.id, text: store.selectedNode.name })
+  }
+}
 
 onMounted(async () => {
   const projectId = Number(route.params.id)
@@ -32,7 +41,7 @@ const toggleDescription = () => {
       <PanelGroup direction="horizontal">
         <!-- Sidebar: Explorador -->
         <Panel :default-size="16" :min-size="12" :max-size="30">
-          <ProjectTreeView />
+          <ProjectTreeView ref="treeRef" />
         </Panel>
 
         <!-- Resize Handle -->
@@ -49,7 +58,24 @@ const toggleDescription = () => {
                 <div class="flex items-center gap-2 text-xs font-mono text-geist-accents-5">
                   <span class="opacity-50">Análisis</span>
                   <i class="fa-solid fa-chevron-right text-[8px] opacity-30"></i>
-                  <span class="text-geist-fg font-bold tracking-tight">{{ store.selectedNode.name }}</span>
+                  
+                  <div class="flex items-center gap-1">
+                    <span class="transition-colors" :class="store.selectedSubNode ? 'opacity-50' : 'text-geist-fg font-bold tracking-tight'">
+                      {{ store.selectedNode.name }}
+                    </span>
+                    <button 
+                      @click="editSelectedMachine"
+                      class="flex items-center justify-center w-5 h-5 rounded-md hover:bg-geist-accents-2 text-geist-accents-5 transition-all border border-transparent hover:border-geist-accents-3 cursor-pointer"
+                      title="Editar información básica"
+                    >
+                      <i class="fa-solid fa-pencil text-[10px]"></i>
+                    </button>
+                  </div>
+
+                  <template v-if="store.selectedSubNode">
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-30"></i>
+                    <span class="text-geist-fg font-bold tracking-tight">{{ store.selectedSubNode.name }}</span>
+                  </template>
                 </div>
                 
                 <div class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
@@ -99,7 +125,10 @@ const toggleDescription = () => {
 
             <!-- Editor Workspace Area Principal -->
             <div class="flex-1 relative overflow-hidden bg-geist-bg">
-              <div v-if="store.selectedNode" class="w-full h-full animate-in fade-in duration-700">
+              <div v-if="store.selectedSubNode" class="w-full h-full">
+                <NodeEditor />
+              </div>
+              <div v-else-if="store.selectedNode" class="w-full h-full animate-in fade-in duration-700">
                 <!-- El visualizador condicionado por el modo -->
                 <MachineVisualizer2D v-if="visualizerMode === '2D'" :machine-json="store.selectedNode.machine" />
                 <MachineVisualizer3D v-else :machine-json="store.selectedNode.machine" />

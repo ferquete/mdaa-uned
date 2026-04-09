@@ -69,7 +69,13 @@ export class MdaAudioCimValidator {
             node.refs.forEach(ref => this.checkRefDescription(ref, accept));
         }
         if (isAudioGenerator(node) && node.rels) {
-            node.rels.forEach(rel => this.checkRefDescription(rel, accept));
+            node.rels.forEach(rel => {
+                this.checkRefDescription(rel, accept);
+                // Validar que la referencia en rel sea de tipo AudioGenerator
+                if (rel.id && rel.id.ref && !isAudioGenerator(rel.id.ref)) {
+                    accept('error', 'Solo se permiten referencias a objetos de tipo AudioGenerator en el array rel.', { node: rel, property: 'id' });
+                }
+            });
         }
     }
 

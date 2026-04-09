@@ -10,6 +10,7 @@ export const useProjectStore = defineStore('project', () => {
 
   // Estados para el Dashboard
   const machines = ref<CimMachine[]>([]);
+  const parsedDocs = ref<Record<number, CimDocument>>({});
   const selectedNodeId = ref<string | number | null>(null);
 
   /**
@@ -20,9 +21,14 @@ export const useProjectStore = defineStore('project', () => {
     try {
       const data = await apiClient.get<CimMachine[]>(`/api/v1/projects/${projectId}/machines`);
       machines.value = data;
+      // Poblamos los documentos parseados en memoria
+      data.forEach(m => {
+        parsedDocs.value[m.id] = parseMachineData(m.machine);
+      });
     } catch (err: any) {
       console.error('Error al cargar máquinas:', err);
       machines.value = [];
+      parsedDocs.value = {};
     } finally {
       loading.value = false;
     }
@@ -40,6 +46,7 @@ export const useProjectStore = defineStore('project', () => {
         description
       });
       machines.value.push(newMachine);
+      parsedDocs.value[newMachine.id] = parseMachineData(newMachine.machine);
       selectedNodeId.value = newMachine.id;
       return { success: true, machine: newMachine };
     } catch (err: any) {
@@ -61,6 +68,7 @@ export const useProjectStore = defineStore('project', () => {
       const index = machines.value.findIndex(m => m.id === machineId);
       if (index !== -1) {
         machines.value[index] = updatedMachine;
+        parsedDocs.value[machineId] = parseMachineData(updatedMachine.machine);
       }
       return { success: true, machine: updatedMachine };
     } catch (err: any) {
@@ -76,6 +84,7 @@ export const useProjectStore = defineStore('project', () => {
     try {
       await apiClient.delete(`/api/v1/machines/${id}`);
       machines.value = machines.value.filter(m => m.id !== id);
+      delete parsedDocs.value[id];
       if (selectedNodeId.value === id) {
         selectedNodeId.value = null;
       }
@@ -94,12 +103,50 @@ export const useProjectStore = defineStore('project', () => {
   }
 
   /**
-   * Obtiene el nodo seleccionado actualmente.
+   * Obtiene el nodo seleccionado actualmente (Máquina).
    */
   const selectedNode = computed(() => {
     if (!selectedNodeId.value) return null;
+    
+    // Si es un ID compuesto (sub-nodo), extraemos el ID de la máquina
+    if (typeof selectedNodeId.value === 'string' && selectedNodeId.value.startsWith('m-')) {
+      const machineId = Number(selectedNodeId.value.split('-')[1]);
+      return machines.value.find(m => m.id === machineId) || null;
+    }
+
     // Buscar en la lista de máquinas persistentes
     return machines.value.find(m => m.id === selectedNodeId.value) || null;
+  });
+
+  /**
+   * Obtiene el sub-nodo seleccionado (Generador o Modificador).
+   */
+  const selectedSubNode = computed(() => {
+    const id = selectedNodeId.value;
+    if (!id || typeof id !== 'string' || !id.startsWith('m-')) return null;
+
+    // Formato esperado: m-{machineId}-{type}-{subId}
+    // subId puede contener guiones, por lo que no podemos simplemente hacer split y coger parts[3]
+    const firstDash = id.indexOf('-');
+    const secondDash = id.indexOf('-', firstDash + 1);
+    const thirdDash = id.indexOf('-', secondDash + 1);
+    
+    if (secondDash === -1 || thirdDash === -1) return null;
+
+    const machineId = Number(id.substring(firstDash + 1, secondDash));
+    const type = id.substring(secondDash + 1, thirdDash); // 'g' o 'mod'
+    const subId = id.substring(thirdDash + 1);
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return null;
+
+    if (type === 'g') {
+      return doc.generators.find(g => g.id === subId) || null;
+    } else if (type === 'mod') {
+      return doc.modificators.find(m => m.id === subId) || null;
+    }
+
+    return null;
   });
 
   /**
@@ -203,6 +250,53 @@ export const useProjectStore = defineStore('project', () => {
     }
   }
 
+  /**
+   * Actualiza los datos de un sub-nodo y persiste la máquina completa.
+   */
+  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'g' | 'mod', data: any) {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return { success: false, message: 'Documento en caché no encontrado' };
+
+    // Actualizamos el objeto reactivo en memoria directamente para la fluidez visual
+    if (type === 'g') {
+      const idx = doc.generators.findIndex(g => g.id === subNodeId);
+      if (idx !== -1) {
+        doc.generators[idx] = { ...doc.generators[idx], ...data };
+      }
+    } else {
+      const idx = doc.modificators.findIndex(m => m.id === subNodeId);
+      if (idx !== -1) {
+        doc.modificators[idx] = { ...doc.modificators[idx], ...data };
+      }
+    }
+
+    try {
+      const jsonStr = JSON.stringify(doc);
+      const payload = {
+        name: machine.name,
+        description: machine.description,
+        machine: jsonStr
+      };
+
+      console.log(`[CIM Store] Consolidando cambios en base de datos para máquina ${machineId}`);
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) {
+        // Mantenemos la reactividad consistente en todo
+        machines.value[machineIdx] = updatedMachine;
+      }
+      return { success: true };
+    } catch (err: any) {
+      console.error('[CIM Store] Error al consolidar:', err);
+      return { success: false, message: err.message || 'Error desconocido' };
+    }
+  }
+
   return {
     projects,
     loading,
@@ -213,6 +307,7 @@ export const useProjectStore = defineStore('project', () => {
     fetchProjectById,
     updateProject,
     machines,
+    parsedDocs,
     selectedNodeId,
     selectedNode,
     fetchMachines,
@@ -220,6 +315,8 @@ export const useProjectStore = defineStore('project', () => {
     updateAnalysisNode,
     deleteAnalysisNode,
     selectNode,
-    parseMachineData
+    parseMachineData,
+    selectedSubNode,
+    updateSubNodeData
   };
 });

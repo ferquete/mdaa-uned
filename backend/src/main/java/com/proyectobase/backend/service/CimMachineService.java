@@ -62,7 +62,8 @@ public class CimMachineService {
      */
     @Transactional
     public Mono<CimMachineResponse> updateMachine(String externalId, Long machineId, CimMachineRequest request) {
-        log.info("Actualizando máquina {} con nuevo nombre '{}' por usuario {}", machineId, request.getName(), externalId);
+        log.info("Actualizando máquina {}. Nuevo nombre: '{}'. JSON recibido: {}", 
+                machineId, request.getName(), request.getMachine());
 
         return cimMachineRepository.findById(machineId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Máquina no encontrada")))
@@ -70,6 +71,10 @@ public class CimMachineService {
                         .flatMap(projId -> {
                             machine.setName(request.getName());
                             machine.setDescription(request.getDescription());
+                            if (request.getMachine() != null && !request.getMachine().isBlank()) {
+                                log.debug("Actualizando estructura JSON para máquina {}", machineId);
+                                machine.setMachine(request.getMachine());
+                            }
                             return cimMachineRepository.save(machine);
                         }))
                 .map(this::mapToResponse);

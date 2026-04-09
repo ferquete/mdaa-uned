@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Position, Handle } from '@vue-flow/core'
+import FlowDraggableEdge from './FlowDraggableEdge.vue'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import type { CimDocument } from '@/shared/types'
@@ -13,7 +14,8 @@ const nodes = ref<any[]>([])
 const edges = ref<any[]>([])
 
 const selectedNodeId = ref<string | null>(null)
-const { onPaneReady, fitView, onNodeClick, onPaneClick } = useVueFlow()
+const selectedEdgeId = ref<string | null>(null)
+const { onPaneReady, fitView, onNodeClick, onPaneClick, onEdgeClick } = useVueFlow()
 
 const transformJsonToElements = () => {
   try {
@@ -40,14 +42,18 @@ const transformJsonToElements = () => {
         id: node.id,
         label: node.name || node.id,
         position: { x, y },
-        data: { type: isGenerator ? 'generator' : 'modificator' },
+        type: 'custom', // Usar tipo personalizado
+        data: { 
+          name: node.name || node.id,
+          type: isGenerator ? 'generator' : 'modificator' 
+        },
         style: {
           background: isGenerator ? 'var(--color-node-generator)' : 'var(--color-node-modificator)',
           color: '#fff',
-          borderRadius: '100px', // Forma de cápsula/círculo perfecta
+          borderRadius: '100px',
           minWidth: '60px',
           minHeight: '60px',
-          padding: '0 16px', // Espacio lateral fijo
+          padding: '0 16px',
           width: 'auto',
           height: 'auto',
           display: 'flex',
@@ -56,53 +62,65 @@ const transformJsonToElements = () => {
           fontSize: '11px',
           fontWeight: 'bold',
           textAlign: 'center',
-          whiteSpace: 'nowrap', // Evitar saltos de línea
+          whiteSpace: 'nowrap',
           border: 'none',
           boxShadow: isGenerator 
             ? 'var(--shadow-node-generator)' 
             : 'var(--shadow-node-modificator)',
-          zIndex: 10
         },
       })
     })
 
     generators.forEach(gen => {
-      if (gen.refs) {
+      if (gen.refs && Array.isArray(gen.refs)) {
         gen.refs.forEach((ref: any) => {
-          const targetId = typeof ref === 'string' ? ref : ref.id
-          newEdges.push({
-            id: `e-${gen.id}-${targetId}`,
-            source: gen.id,
-            target: targetId,
-            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
-            animated: true,
-          })
+          const targetId = typeof ref === 'string' ? ref : ref?.id
+          if (targetId && allNodes.some(n => n.id === targetId)) {
+            newEdges.push({
+              id: `e-${gen.id}-${targetId}-ref`,
+              source: gen.id,
+              target: targetId,
+              type: 'draggable',
+              data: { controlPoint: null },
+              style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
+              animated: true,
+            })
+          }
         })
       }
-      if (gen.rels) {
+      if (gen.rels && Array.isArray(gen.rels)) {
         gen.rels.forEach((rel: any) => {
-          const targetId = typeof rel === 'string' ? rel : rel.id
-          newEdges.push({
-            id: `e-${gen.id}-${targetId}`,
-            source: gen.id,
-            target: targetId,
-            style: { stroke: 'var(--color-node-rel)', strokeWidth: 2 },
-          })
+          const targetId = typeof rel === 'string' ? rel : rel?.id
+          if (targetId && allNodes.some(n => n.id === targetId)) {
+            newEdges.push({
+              id: `e-${gen.id}-${targetId}-rel`,
+              source: gen.id,
+              target: targetId,
+              type: 'draggable',
+              data: { controlPoint: null },
+              style: { stroke: 'var(--color-node-rel)', strokeWidth: 2, strokeDasharray: '5,5' },
+              animated: true,
+            })
+          }
         })
       }
     })
 
     modificators.forEach(mod => {
-      if (mod.refs) {
+      if (mod.refs && Array.isArray(mod.refs)) {
         mod.refs.forEach((ref: any) => {
-          const targetId = typeof ref === 'string' ? ref : ref.id
-          newEdges.push({
-            id: `e-${mod.id}-${targetId}`,
-            source: mod.id,
-            target: targetId,
-            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
-            animated: true,
-          })
+          const targetId = typeof ref === 'string' ? ref : ref?.id
+          if (targetId && allNodes.some(n => n.id === targetId)) {
+            newEdges.push({
+              id: `e-${mod.id}-${targetId}-ref`,
+              source: mod.id,
+              target: targetId,
+              type: 'draggable',
+              data: { controlPoint: null },
+              style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
+              animated: true,
+            })
+          }
         })
       }
     })
@@ -119,26 +137,36 @@ const transformJsonToElements = () => {
 }
 
 const applyDimming = () => {
-  const id = selectedNodeId.value
-  
-  if (!id) {
+  const nodeId = selectedNodeId.value
+  const edgeId = selectedEdgeId.value
+
+  if (!nodeId && !edgeId) {
     // Reset opacity
     nodes.value = nodes.value.map(n => ({ ...n, style: { ...n.style, opacity: 1 } }))
     edges.value = edges.value.map(e => ({ ...e, style: { ...e.style, opacity: 1 } }))
     return
   }
 
-  // Find neighbors
-  const relatedNodeIds = new Set<string>([id])
+  const relatedNodeIds = new Set<string>()
   const relatedEdgeIds = new Set<string>()
 
-  edges.value.forEach(edge => {
-    if (edge.source === id || edge.target === id) {
+  if (nodeId) {
+    relatedNodeIds.add(nodeId)
+    edges.value.forEach(edge => {
+      if (edge.source === nodeId || edge.target === nodeId) {
+        relatedNodeIds.add(edge.source)
+        relatedNodeIds.add(edge.target)
+        relatedEdgeIds.add(edge.id)
+      }
+    })
+  } else if (edgeId) {
+    const edge = edges.value.find(e => e.id === edgeId)
+    if (edge) {
+      relatedEdgeIds.add(edge.id)
       relatedNodeIds.add(edge.source)
       relatedNodeIds.add(edge.target)
-      relatedEdgeIds.add(edge.id)
     }
-  })
+  }
 
   // Apply opacity
   nodes.value = nodes.value.map(n => ({
@@ -154,12 +182,20 @@ const applyDimming = () => {
 
 // Eventos de interacción
 onNodeClick(({ node }) => {
+  selectedEdgeId.value = null
   selectedNodeId.value = selectedNodeId.value === node.id ? null : node.id
+  applyDimming()
+})
+
+onEdgeClick(({ edge }) => {
+  selectedNodeId.value = null
+  selectedEdgeId.value = selectedEdgeId.value === edge.id ? null : edge.id
   applyDimming()
 })
 
 onPaneClick(() => {
   selectedNodeId.value = null
+  selectedEdgeId.value = null
   applyDimming()
 })
 
@@ -190,6 +226,35 @@ onMounted(() => {
     >
       <Background pattern-color="#333" :gap="20" />
       <Controls position="top-left" />
+      
+      <!-- Nodo personalizado con anclajes periféricos -->
+      <template #node-custom="props">
+        <div 
+          class="flex items-center justify-center pointer-events-auto"
+          :style="(props as any).style"
+        >
+          <span class="px-4 py-0">{{ (props as any).data.name }}</span>
+          
+          <!-- Anclajes invisibles en los 4 costados -->
+          <Handle type="target" :position="Position.Top" class="!opacity-0 !pointer-events-none" />
+          <Handle type="source" :position="Position.Top" class="!opacity-0 !pointer-events-none" />
+          
+          <Handle type="target" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" />
+          <Handle type="source" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" />
+          
+          <Handle type="target" :position="Position.Left" class="!opacity-0 !pointer-events-none" />
+          <Handle type="source" :position="Position.Left" class="!opacity-0 !pointer-events-none" />
+          
+          <Handle type="target" :position="Position.Right" class="!opacity-0 !pointer-events-none" />
+          <Handle type="source" :position="Position.Right" class="!opacity-0 !pointer-events-none" />
+        </div>
+      </template>
+
+      <!-- Arista personalizada arrastrable -->
+      <template #edge-draggable="edgeProps">
+        <FlowDraggableEdge v-bind="edgeProps" />
+      </template>
+
     </VueFlow>
 
     <!-- Overlay Indicators (Coherencia con 3D) -->
@@ -222,6 +287,14 @@ onMounted(() => {
 @import '@vue-flow/core/dist/style.css';
 @import '@vue-flow/core/dist/theme-default.css';
 @import '@vue-flow/controls/dist/style.css';
+
+.vue-flow__edges {
+  z-index: 5 !important;
+}
+
+.vue-flow__nodes {
+  z-index: 10 !important;
+}
 
 .vue-flow__node {
   padding: 0;

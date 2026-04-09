@@ -1,0 +1,397 @@
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
+import type { CimGenerator, CimModificator, CimDocument } from '@/shared/types'
+
+const store = useProjectStore()
+
+const localData = ref<CimGenerator | CimModificator>({ id: '', name: '', description: '', inputs: '', outputs: '', params: '' } as any)
+const isSaving = ref(false)
+const saveMessage = ref('')
+
+// Reglas de validación (sincronizadas con mda-audio-cim-validator.ts)
+const RULES = {
+  name: { min: 1, max: 20 },
+  description: { min: 10, max: 300 },
+  inputs: { min: 10, max: 300 },
+  outputs: { min: 10, max: 300 },
+  params: { min: 10, max: 300 }
+}
+
+const validationErrors = computed(() => {
+  const errs: Record<string, string> = {}
+  
+  const validate = (key: keyof typeof RULES, value: string | undefined) => {
+    const val = value || ''
+    if (val.length < RULES[key].min) {
+      errs[key] = `Mínimo ${RULES[key].min} caracteres (actual: ${val.length})`
+    } else if (val.length > RULES[key].max) {
+      errs[key] = `Máximo ${RULES[key].max} caracteres (actual: ${val.length})`
+    }
+  }
+
+  validate('name', localData.value.name)
+  validate('description', localData.value.description)
+  validate('inputs', localData.value.inputs)
+  validate('outputs', localData.value.outputs)
+  validate('params', localData.value.params)
+
+  return errs
+})
+
+const isFormValid = computed(() => Object.keys(validationErrors.value).length === 0)
+
+// Determinar el tipo y la máquina padre
+const nodeInfo = computed(() => {
+  const id = store.selectedNodeId
+  if (!id || typeof id !== 'string' || !id.startsWith('m-')) return null
+  
+  const firstDash = id.indexOf('-');
+  const secondDash = id.indexOf('-', firstDash + 1);
+  const thirdDash = id.indexOf('-', secondDash + 1);
+  
+  if (secondDash === -1 || thirdDash === -1) return null;
+
+  return {
+    machineId: Number(id.substring(firstDash + 1, secondDash)),
+    type: id.substring(secondDash + 1, thirdDash) as 'g' | 'mod',
+    subId: id.substring(thirdDash + 1)
+  }
+})
+
+const isGenerator = computed(() => nodeInfo.value?.type === 'g')
+
+// Cargar datos iniciales con mapeo de relaciones para la UI
+watch(() => store.selectedSubNode, (newNode) => {
+  if (newNode && !isSaving.value) {
+    // Hacemos una copia profunda
+    const rawData = JSON.parse(JSON.stringify(newNode));
+    
+    // Convertimos objetos {id, description} en solo IDs para que el multi-select funcione
+    if (rawData.refs) {
+      rawData.refs = rawData.refs.map((r: any) => (typeof r === 'object' && r !== null) ? (r.id?.ref || r.id || '') : r);
+    }
+    if (rawData.rels) {
+      rawData.rels = rawData.rels.map((r: any) => (typeof r === 'object' && r !== null) ? (r.id?.ref || r.id || '') : r);
+    }
+
+    localData.value = rawData as any;
+
+    // Inicializar arrays si no existen
+    if (newNode.$type === 'Generator' || nodeInfo.value?.type === 'g') {
+      if (!(localData.value as any).rels) (localData.value as any).rels = [];
+      if (!localData.value.refs) localData.value.refs = [];
+    } else {
+      if (!localData.value.refs) localData.value.refs = [];
+    }
+  }
+}, { immediate: true })
+
+// Obtener todas las opciones disponibles de la máquina padre
+const options = computed(() => {
+  if (!store.selectedNode) return { generators: [], modificators: [] }
+  const doc = store.parsedDocs[store.selectedNode.id as number] as CimDocument;
+  if (!doc) return { generators: [], modificators: [] }
+  return {
+    generators: doc.generators.map(g => ({ id: g.id, name: g.name })),
+    modificators: doc.modificators.map(m => ({ id: m.id, name: m.name }))
+  }
+})
+
+// Filtrar "otros" generadores para rel (excluyendo el actual)
+const otherGenerators = computed(() => {
+  return options.value.generators.filter(g => g.id !== nodeInfo.value?.subId)
+})
+
+const handleSave = async () => {
+  if (!nodeInfo.value) return
+  
+  isSaving.value = true
+  saveMessage.value = ''
+  
+  // Mapeamos los datos de vuelta al formato del DSL (objetos con id y descripción)
+  const dataToSave = JSON.parse(JSON.stringify(localData.value));
+  
+  if (dataToSave.refs) {
+    dataToSave.refs = dataToSave.refs.map((id: string) => ({ id, description: "" }));
+  }
+  if (dataToSave.rels) {
+    dataToSave.rels = dataToSave.rels.map((id: string) => ({ id, description: "" }));
+  }
+
+  const result = await store.updateSubNodeData(
+    nodeInfo.value.machineId,
+    nodeInfo.value.subId,
+    nodeInfo.value.type,
+    dataToSave
+  )
+  
+  if (result.success) {
+    saveMessage.value = 'Cambios guardados correctamente'
+    setTimeout(() => saveMessage.value = '', 3000)
+  } else {
+    saveMessage.value = 'Error al guardar: ' + result.message
+  }
+  
+  isSaving.value = false
+}
+
+const toggleSelection = (array: any[], id: string) => {
+  const index = array.indexOf(id)
+  if (index === -1) {
+    array.push(id)
+  } else {
+    array.splice(index, 1)
+  }
+}
+
+// Helpers para UI
+const isSelected = (array: any[], id: string) => array?.includes(id)
+</script>
+
+<template>
+  <div v-if="nodeInfo" class="node-editor h-full flex flex-col bg-geist-bg animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <!-- Header -->
+    <div class="px-8 py-6 border-b border-geist-border bg-geist-accents-1/20">
+      <div class="flex items-center justify-between mb-2" v-if="localData">
+        <div class="flex items-center gap-3">
+          <div 
+            class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg"
+            :class="isGenerator ? 'bg-node-generator shadow-node-generator' : 'bg-node-modificator shadow-node-modificator'"
+          >
+            <i :class="isGenerator ? 'fa-solid fa-wave-square' : 'fa-solid fa-wand-magic-sparkles'"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold tracking-tight text-geist-fg">
+              {{ isGenerator ? 'Generador' : 'Modificador' }}: <span class="font-mono text-geist-accents-5">{{ localData.name }}</span>
+            </h2>
+            <p class="text-[10px] font-mono uppercase tracking-widest text-geist-accents-4">ID: {{ localData.id }}</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+          <transition name="fade">
+            <span v-if="saveMessage" class="text-xs font-mono" :class="saveMessage.includes('Error') ? 'text-geist-error' : 'text-geist-success'">
+              {{ saveMessage }}
+            </span>
+          </transition>
+          <button 
+            @click="handleSave"
+            :disabled="isSaving || !isFormValid"
+            class="geist-button-primary !px-8 !py-2.5 gap-2 group transition-all"
+            :class="(!isFormValid && !isSaving) ? 'opacity-50 cursor-not-allowed grayscale' : ''"
+          >
+            <i class="fa-solid" :class="isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>
+            {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+      <div class="max-w-4xl mx-auto space-y-10">
+        
+        <!-- Basic Info Section -->
+        <section>
+          <div class="flex items-center gap-2 mb-6">
+            <h3 class="text-xs uppercase tracking-[0.2em] font-bold text-geist-accents-4">Información General</h3>
+            <div class="h-px flex-1 bg-geist-border opacity-50"></div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
+                Nombre
+                <span v-if="validationErrors.name" class="text-[9px] text-geist-error normal-case font-mono animate-pulse">{{ validationErrors.name }}</span>
+              </label>
+              <input 
+                v-model="localData.name" 
+                type="text" 
+                class="geist-input !text-base transition-colors" 
+                :class="{ 'border-geist-error/50 bg-geist-error/[0.02]': validationErrors.name }"
+                placeholder="Ej: Oscilador Principal"
+              >
+            </div>
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
+                Inputs
+                <span v-if="validationErrors.inputs" class="text-[9px] text-geist-error normal-case font-mono animate-pulse">{{ validationErrors.inputs }}</span>
+              </label>
+              <input 
+                v-model="localData.inputs" 
+                type="text" 
+                class="geist-input !font-mono transition-colors" 
+                :class="{ 'border-geist-error/50 bg-geist-error/[0.02]': validationErrors.inputs }"
+                placeholder="Ej: audioIn, ctrl"
+              >
+            </div>
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
+                Outputs
+                <span v-if="validationErrors.outputs" class="text-[9px] text-geist-error normal-case font-mono animate-pulse">{{ validationErrors.outputs }}</span>
+              </label>
+              <input 
+                v-model="localData.outputs" 
+                type="text" 
+                class="geist-input !font-mono transition-colors" 
+                :class="{ 'border-geist-error/50 bg-geist-error/[0.02]': validationErrors.outputs }"
+                placeholder="Ej: audioOut"
+              >
+            </div>
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
+                Parámetros
+                <span v-if="validationErrors.params" class="text-[9px] text-geist-error normal-case font-mono animate-pulse">{{ validationErrors.params }}</span>
+              </label>
+              <input 
+                v-model="localData.params" 
+                type="text" 
+                class="geist-input !font-mono transition-colors" 
+                :class="{ 'border-geist-error/50 bg-geist-error/[0.02]': validationErrors.params }"
+                placeholder="Ej: freq:440, amp:0.5"
+              >
+            </div>
+            <div class="md:col-span-2 space-y-2">
+              <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
+                Descripción
+                <span v-if="validationErrors.description" class="text-[9px] text-geist-error normal-case font-mono animate-pulse">{{ validationErrors.description }}</span>
+              </label>
+              <textarea 
+                v-model="localData.description" 
+                rows="3" 
+                class="geist-input !text-base resize-none py-3 transition-colors" 
+                :class="{ 'border-geist-error/50 bg-geist-error/[0.02]': validationErrors.description }"
+                placeholder="Describe el propósito de este componente..."
+              ></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Relationships Section (Rel) - Only for Generators -->
+        <section v-if="isGenerator">
+          <div class="flex items-center gap-2 mb-6">
+            <h3 class="text-xs uppercase tracking-[0.2em] font-bold text-geist-accents-4">Relaciones (rel)</h3>
+            <div class="h-px flex-1 bg-geist-border opacity-50"></div>
+          </div>
+          
+          <p class="text-xs text-geist-accents-4 mb-4 font-mono italic">Selecciona otros generadores relacionados con este componente.</p>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <button 
+              v-for="gen in otherGenerators" 
+              :key="gen.id"
+              @click="toggleSelection((localData as CimGenerator).rels!, gen.id)"
+              class="flex items-center gap-2 p-3 rounded-lg border transition-all text-xs font-medium text-left"
+              :class="isSelected((localData as CimGenerator).rels!, gen.id) 
+                ? 'bg-node-generator/10 border-node-generator text-node-generator ring-1 ring-node-generator/30' 
+                : 'bg-geist-accents-1 border-geist-border text-geist-accents-5 hover:border-geist-accents-3'"
+            >
+              <i class="fa-solid transition-transform duration-300" :class="isSelected((localData as CimGenerator).rels!, gen.id) ? 'fa-check-circle scale-110' : 'fa-circle-plus opacity-40'"></i>
+              <span class="truncate">{{ gen.name }}</span>
+            </button>
+            <div v-if="otherGenerators.length === 0" class="col-span-full py-8 border-2 border-dashed border-geist-border rounded-xl flex flex-col items-center justify-center bg-geist-accents-1/30">
+              <i class="fa-solid fa-ghost text-geist-accents-2 text-2xl mb-2"></i>
+              <p class="text-xs text-geist-accents-4 font-mono">No hay otros generadores disponibles.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- References Section (Ref) -->
+        <section>
+          <div class="flex items-center gap-2 mb-6">
+            <h3 class="text-xs uppercase tracking-[0.2em] font-bold text-geist-accents-4">Referencias (ref)</h3>
+            <div class="h-px flex-1 bg-geist-border opacity-50"></div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Generators Column -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-volume-high text-[10px] text-node-generator"></i>
+                <h4 class="text-[10px] uppercase tracking-widest font-bold text-geist-accents-5">Generadores</h4>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button 
+                  v-for="gen in options.generators" 
+                  :key="gen.id"
+                  @click="toggleSelection(localData.refs!, gen.id)"
+                  class="flex items-center gap-3 p-3 rounded-lg border transition-all text-xs font-medium text-left group"
+                  :class="isSelected(localData.refs!, gen.id) 
+                    ? 'bg-node-generator/10 border-node-generator text-node-generator shadow-sm' 
+                    : 'bg-geist-bg border-geist-border text-geist-accents-5 hover:bg-geist-accents-1'"
+                >
+                  <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
+                    :class="isSelected(localData.refs!, gen.id) ? 'bg-node-generator border-node-generator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                  >
+                    <i v-if="isSelected(localData.refs!, gen.id)" class="fa-solid fa-check text-[10px]"></i>
+                  </div>
+                  <span class="truncate">{{ gen.name }}</span>
+                  <span class="ml-auto text-[10px] font-mono opacity-40">{{ gen.id }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Modificators Column -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-sliders text-[10px] text-node-modificator"></i>
+                <h4 class="text-[10px] uppercase tracking-widest font-bold text-geist-accents-5">Modificadores</h4>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button 
+                  v-for="mod in options.modificators" 
+                  :key="mod.id"
+                  @click="toggleSelection(localData.refs!, mod.id)"
+                  class="flex items-center gap-3 p-3 rounded-lg border transition-all text-xs font-medium text-left group"
+                  :class="isSelected(localData.refs!, mod.id) 
+                    ? 'bg-node-modificator/10 border-node-modificator text-node-modificator shadow-sm' 
+                    : 'bg-geist-bg border-geist-border text-geist-accents-5 hover:bg-geist-accents-1'"
+                >
+                  <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
+                    :class="isSelected(localData.refs!, mod.id) ? 'bg-node-modificator border-node-modificator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                  >
+                    <i v-if="isSelected(localData.refs!, mod.id)" class="fa-solid fa-check text-[10px]"></i>
+                  </div>
+                  <span class="truncate">{{ mod.name }}</span>
+                  <span class="ml-auto text-[10px] font-mono opacity-40">{{ mod.id }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.node-editor {
+  box-shadow: inset 0 1px 0 0 var(--color-geist-border);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-geist-accents-2);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-geist-accents-3);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>

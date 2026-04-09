@@ -25,4 +25,7 @@ public class CimMachineRequest {
     @NotBlank(message = "La descripción de la máquina es obligatoria")
     @Size(max = 600, message = "La descripción no puede superar los 600 caracteres")
     private String description;
+
+    /** Estructura JSON de la máquina */
+    private String machine;
 }

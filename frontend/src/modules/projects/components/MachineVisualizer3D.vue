@@ -18,7 +18,9 @@ let objects: THREE.Group
 let raycaster: THREE.Raycaster
 let mouse: THREE.Vector2
 const selectedNodeId = ref<string | null>(null)
+const selectedEdgeData = ref<{ sourceId: string, targetId: string } | null>(null)
 const adjacencyMap = new Map<string, Set<string>>()
+const clock = new THREE.Clock()
 
 // Colores dinámicos según el tema
 const getThemeColors = () => {
@@ -81,54 +83,41 @@ const createTextTexture = (text: string) => {
   return { texture, width: canvas.width, height: canvas.height }
 }
 
-// Helper para crear un "cable" 3D entre dos puntos
-const createCable = (start: THREE.Vector3, end: THREE.Vector3, color: number, sourceId: string, targetId: string, dashed = false) => {
+// Helper para crear un "cable" 3D segmentado y animable
+const createCable = (start: THREE.Vector3, end: THREE.Vector3, color: number, sourceId: string, targetId: string) => {
   const group = new THREE.Group()
   const distance = start.distanceTo(end)
-  const radius = 0.05
+  const radius = 0.04 // Un poco más fino para que luzca mejor como flujo
   
-  if (!dashed) {
-    const geometry = new THREE.CylinderGeometry(radius, radius, distance, 6)
+  const segmentLen = 0.6
+  const gapLen = 0.4
+  const totalLen = segmentLen + gapLen
+  const numSegments = Math.ceil(distance / totalLen) + 1 // Uno extra para el efecto de wrap-around
+  
+  for (let i = 0; i < numSegments; i++) {
+    const geometry = new THREE.CylinderGeometry(radius, radius, segmentLen, 6)
     const material = new THREE.MeshPhongMaterial({ 
       color: color,
       emissive: color,
-      emissiveIntensity: 0.5,
+      emissiveIntensity: 0.6,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.8
     })
     const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.copy(new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5))
-    mesh.lookAt(end)
-    mesh.rotateX(Math.PI / 2)
-    group.add(mesh)
-  } else {
-    // Crear cable segmentado (gordo y discontinuo)
-    const segmentLen = 0.4
-    const gapLen = 0.2
-    const totalLen = segmentLen + gapLen
-    const numSegments = Math.floor(distance / totalLen)
     
-    for (let i = 0; i < numSegments; i++) {
-      const tStart = (i * totalLen) / distance
-      const tEnd = (i * totalLen + segmentLen) / distance
-      const pStart = new THREE.Vector3().lerpVectors(start, end, tStart)
-      const pEnd = new THREE.Vector3().lerpVectors(start, end, tEnd)
-      
-      const segmentDist = pStart.distanceTo(pEnd)
-      const geometry = new THREE.CylinderGeometry(radius, radius, segmentDist, 6)
-      const material = new THREE.MeshPhongMaterial({ 
-        color: color,
-        emissive: color,
-        emissiveIntensity: 0.5,
-        transparent: true,
-        opacity: 0.8
-      })
-      const mesh = new THREE.Mesh(geometry, material)
-      mesh.position.copy(new THREE.Vector3().addVectors(pStart, pEnd).multiplyScalar(0.5))
-      mesh.lookAt(pEnd)
-      mesh.rotateX(Math.PI / 2)
-      group.add(mesh)
+    // Guardamos metadatos para la animación
+    mesh.userData = { 
+      type: 'cable-segment',
+      index: i,
+      totalSegments: numSegments,
+      segmentLen,
+      gapLen,
+      distance,
+      start: start.clone(),
+      end: end.clone()
     }
+    
+    group.add(mesh)
   }
   
   group.userData = { type: 'cable', sourceId, targetId }
@@ -208,20 +197,40 @@ const onClick = (event: MouseEvent) => {
 
     const nodeId = target.userData.nodeId
     if (nodeId) {
+      selectedEdgeData.value = null
       selectedNodeId.value = selectedNodeId.value === nodeId ? null : nodeId
       updateVisuals()
       return
+    }
+
+    const type = target.userData.type || target.parent?.userData.type
+    if (type === 'connector' || type === 'cable') {
+      const edgeData = { 
+        sourceId: target.userData.sourceId || target.parent?.userData.sourceId, 
+        targetId: target.userData.targetId || target.parent?.userData.targetId 
+      }
+      
+      if (edgeData.sourceId && edgeData.targetId) {
+        selectedNodeId.value = null
+        if (selectedEdgeData.value?.sourceId === edgeData.sourceId && selectedEdgeData.value?.targetId === edgeData.targetId) {
+          selectedEdgeData.value = null
+        } else {
+          selectedEdgeData.value = edgeData
+        }
+        updateVisuals()
+        return
+      }
     }
   }
   
   // Si pulsamos fuera, deseleccionamos
   selectedNodeId.value = null
+  selectedEdgeData.value = null
   updateVisuals()
 }
 
 const updateVisuals = () => {
   if (!objects) return
-  const id = selectedNodeId.value
 
   objects.traverse((obj) => {
     if (obj instanceof THREE.Mesh || obj instanceof THREE.Sprite || obj instanceof THREE.LineSegments) {
@@ -234,17 +243,26 @@ const updateVisuals = () => {
       const targetId = data.targetId
       const type = data.type
 
-      if (!id) {
+      if (!selectedNodeId.value && !selectedEdgeData.value) {
         // Estado normal: todo visible
         isRelated = true
-      } else {
-        // Verificar relación
+      } else if (selectedNodeId.value) {
+        const id = selectedNodeId.value
+        // Verificar relación con nodo
         if (nodeId === id) {
           isRelated = true
         } else if (nodeId && adjacencyMap.get(id)?.has(nodeId)) {
           isRelated = true
         } else if (type === 'cable' || type === 'connector') {
           if (sourceId === id || targetId === id) isRelated = true
+        }
+      } else if (selectedEdgeData.value) {
+        const edge = selectedEdgeData.value
+        // Verificar relación con arista
+        if (nodeId === edge.sourceId || nodeId === edge.targetId) {
+          isRelated = true
+        } else if (type === 'cable' || type === 'connector') {
+          if (sourceId === edge.sourceId && targetId === edge.targetId) isRelated = true
         }
       }
 
@@ -367,36 +385,53 @@ const renderMachine = () => {
       objects.add(nodeGroup)
     })
 
-    // 2. Renderizar Conexiones (Cables 3D)
+    // 2. Renderizar Conexiones (Cables 3D) con Anti-solapamiento
     const drawConnection = (sourceId: string, targetId: string | any, color: number) => {
       const targetIdStr = typeof targetId === 'string' ? targetId : targetId?.id
       if (!targetIdStr) return
+      if (!allNodes.some(n => n.id === targetIdStr)) return // Check existence
+      if (sourceId === targetIdStr) return // Prevent self-referential lines mapping visually
 
       // Registrar relación en mapa
       adjacencyMap.get(sourceId)?.add(targetIdStr)
       adjacencyMap.get(targetIdStr)?.add(sourceId)
 
-      const start = nodePositions.get(sourceId)
-      const end = nodePositions.get(targetIdStr)
-      if (start && end) {
-        // En modo Dracula/Modo Claro, comparamos con el color de referencia del tema actual
-        const isRef = color === colors.ref
-        const cable = createCable(start, end, color, sourceId, targetIdStr, isRef)
-        objects.add(cable)
+      const baseStart = nodePositions.get(sourceId)
+      const baseEnd = nodePositions.get(targetIdStr)
+      
+      if (baseStart && baseEnd) {
+        // Lógica de Anti-solapamiento (Jittering determinista)
+        // Generamos un offset basado en la combinación de IDs para que sea siempre el mismo
+        const hash = (str: string) => {
+          let h = 0;
+          for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+          return h;
+        };
         
-        // Puntero de dirección
-        const coneGeo = new THREE.ConeGeometry(0.15, 0.4, 8)
-        const coneMat = new THREE.MeshBasicMaterial({ 
-          color: color,
-          transparent: true,
-          opacity: 0.8
-        })
-        const cone = new THREE.Mesh(coneGeo, coneMat)
-        cone.userData = { type: 'connector', sourceId, targetId: targetIdStr }
-        cone.position.lerpVectors(start, end, 0.95)
-        cone.lookAt(end)
-        cone.rotateX(Math.PI / 2)
-        objects.add(cone)
+        const seed = hash(`${sourceId}-${targetIdStr}`);
+        const jitterScale = 0.4; // Qué tanto se alejan del eje central en la superficie
+        
+        // Calcular vectores perpendiculares para el jitter
+        const dir = new THREE.Vector3().subVectors(baseEnd, baseStart).normalize();
+        let ortho = new THREE.Vector3(1, 0, 0);
+        if (Math.abs(dir.x) > 0.9) ortho.set(0, 1, 0);
+        ortho.cross(dir).normalize();
+        const ortho2 = new THREE.Vector3().crossVectors(dir, ortho).normalize();
+        
+        // Aplicar jitter basado en el hash
+        const angle = (seed % 100) / 100 * Math.PI * 2;
+        const jitterOffset = new THREE.Vector3()
+          .addScaledVector(ortho, Math.cos(angle) * jitterScale)
+          .addScaledVector(ortho2, Math.sin(angle) * jitterScale);
+
+        // Puntos finales ajustados en la superficie (radio 0.8)
+        const start = baseStart.clone().add(jitterOffset).normalize().multiplyScalar(0.8).add(baseStart);
+        // Para el destino, recalculamos la dirección desde el nuevo inicio corregido
+        const finalDir = new THREE.Vector3().subVectors(baseEnd, start).normalize();
+        const end = baseEnd.clone().sub(finalDir.clone().multiplyScalar(0.8));
+
+        const cable = createCable(start, end, color, sourceId, targetIdStr);
+        objects.add(cable);
       }
     }
 
@@ -422,6 +457,51 @@ const renderMachine = () => {
 const animate = () => {
   animationFrameId = requestAnimationFrame(animate)
   if (controls) controls.update()
+  
+  const time = clock.getElapsedTime()
+  const flowSpeed = 1.5 // Velocidad del flujo
+
+  if (objects) {
+    objects.traverse((obj) => {
+      if (obj.userData.type === 'cable-segment') {
+        const d = obj.userData
+        const totalLen = d.segmentLen + d.gapLen
+        
+        // Calcular desplazamiento basado en el tiempo
+        let flowOffset = (time * flowSpeed) % totalLen
+        
+        // Posición original del segmento
+        const baseOffset = d.index * totalLen
+        const currentT = baseOffset + flowOffset
+        
+        // Si el segmento está fuera de la longitud total del cable, lo ocultamos o lo recirculamos
+        const normalizedT = currentT % (d.distance + totalLen)
+        
+        if (normalizedT > d.distance) {
+          obj.visible = false
+        } else {
+          obj.visible = true
+          // Actualizar posición y orientación del segmento
+          const pStart = new THREE.Vector3().lerpVectors(d.start, d.end, normalizedT / d.distance)
+          const pEnd = new THREE.Vector3().lerpVectors(d.start, d.end, Math.min((normalizedT + d.segmentLen) / d.distance, 1.0))
+          
+          obj.position.copy(new THREE.Vector3().addVectors(pStart, pEnd).multiplyScalar(0.5))
+          obj.lookAt(pEnd)
+          obj.rotateX(Math.PI / 2)
+          
+          // Desvanecimiento suave en los extremos para un flujo natural
+          let fadeOpacity = 1.0
+          if (normalizedT < d.segmentLen) fadeOpacity = normalizedT / d.segmentLen
+          if (normalizedT > d.distance - d.segmentLen) fadeOpacity = (d.distance - normalizedT) / d.segmentLen
+          
+          if ((obj as THREE.Mesh).material instanceof THREE.Material) {
+            ((obj as THREE.Mesh).material as THREE.Material).opacity = Math.max(0, fadeOpacity * 0.8)
+          }
+        }
+      }
+    })
+  }
+
   if (renderer && scene && camera) {
     renderer.render(scene, camera)
   }

@@ -40,8 +40,19 @@ const treeData = computed<TreeNodeType[]>(() => [
         open: true,
         showAdd: store.machines.length < 10,
         children: store.machines.map(m => {
-          const doc = store.parseMachineData(m.machine);
+          const doc = store.parsedDocs[m.id];
           const children: TreeNodeType[] = [];
+
+          if (!doc) {
+            return {
+              id: m.id,
+              text: m.name,
+              icon: 'fa-solid fa-microchip',
+              canDelete: true,
+              canEdit: true,
+              children: []
+            };
+          }
 
           // Agrupación de Generadores
           if (doc.generators.length > 0) {
@@ -138,6 +149,8 @@ const handleSelect = (node: TreeNodeType) => {
   // Solo permitimos seleccionar nodos hijos de análisis por ahora
   store.selectNode(node.id)
 }
+
+defineExpose({ editNode: handleEditNode })
 </script>
 
 <template>

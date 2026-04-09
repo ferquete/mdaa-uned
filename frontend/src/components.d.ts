@@ -16,6 +16,7 @@ declare module 'vue' {
     BaseModal: typeof import('./shared/components/BaseModal.vue')['default']
     ConfirmDeleteModal: typeof import('./modules/projects/components/ConfirmDeleteModal.vue')['default']
     DeleteConfirmModal: typeof import('./modules/projects/components/DeleteConfirmModal.vue')['default']
+    MachineVisualizer3D: typeof import('./modules/projects/components/MachineVisualizer3D.vue')['default']
     ProjectCard: typeof import('./modules/projects/components/ProjectCard.vue')['default']
     ProjectTreeView: typeof import('./modules/projects/components/ProjectTreeView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

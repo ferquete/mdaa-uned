@@ -7,7 +7,7 @@ import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
 const store = useProjectStore()
 const route = useRoute()
-const showDescription = ref(true)
+const showDescription = ref(false)
 
 onMounted(async () => {
   const projectId = Number(route.params.id)
@@ -60,9 +60,9 @@ const toggleDescription = () => {
                 </button>
               </div>
 
-              <!-- Collapsible Description -->
+              <!-- Collapsible Description (Solo texto) -->
               <transition name="expand">
-                <div v-if="showDescription && store.selectedNode.description" class="px-4 pb-4 overflow-hidden">
+                <div v-if="showDescription && store.selectedNode?.description" class="px-4 pb-4 overflow-hidden">
                   <div class="p-4 bg-geist-bg border border-geist-border rounded-lg shadow-sm">
                     <p class="text-xs text-geist-accents-5 leading-relaxed font-mono whitespace-pre-wrap">
                       {{ store.selectedNode.description }}
@@ -72,25 +72,20 @@ const toggleDescription = () => {
               </transition>
             </div>
 
-            <!-- Editor Workspace Area -->
-            <div class="flex-1 overflow-y-auto p-8 relative">
-              <div class="min-h-full flex items-center justify-center">
-                <div v-if="store.selectedNode" class="text-center animate-in fade-in duration-500 py-8">
-                  <div class="mb-6 opacity-20">
-                    <i class="fa-solid fa-microchip text-6xl"></i>
-                  </div>
-                  <h2 class="text-4xl font-bold tracking-tighter mb-4">{{ store.selectedNode.name }}</h2>
-                  <p class="text-geist-accents-5 font-mono text-sm max-w-md mx-auto">
-                    Este es el espacio de trabajo para el nodo de análisis. Próximamente podrás definir generadores y osciladores aquí.
-                  </p>
-                </div>
-                
-                <div v-else class="text-center">
+            <!-- Editor Workspace Area Principal -->
+            <div class="flex-1 relative overflow-hidden bg-geist-bg">
+              <div v-if="store.selectedNode" class="w-full h-full animate-in fade-in duration-700">
+                <!-- El visualizador 3D ahora es el contenido principal -->
+                <MachineVisualizer3D :machine-json="store.selectedNode.machine" />
+              </div>
+              
+              <div v-else class="w-full h-full flex items-center justify-center">
+                <div class="text-center">
                   <div class="w-12 h-12 rounded-2xl bg-geist-accents-1 flex items-center justify-center mx-auto mb-4 border border-geist-border">
                     <i class="fa-solid fa-mouse-pointer text-geist-accents-4"></i>
                   </div>
                   <h3 class="text-lg font-medium text-geist-fg mb-1">Área de Trabajo</h3>
-                  <p class="text-sm text-geist-accents-4">Seleccione un nodo del explorador para comenzar.</p>
+                  <p class="text-sm text-geist-accents-4 font-mono">Seleccione una máquina para comenzar la exploración 3D.</p>
                 </div>
               </div>
             </div>
@@ -104,8 +99,8 @@ const toggleDescription = () => {
 <style scoped>
 .expand-enter-active,
 .expand-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 200px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 800px;
   opacity: 1;
 }
 

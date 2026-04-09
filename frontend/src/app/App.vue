@@ -5,6 +5,7 @@ import keycloak from '@/app/plugins/keycloak'
 import { useUserStore } from '@/modules/auth/stores/userStore'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import { useRoute, useRouter } from 'vue-router'
+import BaseModal from '@/shared/components/BaseModal.vue'
  
 const userStore = useUserStore()
 const projectStore = useProjectStore()
@@ -13,6 +14,7 @@ const router = useRouter()
 
 const isDarkMode = ref(true) // Skills.sh (Geist) es oscuro por defecto
 const isAuthenticated = ref(false)
+const showLogoutModal = ref(false)
 
 const firstName = computed(() => userStore.user?.firstName || 'Usuario')
 
@@ -39,7 +41,10 @@ const updateTheme = () => {
   }
 }
 
-const logout = () => keycloak.logout({ redirectUri: window.location.origin })
+const logout = () => {
+  showLogoutModal.value = false
+  keycloak.logout({ redirectUri: window.location.origin })
+}
 
 onMounted(async () => {
   // Configuración de Tema
@@ -86,7 +91,7 @@ onMounted(async () => {
           <i class="fa-regular fa-circle-user text-base"></i>
           {{ firstName }}
         </router-link>
-        <button @click="logout" class="flex items-center gap-2 text-sm font-medium hover:text-geist-accents-3 transition-colors" title="Salir">
+        <button @click="showLogoutModal = true" class="flex items-center gap-2 text-sm font-medium hover:text-geist-accents-3 transition-colors" title="Salir">
           <i class="fa-solid fa-arrow-right-from-bracket text-base"></i>
         </button>
       </div>
@@ -115,6 +120,34 @@ onMounted(async () => {
     </main>
 
     <ToastContainer />
+
+    <!-- Modal de Confirmación de Salida -->
+    <BaseModal 
+      :show="showLogoutModal" 
+      title="¿Cerrar sesión?" 
+      @close="showLogoutModal = false"
+    >
+      <div class="space-y-6">
+        <p class="text-sm text-geist-accents-5 leading-relaxed">
+          ¿Estás seguro de que deseas cerrar tu sesión actual?
+        </p>
+        
+        <div class="flex flex-col gap-3">
+          <button 
+            @click="logout"
+            class="w-full bg-red-600 text-white font-medium py-2.5 rounded-lg hover:bg-red-700 transition-all active:scale-[0.98] text-sm"
+          >
+            Confirmar y Salir
+          </button>
+          <button 
+            @click="showLogoutModal = false"
+            class="w-full bg-geist-bg border border-geist-border text-geist-fg font-medium py-2.5 rounded-lg hover:border-geist-fg transition-all active:scale-[0.98] text-sm"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
   </div>
 </template>
 

@@ -48,6 +48,8 @@ const handleUpdate = async () => {
 
   if (result?.success) {
     toastStore.addToast('Perfil actualizado correctamente', 'success');
+    // Volver a la ventana previa tras guardar con éxito
+    setTimeout(() => router.back(), 500);
   } else {
     toastStore.addToast(result?.message || 'Error al actualizar el perfil', 'error');
   }
@@ -55,7 +57,7 @@ const handleUpdate = async () => {
   isSubmitting.value = false;
 };
 
-const goBack = () => router.push('/');
+const goBack = () => router.back();
 </script>
 
 <template>

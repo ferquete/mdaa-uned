@@ -21,27 +21,63 @@
   --color-geist-accents-7: #333333;
   --color-geist-accents-8: #111111;
   
-  --color-geist-success: #0070f3;
-  --color-geist-error: #ee0000;
-  --color-geist-warning: #f5a623;
+  --color-geist-success: #059669; /* Verde Esmeralda (Más oscuro para modo claro) */
+  --color-geist-error: #ee0000;   /* Rojo Geist (Más oscuro para modo claro) */
+  --color-geist-warning: #f59e0b; /* Ambar para modo claro */
+
+  /* Tokens semánticos para nodos (Modo Claro) */
+  --color-node-generator: #0070f3;
+  --color-node-modificator: #059669;
+  --color-node-ref: #ee0000;
+  --color-node-rel: #0070f3;
+
+  /* Sombras estándar para modo claro */
+  --shadow-node-generator: 0 2px 10px rgba(0, 112, 243, 0.15);
+  --shadow-node-modificator: 0 2px 10px rgba(5, 150, 105, 0.15);
+  
+  /* Colores propios de Dracula para uso directo */
+  --color-dracula-bg: #282a36;
+  --color-dracula-current: #44475a;
+  --color-dracula-fg: #f8f8f2;
+  --color-dracula-comment: #6272a4;
+  --color-dracula-cyan: #8be9fd;
+  --color-dracula-green: #50fa7b;
+  --color-dracula-orange: #ffb86c;
+  --color-dracula-pink: #ff79c6;
+  --color-dracula-purple: #bd93f9;
+  --color-dracula-red: #ff5555;
+  --color-dracula-yellow: #f1fa8c;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Modo Oscuro Geist (Skills.sh) */
 .dark {
-  --color-geist-bg: #000000;
-  --color-geist-fg: #ffffff;
-  --color-geist-sidebar: #111111;
-  --color-geist-border: #333333;
-  --color-geist-accents-1: #111111;
-  --color-geist-accents-2: #333333;
-  --color-geist-accents-3: #666666;
-  --color-geist-accents-4: #888888;
-  --color-geist-accents-5: #a1a1a1;
+  --color-geist-bg: #282a36;     /* Dracula Background */
+  --color-geist-fg: #f8f8f2;     /* Dracula Foreground */
+  --color-geist-sidebar: #21222c; /* Dracula Selection Background darker */
+  --color-geist-border: #44475a;  /* Dracula Selection */
+  --color-geist-accents-1: #21222c;
+  --color-geist-accents-2: #44475a;
+  --color-geist-accents-3: #6272a4; /* Dracula Comment */
+  --color-geist-accents-4: #8b96c9; 
+  --color-geist-accents-5: #bd93f9; /* Dracula Purple */
   --color-geist-accents-6: #ededed;
   --color-geist-accents-7: #fafafa;
   --color-geist-accents-8: #ffffff;
+
+  /* Tokens semánticos para nodos (Unificados con Modo Claro según petición) */
+  --color-node-generator: #0070f3;   /* Azul Geist */
+  --color-node-modificator: #059669; /* Verde Esmeralda */
+  --color-node-ref: #ff79c6;         /* Dracula Pink (Cálido) */
+  --color-node-rel: #0070f3;
+
+  /* Sobras suavizadas para evitar efecto reflectante */
+  --shadow-node-generator: 0 0 10px rgba(0, 112, 243, 0.35);
+  --shadow-node-modificator: 0 0 10px rgba(5, 150, 105, 0.35);
+
+  --color-geist-success: #50fa7b; /* Dracula Green (Vibrante para modo oscuro) */
+  --color-geist-error: #ff79c6;   /* Dracula Pink para Error cálido */
 }
 
 @layer base {

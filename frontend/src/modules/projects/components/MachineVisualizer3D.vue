@@ -20,10 +20,18 @@ let mouse: THREE.Vector2
 const selectedNodeId = ref<string | null>(null)
 const adjacencyMap = new Map<string, Set<string>>()
 
-// Colores según requerimiento
-const REL_COLOR = 0x0070f3 // Azul
-const REF_COLOR = 0xff0000 // Rojo
-const MOD_COLOR = 0x059669 // Verde Esmeralda más oscuro
+// Colores dinámicos según el tema
+const getThemeColors = () => {
+  const isDark = document.documentElement.classList.contains('dark')
+  return {
+    rel: isDark ? 0xbd93f9 : 0x0070f3, // Purple en Dracula, Azul en Geist
+    ref: isDark ? 0xff79c6 : 0xee0000, // Rosa Dracula (Cálido) vs Rojo Geist
+    mod: isDark ? 0x059669 : 0x059669, // Verde Esmeralda unificado
+    gen: isDark ? 0x0070f3 : 0x0070f3, // Azul Geist unificado
+    genBorder: isDark ? 0xbd93f9 : 0x00aaff,
+    modBorder: isDark ? 0x50fa7b : 0x059669
+  }
+}
 
 // Helper para crear texturas de texto para Sprites (Dinámico y sin difuminado)
 const createTextTexture = (text: string) => {
@@ -161,7 +169,8 @@ const initScene = () => {
   directionalLight.position.set(10, 20, 10)
   scene.add(directionalLight)
 
-  const hLight = new THREE.HemisphereLight(0x0070f3, 0x059669, 0.6)
+  const colors = getThemeColors()
+  const hLight = new THREE.HemisphereLight(colors.gen, colors.mod, 0.6)
   scene.add(hLight)
 
   // Raycaster
@@ -255,6 +264,8 @@ const updateVisuals = () => {
 const renderMachine = () => {
   if (!objects) return
   
+  const colors = getThemeColors()
+  
   // Limpieza profunda de geometrías y materiales
   while(objects.children.length > 0){ 
     const obj = objects.children[0]
@@ -314,7 +325,7 @@ const renderMachine = () => {
       const geometry = new THREE.SphereGeometry(0.8, 32, 32)
       
       const material = new THREE.MeshStandardMaterial({ 
-        color: isGenerator ? 0x0070f3 : MOD_COLOR,
+        color: isGenerator ? colors.gen : colors.mod,
         metalness: 0,
         roughness: 1,
         transparent: true,
@@ -328,7 +339,7 @@ const renderMachine = () => {
       // Borde brillante
       const wireGeo = new THREE.EdgesGeometry(geometry)
       const wireMat = new THREE.LineBasicMaterial({ 
-        color: isGenerator ? 0x00aaff : 0x059669,
+        color: isGenerator ? colors.genBorder : colors.modBorder,
         transparent: true,
         opacity: 0.8
       })
@@ -368,7 +379,9 @@ const renderMachine = () => {
       const start = nodePositions.get(sourceId)
       const end = nodePositions.get(targetIdStr)
       if (start && end) {
-        const cable = createCable(start, end, color, sourceId, targetIdStr, color === REF_COLOR)
+        // En modo Dracula/Modo Claro, comparamos con el color de referencia del tema actual
+        const isRef = color === colors.ref
+        const cable = createCable(start, end, color, sourceId, targetIdStr, isRef)
         objects.add(cable)
         
         // Puntero de dirección
@@ -388,12 +401,12 @@ const renderMachine = () => {
     }
 
     generators.forEach(gen => {
-      if (gen.refs) gen.refs.forEach(r => drawConnection(gen.id, r, REF_COLOR))
-      if (gen.rels) gen.rels.forEach(r => drawConnection(gen.id, r, REL_COLOR))
+      if (gen.refs) gen.refs.forEach(r => drawConnection(gen.id, r, colors.ref))
+      if (gen.rels) gen.rels.forEach(r => drawConnection(gen.id, r, colors.rel))
     })
 
     modificators.forEach(mod => {
-      if (mod.refs) mod.refs.forEach(r => drawConnection(mod.id, r, REF_COLOR))
+      if (mod.refs) mod.refs.forEach(r => drawConnection(mod.id, r, colors.ref))
     })
 
     // Suelo técnico
@@ -451,23 +464,23 @@ watch(() => props.machineJson, () => {
     <!-- Overlay Indicators -->
     <div class="absolute bottom-4 left-4 flex items-center gap-6 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 bg-[#0070f3] rounded-full shadow-[0_0_8px_#0070f3]"></div>
+        <div class="w-3 h-3 bg-[var(--color-node-generator)] rounded-full shadow-[0_0_8px_var(--color-node-generator)]"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Generadores</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 bg-[#059669] rounded-full shadow-[0_0_8px_#059669]"></div>
+        <div class="w-3 h-3 bg-[var(--color-node-modificator)] rounded-full shadow-[0_0_8px_var(--color-node-modificator)]"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Modificadores</span>
       </div>
       
       <div class="h-3 w-px bg-geist-accents-2 mx-1"></div>
       
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0.5 bg-[#0070f3] rounded-full"></div>
-        <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Relación (rel)</span>
+        <div class="w-4 h-0.5 bg-[var(--color-node-rel)] rounded-full"></div>
+        <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Propiedades</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0 border-t-2 border-[#ff0000] border-dashed"></div>
-        <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Referencia (ref)</span>
+        <div class="w-4 h-0 border-t-2 border-[var(--color-node-ref)] border-dashed"></div>
+        <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Relaciones</span>
       </div>
     </div>
     

@@ -42,7 +42,7 @@ const transformJsonToElements = () => {
         position: { x, y },
         data: { type: isGenerator ? 'generator' : 'modificator' },
         style: {
-          background: isGenerator ? '#0070f3' : '#059669',
+          background: isGenerator ? 'var(--color-node-generator)' : 'var(--color-node-modificator)',
           color: '#fff',
           borderRadius: '100px', // Forma de cápsula/círculo perfecta
           minWidth: '60px',
@@ -58,7 +58,9 @@ const transformJsonToElements = () => {
           textAlign: 'center',
           whiteSpace: 'nowrap', // Evitar saltos de línea
           border: 'none',
-          boxShadow: isGenerator ? '0 0 15px rgba(0, 112, 243, 0.4)' : '0 0 15px rgba(5, 150, 105, 0.4)',
+          boxShadow: isGenerator 
+            ? 'var(--shadow-node-generator)' 
+            : 'var(--shadow-node-modificator)',
           zIndex: 10
         },
       })
@@ -72,7 +74,7 @@ const transformJsonToElements = () => {
             id: `e-${gen.id}-${targetId}`,
             source: gen.id,
             target: targetId,
-            style: { stroke: '#ff0000', strokeWidth: 2, strokeDasharray: '5,5' },
+            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
             animated: true,
           })
         })
@@ -84,7 +86,7 @@ const transformJsonToElements = () => {
             id: `e-${gen.id}-${targetId}`,
             source: gen.id,
             target: targetId,
-            style: { stroke: '#0070f3', strokeWidth: 2 },
+            style: { stroke: 'var(--color-node-rel)', strokeWidth: 2 },
           })
         })
       }
@@ -98,7 +100,7 @@ const transformJsonToElements = () => {
             id: `e-${mod.id}-${targetId}`,
             source: mod.id,
             target: targetId,
-            style: { stroke: '#ff0000', strokeWidth: 2, strokeDasharray: '5,5' },
+            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
             animated: true,
           })
         })

@@ -13,6 +13,8 @@ interface TreeNodeType {
   icon?: string
   open?: boolean
   showAdd?: boolean
+  canDelete?: boolean
+  canEdit?: boolean
 }
 
 const store = useProjectStore()
@@ -55,32 +57,32 @@ const treeData = computed<TreeNodeType[]>(() => [
           }
 
           // Agrupación de Generadores
-          if (doc.generators.length > 0) {
-            children.push({
-              id: `m-${m.id}-generators`,
-              text: 'Generadores',
-              icon: 'fa-solid fa-volume-high',
-              children: doc.generators.map(g => ({
-                id: `m-${m.id}-g-${g.id}`,
-                text: g.name,
-                icon: 'fa-solid fa-wave-square'
-              }))
-            });
-          }
+          children.push({
+            id: `m-${m.id}-generators`,
+            text: 'Generadores',
+            icon: 'fa-solid fa-volume-high',
+            showAdd: true,
+            children: doc.generators.map(g => ({
+              id: `m-${m.id}-g-${g.id}`,
+              text: g.name,
+              icon: 'fa-solid fa-wave-square',
+              canDelete: true
+            }))
+          });
 
           // Agrupación de Modificadores
-          if (doc.modificators.length > 0) {
-            children.push({
-              id: `m-${m.id}-modificators`,
-              text: 'Modificadores',
-              icon: 'fa-solid fa-sliders',
-              children: doc.modificators.map(mod => ({
-                id: `m-${m.id}-mod-${mod.id}`,
-                text: mod.name,
-                icon: 'fa-solid fa-wand-magic-sparkles'
-              }))
-            });
-          }
+          children.push({
+            id: `m-${m.id}-modificators`,
+            text: 'Modificadores',
+            icon: 'fa-solid fa-sliders',
+            showAdd: true,
+            children: doc.modificators.map(mod => ({
+              id: `m-${m.id}-mod-${mod.id}`,
+              text: mod.name,
+              icon: 'fa-solid fa-wand-magic-sparkles',
+              canDelete: true
+            }))
+          });
 
           return {
             id: m.id,
@@ -103,6 +105,13 @@ const handleAddChild = (parentId: string | number) => {
     pendingParentId.value = parentId
     nodeToEdit.value = null
     showAddModal.value = true
+  } else if (typeof parentId === 'string' && parentId.startsWith('m-')) {
+    const parts = parentId.split('-');
+    if (parts.length === 3 && (parts[2] === 'generators' || parts[2] === 'modificators')) {
+      const machineId = Number(parts[1]);
+      const type = parts[2] === 'generators' ? 'g' : 'mod';
+      store.selectNewSubNode(machineId, type);
+    }
   }
 }
 
@@ -139,7 +148,18 @@ const handleDeleteNode = (node: TreeNodeType) => {
 
 const confirmDeleteNode = async () => {
   if (nodeToDelete.value) {
-    await store.deleteAnalysisNode(Number(nodeToDelete.value.id))
+    const id = nodeToDelete.value.id;
+    if (typeof id === 'number' || (typeof id === 'string' && !isNaN(Number(id)))) {
+      await store.deleteAnalysisNode(Number(id));
+    } else if (typeof id === 'string' && id.startsWith('m-')) {
+      const parts = id.split('-');
+      if (parts.length >= 4) {
+        const machineId = Number(parts[1]);
+        const type = parts[2] as 'g' | 'mod';
+        const subId = parts.slice(3).join('-');
+        await store.deleteSubNode(machineId, subId, type);
+      }
+    }
     showDeleteModal.value = false
     nodeToDelete.value = null
   }

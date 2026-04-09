@@ -44,7 +44,19 @@ const isFormValid = computed(() => Object.keys(validationErrors.value).length ==
 // Determinar el tipo y la máquina padre
 const nodeInfo = computed(() => {
   const id = store.selectedNodeId
-  if (!id || typeof id !== 'string' || !id.startsWith('m-')) return null
+  if (!id || typeof id !== 'string') return null
+  
+  if (id.startsWith('new-m-')) {
+    const parts = id.split('-');
+    return {
+      machineId: Number(parts[2]),
+      type: parts[3] as 'g' | 'mod',
+      subId: localData.value?.id || 'new',
+      isNew: true
+    }
+  }
+
+  if (!id.startsWith('m-')) return null
   
   const firstDash = id.indexOf('-');
   const secondDash = id.indexOf('-', firstDash + 1);
@@ -55,7 +67,8 @@ const nodeInfo = computed(() => {
   return {
     machineId: Number(id.substring(firstDash + 1, secondDash)),
     type: id.substring(secondDash + 1, thirdDash) as 'g' | 'mod',
-    subId: id.substring(thirdDash + 1)
+    subId: id.substring(thirdDash + 1),
+    isNew: false
   }
 })
 
@@ -123,7 +136,8 @@ const handleSave = async () => {
     nodeInfo.value.machineId,
     nodeInfo.value.subId,
     nodeInfo.value.type,
-    dataToSave
+    dataToSave,
+    nodeInfo.value.isNew
   )
   
   if (result.success) {
@@ -163,7 +177,7 @@ const isSelected = (array: any[], id: string) => array?.includes(id)
           </div>
           <div>
             <h2 class="text-xl font-bold tracking-tight text-geist-fg">
-              {{ isGenerator ? 'Generador' : 'Modificador' }}: <span class="font-mono text-geist-accents-5">{{ localData.name }}</span>
+              {{ isGenerator ? 'Generador' : 'Modificador' }}: <span class="font-mono text-geist-accents-5">{{ localData.name || 'Nuevo' }}</span>
             </h2>
             <p class="text-[10px] font-mono uppercase tracking-widest text-geist-accents-4">ID: {{ localData.id }}</p>
           </div>
@@ -213,6 +227,7 @@ const isSelected = (array: any[], id: string) => array?.includes(id)
                 placeholder="Ej: Oscilador Principal"
               >
             </div>
+
             <div class="space-y-2">
               <label class="text-[11px] font-bold uppercase tracking-wider text-geist-accents-5 ml-1 flex justify-between">
                 Inputs

@@ -103,15 +103,40 @@ export const useProjectStore = defineStore('project', () => {
   }
 
   /**
+   * Prepara un nuevo sub-nodo para ser creado con un ID único garantizado.
+   */
+  function selectNewSubNode(machineId: string | number, type: 'g' | 'mod') {
+    const doc = parsedDocs.value[Number(machineId)];
+    let newId = '';
+    do {
+      newId = `${type === 'g' ? 'gen' : 'mod'}_${Math.random().toString(36).substring(2, 8)}`;
+      let exists = false;
+      if (doc) {
+        if (doc.generators?.some((g: any) => g.id === newId)) exists = true;
+        if (doc.modificators?.some((m: any) => m.id === newId)) exists = true;
+      }
+      if (!exists) break;
+    } while (true);
+    
+    selectedNodeId.value = `new-m-${machineId}-${type}-${newId}`;
+  }
+
+  /**
    * Obtiene el nodo seleccionado actualmente (Máquina).
    */
   const selectedNode = computed(() => {
     if (!selectedNodeId.value) return null;
     
     // Si es un ID compuesto (sub-nodo), extraemos el ID de la máquina
-    if (typeof selectedNodeId.value === 'string' && selectedNodeId.value.startsWith('m-')) {
-      const machineId = Number(selectedNodeId.value.split('-')[1]);
-      return machines.value.find(m => m.id === machineId) || null;
+    if (typeof selectedNodeId.value === 'string') {
+      if (selectedNodeId.value.startsWith('new-m-')) {
+        const machineId = Number(selectedNodeId.value.split('-')[2]);
+        return machines.value.find(m => m.id === machineId) || null;
+      }
+      if (selectedNodeId.value.startsWith('m-')) {
+        const machineId = Number(selectedNodeId.value.split('-')[1]);
+        return machines.value.find(m => m.id === machineId) || null;
+      }
     }
 
     // Buscar en la lista de máquinas persistentes
@@ -123,7 +148,26 @@ export const useProjectStore = defineStore('project', () => {
    */
   const selectedSubNode = computed(() => {
     const id = selectedNodeId.value;
-    if (!id || typeof id !== 'string' || !id.startsWith('m-')) return null;
+    if (!id || typeof id !== 'string') return null;
+
+    if (id.startsWith('new-m-')) {
+      const parts = id.split('-');
+      const type = parts[3]; // g | mod
+      const newId = parts.slice(4).join('-');
+      return {
+        $type: type === 'g' ? 'AudioGenerator' : 'Modificator',
+        id: newId,
+        name: '',
+        description: '',
+        inputs: '',
+        outputs: '',
+        params: '',
+        refs: [],
+        ...(type === 'g' ? { rels: [] } : {})
+      };
+    }
+
+    if (!id.startsWith('m-')) return null;
 
     // Formato esperado: m-{machineId}-{type}-{subId}
     // subId puede contener guiones, por lo que no podemos simplemente hacer split y coger parts[3]
@@ -253,7 +297,7 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Actualiza los datos de un sub-nodo y persiste la máquina completa.
    */
-  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'g' | 'mod', data: any) {
+  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'g' | 'mod', data: any, isNew: boolean = false) {
     const machine = machines.value.find(m => m.id === machineId);
     if (!machine) return { success: false, message: 'Máquina no encontrada' };
 
@@ -261,15 +305,23 @@ export const useProjectStore = defineStore('project', () => {
     if (!doc) return { success: false, message: 'Documento en caché no encontrado' };
 
     // Actualizamos el objeto reactivo en memoria directamente para la fluidez visual
-    if (type === 'g') {
-      const idx = doc.generators.findIndex(g => g.id === subNodeId);
-      if (idx !== -1) {
-        doc.generators[idx] = { ...doc.generators[idx], ...data };
+    if (isNew) {
+      if (type === 'g') {
+        doc.generators.push({ ...data, $type: 'AudioGenerator' });
+      } else {
+        doc.modificators.push({ ...data, $type: 'Modificator' });
       }
     } else {
-      const idx = doc.modificators.findIndex(m => m.id === subNodeId);
-      if (idx !== -1) {
-        doc.modificators[idx] = { ...doc.modificators[idx], ...data };
+      if (type === 'g') {
+        const idx = doc.generators.findIndex(g => g.id === subNodeId);
+        if (idx !== -1) {
+          doc.generators[idx] = { ...doc.generators[idx], ...data };
+        }
+      } else {
+        const idx = doc.modificators.findIndex(m => m.id === subNodeId);
+        if (idx !== -1) {
+          doc.modificators[idx] = { ...doc.modificators[idx], ...data };
+        }
       }
     }
 
@@ -290,10 +342,63 @@ export const useProjectStore = defineStore('project', () => {
         // Mantenemos la reactividad consistente en todo
         machines.value[machineIdx] = updatedMachine;
       }
+      
+      if (isNew) {
+        selectedNodeId.value = `m-${machineId}-${type}-${data.id}`;
+      }
       return { success: true };
     } catch (err: any) {
       console.error('[CIM Store] Error al consolidar:', err);
-      return { success: false, message: err.message || 'Error desconocido' };
+      // Opcional: revertir en memoria o hacer refetch
+      await fetchMachines(machine.idProyect);
+      return { success: false, message: 'Error de validación/guardado. Revisa la sintaxis generada.' };
+    }
+  }
+
+  /**
+   * Elimina un sub-nodo de una máquina y persiste.
+   */
+  async function deleteSubNode(machineId: number, subId: string, type: 'g' | 'mod') {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return { success: false, message: 'Documento en caché no encontrado' };
+
+    if (type === 'g') {
+      const idx = doc.generators.findIndex(g => g.id === subId);
+      if (idx !== -1) {
+        doc.generators.splice(idx, 1);
+      }
+    } else {
+      const idx = doc.modificators.findIndex(m => m.id === subId);
+      if (idx !== -1) {
+        doc.modificators.splice(idx, 1);
+      }
+    }
+
+    try {
+      const jsonStr = JSON.stringify(doc);
+      const payload = {
+        name: machine.name,
+        description: machine.description,
+        machine: jsonStr
+      };
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) {
+        machines.value[machineIdx] = updatedMachine;
+      }
+
+      // Siempre seleccionar la máquina padre tras borrar
+      selectedNodeId.value = machineId;
+      
+      return { success: true };
+    } catch (err: any) {
+      console.error('[CIM Store] Error al consolidar tras borrar:', err);
+      await fetchMachines(machine.idProyect);
+      return { success: false, message: 'Error al borrar' };
     }
   }
 
@@ -312,11 +417,13 @@ export const useProjectStore = defineStore('project', () => {
     selectedNode,
     fetchMachines,
     addAnalysisNode,
+    selectNewSubNode,
     updateAnalysisNode,
     deleteAnalysisNode,
     selectNode,
     parseMachineData,
     selectedSubNode,
-    updateSubNodeData
+    updateSubNodeData,
+    deleteSubNode
   };
 });

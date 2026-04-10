@@ -75,6 +75,9 @@ const cimSchema = {
   }
 }
 
+const editorTheme = ref('vs')
+let themeObserver: MutationObserver | null = null
+
 let isInitializing = false
 
 onMounted(() => {
@@ -87,12 +90,26 @@ onMounted(() => {
   code.value = JSON.stringify(parsed, null, 2)
   clearUnsavedState()
   setTimeout(() => { isInitializing = false }, 100)
+
+  // Observador dinámico de tema
+  const updateTheme = () => {
+    editorTheme.value = document.documentElement.classList.contains('dark') ? 'vs-dark' : 'vs'
+  }
+  updateTheme()
+  themeObserver = new MutationObserver((m) => {
+    if (m.some(mutation => mutation.attributeName === 'class')) updateTheme()
+  })
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+})
+
+onBeforeUnmount(() => {
+  themeObserver?.disconnect()
 })
 
 // Registrar JSON schema en Monaco Editor
 watch(monacoRef, (monacoInst) => {
   if (monacoInst) {
-    monacoInst.languages.json.jsonDefaults.setDiagnosticsOptions({
+    ;(monacoInst.languages as any).json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       schemas: [{
         uri: "http://cim-dsl/schema.json",
@@ -100,10 +117,6 @@ watch(monacoRef, (monacoInst) => {
         schema: cimSchema
       }]
     })
-
-    // Theme setup based on document root dark class
-    const isDark = document.documentElement.classList.contains('dark')
-    monacoInst.editor.setTheme(isDark ? 'vs-dark' : 'vs')
   }
 }, { immediate: true })
 
@@ -125,6 +138,22 @@ const validateCustomLogic = (jsonString: string) => {
           reportedIds.add(node.id)
         }
       }
+    })
+
+    // Validar relaciones/referencias orfanas
+    allNodes.forEach(node => {
+      // Validar rels
+      ;(node.rels || []).forEach((rel: any) => {
+        if (rel.id && !reportedIds.has(rel.id)) {
+           customErrors.value.push(`El ID referenciado '${rel.id}' en la relación de '${node.id}' ya no existe en el documento.`)
+        }
+      })
+      // Validar refs
+      ;(node.refs || []).forEach((ref: any) => {
+        if (ref.id && !reportedIds.has(ref.id)) {
+           customErrors.value.push(`El ID referenciado '${ref.id}' en la referencia de '${node.id}' ya no existe en el documento.`)
+        }
+      })
     })
   } catch(e) {
     // Si no parsea, hasSyntaxErrors lo capturará en handleValidate
@@ -234,6 +263,7 @@ const doSave = async () => {
       <VueMonacoEditor
         v-model:value="code"
         language="json"
+        :theme="editorTheme"
         :options="{
           minimap: { enabled: false },
           fontSize: 13,

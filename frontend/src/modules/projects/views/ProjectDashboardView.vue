@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
@@ -52,8 +52,47 @@ onMounted(async () => {
   }
 })
 
+// Fuerza el modo 2D al entrar en la visualización de una máquina principal
+watch(
+  () => [store.selectedNode?.id, store.selectedSubNode?.id],
+  ([newMachineId, newSubId], [oldMachineId, oldSubId]) => {
+    // Solo reseteamos a 2D al entrar a una máquina nueva o volver del subnodo a la raíz
+    if (!newSubId && (newMachineId !== oldMachineId || oldSubId)) {
+      visualizerMode.value = '2D'
+    }
+  }
+)
+
 const toggleDescription = () => {
   showDescription.value = !showDescription.value
+}
+
+const exportMachine = () => {
+  if (!store.selectedNode) return
+  
+  // Format el JSON limpiamente
+  let content = store.selectedNode.machine
+  try {
+    const parsed = JSON.parse(content)
+    content = JSON.stringify(parsed, null, 2)
+  } catch(e) {
+    // Si no es parseable, usamos raw
+  }
+
+  const blob = new Blob([content], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  
+  const a = document.createElement('a')
+  a.href = url
+  // Limpiar el nombre para sistema de archivos
+  const safeName = store.selectedNode.name.replace(/[^a-zA-Z0-9_-]/g, '_')
+  a.download = `${safeName}.json`
+  
+  document.body.appendChild(a)
+  a.click()
+  
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 </script>
 
@@ -101,30 +140,43 @@ const toggleDescription = () => {
                   </template>
                 </div>
                 
-                <div v-if="!store.selectedSubNode" class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
+                <div v-if="!store.selectedSubNode" class="flex items-center gap-2">
+                  <div class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
+                    <button 
+                      @click="setVisualizerMode('2D')"
+                      class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                      :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                    >
+                      <i class="fa-solid fa-diagram-project"></i>
+                      2D
+                    </button>
+                    <button 
+                      @click="setVisualizerMode('3D')"
+                      class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                      :class="visualizerMode === '3D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                    >
+                      <i class="fa-solid fa-cube"></i>
+                      3D
+                    </button>
+                    <button 
+                      @click="setVisualizerMode('JSON')"
+                      class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                      :class="visualizerMode === 'JSON' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                    >
+                      <i class="fa-solid fa-code"></i>
+                      JSON
+                    </button>
+                  </div>
+
+                  <div class="w-px h-4 bg-geist-border mx-1"></div>
+
                   <button 
-                    @click="setVisualizerMode('2D')"
-                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
-                    :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                    @click="exportMachine"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-geist-border bg-geist-bg text-[10px] uppercase font-bold hover:bg-geist-accents-2 text-geist-accents-5 hover:text-geist-fg transition-all shadow-sm group"
+                    title="Exportar archivo JSON"
                   >
-                    <i class="fa-solid fa-diagram-project"></i>
-                    2D
-                  </button>
-                  <button 
-                    @click="setVisualizerMode('3D')"
-                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
-                    :class="visualizerMode === '3D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
-                  >
-                    <i class="fa-solid fa-cube"></i>
-                    3D
-                  </button>
-                  <button 
-                    @click="setVisualizerMode('JSON')"
-                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
-                    :class="visualizerMode === 'JSON' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
-                  >
-                    <i class="fa-solid fa-code"></i>
-                    JSON
+                    <i class="fa-solid fa-download group-hover:scale-110 transition-transform"></i>
+                    Exportar
                   </button>
                 </div>
 

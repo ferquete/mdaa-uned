@@ -1,0 +1,16 @@
+{
+    "projectName": "MdaCimRelations",
+    "languages": [
+        {
+            "id": "mda-cim-relations",
+            "grammar": "src/mda-cim-relations.langium",
+            "fileExtensions": [
+                "mdacimRel"
+            ],
+            "textMate": {
+                "out": "syntaxes/mda-cim-relations.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}

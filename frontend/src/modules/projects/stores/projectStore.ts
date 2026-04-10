@@ -284,10 +284,16 @@ export const useProjectStore = defineStore('project', () => {
    */
   function parseMachineData(machineStr: string): CimDocument {
     try {
-      if (!machineStr || machineStr.trim() === '' || machineStr === '{}') {
+      if (!machineStr || machineStr.trim() === '') {
         return { $type: 'Document', generators: [], modificators: [] };
       }
-      return JSON.parse(machineStr) as CimDocument;
+      const parsed = JSON.parse(machineStr);
+      return {
+        ...parsed,
+        $type: parsed.$type || 'Document',
+        generators: parsed.generators || [],
+        modificators: parsed.modificators || []
+      } as CimDocument;
     } catch (err) {
       console.error('Error parseando datos de máquina:', err);
       return { $type: 'Document', generators: [], modificators: [] };

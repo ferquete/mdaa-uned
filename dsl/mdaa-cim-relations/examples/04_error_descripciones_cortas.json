@@ -1,0 +1,10 @@
+{
+    "description": "xyz",
+    "relations": [
+        {
+            "source": "synth_1",
+            "destination": "reverb_3",
+            "description": "Corta"
+        }
+    ]
+}

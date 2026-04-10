@@ -4,7 +4,7 @@ import { BaseEdge, type EdgeProps, useVueFlow } from '@vue-flow/core'
 
 const props = defineProps<EdgeProps>()
 
-const { updateEdgeData, project } = useVueFlow()
+const { updateEdgeData, project, findNode } = useVueFlow()
 
 const isDragging = ref(false)
 
@@ -34,10 +34,54 @@ const controlPoint = computed(() => {
   }
 })
 
-// Path personalizado de Bezier Cuadrático para que el punto de control sea real
+// Función para calcular intersección del borde del nodo con un rayo dirigido al punto de control
+const getIntersection = (cx: number, cy: number, w: number, h: number, targetX: number, targetY: number) => {
+  const dx = targetX - cx
+  const dy = targetY - cy
+  if (dx === 0 && dy === 0) return { x: cx, y: cy }
+  
+  // Acercamiento elíptico, considerando que los nodos son píldoras (redondeados). 
+  // Reducimos un poco w y h (-2px) para que la línea toque exactamente el perímetro dibujado.
+  const a = Math.max(1, w - 2)
+  const b = Math.max(1, h - 2)
+  
+  const t = 1 / Math.sqrt((dx * dx) / (a * a) + (dy * dy) / (b * b))
+  
+  // Intersectamos cerca pero sin rebasar el margen interior visual 
+  return {
+    x: cx + dx * t,
+    y: cy + dy * t
+  }
+}
+
+// Puntos de inicio y fin ajustados al borde del nodo
+const edgeEndpoints = computed(() => {
+  const sNode = findNode(props.source)
+  const tNode = findNode(props.target)
+  const cp = controlPoint.value
+  
+  // Source
+  let sx = props.sourceX, sy = props.sourceY
+  if (sNode && sNode.dimensions) {
+    const inter = getIntersection(props.sourceX, props.sourceY, sNode.dimensions.width / 2, sNode.dimensions.height / 2, cp.x, cp.y)
+    sx = inter.x; sy = inter.y;
+  }
+  
+  // Target
+  let tx = props.targetX, ty = props.targetY
+  if (tNode && tNode.dimensions) {
+    const inter = getIntersection(props.targetX, props.targetY, tNode.dimensions.width / 2, tNode.dimensions.height / 2, cp.x, cp.y)
+    tx = inter.x; ty = inter.y;
+  }
+  
+  return { sx, sy, tx, ty }
+})
+
+// Path personalizado de Bezier Cuadrático interactivo
 const customPath = computed(() => {
   const cp = controlPoint.value
-  return `M ${props.sourceX} ${props.sourceY} Q ${cp.x} ${cp.y} ${props.targetX} ${props.targetY}`
+  const { sx, sy, tx, ty } = edgeEndpoints.value
+  return `M ${sx} ${sy} Q ${cp.x} ${cp.y} ${tx} ${ty}`
 })
 
 const onMouseDown = (event: MouseEvent) => {

@@ -40,7 +40,7 @@ const toggleDescription = () => {
     <main class="flex-1 overflow-hidden">
       <PanelGroup direction="horizontal">
         <!-- Sidebar: Explorador -->
-        <Panel :default-size="16" :min-size="12" :max-size="30">
+        <Panel :default-size="25" :min-size="12" :max-size="35">
           <ProjectTreeView ref="treeRef" />
         </Panel>
 
@@ -78,7 +78,7 @@ const toggleDescription = () => {
                   </template>
                 </div>
                 
-                <div class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
+                <div v-if="!store.selectedSubNode" class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
                   <button 
                     @click="visualizerMode = '2D'"
                     class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
@@ -140,7 +140,7 @@ const toggleDescription = () => {
                     <i class="fa-solid fa-mouse-pointer text-geist-accents-4"></i>
                   </div>
                   <h3 class="text-lg font-medium text-geist-fg mb-1">Área de Trabajo</h3>
-                  <p class="text-sm text-geist-accents-4 font-mono">Seleccione una máquina para comenzar la exploración.</p>
+
                 </div>
               </div>
             </div>

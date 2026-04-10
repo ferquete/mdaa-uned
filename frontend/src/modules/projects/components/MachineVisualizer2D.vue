@@ -235,18 +235,9 @@ onMounted(() => {
         >
           <span class="px-4 py-0">{{ (props as any).data.name }}</span>
           
-          <!-- Anclajes invisibles en los 4 costados -->
-          <Handle type="target" :position="Position.Top" class="!opacity-0 !pointer-events-none" />
-          <Handle type="source" :position="Position.Top" class="!opacity-0 !pointer-events-none" />
-          
-          <Handle type="target" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" />
-          <Handle type="source" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" />
-          
-          <Handle type="target" :position="Position.Left" class="!opacity-0 !pointer-events-none" />
-          <Handle type="source" :position="Position.Left" class="!opacity-0 !pointer-events-none" />
-          
-          <Handle type="target" :position="Position.Right" class="!opacity-0 !pointer-events-none" />
-          <Handle type="source" :position="Position.Right" class="!opacity-0 !pointer-events-none" />
+          <!-- Anclaje central invisible para cálculos dinámicos de intersección -->
+          <Handle type="target" :position="Position.Top" class="!opacity-0 !pointer-events-none" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1px; height: 1px" />
+          <Handle type="source" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1px; height: 1px" />
         </div>
       </template>
 
@@ -260,22 +251,22 @@ onMounted(() => {
     <!-- Overlay Indicators (Coherencia con 3D) -->
     <div class="absolute bottom-4 left-4 flex items-center gap-6 pointer-events-none opacity-60 hover:opacity-100 transition-opacity z-10">
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 bg-[#0070f3] rounded-full shadow-[0_0_8px_#0070f3]"></div>
+        <div class="w-3 h-3 bg-[var(--color-node-generator)] rounded-full shadow-[0_0_8px_var(--color-node-generator)]"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Generadores</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-3 h-3 bg-[#059669] rounded-full shadow-[0_0_8px_#059669]"></div>
+        <div class="w-3 h-3 bg-[var(--color-node-modificator)] rounded-full shadow-[0_0_8px_var(--color-node-modificator)]"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Modificadores</span>
       </div>
       
       <div class="h-3 w-px bg-geist-accents-2 mx-1"></div>
       
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0 border-t-2 border-[#0070f3] border-dashed"></div>
+        <div class="w-4 h-0 border-t-2 border-[var(--color-node-rel)] border-dashed"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">rel</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0 border-t-2 border-[#ff0000] border-dashed"></div>
+        <div class="w-4 h-0 border-t-2 border-[var(--color-node-ref)] border-dashed"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">ref</span>
       </div>
     </div>

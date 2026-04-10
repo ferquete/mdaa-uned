@@ -22,16 +22,15 @@ const selectedEdgeData = ref<{ sourceId: string, targetId: string } | null>(null
 const adjacencyMap = new Map<string, Set<string>>()
 const clock = new THREE.Clock()
 
-// Colores dinámicos según el tema
+// Colores estáticos independientes del tema
 const getThemeColors = () => {
-  const isDark = document.documentElement.classList.contains('dark')
   return {
-    rel: isDark ? 0xbd93f9 : 0x0070f3, // Purple en Dracula, Azul en Geist
-    ref: isDark ? 0xff79c6 : 0xee0000, // Rosa Dracula (Cálido) vs Rojo Geist
-    mod: isDark ? 0x059669 : 0x059669, // Verde Esmeralda unificado
-    gen: isDark ? 0x0070f3 : 0x0070f3, // Azul Geist unificado
-    genBorder: isDark ? 0xbd93f9 : 0x00aaff,
-    modBorder: isDark ? 0x50fa7b : 0x059669
+    rel: 0x0070f3,
+    ref: 0xee0000,
+    mod: 0x059669,
+    gen: 0x0070f3,
+    genBorder: 0x00aaff,
+    modBorder: 0x059669
   }
 }
 

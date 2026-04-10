@@ -67,9 +67,9 @@
   --color-geist-accents-8: #ffffff;
 
   /* Tokens semánticos para nodos (Unificados con Modo Claro según petición) */
-  --color-node-generator: #0070f3;   /* Azul Geist */
-  --color-node-modificator: #059669; /* Verde Esmeralda */
-  --color-node-ref: #ff79c6;         /* Dracula Pink (Cálido) */
+  --color-node-generator: #0070f3;
+  --color-node-modificator: #059669;
+  --color-node-ref: #ee0000;
   --color-node-rel: #0070f3;
 
   /* Sobras suavizadas para evitar efecto reflectante */

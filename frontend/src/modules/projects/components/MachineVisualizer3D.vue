@@ -555,7 +555,7 @@ watch(() => props.machineJson, () => {
       <div class="h-3 w-px bg-geist-accents-2 mx-1"></div>
       
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0.5 bg-[var(--color-node-rel)] rounded-full"></div>
+        <div class="w-4 h-0 border-t-2 border-[var(--color-node-rel)] border-dashed"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">Propiedades</span>
       </div>
       <div class="flex items-center gap-2">

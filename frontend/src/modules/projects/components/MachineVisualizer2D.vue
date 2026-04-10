@@ -271,7 +271,7 @@ onMounted(() => {
       <div class="h-3 w-px bg-geist-accents-2 mx-1"></div>
       
       <div class="flex items-center gap-2">
-        <div class="w-4 h-0.5 bg-[#0070f3] rounded-full"></div>
+        <div class="w-4 h-0 border-t-2 border-[#0070f3] border-dashed"></div>
         <span class="text-[10px] font-mono uppercase tracking-tighter text-geist-fg">rel</span>
       </div>
       <div class="flex items-center gap-2">

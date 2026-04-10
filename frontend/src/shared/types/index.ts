@@ -34,6 +34,7 @@ export interface ApiResult<T = any> {
 export interface CimMachine {
   id: number;
   idProyect: number;
+  refMachine: string;
   name: string;
   description: string;
   machine: string; // JSON String

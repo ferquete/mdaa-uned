@@ -32,6 +32,7 @@ VALUES ('59cd8c60-9936-4f34-8b8a-54d622e4989f', 'Usuario', 'Test', 'test@uned.es
 CREATE TABLE IF NOT EXISTS cim_machines (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_proyect BIGINT NOT NULL,
+    ref_machine VARCHAR(36) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL,
     description VARCHAR(600) NOT NULL,
     machine LONGTEXT NOT NULL CHECK (JSON_VALID(machine)),

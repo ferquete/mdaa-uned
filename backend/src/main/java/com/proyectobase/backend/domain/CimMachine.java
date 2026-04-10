@@ -26,6 +26,10 @@ public class CimMachine {
     @Column("id_proyect")
     private Long idProyect;
 
+    /** Referencia auto-generada única */
+    @Column("ref_machine")
+    private String refMachine;
+
     /** Nombre de la máquina */
     private String name;
 

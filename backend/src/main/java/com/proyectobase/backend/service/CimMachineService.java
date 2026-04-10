@@ -44,6 +44,7 @@ public class CimMachineService {
                 .flatMap(projId -> {
                     CimMachine machine = CimMachine.builder()
                             .idProyect(projectId)
+                            .refMachine(java.util.UUID.randomUUID().toString())
                             .name(request.getName())
                             .description(request.getDescription())
                             .machine("{}")
@@ -143,6 +144,7 @@ public class CimMachineService {
         return CimMachineResponse.builder()
                 .id(machine.getId())
                 .idProyect(machine.getIdProyect())
+                .refMachine(machine.getRefMachine())
                 .name(machine.getName())
                 .description(machine.getDescription())
                 .machine(machine.getMachine())

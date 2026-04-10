@@ -36,6 +36,25 @@ const validationErrors = computed(() => {
   validate('outputs', localData.value.outputs)
   validate('params', localData.value.params)
 
+  // Validaciones de relaciones (mandatory description 10-300)
+  if (isGenerator.value && (localData.value as any).rels) {
+    ;(localData.value as any).rels.forEach((rel: {id: string, description: string}) => {
+      const v = rel.description || ''
+      if (v.length < RULES.description.min || v.length > RULES.description.max) {
+        errs[`rel_${rel.id}`] = `Mínimo ${RULES.description.min}, máximo ${RULES.description.max} caract. (actual: ${v.length})`
+      }
+    })
+  }
+
+  if (localData.value.refs) {
+    localData.value.refs.forEach((ref: {id: string, description: string}) => {
+      const v = ref.description || ''
+      if (v.length < RULES.description.min || v.length > RULES.description.max) {
+        errs[`ref_${ref.id}`] = `Mínimo ${RULES.description.min}, máximo ${RULES.description.max} caract. (actual: ${v.length})`
+      }
+    })
+  }
+
   return errs
 })
 
@@ -74,18 +93,32 @@ const nodeInfo = computed(() => {
 
 const isGenerator = computed(() => nodeInfo.value?.type === 'g')
 
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+
+const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
+
+let isInitializing = false
+
 // Cargar datos iniciales con mapeo de relaciones para la UI
 watch(() => store.selectedSubNode, (newNode) => {
   if (newNode && !isSaving.value) {
+    isInitializing = true
     // Hacemos una copia profunda
     const rawData = JSON.parse(JSON.stringify(newNode));
     
-    // Convertimos objetos {id, description} en solo IDs para que el multi-select funcione
+    // Convertimos las relaciones a su objeto completo ({id, description})
+    const mapRelation = (r: any) => {
+      if (typeof r === 'object' && r !== null) {
+        return { id: r.id?.ref || r.id || '', description: r.description || '' }
+      }
+      return { id: r || '', description: '' }
+    }
+
     if (rawData.refs) {
-      rawData.refs = rawData.refs.map((r: any) => (typeof r === 'object' && r !== null) ? (r.id?.ref || r.id || '') : r);
+      rawData.refs = rawData.refs.map(mapRelation);
     }
     if (rawData.rels) {
-      rawData.rels = rawData.rels.map((r: any) => (typeof r === 'object' && r !== null) ? (r.id?.ref || r.id || '') : r);
+      rawData.rels = rawData.rels.map(mapRelation);
     }
 
     localData.value = rawData as any;
@@ -97,6 +130,9 @@ watch(() => store.selectedSubNode, (newNode) => {
     } else {
       if (!localData.value.refs) localData.value.refs = [];
     }
+    
+    clearUnsavedState()
+    setTimeout(() => { isInitializing = false }, 50)
   }
 }, { immediate: true })
 
@@ -116,21 +152,14 @@ const otherGenerators = computed(() => {
   return options.value.generators.filter(g => g.id !== nodeInfo.value?.subId)
 })
 
-const handleSave = async () => {
-  if (!nodeInfo.value) return
+const handleSave = async (): Promise<boolean> => {
+  if (!nodeInfo.value) return false
   
   isSaving.value = true
   saveMessage.value = ''
   
-  // Mapeamos los datos de vuelta al formato del DSL (objetos con id y descripción)
+  // Mapeamos los datos de vuelta al formato del DSL (ya son objetos con id y description)
   const dataToSave = JSON.parse(JSON.stringify(localData.value));
-  
-  if (dataToSave.refs) {
-    dataToSave.refs = dataToSave.refs.map((id: string) => ({ id, description: "" }));
-  }
-  if (dataToSave.rels) {
-    dataToSave.rels = dataToSave.rels.map((id: string) => ({ id, description: "" }));
-  }
 
   const result = await store.updateSubNodeData(
     nodeInfo.value.machineId,
@@ -140,27 +169,35 @@ const handleSave = async () => {
     nodeInfo.value.isNew
   )
   
+  isSaving.value = false
   if (result.success) {
+    clearUnsavedState()
     saveMessage.value = 'Cambios guardados correctamente'
     setTimeout(() => saveMessage.value = '', 3000)
+    return true
   } else {
     saveMessage.value = 'Error al guardar: ' + result.message
+    return false
   }
-  
-  isSaving.value = false
 }
 
+watch([localData, isFormValid], () => {
+  if (isInitializing || isSaving.value) return
+  setUnsavedState(true, isFormValid.value, handleSave)
+}, { deep: true })
+
 const toggleSelection = (array: any[], id: string) => {
-  const index = array.indexOf(id)
+  const index = array.findIndex(a => a.id === id)
   if (index === -1) {
-    array.push(id)
+    array.push({ id, description: '' })
   } else {
     array.splice(index, 1)
   }
 }
 
 // Helpers para UI
-const isSelected = (array: any[], id: string) => array?.includes(id)
+const getRelation = (array: any[], id: string) => array?.find(a => a.id === id)
+const isSelected = (array: any[], id: string) => !!getRelation(array, id)
 </script>
 
 <template>
@@ -292,19 +329,39 @@ const isSelected = (array: any[], id: string) => array?.includes(id)
           
           <p class="text-xs text-geist-accents-4 mb-4 font-mono italic">Selecciona otros generadores relacionados con este componente.</p>
           
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            <button 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div 
               v-for="gen in otherGenerators" 
               :key="gen.id"
-              @click="toggleSelection((localData as CimGenerator).rels!, gen.id)"
-              class="flex items-center gap-2 p-3 rounded-lg border transition-all text-xs font-medium text-left"
+              class="flex flex-col border rounded-lg transition-all overflow-hidden w-full"
               :class="isSelected((localData as CimGenerator).rels!, gen.id) 
-                ? 'bg-node-generator/10 border-node-generator text-node-generator ring-1 ring-node-generator/30' 
-                : 'bg-geist-accents-1 border-geist-border text-geist-accents-5 hover:border-geist-accents-3'"
+                ? 'bg-node-generator/5 border-node-generator ring-1 ring-node-generator/30' 
+                : 'bg-geist-accents-1 border-geist-border'"
             >
-              <i class="fa-solid transition-transform duration-300" :class="isSelected((localData as CimGenerator).rels!, gen.id) ? 'fa-check-circle scale-110' : 'fa-circle-plus opacity-40'"></i>
-              <span class="truncate">{{ gen.name }}</span>
-            </button>
+              <button 
+                @click="toggleSelection((localData as CimGenerator).rels!, gen.id)"
+                class="flex items-center gap-2 p-3 text-xs font-medium text-left hover:bg-geist-accents-2 transition-colors w-full"
+                :class="isSelected((localData as CimGenerator).rels!, gen.id) ? 'text-node-generator' : 'text-geist-accents-5'"
+              >
+                <i class="fa-solid transition-transform duration-300" :class="isSelected((localData as CimGenerator).rels!, gen.id) ? 'fa-check-circle scale-110' : 'fa-circle-plus opacity-40'"></i>
+                <span class="truncate">{{ gen.name }}</span>
+              </button>
+
+              <div v-if="isSelected((localData as CimGenerator).rels!, gen.id)" class="px-3 pb-3 pt-1 border-t border-node-generator/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                <label class="text-[9px] font-bold uppercase tracking-wider text-node-generator mb-1 flex justify-between">
+                  Descripción
+                  <span v-if="validationErrors[`rel_${gen.id}`]" class="text-[9px] text-geist-error normal-case font-mono">{{ validationErrors[`rel_${gen.id}`] }}</span>
+                </label>
+                <textarea 
+                  v-model="getRelation((localData as CimGenerator).rels!, gen.id)!.description"
+                  rows="2"
+                  class="geist-input !text-[11px] !py-1.5 resize-none transition-colors"
+                  :class="{'border-geist-error bg-geist-error/10': validationErrors[`rel_${gen.id}`]}"
+                  placeholder="Obligatorio (min 10 chars)..."
+                ></textarea>
+              </div>
+            </div>
+
             <div v-if="otherGenerators.length === 0" class="col-span-full py-8 border-2 border-dashed border-geist-border rounded-xl flex flex-col items-center justify-center bg-geist-accents-1/30">
               <i class="fa-solid fa-ghost text-geist-accents-2 text-2xl mb-2"></i>
               <p class="text-xs text-geist-accents-4 font-mono">No hay otros generadores disponibles.</p>
@@ -327,23 +384,36 @@ const isSelected = (array: any[], id: string) => array?.includes(id)
                 <h4 class="text-[10px] uppercase tracking-widest font-bold text-geist-accents-5">Generadores</h4>
               </div>
               <div class="flex flex-col gap-2">
-                <button 
-                  v-for="gen in options.generators" 
-                  :key="gen.id"
-                  @click="toggleSelection(localData.refs!, gen.id)"
-                  class="flex items-center gap-3 p-3 rounded-lg border transition-all text-xs font-medium text-left group"
-                  :class="isSelected(localData.refs!, gen.id) 
-                    ? 'bg-node-generator/10 border-node-generator text-node-generator shadow-sm' 
-                    : 'bg-geist-bg border-geist-border text-geist-accents-5 hover:bg-geist-accents-1'"
+                <div v-for="gen in options.generators" :key="gen.id" class="flex flex-col border rounded-lg overflow-hidden transition-all"
+                  :class="isSelected(localData.refs!, gen.id) ? 'bg-node-generator/5 border-node-generator shadow-sm relative' : 'bg-geist-bg border-geist-border hover:bg-geist-accents-1'"
                 >
-                  <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
-                    :class="isSelected(localData.refs!, gen.id) ? 'bg-node-generator border-node-generator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                  <button 
+                    @click="toggleSelection(localData.refs!, gen.id)"
+                    class="flex items-center gap-3 p-3 text-xs font-medium text-left group w-full"
                   >
-                    <i v-if="isSelected(localData.refs!, gen.id)" class="fa-solid fa-check text-[10px]"></i>
+                    <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
+                      :class="isSelected(localData.refs!, gen.id) ? 'bg-node-generator border-node-generator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                    >
+                      <i v-if="isSelected(localData.refs!, gen.id)" class="fa-solid fa-check text-[10px]"></i>
+                    </div>
+                    <span class="truncate" :class="isSelected(localData.refs!, gen.id) ? 'text-node-generator' : 'text-geist-accents-5'">{{ gen.name }}</span>
+                    <span class="ml-auto text-[10px] font-mono opacity-40" :class="isSelected(localData.refs!, gen.id) ? 'text-node-generator' : ''">{{ gen.id }}</span>
+                  </button>
+                  
+                  <div v-if="isSelected(localData.refs!, gen.id)" class="px-3 pb-3 pt-1 border-t border-node-generator/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-node-generator mb-1 flex justify-between">
+                      Descripción
+                      <span v-if="validationErrors[`ref_${gen.id}`]" class="text-[9px] text-geist-error normal-case font-mono">{{ validationErrors[`ref_${gen.id}`] }}</span>
+                    </label>
+                    <textarea 
+                      v-model="getRelation(localData.refs!, gen.id)!.description"
+                      rows="2"
+                      class="geist-input !text-[11px] !py-1.5 resize-none transition-colors"
+                      :class="{'border-geist-error bg-geist-error/10': validationErrors[`ref_${gen.id}`]}"
+                      placeholder="Obligatorio (min 10 chars)..."
+                    ></textarea>
                   </div>
-                  <span class="truncate">{{ gen.name }}</span>
-                  <span class="ml-auto text-[10px] font-mono opacity-40">{{ gen.id }}</span>
-                </button>
+                </div>
               </div>
             </div>
 
@@ -353,24 +423,37 @@ const isSelected = (array: any[], id: string) => array?.includes(id)
                 <i class="fa-solid fa-sliders text-[10px] text-node-modificator"></i>
                 <h4 class="text-[10px] uppercase tracking-widest font-bold text-geist-accents-5">Modificadores</h4>
               </div>
-              <div class="flex flex-col gap-2">
-                <button 
-                  v-for="mod in options.modificators" 
-                  :key="mod.id"
-                  @click="toggleSelection(localData.refs!, mod.id)"
-                  class="flex items-center gap-3 p-3 rounded-lg border transition-all text-xs font-medium text-left group"
-                  :class="isSelected(localData.refs!, mod.id) 
-                    ? 'bg-node-modificator/10 border-node-modificator text-node-modificator shadow-sm' 
-                    : 'bg-geist-bg border-geist-border text-geist-accents-5 hover:bg-geist-accents-1'"
+              <div class="flex flex-col gap-3">
+                <div v-for="mod in options.modificators" :key="mod.id" class="flex flex-col border rounded-lg overflow-hidden transition-all"
+                  :class="isSelected(localData.refs!, mod.id) ? 'bg-node-modificator/5 border-node-modificator shadow-sm relative' : 'bg-geist-bg border-geist-border hover:bg-geist-accents-1'"
                 >
-                  <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
-                    :class="isSelected(localData.refs!, mod.id) ? 'bg-node-modificator border-node-modificator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                  <button 
+                    @click="toggleSelection(localData.refs!, mod.id)"
+                    class="flex items-center gap-3 p-3 text-xs font-medium text-left group w-full"
                   >
-                    <i v-if="isSelected(localData.refs!, mod.id)" class="fa-solid fa-check text-[10px]"></i>
+                    <div class="w-5 h-5 rounded-md flex items-center justify-center border transition-all"
+                      :class="isSelected(localData.refs!, mod.id) ? 'bg-node-modificator border-node-modificator text-white' : 'border-geist-border bg-geist-accents-1 group-hover:border-geist-accents-3'"
+                    >
+                      <i v-if="isSelected(localData.refs!, mod.id)" class="fa-solid fa-check text-[10px]"></i>
+                    </div>
+                    <span class="truncate" :class="isSelected(localData.refs!, mod.id) ? 'text-node-modificator' : 'text-geist-accents-5'">{{ mod.name }}</span>
+                    <span class="ml-auto text-[10px] font-mono opacity-40" :class="isSelected(localData.refs!, mod.id) ? 'text-node-modificator' : ''">{{ mod.id }}</span>
+                  </button>
+
+                  <div v-if="isSelected(localData.refs!, mod.id)" class="px-3 pb-3 pt-1 border-t border-node-modificator/20 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label class="text-[9px] font-bold uppercase tracking-wider text-node-modificator mb-1 flex justify-between">
+                      Descripción
+                      <span v-if="validationErrors[`ref_${mod.id}`]" class="text-[9px] text-geist-error normal-case font-mono">{{ validationErrors[`ref_${mod.id}`] }}</span>
+                    </label>
+                    <textarea 
+                      v-model="getRelation(localData.refs!, mod.id)!.description"
+                      rows="2"
+                      class="geist-input !text-[11px] !py-1.5 resize-none transition-colors"
+                      :class="{'border-geist-error bg-geist-error/10': validationErrors[`ref_${mod.id}`]}"
+                      placeholder="Obligatorio (min 10 chars)..."
+                    ></textarea>
                   </div>
-                  <span class="truncate">{{ mod.name }}</span>
-                  <span class="ml-auto text-[10px] font-mono opacity-40">{{ mod.id }}</span>
-                </button>
+                </div>
               </div>
             </div>
           </div>

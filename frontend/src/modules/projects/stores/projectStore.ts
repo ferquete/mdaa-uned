@@ -402,6 +402,38 @@ export const useProjectStore = defineStore('project', () => {
     }
   }
 
+  /**
+   * Actualiza el JSON raw de la máquina (desde el editor de código) y lo persiste.
+   */
+  async function updateMachineRawJson(machineId: number, rawJson: string) {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    try {
+      // Validar si es un JSON parseable básico antes de enviar
+      JSON.parse(rawJson);
+      
+      const payload = {
+        name: machine.name,
+        description: machine.description,
+        machine: rawJson
+      };
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) {
+        machines.value[machineIdx] = updatedMachine;
+        parsedDocs.value[machineId] = parseMachineData(updatedMachine.machine);
+      }
+      
+      return { success: true };
+    } catch (err: any) {
+      console.error('[CIM Store] Error guardando raw JSON:', err);
+      return { success: false, message: err.message || 'Error de parseo JSON' };
+    }
+  }
+
   return {
     projects,
     loading,
@@ -424,6 +456,7 @@ export const useProjectStore = defineStore('project', () => {
     parseMachineData,
     selectedSubNode,
     updateSubNodeData,
-    deleteSubNode
+    deleteSubNode,
+    updateMachineRawJson
   };
 });

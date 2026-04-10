@@ -19,6 +19,7 @@ declare module 'vue' {
     FlowDraggableEdge: typeof import('./modules/projects/components/FlowDraggableEdge.vue')['default']
     MachineVisualizer2D: typeof import('./modules/projects/components/MachineVisualizer2D.vue')['default']
     MachineVisualizer3D: typeof import('./modules/projects/components/MachineVisualizer3D.vue')['default']
+    MachineVisualizerJSON: typeof import('./modules/projects/components/MachineVisualizerJSON.vue')['default']
     NodeEditor: typeof import('./modules/projects/components/NodeEditor.vue')['default']
     ProjectCard: typeof import('./modules/projects/components/ProjectCard.vue')['default']
     ProjectTreeView: typeof import('./modules/projects/components/ProjectTreeView.vue')['default']
@@ -27,5 +28,6 @@ declare module 'vue' {
     SoundWaveAnimation: typeof import('./shared/components/ui/SoundWaveAnimation.vue')['default']
     ToastContainer: typeof import('./shared/components/ui/ToastContainer.vue')['default']
     TreeNode: typeof import('./modules/projects/components/TreeNode.vue')['default']
+    UnsavedChangesModal: typeof import('./shared/components/UnsavedChangesModal.vue')['default']
   }
 }

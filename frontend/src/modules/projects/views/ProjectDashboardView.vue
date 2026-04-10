@@ -1,25 +1,48 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 
 import MachineVisualizer3D from '@/modules/projects/components/MachineVisualizer3D.vue'
 import MachineVisualizer2D from '@/modules/projects/components/MachineVisualizer2D.vue'
+import MachineVisualizerJSON from '@/modules/projects/components/MachineVisualizerJSON.vue'
 import NodeEditor from '@/modules/projects/components/NodeEditor.vue'
+import UnsavedChangesModal from '@/shared/components/UnsavedChangesModal.vue'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
 const store = useProjectStore()
 const route = useRoute()
 const showDescription = ref(false)
-const visualizerMode = ref<'2D' | '3D'>('2D')
+const visualizerMode = ref<'2D' | '3D' | 'JSON'>('2D')
+const { runWithGuard, hasUnsavedChanges } = useUnsavedChanges()
+
+// Protección contra cambio de rutas (Vue Router)
+onBeforeRouteLeave((to, from, next) => {
+  if (hasUnsavedChanges.value) {
+    runWithGuard(() => {
+      next()
+    })
+  } else {
+    next()
+  }
+})
 
 const treeRef = ref<InstanceType<typeof ProjectTreeView> | null>(null)
 
 const editSelectedMachine = () => {
   if (store.selectedNode && treeRef.value) {
-    treeRef.value.editNode({ id: store.selectedNode.id, text: store.selectedNode.name })
+    runWithGuard(() => {
+      treeRef.value!.editNode({ id: store.selectedNode!.id, text: store.selectedNode!.name })
+    })
   }
+}
+
+const setVisualizerMode = (mode: '2D' | '3D' | 'JSON') => {
+  runWithGuard(() => {
+    visualizerMode.value = mode
+  })
 }
 
 onMounted(async () => {
@@ -80,7 +103,7 @@ const toggleDescription = () => {
                 
                 <div v-if="!store.selectedSubNode" class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
                   <button 
-                    @click="visualizerMode = '2D'"
+                    @click="setVisualizerMode('2D')"
                     class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
                     :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
                   >
@@ -88,12 +111,20 @@ const toggleDescription = () => {
                     2D
                   </button>
                   <button 
-                    @click="visualizerMode = '3D'"
+                    @click="setVisualizerMode('3D')"
                     class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
                     :class="visualizerMode === '3D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
                   >
                     <i class="fa-solid fa-cube"></i>
                     3D
+                  </button>
+                  <button 
+                    @click="setVisualizerMode('JSON')"
+                    class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+                    :class="visualizerMode === 'JSON' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+                  >
+                    <i class="fa-solid fa-code"></i>
+                    JSON
                   </button>
                 </div>
 
@@ -130,7 +161,8 @@ const toggleDescription = () => {
               </div>
               <div v-else-if="store.selectedNode" class="w-full h-full animate-in fade-in duration-700">
                 <!-- El visualizador condicionado por el modo -->
-                <MachineVisualizer2D v-if="visualizerMode === '2D'" :machine-json="store.selectedNode.machine" />
+                <MachineVisualizerJSON v-if="visualizerMode === 'JSON'" :machine="store.selectedNode" />
+                <MachineVisualizer2D v-else-if="visualizerMode === '2D'" :machine-json="store.selectedNode.machine" />
                 <MachineVisualizer3D v-else :machine-json="store.selectedNode.machine" />
               </div>
               
@@ -147,6 +179,9 @@ const toggleDescription = () => {
           </div>
         </Panel>
       </PanelGroup>
+      
+      <!-- Guardian Global de Cambios -->
+      <UnsavedChangesModal />
     </main>
   </div>
 </template>

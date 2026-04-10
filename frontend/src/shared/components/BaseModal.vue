@@ -4,6 +4,7 @@ import { onMounted, onUnmounted } from 'vue'
 const props = defineProps<{
   show: boolean
   title?: string
+  maxWidth?: string
 }>()
 
 const emit = defineEmits<{
@@ -32,7 +33,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
         <!-- Modal Content -->
         <div 
-          class="relative bg-geist-bg border border-geist-border rounded-xl shadow-2xl w-full max-w-md transform transition-all overflow-hidden animate-in zoom-in-95 duration-200"
+          class="relative bg-geist-bg border border-geist-border rounded-xl shadow-2xl w-full transform transition-all overflow-hidden animate-in zoom-in-95 duration-200"
+          :class="maxWidth || 'max-w-md'"
           role="dialog"
           aria-modal="true"
         >

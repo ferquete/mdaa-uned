@@ -165,9 +165,15 @@ const confirmDeleteNode = async () => {
   }
 }
 
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+
+const { runWithGuard } = useUnsavedChanges()
+
 const handleSelect = (node: TreeNodeType) => {
-  // Solo permitimos seleccionar nodos hijos de análisis por ahora
-  store.selectNode(node.id)
+  // Integramos el Guard de "Unsaved Changes" en todas las navegaciones del árbol
+  runWithGuard(() => {
+    store.selectNode(node.id)
+  })
 }
 
 defineExpose({ editNode: handleEditNode })

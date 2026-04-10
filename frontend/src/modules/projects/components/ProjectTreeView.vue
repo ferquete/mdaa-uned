@@ -2,9 +2,10 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import TreeNode from '@/modules/projects/components/TreeNode.vue'
-import AddNodeModal from '@/modules/projects/components/AddNodeModal.vue'
-import ConfirmDeleteModal from '@/modules/projects/components/ConfirmDeleteModal.vue'
-import { useProjectStore } from '@/modules/projects/stores/projectStore'
+import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
+import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
+import { useAnalysisStore } from '@/modules/analysis/stores/analysisStore'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
 interface TreeNodeType {
   id: string | number
@@ -17,15 +18,17 @@ interface TreeNodeType {
   canEdit?: boolean
 }
 
-const store = useProjectStore()
+const analysisStore = useAnalysisStore()
 const route = useRoute()
+const { runWithGuard } = useUnsavedChanges()
+
 const showAddModal = ref(false)
 const showDeleteModal = ref(false)
 const pendingParentId = ref<string | number | null>(null)
 const nodeToDelete = ref<TreeNodeType | null>(null)
 const nodeToEdit = ref<any | null>(null)
+const deleteWarningDetails = ref<string[]>([])
 
-// Extraemos el ID del proyecto de la ruta actual
 const projectId = computed(() => Number(route.params.id))
 
 const treeData = computed<TreeNodeType[]>(() => [
@@ -40,9 +43,9 @@ const treeData = computed<TreeNodeType[]>(() => [
         text: 'Análisis', 
         icon: 'fa-solid fa-microscope',
         open: true,
-        showAdd: store.machines.length < 10,
-        children: store.machines.map(m => {
-          const doc = store.parsedDocs[m.id];
+        showAdd: analysisStore.machines.length < 10,
+        children: analysisStore.machines.map(m => {
+          const doc = analysisStore.parsedDocs[m.id];
           const children: TreeNodeType[] = [];
 
           if (!doc) {
@@ -56,7 +59,6 @@ const treeData = computed<TreeNodeType[]>(() => [
             };
           }
 
-          // Agrupación de Generadores
           children.push({
             id: `m-${m.id}-generators`,
             text: 'Generadores',
@@ -70,7 +72,6 @@ const treeData = computed<TreeNodeType[]>(() => [
             }))
           });
 
-          // Agrupación de Modificadores
           children.push({
             id: `m-${m.id}-modificators`,
             text: 'Modificadores',
@@ -110,13 +111,15 @@ const handleAddChild = (parentId: string | number) => {
     if (parts.length === 3 && (parts[2] === 'generators' || parts[2] === 'modificators')) {
       const machineId = Number(parts[1]);
       const type = parts[2] === 'generators' ? 'g' : 'mod';
-      store.selectNewSubNode(machineId, type);
+      runWithGuard(() => {
+        analysisStore.selectNewSubNode(machineId, type);
+      })
     }
   }
 }
 
 const handleEditNode = (node: TreeNodeType) => {
-  const machine = store.machines.find(m => m.id === node.id)
+  const machine = analysisStore.machines.find(m => m.id === node.id)
   if (machine) {
     nodeToEdit.value = machine
     showAddModal.value = true
@@ -125,24 +128,28 @@ const handleEditNode = (node: TreeNodeType) => {
 
 const confirmAddNode = async (name: string, description: string) => {
   if (nodeToEdit.value) {
-    await store.updateAnalysisNode(nodeToEdit.value.id, name, description)
+    await analysisStore.updateMachine(nodeToEdit.value.id, name, description)
   } else if (pendingParentId.value === 'analisis' && projectId.value) {
-    await store.addAnalysisNode(projectId.value, name, description)
+    await analysisStore.addMachine(projectId.value, name, description)
   }
   
-  pendingParentId.value = null
-  nodeToEdit.value = null
   showAddModal.value = false
-}
-
-const handleCloseAddModal = () => {
-  showAddModal.value = false
-  nodeToEdit.value = null
-  pendingParentId.value = null
 }
 
 const handleDeleteNode = (node: TreeNodeType) => {
   nodeToDelete.value = node
+  deleteWarningDetails.value = []
+
+  // Si es un sub-nodo, buscamos si tiene referencias
+  if (typeof node.id === 'string' && node.id.startsWith('m-')) {
+    const parts = node.id.split('-')
+    if (parts.length >= 4) {
+      const machineId = Number(parts[1])
+      const subId = parts.slice(3).join('-')
+      deleteWarningDetails.value = analysisStore.getSubNodeReferences(machineId, subId)
+    }
+  }
+
   showDeleteModal.value = true
 }
 
@@ -150,14 +157,14 @@ const confirmDeleteNode = async () => {
   if (nodeToDelete.value) {
     const id = nodeToDelete.value.id;
     if (typeof id === 'number' || (typeof id === 'string' && !isNaN(Number(id)))) {
-      await store.deleteAnalysisNode(Number(id));
+      await analysisStore.deleteMachine(Number(id));
     } else if (typeof id === 'string' && id.startsWith('m-')) {
       const parts = id.split('-');
       if (parts.length >= 4) {
         const machineId = Number(parts[1]);
         const type = parts[2] as 'g' | 'mod';
         const subId = parts.slice(3).join('-');
-        await store.deleteSubNode(machineId, subId, type);
+        await analysisStore.deleteSubNode(machineId, subId, type);
       }
     }
     showDeleteModal.value = false
@@ -165,14 +172,9 @@ const confirmDeleteNode = async () => {
   }
 }
 
-import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
-
-const { runWithGuard } = useUnsavedChanges()
-
 const handleSelect = (node: TreeNodeType) => {
-  // Integramos el Guard de "Unsaved Changes" en todas las navegaciones del árbol
   runWithGuard(() => {
-    store.selectNode(node.id)
+    analysisStore.selectNode(node.id)
   })
 }
 
@@ -186,7 +188,6 @@ defineExpose({ editNode: handleEditNode })
       <div class="h-px w-full bg-geist-border"></div>
     </div>
 
-    <!-- Custom Tree View -->
     <div class="tree-root">
       <TreeNode 
         v-for="node in treeData" 
@@ -194,7 +195,7 @@ defineExpose({ editNode: handleEditNode })
         :node="node" 
         :level="0" 
         :show-add-button="node.showAdd"
-        :selected-id="store.selectedNodeId"
+        :selected-id="analysisStore.selectedNodeId"
         @add-child="handleAddChild"
         @select="handleSelect"
         @delete-node="handleDeleteNode"
@@ -202,32 +203,29 @@ defineExpose({ editNode: handleEditNode })
       />
     </div>
 
-    <!-- Modals -->
-    <AddNodeModal 
-      :show="showAddModal" 
-      :existing-names="store.machines.map(m => m.name)"
+    <!-- Modales Generales -->
+    <GenericAddEditModal
+      :show="showAddModal"
+      :title="nodeToEdit ? 'Editar Análisis' : 'Nuevo Análisis'"
+      entity-label="Análisis"
+      :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear Análisis'"
+      :existing-names="analysisStore.machines.map(m => m.name)"
       :initial-data="nodeToEdit ? { name: nodeToEdit.name, description: nodeToEdit.description } : null"
-      @close="handleCloseAddModal" 
+      @close="showAddModal = false"
       @confirm="confirmAddNode"
     />
 
-    <ConfirmDeleteModal 
-      :show="showDeleteModal" 
-      :item-name="nodeToDelete?.text" 
-      @close="showDeleteModal = false" 
+    <GenericConfirmDeleteModal
+      :show="showDeleteModal"
+      :item-name="nodeToDelete?.text"
+      :extra-warnings="deleteWarningDetails"
+      @close="showDeleteModal = false"
       @confirm="confirmDeleteNode"
     />
   </div>
 </template>
 
 <style scoped>
-.project-tree-wrapper {
-  border-right: 1px solid var(--color-geist-border);
-}
-
-.tree-root {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.project-tree-wrapper { border-right: 1px solid var(--color-geist-border); }
+.tree-root { display: flex; flex-direction: column; gap: 2px; }
 </style>

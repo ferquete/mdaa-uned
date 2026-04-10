@@ -2,39 +2,45 @@
 import BaseModal from '@/shared/components/BaseModal.vue';
 import { computed, ref, watch } from 'vue';
 
-const props = defineProps<{
+interface Props {
   show: boolean
+  title: string
+  entityLabel: string
+  confirmText: string
   existingNames?: string[]
   initialData?: { name: string, description: string } | null
-}>()
+  nameMaxLength?: number
+  descMaxLength?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  nameMaxLength: 20,
+  descMaxLength: 600
+})
 
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'confirm', name: string, description: string): void
 }>()
 
-const nodeName = ref('')
-const nodeDescription = ref('')
-
-const isEditMode = computed(() => !!props.initialData)
-const modalTitle = computed(() => isEditMode.value ? 'Editar Máquina' : 'Nueva Máquina')
+const localName = ref('')
+const localDescription = ref('')
 
 watch(() => props.show, (isShowing) => {
   if (isShowing && props.initialData) {
-    nodeName.value = props.initialData.name
-    nodeDescription.value = props.initialData.description
+    localName.value = props.initialData.name
+    localDescription.value = props.initialData.description
   } else if (!isShowing) {
-    nodeName.value = ''
-    nodeDescription.value = ''
+    localName.value = ''
+    localDescription.value = ''
   }
 }, { immediate: true })
 
 const isDuplicate = computed(() => {
-  const name = nodeName.value.trim().toLowerCase()
+  const name = localName.value.trim().toLowerCase()
   if (!name || !props.existingNames) return false
   
-  // Si estamos editando y el nombre es el mismo que el original, no es duplicado
-  if (isEditMode.value && name === props.initialData?.name.trim().toLowerCase()) {
+  if (props.initialData && name === props.initialData.name.trim().toLowerCase()) {
     return false
   }
   
@@ -42,48 +48,47 @@ const isDuplicate = computed(() => {
 })
 
 const isValid = computed(() => {
-  const nameLen = nodeName.value.trim().length
-  const descLen = nodeDescription.value.trim().length
-  return nameLen >= 1 && nameLen <= 20 && descLen >= 1 && descLen <= 600 && !isDuplicate.value
+  const nameLen = localName.value.trim().length
+  const descLen = localDescription.value.trim().length
+  return nameLen >= 1 && nameLen <= props.nameMaxLength && descLen >= 1 && descLen <= props.descMaxLength && !isDuplicate.value
 })
 
 const handleConfirm = () => {
   if (isValid.value) {
-    emit('confirm', nodeName.value.trim(), nodeDescription.value.trim())
-    nodeName.value = ''
-    nodeDescription.value = ''
+    emit('confirm', localName.value.trim(), localDescription.value.trim())
+    localName.value = ''
+    localDescription.value = ''
   }
 }
 
 const handleClose = () => {
-  nodeName.value = ''
-  nodeDescription.value = ''
+  localName.value = ''
+  localDescription.value = ''
   emit('close')
 }
 </script>
 
 <template>
-  <BaseModal :show="show" :title="modalTitle" @close="handleClose">
+  <BaseModal :show="show" :title="title" @close="handleClose">
     <div class="space-y-6">
       <!-- Nombre -->
       <div class="space-y-2">
         <div class="flex justify-between items-center">
-          <label for="node-name" class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
-            Nombre del Análisis
+          <label class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
+            Nombre de {{ entityLabel }}
           </label>
           <span 
             class="text-[10px] font-mono tracking-tighter"
-            :class="nodeName.length >= 20 ? 'text-geist-error font-bold animate-pulse' : 'text-geist-accents-4'"
+            :class="localName.length >= nameMaxLength ? 'text-geist-error font-bold animate-pulse' : 'text-geist-accents-4'"
           >
-            {{ nodeName.length }}/20
+            {{ localName.length }}/{{ nameMaxLength }}
           </span>
         </div>
         <input 
-          id="node-name"
-          v-model="nodeName"
+          v-model="localName"
           type="text" 
-          placeholder="Ej. Motor principal..."
-          maxlength="20"
+          :placeholder="`Ej. ${entityLabel} principal...`"
+          :maxlength="nameMaxLength"
           class="geist-input w-full"
           :class="{ 'border-geist-error focus:ring-geist-error/20': isDuplicate }"
           @keyup.enter="handleConfirm"
@@ -91,34 +96,30 @@ const handleClose = () => {
         >
         <p v-if="isDuplicate" class="text-[10px] text-geist-error font-mono flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1">
           <i class="fa-solid fa-circle-exclamation"></i>
-          Este nombre ya está en uso en el proyecto
+          Este nombre ya está en uso
         </p>
       </div>
 
       <!-- Descripción -->
       <div class="space-y-2">
         <div class="flex justify-between items-center">
-          <label for="node-description" class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
+          <label class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
             Descripción
           </label>
           <span 
             class="text-[10px] font-mono tracking-tighter"
-            :class="nodeDescription.length >= 600 ? 'text-geist-error font-bold animate-pulse' : 'text-geist-accents-4'"
+            :class="localDescription.length >= descMaxLength ? 'text-geist-error font-bold animate-pulse' : 'text-geist-accents-4'"
           >
-            {{ nodeDescription.length }}/600
+            {{ localDescription.length }}/{{ descMaxLength }}
           </span>
         </div>
         <textarea 
-          id="node-description"
-          v-model="nodeDescription"
-          placeholder="Describe el propósito de esta máquina..."
-          maxlength="600"
+          v-model="localDescription"
+          :placeholder="`Describe el propósito de ${entityLabel}...`"
+          :maxlength="descMaxLength"
           rows="4"
           class="geist-input w-full min-h-[100px] resize-none py-2"
         ></textarea>
-        <p class="text-[10px] text-geist-accents-3 font-mono">
-          Explica brevemente qué realizará esta máquina.
-        </p>
       </div>
 
       <!-- Acciones -->
@@ -134,7 +135,7 @@ const handleClose = () => {
           :disabled="!isValid"
           @click="handleConfirm"
         >
-          {{ isEditMode ? 'Guardar Cambios' : 'Crear Máquina' }}
+          {{ confirmText }}
         </button>
       </div>
     </div>

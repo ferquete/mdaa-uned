@@ -54,7 +54,7 @@ const getIntersection = (cx: number, cy: number, w: number, h: number, targetX: 
   }
 }
 
-// Puntos de inicio y fin ajustados al borde del nodo
+// Puntos de inicio y fin ajustados al borde del nodo (ahora los nodos son solo el óvalo)
 const edgeEndpoints = computed(() => {
   const sNode = findNode(props.source)
   const tNode = findNode(props.target)
@@ -151,6 +151,15 @@ const onMouseDown = (event: MouseEvent) => {
       style="pointer-events: none"
     />
   </g>
+
+  <!-- Partícula animada (Pelotita) -->
+  <circle r="3" :fill="style?.stroke || '#fff'" class="pointer-events-none" :style="{ opacity: style?.opacity }">
+    <animateMotion
+      :path="customPath"
+      dur="3s"
+      repeatCount="indefinite"
+    />
+  </circle>
 </template>
 
 <style scoped>

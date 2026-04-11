@@ -4,6 +4,8 @@ import { Position, Handle } from '@vue-flow/core'
 import BaseGraph2D from '@/shared/components/visualizers/BaseGraph2D.vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 
+import SynthSketchIcon from '@/shared/components/icons/SynthSketchIcon.vue'
+
 const store = useAnalysisMachinesStore()
 
 const nodesAndEdges = computed(() => {
@@ -31,7 +33,7 @@ const nodesAndEdges = computed(() => {
     }
   }).filter(m => m.id)
 
-  const radius = Math.max(200, currentMachinesInProject.length * 50)
+  const radius = Math.max(250, currentMachinesInProject.length * 60)
   const centerX = 400
   const centerY = 300
 
@@ -50,21 +52,11 @@ const nodesAndEdges = computed(() => {
         type: 'machine' 
       },
       style: {
-        background: '#F0CDAF',
-        color: '#3d2b1f', // Texto oscuro para mejor contraste con el marrón claro
-        borderRadius: '40px',
-        minWidth: '120px',
-        minHeight: '50px',
-        padding: '0 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        fontSize: '11px',
-        fontWeight: 'bold',
-        textTransform: 'none', // Como en la imagen, no todo mayúsculas
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        border: '1px solid rgba(0,0,0,0.05)',
+        // Estilo base minimalista, el diseño real va en el template
+        background: 'transparent',
+        color: '#3d2b1f',
+        border: 'none',
+        boxShadow: 'none',
       },
     })
   })
@@ -115,20 +107,23 @@ const edgeLegend = [
       :legend="legend"
       :edge-legend="edgeLegend"
     >
-      <!-- Nodo Personalizado con Icono -->
+      <!-- Nodo Personalizado con Icono de Sintetizador Estilo Boceto -->
       <template #node="nodeProps">
         <div 
-          class="flex items-center justify-center gap-3 pointer-events-auto relative"
-          :style="(nodeProps as any).style"
+          class="flex items-center justify-center px-5 py-1.5 rounded-full bg-[#F0CDAF] text-[#3d2b1f] text-[10px] font-bold shadow-lg tracking-tight whitespace-nowrap border border-white/10 pointer-events-auto group relative min-w-[100px]"
         >
-          <!-- Icono alineado con el texto -->
-          <div class="opacity-60 text-[12px]">
-            <i class="fa-solid fa-microchip"></i>
+          <!-- Icono de Sintetizador (Posicionado absolutamente encima del óvalo) -->
+          <div 
+            class="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2 w-24 h-24 text-[#F0CDAF] transition-transform duration-300 group-hover:scale-110 pointer-events-auto"
+            style="filter: drop-shadow(0 0 8px rgba(240, 205, 175, 0.2))"
+          >
+            <SynthSketchIcon />
           </div>
           
-          <span class="font-bold">{{ (nodeProps as any).data.name }}</span>
+          <!-- Texto del Nodo -->
+          {{ (nodeProps as any).data.name }}
           
-          <!-- Los handles son necesarios para Vue Flow -->
+          <!-- Los handles en el óvalo permiten que las aristas apunten al nombre -->
           <Handle type="target" :position="Position.Top" class="!opacity-0 !pointer-events-none" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1px; height: 1px" />
           <Handle type="source" :position="Position.Bottom" class="!opacity-0 !pointer-events-none" style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1px; height: 1px" />
         </div>

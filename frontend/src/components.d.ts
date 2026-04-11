@@ -47,6 +47,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SoundWaveAnimation: typeof import('./shared/components/ui/SoundWaveAnimation.vue')['default']
+    SynthSketchIcon: typeof import('./shared/components/icons/SynthSketchIcon.vue')['default']
     ToastContainer: typeof import('./shared/components/ui/ToastContainer.vue')['default']
     TreeNode: typeof import('./modules/projects/components/TreeNode.vue')['default']
     UnsavedChangesModal: typeof import('./shared/components/UnsavedChangesModal.vue')['default']

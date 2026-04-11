@@ -152,14 +152,20 @@ const onMouseDown = (event: MouseEvent) => {
     />
   </g>
 
-  <!-- Partícula animada (Pelotita) -->
-  <circle r="3" :fill="style?.stroke || '#fff'" class="pointer-events-none" :style="{ opacity: style?.opacity }">
+  <!-- Punta de flecha animada (Dirección del flujo) -->
+  <path 
+    d="M -8 -5 L 2 0 L -8 5 Z" 
+    :fill="style?.stroke || '#fff'" 
+    class="pointer-events-none" 
+    :style="{ opacity: style?.opacity }"
+  >
     <animateMotion
       :path="customPath"
       dur="3s"
       repeatCount="indefinite"
+      rotate="auto"
     />
-  </circle>
+  </path>
 </template>
 
 <style scoped>

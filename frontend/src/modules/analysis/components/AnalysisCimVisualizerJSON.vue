@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
 import BaseDiffEditor from '@/shared/components/editors/BaseDiffEditor.vue'
+import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+import { computed, ref, watch } from 'vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import { validateCimRelations } from '../utils/analysisCimValidation'
 import { CIM_RELATIONS_SCHEMA } from '../utils/cim-relations-schema'
@@ -96,10 +96,6 @@ const handleSave = async () => {
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-geist-fg/5 flex items-center justify-center text-geist-accents-4 border border-geist-border">
           <i class="fa-solid fa-code text-sm"></i>
-        </div>
-        <div>
-          <span class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] block leading-none mb-1">Editor CIM</span>
-          <span class="text-xs font-mono font-medium text-geist-fg">Análisis Raw JSON</span>
         </div>
       </div>
       

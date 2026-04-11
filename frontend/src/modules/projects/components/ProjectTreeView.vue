@@ -100,7 +100,7 @@ const treeData = computed<TreeNodeType[]>(() => [
           };
         })
       },
-      { id: 'diseno', text: 'Diseño', icon: 'fa-solid fa-pen-nib' },
+      { id: 'diseno', text: 'Diseño Conceptual', icon: 'fa-solid fa-pen-nib' },
       { id: 'implementacion', text: 'Implementación', icon: 'fa-solid fa-code' },
     ]
   }

@@ -2,11 +2,13 @@
     "description": "Lista maestra de compatibilidades y relaciones entre componentes de hardware de audio.",
     "relations": [
         {
+            "id": "88888888-4444-4444-4444-121212121212",
             "source": "generator_synth01",
             "destination": "modificator_reverb22",
             "description": "Se aplica un efecto de reverberación masiva para emular salas grandes."
         },
         {
+            "id": "99999999-5555-5555-5555-343434343434",
             "source": "generator_bass09",
             "destination": "modificator_distorsionX",
             "description": "Distorsiona el bajo para géneros agresivos como el metal."

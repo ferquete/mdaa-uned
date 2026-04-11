@@ -1,0 +1,23 @@
+{
+    "description": "Prueba de error de IDs duplicados e IDs con longitud incorrecta.",
+    "relations": [
+        {
+            "id": "11111111-2222-3333-4444-555555555555",
+            "source": "synth_1",
+            "destination": "reverb_1",
+            "description": "Relación con ID correcto pero que se duplicará."
+        },
+        {
+            "id": "11111111-2222-3333-4444-555555555555",
+            "source": "synth_2",
+            "destination": "reverb_2",
+            "description": "Relación con ID duplicado (fallará)."
+        },
+        {
+            "id": "too-short",
+            "source": "synth_3",
+            "destination": "reverb_3",
+            "description": "Relación con ID demasiado corto (fallará)."
+        }
+    ]
+}

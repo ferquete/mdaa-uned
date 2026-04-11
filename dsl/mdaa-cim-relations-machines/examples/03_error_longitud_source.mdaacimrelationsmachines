@@ -2,6 +2,7 @@
     "description": "Prueba de error donde el source supera el límite.",
     "relations": [
         {
+            "id": "11111111-2222-3333-4444-555555555555",
             "source": "generator_synth01_que_tiene_un_nombre_extremadamente_largo_mayor_a_36_caracteres_y_va_a_fallar",
             "destination": "modificator_reverb22",
             "description": "Se aplica un efecto de reverberación."

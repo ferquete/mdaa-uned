@@ -72,7 +72,7 @@ const nodesAndEdges = computed(() => {
 
     if (sourceExists && destExists) {
       edges.push({
-        id: `rel-${index}`,
+        id: rel.id || `rel-${index}`,
         source: rel.source,
         target: rel.destination,
         label: rel.description,

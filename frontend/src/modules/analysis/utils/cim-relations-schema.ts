@@ -15,8 +15,14 @@ export const CIM_RELATIONS_SCHEMA = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['source', 'destination', 'description'],
+        required: ['id', 'source', 'destination', 'description'],
         properties: {
+          id: { 
+            type: 'string', 
+            minLength: 36, 
+            maxLength: 36, 
+            description: 'Identificador único de la relación (36 caracteres)' 
+          },
           source: { 
             type: 'string', 
             minLength: 36, 

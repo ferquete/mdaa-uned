@@ -58,6 +58,7 @@ watch([formData, isValid], () => {
 
 const addRelation = () => {
   formData.value.relations.push({
+    id: crypto.randomUUID(),
     source: '',
     destination: '',
     description: ''

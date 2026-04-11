@@ -28,34 +28,45 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
 
   const validUuidSet = new Set(machineUuids)
   const seenRelations = new Set<string>()
+  const seenIds = new Set<string>()
 
   doc.relations.forEach((rel: any, index: number) => {
-    const relId = `Relación #${index + 1}`
+    const relIdPrefix = `Relación #${index + 1}`
     
+    // Validar ID único de la relación
+    if (!rel.id) {
+      errors.push({ nodeId: relIdPrefix, field: 'id', message: 'ID obligatorio' })
+    } else if (rel.id.length !== 36) {
+      errors.push({ nodeId: relIdPrefix, field: 'id', message: 'El ID debe tener exactamente 36 caracteres' })
+    } else if (seenIds.has(rel.id)) {
+      errors.push({ nodeId: relIdPrefix, field: 'id', message: `ID duplicado: ${rel.id}` })
+    }
+    if (rel.id) seenIds.add(rel.id)
+
     // Validar source
     if (!rel.source) {
-      errors.push({ nodeId: relId, field: 'source', message: 'Origen obligatorio' })
+      errors.push({ nodeId: relIdPrefix, field: 'source', message: 'Origen obligatorio' })
     } else if (validUuidSet.size > 0 && !validUuidSet.has(rel.source)) {
-      errors.push({ nodeId: relId, field: 'source', message: `ID Origen inexistente: ${rel.source}` })
+      errors.push({ nodeId: relIdPrefix, field: 'source', message: `ID Origen inexistente: ${rel.source}` })
     }
 
     // Validar destination
     if (!rel.destination) {
-      errors.push({ nodeId: relId, field: 'destination', message: 'Destino obligatorio' })
+      errors.push({ nodeId: relIdPrefix, field: 'destination', message: 'Destino obligatorio' })
     } else if (validUuidSet.size > 0 && !validUuidSet.has(rel.destination)) {
-      errors.push({ nodeId: relId, field: 'destination', message: `ID Destino inexistente: ${rel.destination}` })
+      errors.push({ nodeId: relIdPrefix, field: 'destination', message: `ID Destino inexistente: ${rel.destination}` })
     }
 
     // Validar que no sea la misma máquina
     if (rel.source && rel.destination && rel.source === rel.destination) {
-      errors.push({ nodeId: relId, field: 'destination', message: 'No se permiten autoreferencias' })
+      errors.push({ nodeId: relIdPrefix, field: 'destination', message: 'No se permiten autoreferencias' })
     }
 
-    // Validar duplicados
+    // Validar duplicados de pares source/destination
     if (rel.source && rel.destination) {
       const pair = `${rel.source}->${rel.destination}`
       if (seenRelations.has(pair)) {
-        errors.push({ nodeId: relId, field: 'destination', message: 'Relación duplicada: Ya existe una conexión entre estas máquinas' })
+        errors.push({ nodeId: relIdPrefix, field: 'destination', message: 'Relación duplicada: Ya existe una conexión entre estas máquinas' })
       }
       seenRelations.add(pair)
     }
@@ -63,9 +74,9 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
     // Validar descripción de la relación
     const relDesc = rel.description || ''
     if (relDesc.length < 10) {
-       errors.push({ nodeId: relId, field: 'description', message: 'Descripción: Mínimo 10 caracteres' })
+       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Mínimo 10 caracteres' })
     } else if (relDesc.length > 300) {
-       errors.push({ nodeId: relId, field: 'description', message: 'Descripción: Máximo 300 caracteres' })
+       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Máximo 300 caracteres' })
     }
   })
 

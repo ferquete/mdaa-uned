@@ -21,9 +21,31 @@ export class MdaAudioCimRelationsMachinesValidator {
                 accept('error', 'El campo description del documento principal debe tener entre 1 y 600 caracteres.', { node: doc, property: 'description' });
             }
         }
+
+        // Validación de unicidad de IDs en las relaciones
+        const ids = new Set<string>();
+        doc.relations.forEach((rel) => {
+            if (rel.id) {
+                const cleanId = rel.id.replace(/^["']|["']$/g, '');
+                if (ids.has(cleanId)) {
+                    accept('error', `ID duplicado detectado: ${cleanId}. Cada relación debe tener un ID único.`, { node: rel, property: 'id' });
+                }
+                ids.add(cleanId);
+            }
+        });
     }
 
     checkRelation(relation: Relation, accept: ValidationAcceptor): void {
+        // Validación del campo id (36 caracteres obligatorios)
+        if (relation.id !== undefined && relation.id !== null) {
+            const cleanId = relation.id.replace(/^["']|["']$/g, '');
+            if (cleanId.length !== 36) {
+                accept('error', 'El campo id debe tener exactamente 36 caracteres.', { node: relation, property: 'id' });
+            }
+        } else {
+            accept('error', 'El campo id es obligatorio en cada relación.', { node: relation, property: 'id' });
+        }
+
         if (relation.source !== undefined && relation.source !== null) {
             const cleanSource = relation.source.replace(/^["']|["']$/g, '');
             if (cleanSource.length < 1 || cleanSource.length > 36) {

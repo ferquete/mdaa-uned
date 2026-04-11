@@ -11,6 +11,7 @@ entry RelationDocument:
 
 Relation:
     '{'
+        '"id"' ':' id=STRING ','
         '"source"' ':' source=STRING ','
         '"destination"' ':' destination=STRING ','
         '"description"' ':' description=STRING

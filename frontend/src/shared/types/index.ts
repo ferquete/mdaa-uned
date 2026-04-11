@@ -79,3 +79,14 @@ export interface CimDocument {
   generators: CimGenerator[];
   modificators: CimModificator[];
 }
+export interface CimRelation {
+  id: string;
+  source: string;
+  destination: string;
+  description: string;
+}
+
+export interface CimRelationsDocument {
+  description: string;
+  relations: CimRelation[];
+}

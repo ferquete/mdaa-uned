@@ -17,7 +17,15 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const parsedCimRelations = computed(() => {
     if (!currentCim.value?.machinesRelations) return { description: '', relations: [] };
     try {
-      return JSON.parse(currentCim.value.machinesRelations);
+      const parsed = JSON.parse(currentCim.value.machinesRelations);
+      if (parsed && Array.isArray(parsed.relations)) {
+        // Asegurar que todas las relaciones tengan un ID (hidratación para datos antiguos)
+        parsed.relations = parsed.relations.map((r: any) => ({
+          ...r,
+          id: r.id || crypto.randomUUID()
+        }));
+      }
+      return parsed;
     } catch (e) {
       return { description: '', relations: [] };
     }

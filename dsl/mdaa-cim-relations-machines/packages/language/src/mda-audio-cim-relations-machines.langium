@@ -1,4 +1,4 @@
-grammar MdaCimRelations
+grammar MdaAudioCimRelationsMachines
 
 entry RelationDocument:
     '{'

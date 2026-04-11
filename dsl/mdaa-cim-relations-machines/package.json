@@ -1,5 +1,5 @@
 {
-    "name": "mda-cim-relations-workspace",
+    "name": "mda-audio-cim-relations-machines-workspace",
     "description": "Base workspace package",
     "version": "0.0.1",
     "type": "module",

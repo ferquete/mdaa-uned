@@ -1,14 +1,14 @@
 import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
-import { MdaCimRelationsGeneratedModule, MdaCimRelationsGeneratedSharedModule } from './generated/module.js';
-import { MdaCimRelationsValidator, registerValidationChecks } from './mda-cim-relations-validator.js';
+import { MdaAudioCimRelationsMachinesGeneratedModule, MdaAudioCimRelationsMachinesGeneratedSharedModule } from './generated/module.js';
+import { MdaAudioCimRelationsMachinesValidator, registerValidationChecks } from './mda-audio-cim-relations-machines-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-export type MdaCimRelationsAddedServices = {
+export type MdaAudioCimRelationsMachinesAddedServices = {
     validation: {
-        MdaCimRelationsValidator: MdaCimRelationsValidator
+        MdaAudioCimRelationsMachinesValidator: MdaAudioCimRelationsMachinesValidator
     }
 }
 
@@ -16,16 +16,16 @@ export type MdaCimRelationsAddedServices = {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type MdaCimRelationsServices = LangiumServices & MdaCimRelationsAddedServices
+export type MdaAudioCimRelationsMachinesServices = LangiumServices & MdaAudioCimRelationsMachinesAddedServices
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const MdaCimRelationsModule: Module<MdaCimRelationsServices, PartialLangiumServices & MdaCimRelationsAddedServices> = {
+export const MdaAudioCimRelationsMachinesModule: Module<MdaAudioCimRelationsMachinesServices, PartialLangiumServices & MdaAudioCimRelationsMachinesAddedServices> = {
     validation: {
-        MdaCimRelationsValidator: () => new MdaCimRelationsValidator()
+        MdaAudioCimRelationsMachinesValidator: () => new MdaAudioCimRelationsMachinesValidator()
     }
 };
 
@@ -44,25 +44,25 @@ export const MdaCimRelationsModule: Module<MdaCimRelationsServices, PartialLangi
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createMdaCimRelationsServices(context: DefaultSharedModuleContext): {
+export function createMdaAudioCimRelationsMachinesServices(context: DefaultSharedModuleContext): {
     shared: LangiumSharedServices,
-    MdaCimRelations: MdaCimRelationsServices
+    MdaAudioCimRelationsMachines: MdaAudioCimRelationsMachinesServices
 } {
     const shared = inject(
         createDefaultSharedModule(context),
-        MdaCimRelationsGeneratedSharedModule
+        MdaAudioCimRelationsMachinesGeneratedSharedModule
     );
-    const MdaCimRelations = inject(
+    const MdaAudioCimRelationsMachines = inject(
         createDefaultModule({ shared }),
-        MdaCimRelationsGeneratedModule,
-        MdaCimRelationsModule
+        MdaAudioCimRelationsMachinesGeneratedModule,
+        MdaAudioCimRelationsMachinesModule
     );
-    shared.ServiceRegistry.register(MdaCimRelations);
-    registerValidationChecks(MdaCimRelations);
+    shared.ServiceRegistry.register(MdaAudioCimRelationsMachines);
+    registerValidationChecks(MdaAudioCimRelationsMachines);
     if (!context.connection) {
         // We don't run inside a language server
         // Therefore, initialize the configuration provider instantly
         shared.workspace.ConfigurationProvider.initialized({});
     }
-    return { shared, MdaCimRelations };
+    return { shared, MdaAudioCimRelationsMachines };
 }

@@ -1,18 +1,18 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { MdaCimRelationsAstType, RelationDocument, Relation } from './generated/ast.js';
-import type { MdaCimRelationsServices } from './mda-cim-relations-module.js';
+import type { MdaAudioCimRelationsMachinesAstType, RelationDocument, Relation } from './generated/ast.js';
+import type { MdaAudioCimRelationsMachinesServices } from './mda-audio-cim-relations-machines-module.js';
 
-export function registerValidationChecks(services: MdaCimRelationsServices) {
+export function registerValidationChecks(services: MdaAudioCimRelationsMachinesServices) {
     const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.MdaCimRelationsValidator;
-    const checks: ValidationChecks<MdaCimRelationsAstType> = {
+    const validator = services.validation.MdaAudioCimRelationsMachinesValidator;
+    const checks: ValidationChecks<MdaAudioCimRelationsMachinesAstType> = {
         RelationDocument: validator.checkRelationDocument,
         Relation: validator.checkRelation
     };
     registry.register(checks, validator);
 }
 
-export class MdaCimRelationsValidator {
+export class MdaAudioCimRelationsMachinesValidator {
 
     checkRelationDocument(doc: RelationDocument, accept: ValidationAcceptor): void {
         if (doc.description !== undefined && doc.description !== null) {

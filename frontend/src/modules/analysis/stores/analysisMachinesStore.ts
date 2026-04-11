@@ -12,7 +12,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const parsedDocs = ref<Record<number, CimDocument>>({});
   const currentCim = ref<Cim | null>(null);
   const selectedNodeId = ref<string | number | null>(null);
-  const visualizerMode = ref<'2D' | 'JSON'>('2D');
+  const visualizerMode = ref<'2D' | 'JSON' | 'FORM'>('2D');
   
   const parsedCimRelations = computed(() => {
     if (!currentCim.value?.machinesRelations) return { description: '', relations: [] };
@@ -43,7 +43,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   function parseMachineData(machineStr: string): CimDocument {
     try {
       if (!machineStr || machineStr.trim() === '') {
-        return { $type: 'Document', name: '', description: '', generators: [], modificators: [] };
+        return { $type: 'Document', id: '', name: '', description: '', generators: [], modificators: [] };
       }
       const parsed = JSON.parse(machineStr);
       return {
@@ -54,7 +54,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
       } as CimDocument;
     } catch (err) {
       console.error('Error parseando datos de máquina:', err);
-      return { $type: 'Document', name: '', description: '', generators: [], modificators: [] };
+      return { $type: 'Document', id: '', name: '', description: '', generators: [], modificators: [] };
     }
   }
 

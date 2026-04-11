@@ -3,9 +3,10 @@ import ModuleViewHeader from '@/shared/components/layout/ModuleViewHeader.vue'
 import { useExport } from '@/shared/composables/useExport'
 import type { CimMachine } from '@/shared/types'
 import AnalysisCimEditor from '../components/AnalysisCimEditor.vue'
+import AnalysisCimVisualizer2D from '../components/AnalysisCimVisualizer2D.vue'
+import AnalysisCimVisualizerJSON from '../components/AnalysisCimVisualizerJSON.vue'
 import AnalysisMachinesNodeEditor from '../components/AnalysisMachinesNodeEditor.vue'
 import AnalysisMachinesVisualizer2D from '../components/AnalysisMachinesVisualizer2D.vue'
-
 import AnalysisMachinesVisualizerJSON from '../components/AnalysisMachinesVisualizerJSON.vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 
@@ -36,7 +37,9 @@ const breadcrumbs = computed(() => {
 })
 
 const handleExport = () => {
-  if (currentMachine.value) {
+  if (store.selectedNodeId === 'analisis' && store.currentCim) {
+    exportToJson(store.currentCim.machinesRelations, 'analisis-cim-relations')
+  } else if (currentMachine.value) {
     const doc = store.parsedDocs[currentMachine.value.id]
     exportToJson(currentMachine.value.machine, doc?.name || 'machine')
   }
@@ -50,13 +53,13 @@ const handleEditBasic = () => {
   }
 }
 
-const setMode = (mode: '2D' | 'JSON') => {
+const setMode = (mode: '2D' | 'JSON' | 'FORM') => {
   store.visualizerMode = mode
 }
 
-// Reset mode to 2D when selecting a base machine node
+// Reset mode to 2D when switching between machines or to/from analisis
 watch(() => store.selectedNodeId, (newId, oldId) => {
-  if (typeof newId === 'number' && typeof oldId !== 'number') {
+  if (newId !== oldId) {
     store.visualizerMode = '2D'
   }
 })
@@ -73,8 +76,9 @@ const emit = defineEmits<{
       <ModuleViewHeader 
         module-name="Análisis"
         :breadcrumbs="breadcrumbs"
-        :visualizer-mode="(!store.selectedSubNode && store.selectedNodeId !== 'analisis') ? store.visualizerMode : undefined"
-        :show-export="!store.selectedSubNode && store.selectedNodeId !== 'analisis'"
+        :visualizer-mode="(!store.selectedSubNode) ? store.visualizerMode : undefined"
+        :show-export="!store.selectedSubNode"
+        :show-form-mode="store.selectedNodeId === 'analisis'"
         :description="(!store.selectedSubNode) ? (store.selectedNodeId === 'analisis' ? store.parsedCimRelations.description : store.parsedDocs[currentMachine?.id || 0]?.description) : undefined"
         @set-mode="setMode"
         @export="handleExport"
@@ -83,7 +87,15 @@ const emit = defineEmits<{
   
         <div class="flex-1 relative overflow-hidden">
           <div v-if="store.selectedNodeId === 'analisis'" class="w-full h-full">
-            <AnalysisCimEditor />
+            <template v-if="store.visualizerMode === '2D'">
+              <AnalysisCimVisualizer2D />
+            </template>
+            <template v-else-if="store.visualizerMode === 'FORM'">
+              <AnalysisCimEditor />
+            </template>
+            <template v-else-if="store.visualizerMode === 'JSON'">
+              <AnalysisCimVisualizerJSON />
+            </template>
           </div>
           <div v-else-if="store.selectedSubNode" class="w-full h-full">
             <AnalysisMachinesNodeEditor />
@@ -92,7 +104,6 @@ const emit = defineEmits<{
             <template v-if="currentMachine">
               <AnalysisMachinesVisualizerJSON v-if="store.visualizerMode === 'JSON'" :machine="currentMachine" />
               <AnalysisMachinesVisualizer2D v-else-if="store.visualizerMode === '2D'" :machine-json="currentMachine.machine" />
-
             </template>
           </div>
         </div>

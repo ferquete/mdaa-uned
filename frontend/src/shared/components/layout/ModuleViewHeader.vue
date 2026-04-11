@@ -10,8 +10,9 @@ interface Breadcrumb {
 interface Props {
   moduleName: string
   breadcrumbs: Breadcrumb[]
-  visualizerMode?: '2D' | 'JSON'
+  visualizerMode?: '2D' | 'JSON' | 'FORM'
   showExport?: boolean
+  showFormMode?: boolean
   description?: string
 }
 
@@ -20,7 +21,7 @@ import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'set-mode', mode: '2D' | 'JSON'): void
+  (e: 'set-mode', mode: '2D' | 'JSON' | 'FORM'): void
   (e: 'export'): void
   (e: 'edit-basic'): void
 }>()
@@ -32,7 +33,7 @@ const toggleDescription = () => {
   showDescription.value = !showDescription.value
 }
 
-const handleSetMode = (mode: '2D' | 'JSON') => {
+const handleSetMode = (mode: '2D' | 'JSON' | 'FORM') => {
   runWithGuard(() => {
     emit('set-mode', mode)
   })
@@ -84,6 +85,15 @@ const handleEditBasic = () => {
             <i class="fa-solid fa-diagram-project"></i> 2D
           </button>
 
+          <button 
+            v-if="showFormMode"
+            @click="handleSetMode('FORM')"
+            class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+            :class="visualizerMode === 'FORM' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
+          >
+            <i class="fa-solid fa-rectangle-list"></i> Formulario
+          </button>
+          
           <button 
             @click="handleSetMode('JSON')"
             class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"

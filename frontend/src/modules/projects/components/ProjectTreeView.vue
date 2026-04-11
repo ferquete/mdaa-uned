@@ -6,7 +6,9 @@ import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.
 import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
 import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+import { onMounted } from 'vue'
 
 interface TreeNodeType {
   id: string | number
@@ -20,8 +22,11 @@ interface TreeNodeType {
 }
 
 const analysisStore = useAnalysisMachinesStore()
+const projectStore = useProjectStore()
 const route = useRoute()
 const { runWithGuard } = useUnsavedChanges()
+
+const projectName = ref('Cargando...')
 
 const showAddModal = ref(false)
 const showDeleteModal = ref(false)
@@ -41,7 +46,7 @@ const projectId = computed(() => Number(route.params.id))
 const treeData = computed<TreeNodeType[]>(() => [
   {
     id: 'root',
-    text: 'Proyecto Actual',
+    text: projectName.value,
     icon: 'fa-solid fa-folder-open',
     open: true,
     children: [
@@ -185,6 +190,14 @@ const handleDeleteNode = (node: TreeNodeType) => {
   nodeToDelete.value = node
   deleteWarningDetails.value = []
 
+  // Si es una máquina, avisamos sobre sus relaciones CIM
+  if (typeof node.id === 'number' || (typeof node.id === 'string' && !isNaN(Number(node.id)))) {
+    const relCount = analysisStore.getMachineRelationsCount(Number(node.id))
+    if (relCount > 0) {
+      deleteWarningDetails.value.push(`Se eliminarán ${relCount} relaciones de esta máquina en el Análisis (CIM)`)
+    }
+  }
+
   // Si es un sub-nodo, buscamos si tiene referencias
   if (typeof node.id === 'string' && node.id.startsWith('m-')) {
     const parts = node.id.split('-')
@@ -202,7 +215,13 @@ const confirmDeleteNode = async () => {
   if (nodeToDelete.value) {
     const id = nodeToDelete.value.id;
     if (typeof id === 'number' || (typeof id === 'string' && !isNaN(Number(id)))) {
-      await analysisStore.deleteMachine(Number(id));
+      const result = await analysisStore.deleteMachine(Number(id));
+      if (!result.success) {
+        alertTitle.value = 'Error al Eliminar'
+        alertMessage.value = result.message || 'No se pudo eliminar la máquina'
+        alertType.value = 'error'
+        showAlert.value = true
+      }
     } else if (typeof id === 'string' && id.startsWith('m-')) {
       const parts = id.split('-');
       if (parts.length >= 4) {
@@ -222,6 +241,17 @@ const handleSelect = (node: TreeNodeType) => {
     analysisStore.selectNode(node.id)
   })
 }
+
+onMounted(async () => {
+  if (projectId.value) {
+    const project = await projectStore.fetchProjectById(projectId.value)
+    if (project) {
+      projectName.value = project.name
+    } else {
+      projectName.value = 'Proyecto no encontrado'
+    }
+  }
+})
 </script>
 
 <template>

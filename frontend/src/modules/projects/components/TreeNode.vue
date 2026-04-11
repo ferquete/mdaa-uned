@@ -44,6 +44,11 @@ const handleAddChild = (e: Event) => {
   emit('add-child', props.node.id)
 }
 
+const handleToggle = (e: Event) => {
+  e.stopPropagation()
+  toggle()
+}
+
 const handleDelete = (e: Event) => {
   e.stopPropagation()
   emit('delete-node', props.node)
@@ -61,7 +66,7 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
     <div 
       class="tree-node-content group flex items-center py-1.5 px-2 rounded-md transition-colors cursor-pointer w-full relative"
       :class="[isSelected ? 'bg-geist-accents-2' : 'hover:bg-geist-accents-1']"
-      @click="handleSelect(); toggle()"
+      @click="handleSelect()"
     >
       <!-- Vertical guide line (Trunk) -->
       <div 
@@ -75,8 +80,9 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
         <!-- Toggle Arrow for parents -->
         <i 
           v-if="node.children?.length" 
-          class="fa-solid fa-chevron-right text-[10px] transition-transform duration-200 opacity-40 group-hover:opacity-100"
+          class="fa-solid fa-chevron-right text-[10px] transition-transform duration-200 opacity-40 group-hover:opacity-100 p-1 -m-1 hover:bg-geist-accents-2 rounded cursor-pointer"
           :class="{ 'rotate-90': isOpen }"
+          @click="handleToggle"
         ></i>
         
         <!-- Spacer for items without children to align with arrows -->

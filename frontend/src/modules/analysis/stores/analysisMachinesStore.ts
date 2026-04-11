@@ -11,7 +11,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const machines = ref<CimMachine[]>([]);
   const parsedDocs = ref<Record<number, CimDocument>>({});
   const currentCim = ref<Cim | null>(null);
-  const selectedNodeId = ref<string | number | null>(null);
+  const selectedNodeId = ref<string | number | null>('root');
   const visualizerMode = ref<'2D' | 'JSON' | 'FORM'>('2D');
   
   const parsedCimRelations = computed(() => {
@@ -138,21 +138,47 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     }
   }
 
-  /**
-   * Elimina una máquina.
-   */
   async function deleteMachine(id: number) {
     try {
+      const machineUuid = machineUuids.value[id];
       await apiClient.delete(`/api/v1/machines/${id}`);
+      
+      // Limpiar relaciones que involucren a esta máquina ANTES de quitarla del estado local
+      if (machineUuid && currentCim.value) {
+        const relations = JSON.parse(JSON.stringify(parsedCimRelations.value));
+        if (Array.isArray(relations.relations)) {
+          const originalCount = relations.relations.length;
+          relations.relations = relations.relations.filter((r: any) => 
+            r.source !== machineUuid && r.destination !== machineUuid
+          );
+          
+          if (relations.relations.length !== originalCount) {
+             await updateCimRelations(JSON.stringify(relations));
+          }
+        }
+      }
+
       machines.value = machines.value.filter(m => m.id !== id);
       delete parsedDocs.value[id];
-      if (selectedNodeId.value === id) {
-        selectedNodeId.value = null;
+      
+      if (Number(selectedNodeId.value) === id) {
+        selectedNodeId.value = 'analisis';
       }
       return { success: true };
     } catch (err: any) {
       return { success: false, message: err.message };
     }
+  }
+
+  /**
+   * Obtiene el número de relaciones CIM que involucren a una máquina.
+   */
+  function getMachineRelationsCount(machineId: number): number {
+    const uuid = machineUuids.value[machineId];
+    if (!uuid || !Array.isArray(parsedCimRelations.value.relations)) return 0;
+    return parsedCimRelations.value.relations.filter((r: any) => 
+      r.source === uuid || r.destination === uuid
+    ).length;
   }
 
   /**
@@ -411,6 +437,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     updateSubNodeData,
     deleteSubNode,
     getSubNodeReferences,
+    getMachineRelationsCount,
     updateMachineRawJson
   };
 });

@@ -8,18 +8,20 @@ interface Props {
   readOnly?: boolean
   height?: string
   options?: any
+  schema?: any // Esquema JSON opcional
 }
 
 const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
   height: '100%',
-  options: () => ({})
+  options: () => ({}),
+  schema: null
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'change', value: string): void
-  (e: 'editorDidMount', editor: any): void
+  (e: 'editorDidMount', editor: any, monaco: any): void
 }>()
 
 const { isDark } = useTheme()
@@ -31,12 +33,20 @@ const defaultOptions = computed(() => ({
   formatOnPaste: true,
   formatOnType: true,
   scrollBeyondLastLine: false,
-  minimap: { enabled: false },
+  minimap: { 
+    enabled: true,
+    scale: 1,
+    showSlider: 'mouseover' 
+  },
   readOnly: props.readOnly,
   fontSize: 12,
   fontFamily: "'JetBrains Mono', 'Monaco', 'Consolas', monospace",
   lineHeight: 1.6,
   padding: { top: 16, bottom: 16 },
+  folding: true,
+  foldingHighlight: true,
+  foldingStrategy: 'indentation',
+  showFoldingControls: 'always',
   ...props.options
 }))
 
@@ -68,14 +78,23 @@ const handleEditorWillMount = (monaco: any) => {
       'editorLineNumber.activeForeground': '#f8f8f2',
     }
   })
+
+  // Configurar esquema si se proporciona
+  if (props.schema) {
+    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: true,
+      allowComments: false,
+      schemas: [{
+        uri: 'http://mda-audio/machine-schema.json',
+        fileMatch: ['model.json'],
+        schema: props.schema
+      }]
+    })
+  }
 }
 
-const onEditorMount = (editor: any) => {
-  emit('editorDidMount', editor)
-}
-
-const handleEditorDidMount = (editor: any) => {
-  emit('editorDidMount', editor)
+const onEditorMount = (editor: any, monaco: any) => {
+  emit('editorDidMount', editor, monaco)
 }
 
 const onInputChange = (value: string | undefined) => {
@@ -104,6 +123,7 @@ defineExpose({ formatJson })
       <VueMonacoEditor
         :value="modelValue"
         language="json"
+        path="model.json"
         :theme="editorTheme"
         :options="defaultOptions"
         @before-mount="handleEditorWillMount"
@@ -116,7 +136,7 @@ defineExpose({ formatJson })
     <button 
       v-if="!readOnly"
       @click="formatJson"
-      class="absolute bottom-4 right-8 z-10 p-2 rounded-md bg-geist-accents-2/50 hover:bg-geist-accents-2 text-geist-accents-5 border border-geist-border backdrop-blur-sm transition-all"
+      class="absolute bottom-20 right-8 z-10 p-2 rounded-md bg-geist-accents-2/50 hover:bg-geist-accents-2 text-geist-accents-5 border border-geist-border backdrop-blur-sm transition-all"
       title="Formatear JSON"
     >
       <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>

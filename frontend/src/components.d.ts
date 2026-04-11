@@ -23,6 +23,7 @@ declare module 'vue' {
     AnalysisVisualizer3D: typeof import('./modules/analysis/components/AnalysisVisualizer3D.vue')['default']
     AnalysisVisualizerJSON: typeof import('./modules/analysis/components/AnalysisVisualizerJSON.vue')['default']
     BaseButton: typeof import('./shared/components/base/BaseButton.vue')['default']
+    BaseDiffEditor: typeof import('./shared/components/editors/BaseDiffEditor.vue')['default']
     BaseGraph2D: typeof import('./shared/components/visualizers/BaseGraph2D.vue')['default']
     BaseGraph3D: typeof import('./shared/components/visualizers/BaseGraph3D.vue')['default']
     BaseJSONEditor: typeof import('./shared/components/editors/BaseJSONEditor.vue')['default']

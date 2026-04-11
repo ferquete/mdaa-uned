@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
-import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
-import { validateCimDocument } from '../utils/analysisMachinesValidation'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import type { CimMachine } from '@/shared/types'
+import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
+import BaseDiffEditor from '@/shared/components/editors/BaseDiffEditor.vue'
+import { validateCimDocument } from '../utils/analysisMachinesValidation'
+import { CIM_MACHINE_SCHEMA } from '../utils/machine-schema'
 
 const props = defineProps<{
   machine: CimMachine | null
@@ -16,6 +18,7 @@ const isSyntaxValid = ref(true)
 const businessErrors = ref<any[]>([])
 const isSaving = ref(false)
 const saveMessage = ref('')
+const isDiffEnabled = ref(false)
 
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
@@ -84,6 +87,10 @@ watch([localJson, isValid], () => {
   }
 })
 
+const onEditorDidMount = (editor: any, monaco: any) => {
+  // Funcionalidad de salto a definición eliminada a petición del usuario
+}
+
 const handleSave = async () => {
   if (!isValid.value || !props.machine) return
   
@@ -95,6 +102,7 @@ const handleSave = async () => {
     saveMessage.value = 'Guardado con éxito'
     clearUnsavedState()
     setTimeout(() => saveMessage.value = '', 3000)
+    isDiffEnabled.value = false
   } else {
     saveMessage.value = 'Error: ' + result.message
   }
@@ -117,6 +125,18 @@ const handleSave = async () => {
       
       <div class="flex items-center gap-4">
         <span v-if="saveMessage" class="text-[10px] font-mono" :class="saveMessage.includes('Error') ? 'text-geist-error' : 'text-geist-success'">{{ saveMessage }}</span>
+        
+        <!-- Toggle Diff (Pendiente de implementación de componente Diff) -->
+        <button 
+          v-if="machine"
+          @click="isDiffEnabled = !isDiffEnabled"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-geist-border bg-geist-bg text-[10px] uppercase font-bold text-geist-accents-5 hover:text-geist-fg transition-all"
+          :class="{ 'bg-geist-accents-2 text-geist-fg': isDiffEnabled }"
+        >
+          <i class="fa-solid fa-code-compare"></i>
+          {{ isDiffEnabled ? 'Editor' : 'Comparar' }}
+        </button>
+
         <button 
           @click="handleSave"
           :disabled="!isValid || isSaving"
@@ -130,11 +150,20 @@ const handleSave = async () => {
     </div>
 
     <!-- Main Editor -->
-    <div class="flex-1 min-h-0">
+    <div class="flex-1 min-h-0 relative">
       <BaseJSONEditor 
+        v-if="!isDiffEnabled"
         v-model="localJson"
+        :schema="CIM_MACHINE_SCHEMA"
         @change="validateInternal"
+        @editor-did-mount="onEditorDidMount"
       />
+      <div v-else class="w-full h-full">
+        <BaseDiffEditor 
+          :original="machine?.machine || ''" 
+          :modified="localJson" 
+        />
+      </div>
     </div>
 
     <!-- Error Bar -->

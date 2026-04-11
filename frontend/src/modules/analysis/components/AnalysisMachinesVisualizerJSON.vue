@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
+import BaseDiffEditor from '@/shared/components/editors/BaseDiffEditor.vue'
+import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import type { CimMachine } from '@/shared/types'
-import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
-import BaseDiffEditor from '@/shared/components/editors/BaseDiffEditor.vue'
+import { computed, ref, watch } from 'vue'
+import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import { validateCimDocument } from '../utils/analysisMachinesValidation'
 import { CIM_MACHINE_SCHEMA } from '../utils/machine-schema'
 
@@ -19,6 +19,15 @@ const businessErrors = ref<any[]>([])
 const isSaving = ref(false)
 const saveMessage = ref('')
 const isDiffEnabled = ref(false)
+const originalPrettyJson = computed(() => {
+  if (!props.machine?.machine) return ''
+  try {
+    const parsed = JSON.parse(props.machine.machine)
+    return JSON.stringify(parsed, null, 2)
+  } catch (e) {
+    return props.machine.machine
+  }
+})
 
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
@@ -40,7 +49,7 @@ const validateInternal = (val: string) => {
   try {
     const parsed = JSON.parse(val)
     isSyntaxValid.value = true
-    businessErrors.value = validateCimDocument(parsed)
+    businessErrors.value = validateCimDocument(parsed, store.machineUuids, props.machine?.id)
   } catch (e: any) {
     isSyntaxValid.value = false
     businessErrors.value = []
@@ -119,7 +128,7 @@ const handleSave = async () => {
         </div>
         <div>
           <span class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] block leading-none mb-1">Raw Mode</span>
-          <span class="text-xs font-mono font-medium text-geist-fg">Editor de Máquina CIM</span>
+          <span class="text-xs font-mono font-medium text-geist-fg">Editor</span>
         </div>
       </div>
       
@@ -160,7 +169,7 @@ const handleSave = async () => {
       />
       <div v-else class="w-full h-full">
         <BaseDiffEditor 
-          :original="machine?.machine || ''" 
+          :original="originalPrettyJson" 
           :modified="localJson" 
         />
       </div>

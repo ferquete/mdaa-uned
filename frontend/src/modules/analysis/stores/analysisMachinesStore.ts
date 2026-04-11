@@ -13,8 +13,29 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const currentCim = ref<Cim | null>(null);
   const selectedNodeId = ref<string | number | null>(null);
   const visualizerMode = ref<'2D' | 'JSON'>('2D');
+  
+  const parsedCimRelations = computed(() => {
+    if (!currentCim.value?.machinesRelations) return { description: '', relations: [] };
+    try {
+      return JSON.parse(currentCim.value.machinesRelations);
+    } catch (e) {
+      return { description: '', relations: [] };
+    }
+  });
 
   const isRawEditing = computed(() => visualizerMode.value === 'JSON');
+  
+  /**
+   * Mapa de IDs de base de datos a sus respectivos IDs de negocio (UUID)
+   */
+  const machineUuids = computed(() => {
+    const map: Record<number, string> = {};
+    machines.value.forEach(m => {
+      const doc = parsedDocs.value[m.id];
+      if (doc?.id) map[m.id] = doc.id;
+    });
+    return map;
+  });
 
   /**
    * Parsea los datos de una máquina de string JSON a CimDocument.
@@ -22,7 +43,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   function parseMachineData(machineStr: string): CimDocument {
     try {
       if (!machineStr || machineStr.trim() === '') {
-        return { $type: 'Document', generators: [], modificators: [] };
+        return { $type: 'Document', name: '', description: '', generators: [], modificators: [] };
       }
       const parsed = JSON.parse(machineStr);
       return {
@@ -33,7 +54,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
       } as CimDocument;
     } catch (err) {
       console.error('Error parseando datos de máquina:', err);
-      return { $type: 'Document', generators: [], modificators: [] };
+      return { $type: 'Document', name: '', description: '', generators: [], modificators: [] };
     }
   }
 
@@ -63,12 +84,12 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   }
 
   /**
-   * Actualiza la descripción central del CIM.
+   * Actualiza las relaciones entre máquinas del CIM.
    */
-  async function updateCimCentral(description: string) {
+  async function updateCimRelations(machinesRelations: string) {
     if (!currentCim.value) return { success: false, message: 'CIM no cargado' };
     try {
-      const updated = await apiClient.put<Cim>(`/api/v1/cim/${currentCim.value.id}`, { description });
+      const updated = await apiClient.put<Cim>(`/api/v1/cim/${currentCim.value.id}`, { machinesRelations });
       currentCim.value = updated;
       return { success: true };
     } catch (err: any) {
@@ -148,7 +169,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     const doc = parsedDocs.value[Number(machineId)];
     let newId = '';
     do {
-      newId = `${type === 'g' ? 'gen' : 'mod'}_${Math.random().toString(36).substring(2, 8)}`;
+      newId = crypto.randomUUID();
       let exists = false;
       if (doc) {
         if (doc.generators?.some((g: any) => g.id === newId)) exists = true;
@@ -250,8 +271,8 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
 
     try {
       const payload = {
-        name: machine.name,
-        description: machine.description,
+        name: doc.name,
+        description: doc.description,
         machine: JSON.stringify(doc)
       };
 
@@ -323,8 +344,8 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
 
     try {
       const payload = {
-        name: machine.name,
-        description: machine.description,
+        name: doc.name,
+        description: doc.description,
         machine: JSON.stringify(doc)
       };
 
@@ -347,10 +368,11 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     if (!machine) return { success: false, message: 'Máquina no encontrada' };
 
     try {
-      JSON.parse(rawJson);
+      const parsed = JSON.parse(rawJson);
+      const oldDoc = parsedDocs.value[machineId];
       const payload = {
-        name: machine.name,
-        description: machine.description,
+        name: parsed.name || oldDoc?.name || '',
+        description: parsed.description || oldDoc?.description || '',
         machine: rawJson
       };
 
@@ -372,13 +394,15 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     machines,
     parsedDocs,
     currentCim,
+    parsedCimRelations,
+    machineUuids,
     selectedNodeId,
     visualizerMode,
     isRawEditing,
     selectedNode,
     selectedSubNode,
     fetchMachines,
-    updateCimCentral,
+    updateCimRelations,
     addMachine,
     updateMachine,
     deleteMachine,

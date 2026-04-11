@@ -11,11 +11,13 @@ interface Props {
   initialData?: { name: string, description: string } | null
   nameMaxLength?: number
   descMaxLength?: number
+  showNameField?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   nameMaxLength: 20,
-  descMaxLength: 600
+  descMaxLength: 600,
+  showNameField: true
 })
 
 const emit = defineEmits<{
@@ -50,7 +52,11 @@ const isDuplicate = computed(() => {
 const isValid = computed(() => {
   const nameLen = localName.value.trim().length
   const descLen = localDescription.value.trim().length
-  return nameLen >= 1 && nameLen <= props.nameMaxLength && descLen >= 1 && descLen <= props.descMaxLength && !isDuplicate.value
+  
+  const nameValid = !props.showNameField || (nameLen >= 1 && nameLen <= props.nameMaxLength && !isDuplicate.value)
+  const descValid = descLen >= 1 && descLen <= props.descMaxLength
+  
+  return nameValid && descValid
 })
 
 const handleConfirm = () => {
@@ -72,7 +78,7 @@ const handleClose = () => {
   <BaseModal :show="show" :title="title" @close="handleClose">
     <div class="space-y-6">
       <!-- Nombre -->
-      <div class="space-y-2">
+      <div v-if="showNameField" class="space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
             Nombre

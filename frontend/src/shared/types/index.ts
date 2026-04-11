@@ -36,9 +36,6 @@ export interface CimMachine {
   id: number;
   idProyect: number;
   idCim: number;
-  refMachine: string;
-  name: string;
-  description: string;
   machine: string; // JSON String
 }
 
@@ -47,7 +44,7 @@ export interface CimMachine {
  */
 export interface Cim {
   id: number;
-  description: string;
+  machinesRelations: string; // JSON String
   idProject: number;
 }
 
@@ -76,6 +73,9 @@ export interface CimModificator extends CimBaseComponent {
 
 export interface CimDocument {
   $type: 'Document';
+  id: string;
+  name: string;
+  description: string;
   generators: CimGenerator[];
   modificators: CimModificator[];
 }

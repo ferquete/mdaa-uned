@@ -45,7 +45,14 @@ const activeModule = computed(() => {
 
 const handleEditMachine = (machine: any) => {
   if (treeRef.value) {
-    treeRef.value.editNode({ id: machine.id, text: machine.name })
+    // Ya no usamos m.name porque está en el JSON, editNode lo recuperará del store
+    treeRef.value.editNode({ id: machine.id, text: '' })
+  }
+}
+
+const handleEditCim = () => {
+  if (treeRef.value) {
+    treeRef.value.editNode({ id: 'analisis', text: 'Análisis' })
   }
 }
 
@@ -74,7 +81,10 @@ onMounted(async () => {
         <Panel :min-size="40">
           <div class="h-full bg-geist-bg">
             <template v-if="activeModule === 'analysis'">
-              <AnalysisMachinesDashboard @edit-machine="handleEditMachine" />
+              <AnalysisMachinesDashboard 
+                @edit-machine="handleEditMachine" 
+                @edit-cim="handleEditCim"
+              />
             </template>
             
             <div v-else-if="activeModule === 'design' || activeModule === 'implementation'" class="w-full h-full flex items-center justify-center">

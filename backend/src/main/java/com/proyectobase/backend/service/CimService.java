@@ -58,7 +58,7 @@ public class CimService {
                                     if (!java.util.Objects.equals(project.getUserId(), user.getId())) {
                                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "No autorizado"));
                                     }
-                                    cim.setDescription(request.getDescription());
+                                    cim.setMachinesRelations(request.getMachinesRelations());
                                     return cimRepository.save(cim)
                                             .map(this::mapToResponse);
                                 })));
@@ -67,7 +67,7 @@ public class CimService {
     private CimResponse mapToResponse(Cim cim) {
         return CimResponse.builder()
                 .id(cim.getId())
-                .description(cim.getDescription())
+                .machinesRelations(cim.getMachinesRelations())
                 .idProject(cim.getIdProject())
                 .build();
     }

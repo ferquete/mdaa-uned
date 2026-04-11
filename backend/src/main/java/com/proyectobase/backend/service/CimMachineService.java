@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,6 +32,7 @@ public class CimMachineService {
     private final CimRepository cimRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Crea una nueva máquina vinculada a un proyecto.
@@ -46,12 +49,23 @@ public class CimMachineService {
                 .flatMap(projId -> cimRepository.findByIdProject(projectId))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Configuración CIM no encontrada para el proyecto")))
                 .flatMap(cim -> {
+                    String initialJson = "{}";
+                    try {
+                        ObjectNode root = objectMapper.createObjectNode();
+                        root.put("$type", "Document");
+                        root.put("id", java.util.UUID.randomUUID().toString());
+                        root.put("name", request.getName());
+                        root.put("description", request.getDescription());
+                        root.putArray("generators");
+                        root.putArray("modificators");
+                        initialJson = objectMapper.writeValueAsString(root);
+                    } catch (Exception e) {
+                        log.error("Error creando JSON inicial", e);
+                    }
+
                     CimMachine machine = CimMachine.builder()
                             .idCim(cim.getId())
-                            .refMachine(java.util.UUID.randomUUID().toString())
-                            .name(request.getName())
-                            .description(request.getDescription())
-                            .machine("{}")
+                            .machine(initialJson)
                             .build();
                     return cimMachineRepository.save(machine)
                             .map(savedMachine -> mapToResponse(savedMachine, projectId));
@@ -75,11 +89,52 @@ public class CimMachineService {
                 .flatMap(machine -> cimRepository.findById(machine.getIdCim())
                         .flatMap(cim -> verifyProjectOwnership(externalId, cim.getIdProject())
                                 .flatMap(projId -> {
-                                    machine.setName(request.getName());
-                                    machine.setDescription(request.getDescription());
-                                    if (request.getMachine() != null && !request.getMachine().isBlank()) {
-                                        log.debug("Actualizando estructura JSON para máquina {}", machineId);
-                                        machine.setMachine(request.getMachine());
+                                    try {
+                                        String json = request.getMachine();
+                                        if (json == null || json.isBlank()) {
+                                            json = machine.getMachine();
+                                        }
+                                        ObjectNode root = (ObjectNode) objectMapper.readTree(json);
+                                        root.put("name", request.getName());
+                                        root.put("description", request.getDescription());
+                                        
+                                        String newId = root.has("id") ? root.get("id").asText() : null;
+                                        if (newId != null && newId.length() == 36) {
+                                            // Validar unicidad en el proyecto
+                                            return cimMachineRepository.findByIdCim(machine.getIdCim())
+                                                .filter(m -> !Objects.equals(m.getId(), machine.getId())) // No comparar con la misma máquina
+                                                .flatMap(m -> {
+                                                    try {
+                                                        ObjectNode otherRoot = (ObjectNode) objectMapper.readTree(m.getMachine());
+                                                        if (otherRoot.has("id") && Objects.equals(otherRoot.get("id").asText(), newId)) {
+                                                            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID de máquina duplicado en el proyecto"));
+                                                        }
+                                                    } catch (Exception e) {}
+                                                    return Mono.empty();
+                                                })
+                                                .then(Mono.defer(() -> {
+                                                    try {
+                                                        // Asegurar que las colecciones obligatorias existen
+                                                        if (!root.has("generators")) root.putArray("generators");
+                                                        if (!root.has("modificators")) root.putArray("modificators");
+                                                        
+                                                        machine.setMachine(objectMapper.writeValueAsString(root));
+                                                        return cimMachineRepository.save(machine)
+                                                                .map(saved -> mapToResponse(saved, projId));
+                                                    } catch (Exception e) {
+                                                        return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar máquina"));
+                                                    }
+                                                }));
+                                        }
+
+                                        // Asegurar que las colecciones obligatorias existen
+                                        if (!root.has("generators")) root.putArray("generators");
+                                        if (!root.has("modificators")) root.putArray("modificators");
+                                        
+                                        machine.setMachine(objectMapper.writeValueAsString(root));
+                                    } catch (Exception e) {
+                                        log.error("Error actualizando JSON de máquina {}", machineId, e);
+                                        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato JSON inválido: " + e.getMessage()));
                                     }
                                     return cimMachineRepository.save(machine)
                                             .map(saved -> mapToResponse(saved, projId));
@@ -150,9 +205,6 @@ public class CimMachineService {
                 .id(machine.getId())
                 .idProyect(projectId)
                 .idCim(machine.getIdCim())
-                .refMachine(machine.getRefMachine())
-                .name(machine.getName())
-                .description(machine.getDescription())
                 .machine(machine.getMachine())
                 .build();
     }

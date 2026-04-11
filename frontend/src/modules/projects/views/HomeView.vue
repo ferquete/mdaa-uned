@@ -5,6 +5,7 @@ import keycloak from '@/app/plugins/keycloak'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import { useUserStore } from '@/modules/auth/stores/userStore'
 import type { Project } from '@/shared/types'
+import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
 
 // Componentes (Auto-importados por unplugin-vue-components)
 
@@ -19,6 +20,9 @@ const firstName = ref('')
 const showDeleteConfirm = ref(false)
 const projectToDelete = ref<Project | null>(null)
 const isDeleting = ref(false)
+
+const showAlert = ref(false)
+const alertMessage = ref('')
 
 onMounted(async () => {
   isAuthenticated.value = keycloak.authenticated || false
@@ -63,7 +67,8 @@ const confirmDelete = async () => {
     showDeleteConfirm.value = false
     projectToDelete.value = null
   } else {
-    alert(result.message || 'Error al eliminar el proyecto')
+    alertMessage.value = result.message || 'Error al eliminar el proyecto'
+    showAlert.value = true
   }
 }
 
@@ -165,6 +170,14 @@ const openProject = (id: number) => {
       :item-name="projectToDelete?.name"
       @close="cancelDelete"
       @confirm="confirmDelete"
+    />
+
+    <GenericAlertModal
+      :show="showAlert"
+      title="Error al Eliminar"
+      :message="alertMessage"
+      type="error"
+      @close="showAlert = false"
     />
   </div>
 </template>

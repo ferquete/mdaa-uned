@@ -17,8 +17,5 @@ public class CimMachineResponse {
     private Long id;
     private Long idProyect;
     private Long idCim;
-    private String refMachine;
-    private String name;
-    private String description;
     private String machine;
 }

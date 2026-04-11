@@ -27,6 +27,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final CimRepository cimRepository;
     private final UserRepository userRepository;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     private static final int MAX_PROJECTS_PER_USER = 10;
 
@@ -78,9 +79,20 @@ public class ProjectService {
                             return projectRepository.save(project)
                                     .flatMap(savedProject -> {
                                         log.info("Proyecto {} creado. Procediendo a crear entrada CIM vinculada.", savedProject.getId());
+                                        
+                                        String initialRelationsJson = "{}";
+                                        try {
+                                            com.fasterxml.jackson.databind.node.ObjectNode root = objectMapper.createObjectNode();
+                                            root.put("description", request.getDescription() != null ? request.getDescription() : "");
+                                            root.putArray("relations");
+                                            initialRelationsJson = objectMapper.writeValueAsString(root);
+                                        } catch (Exception e) {
+                                            log.error("Error serializando JSON CIM inicial", e);
+                                        }
+
                                         Cim cim = Cim.builder()
                                                 .idProject(savedProject.getId())
-                                                .description(request.getDescription() != null ? request.getDescription() : "")
+                                                .machinesRelations(initialRelationsJson)
                                                 .build();
                                         return cimRepository.save(cim)
                                                 .map(savedCim -> mapToResponse(savedProject, savedCim.getId()));

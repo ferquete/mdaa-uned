@@ -22,8 +22,9 @@ public class Cim {
     @Id
     private Long id;
 
-    /** Descripción de la parte de análisis del proyecto */
-    private String description;
+    /** Relaciones entre máquinas en formato JSON */
+    @Column("machines_relations")
+    private String machinesRelations;
 
     /** ID del proyecto vinculado (Relación 1:1) */
     @Column("id_project")

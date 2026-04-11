@@ -5,19 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 /**
- * Petición para actualizar la información de un CIM.
+ * Petición para actualizar la configuración central de análisis (CIM).
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateCimRequest {
-    
-    @NotBlank(message = "La descripción no puede estar vacía")
-    @Size(min = 10, max = 600, message = "La descripción debe tener entre 10 y 600 caracteres")
-    private String description;
+
+    /** Relaciones entre máquinas en formato JSON */
+    private String machinesRelations;
 }

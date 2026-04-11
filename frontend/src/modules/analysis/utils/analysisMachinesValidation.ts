@@ -1,10 +1,10 @@
 export const ANALYSIS_RULES = {
   name: { min: 1, max: 20 },
   description: { min: 10, max: 300 },
-  cim_description: { min: 10, max: 600 },
   inputs: { min: 10, max: 300 },
   outputs: { min: 10, max: 300 },
-  params: { min: 10, max: 300 }
+  params: { min: 10, max: 300 },
+  id: { min: 36, max: 36 }
 }
 
 export interface ValidationError {
@@ -15,8 +15,11 @@ export interface ValidationError {
 
 /**
  * Valida un documento CIM completo, incluyendo integridad referencial.
+ * @param doc El documento a validar
+ * @param existingMachineIds Mapa de IDs de otras máquinas del proyecto para validar unicidad global del ID de la máquina
+ * @param currentMachineId ID de base de datos de la máquina actual para no validar contra sí misma
  */
-export function validateCimDocument(doc: any): ValidationError[] {
+export function validateCimDocument(doc: any, existingMachineIds: Record<number, string> = {}, currentMachineId?: number): ValidationError[] {
   const errors: ValidationError[] = []
 
   if (!doc || typeof doc !== 'object') {
@@ -35,6 +38,25 @@ export function validateCimDocument(doc: any): ValidationError[] {
       }
     })
   }
+
+  // Validar campos de raíz obligatorios
+  if (!doc.id) errors.push({ field: 'id', message: 'ID: El identificador único de la máquina (36 caracteres) es obligatorio' })
+  if (!doc.name) errors.push({ field: 'name', message: 'NAME: El nombre de la máquina es obligatorio' })
+  if (!doc.description) errors.push({ field: 'description', message: 'DESCRIPTION: La descripción de la máquina es obligatoria' })
+  if (!Array.isArray(doc.generators)) errors.push({ field: 'generators', message: 'GENERATORS: El array de generadores es obligatorio' })
+  if (!Array.isArray(doc.modificators)) errors.push({ field: 'modificators', message: 'MODIFICATORS: El array de modificadores es obligatorio' })
+
+  // Validar unicidad global del ID de la máquina en el proyecto
+  if (doc.id && doc.id.length === 36) {
+    const duplicateMachine = Object.entries(existingMachineIds).find(([dbId, uuid]) => {
+      return uuid === doc.id && Number(dbId) !== currentMachineId
+    })
+    if (duplicateMachine) {
+      errors.push({ field: 'id', message: `ID Global duplicado: El ID ${doc.id} ya pertenece a otra máquina de este proyecto` })
+    }
+  }
+
+  checkStrings(doc, 'Document')
 
   const allDefinedIds = new Set<string>()
 

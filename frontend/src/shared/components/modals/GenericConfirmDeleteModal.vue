@@ -39,17 +39,33 @@ const emit = defineEmits<{
           </div>
 
           <!-- Extra Warnings for References -->
-          <div v-if="extraWarnings && extraWarnings.length > 0" class="p-3 bg-white/5 rounded-lg border border-white/5 space-y-2 animate-in fade-in slide-in-from-top-2">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-geist-error flex items-center gap-2">
-              <i class="fa-solid fa-link"></i>
-              Elemento en uso
-            </p>
-            <p class="text-xs text-geist-accents-4">
-              Este elemento es referenciado por: <span class="text-geist-fg font-medium">{{ extraWarnings.join(', ') }}</span>.
-            </p>
-            <p class="text-[10px] italic text-geist-accents-3 bg-geist-accents-1 p-1.5 rounded">
-              Las referencias en estos elementos se eliminarán automáticamente para mantener la integridad.
-            </p>
+          <div v-if="extraWarnings && extraWarnings.length > 0" class="mt-4 overflow-hidden rounded-xl border border-geist-error/30 bg-geist-error/5 shadow-sm">
+            <div class="px-4 py-2 bg-geist-error/10 border-b border-geist-error/20 flex items-center gap-2">
+              <i class="fa-solid fa-link text-[10px] text-geist-error"></i>
+              <p class="text-[9px] font-black uppercase tracking-[0.15em] text-geist-error">
+                Conflicto de Integridad
+              </p>
+            </div>
+            <div class="p-4 space-y-3">
+              <p class="text-[11px] text-geist-error/80 leading-relaxed font-medium">
+                Este componente no se puede eliminar de forma aislada porque es referenciado por los siguientes elementos:
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span 
+                  v-for="ref in extraWarnings" 
+                  :key="ref"
+                  class="px-2 py-0.5 rounded-md bg-geist-error/10 border border-geist-error/20 text-[10px] font-mono text-geist-error"
+                >
+                  {{ ref }}
+                </span>
+              </div>
+              <div class="pt-2 border-t border-geist-error/10 flex items-start gap-2">
+                <i class="fa-solid fa-circle-info text-[10px] text-geist-error/60 mt-0.5"></i>
+                <p class="text-[10px] italic text-geist-error/70">
+                  Al confirmar, estas referencias se limpiarán automáticamente para mantener la consistencia del documento.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

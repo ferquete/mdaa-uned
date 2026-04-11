@@ -32,6 +32,7 @@ declare module 'vue' {
     DeleteConfirmModal: typeof import('./modules/projects/components/DeleteConfirmModal.vue')['default']
     FlowDraggableEdge: typeof import('./modules/projects/components/FlowDraggableEdge.vue')['default']
     GenericAddEditModal: typeof import('./shared/components/modals/GenericAddEditModal.vue')['default']
+    GenericAlertModal: typeof import('./shared/components/modals/GenericAlertModal.vue')['default']
     GenericConfirmDeleteModal: typeof import('./shared/components/modals/GenericConfirmDeleteModal.vue')['default']
     MachineVisualizer2D: typeof import('./modules/projects/components/MachineVisualizer2D.vue')['default']
     MachineVisualizer3D: typeof import('./modules/projects/components/MachineVisualizer3D.vue')['default']

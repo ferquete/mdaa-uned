@@ -9,7 +9,7 @@ export function registerValidationChecks(services: MdaAudioCimServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.MdaAudioCimValidator;
     const checks: ValidationChecks<MdaAudioCimAstType> = {
-        Document: [validator.checkUniqueIds],
+        Document: [validator.checkUniqueIds, validator.checkDocumentProperties],
         AudioGenerator: [validator.checkBaseProperties, validator.checkRefProperties],
         Modificator: [validator.checkBaseProperties, validator.checkRefProperties],
         Ref: validator.checkRefDescription
@@ -37,13 +37,24 @@ export class MdaAudioCimValidator {
             }
         }
     }
+    
+    /**
+     * Verifica las propiedades del documento raíz (name, description).
+     */
+    checkDocumentProperties(node: Document, accept: ValidationAcceptor): void {
+        this.checkStringLength(node, 'id', node.id, 36, 36, accept);
+        this.checkStringLength(node, 'name', node.name, 1, 20, accept);
+        this.checkStringLength(node, 'description', node.description, 10, 300, accept);
+        if (!node.generators) accept('error', 'El documento debe contener una lista de generadores.', { node, property: 'generators' });
+        if (!node.modificators) accept('error', 'El documento debe contener una lista de modificadores.', { node, property: 'modificators' });
+    }
 
     /**
      * Verifica las propiedades comunes de Base (id, name, description, inputs, outputs, params).
      */
     checkBaseProperties(node: Base, accept: ValidationAcceptor): void {
-        // Validar id: 1-30 caracteres
-        this.checkStringLength(node, 'id', node.id, 1, 30, accept);
+        // Validar id: 36 caracteres
+        this.checkStringLength(node, 'id', node.id, 36, 36, accept);
         
         // Validar name: 1-20 caracteres
         this.checkStringLength(node, 'name', node.name, 1, 20, accept);

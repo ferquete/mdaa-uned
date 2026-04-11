@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import TreeNode from '@/modules/projects/components/TreeNode.vue'
 import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
 import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
+import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
@@ -29,6 +30,12 @@ const nodeToDelete = ref<TreeNodeType | null>(null)
 const nodeToEdit = ref<any | null>(null)
 const deleteWarningDetails = ref<string[]>([])
 
+// Estado para alertas genéricas
+const showAlert = ref(false)
+const alertTitle = ref('')
+const alertMessage = ref('')
+const alertType = ref<'warning' | 'error' | 'info'>('warning')
+
 const projectId = computed(() => Number(route.params.id))
 
 const treeData = computed<TreeNodeType[]>(() => [
@@ -51,7 +58,7 @@ const treeData = computed<TreeNodeType[]>(() => [
           if (!doc) {
             return {
               id: m.id,
-              text: m.name,
+              text: 'Cargando...',
               icon: 'fa-solid fa-microchip',
               canDelete: true,
               canEdit: true,
@@ -87,7 +94,7 @@ const treeData = computed<TreeNodeType[]>(() => [
 
           return {
             id: m.id,
-            text: m.name,
+            text: doc.name,
             icon: 'fa-solid fa-microchip',
             canDelete: true,
             canEdit: true,
@@ -103,7 +110,10 @@ const treeData = computed<TreeNodeType[]>(() => [
 
 const checkRawEditing = () => {
   if (analysisStore.isRawEditing) {
-    alert('No se puede modificar la estructura del proyecto mientras se edita el JSON raw. Por favor, cambia a la vista 2D primero.')
+    alertTitle.value = 'Edición en Curso'
+    alertMessage.value = 'No se puede modificar la estructura del proyecto mientras se edita el JSON raw. Por favor, cambia a la vista 2D primero.'
+    alertType.value = 'warning'
+    showAlert.value = true
     return true
   }
   return false
@@ -130,14 +140,37 @@ const handleAddChild = (parentId: string | number) => {
 
 const handleEditNode = (node: TreeNodeType) => {
   const machine = analysisStore.machines.find(m => m.id === node.id)
-  if (machine) {
-    nodeToEdit.value = machine
+  const doc = analysisStore.parsedDocs[Number(node.id)]
+  if (machine && doc) {
+    nodeToEdit.value = { ...machine, name: doc.name, description: doc.description }
     showAddModal.value = true
   }
 }
 
+/**
+ * Método expuesto para disparar el modal de edición desde el exterior.
+ */
+const editNode = (node: any) => {
+  if (node.id === 'analisis') {
+    const cim = analysisStore.currentCim
+    const relations = analysisStore.parsedCimRelations
+    if (cim && relations) {
+      // Para el CIM, el "name" es fijo, solo editamos descripción
+      nodeToEdit.value = { id: 'analisis', name: 'Análisis del Proyecto', description: relations.description || '' }
+      showAddModal.value = true
+    }
+  } else {
+    handleEditNode(node as TreeNodeType)
+  }
+}
+
+defineExpose({ editNode })
+
 const confirmAddNode = async (name: string, description: string) => {
-  if (nodeToEdit.value) {
+  if (nodeToEdit.value?.id === 'analisis') {
+    const newRelations = { ...analysisStore.parsedCimRelations, description }
+    await analysisStore.updateCimRelations(JSON.stringify(newRelations))
+  } else if (nodeToEdit.value) {
     await analysisStore.updateMachine(nodeToEdit.value.id, name, description)
   } else if (pendingParentId.value === 'analisis' && projectId.value) {
     await analysisStore.addMachine(projectId.value, name, description)
@@ -189,8 +222,6 @@ const handleSelect = (node: TreeNodeType) => {
     analysisStore.selectNode(node.id)
   })
 }
-
-defineExpose({ editNode: handleEditNode })
 </script>
 
 <template>
@@ -218,10 +249,11 @@ defineExpose({ editNode: handleEditNode })
     <!-- Modales Generales -->
     <GenericAddEditModal
       :show="showAddModal"
-      :title="nodeToEdit ? 'Editar Análisis de Módulo Sintetizador' : 'Nuevo Análisis de Módulo Sintetizador'"
-      entity-label="Análisis de Módulo Sintetizador"
-      :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear Análisis de Módulo'"
-      :existing-names="analysisStore.machines.map(m => m.name)"
+      :title="nodeToEdit?.id === 'analisis' ? 'Editar Análisis del Proyecto' : (nodeToEdit ? 'Editar Máquina' : 'Nueva Máquina')"
+      entity-label="Análisis"
+      :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear'"
+      :show-name-field="nodeToEdit?.id !== 'analisis'"
+      :existing-names="analysisStore.machines.map(m => analysisStore.parsedDocs[m.id]?.name || '')"
       :initial-data="nodeToEdit ? { name: nodeToEdit.name, description: nodeToEdit.description } : null"
       @close="showAddModal = false"
       @confirm="confirmAddNode"
@@ -233,6 +265,14 @@ defineExpose({ editNode: handleEditNode })
       :extra-warnings="deleteWarningDetails"
       @close="showDeleteModal = false"
       @confirm="confirmDeleteNode"
+    />
+
+    <GenericAlertModal
+      :show="showAlert"
+      :title="alertTitle"
+      :message="alertMessage"
+      :type="alertType"
+      @close="showAlert = false"
     />
   </div>
 </template>

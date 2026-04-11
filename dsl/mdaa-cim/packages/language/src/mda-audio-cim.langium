@@ -1,7 +1,12 @@
 grammar MdaAudioCim
 
 entry Document:
-    (generators+=AudioGenerator | modificators+=Modificator)*;
+    'id' id=STRING
+    'name' name=STRING
+    'description' description=STRING
+    'generators' '[' (generators+=AudioGenerator (',' generators+=AudioGenerator)*)? ']'
+    'modificators' '[' (modificators+=Modificator (',' modificators+=Modificator)*)? ']'
+;
 
 interface Base {
     id: string

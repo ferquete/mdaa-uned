@@ -37,6 +37,12 @@ const handleSetMode = (mode: '2D' | 'JSON') => {
     emit('set-mode', mode)
   })
 }
+
+const handleEditBasic = () => {
+  runWithGuard(() => {
+    emit('edit-basic')
+  })
+}
 </script>
 
 <template>
@@ -56,7 +62,7 @@ const handleSetMode = (mode: '2D' | 'JSON') => {
             </span>
             <button 
               v-if="bc.active && index === 0"
-              @click="emit('edit-basic')"
+              @click="handleEditBasic"
               class="flex items-center justify-center w-5 h-5 rounded-md hover:bg-geist-accents-2 text-geist-accents-5 transition-all border border-transparent hover:border-geist-accents-3 cursor-pointer"
               title="Editar información básica"
             >

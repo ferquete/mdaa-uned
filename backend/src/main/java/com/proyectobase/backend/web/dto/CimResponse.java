@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CimResponse {
     private Long id;
-    private String description;
+    private String machinesRelations;
     private Long idProject;
 }

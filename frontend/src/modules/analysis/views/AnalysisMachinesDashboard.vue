@@ -22,11 +22,12 @@ const currentMachine = computed(() => {
 const breadcrumbs = computed(() => {
   const list = []
   if (store.selectedNodeId === 'analisis') {
-    list.push({ label: 'Configuración Central', active: true })
+    list.push({ label: 'Análisis del Proyecto', active: true })
     return list
   }
-  if (store.selectedNode && store.selectedNodeId !== 'analisis') {
-    list.push({ label: (store.selectedNode as any).name, active: !store.selectedSubNode })
+  if (currentMachine.value) {
+    const doc = store.parsedDocs[currentMachine.value.id]
+    list.push({ label: doc?.name || 'Máquina', active: !store.selectedSubNode })
   }
   if (store.selectedSubNode) {
     list.push({ label: store.selectedSubNode.name || 'Nuevo Componente', active: true })
@@ -36,12 +37,15 @@ const breadcrumbs = computed(() => {
 
 const handleExport = () => {
   if (currentMachine.value) {
-    exportToJson(currentMachine.value.machine, currentMachine.value.name)
+    const doc = store.parsedDocs[currentMachine.value.id]
+    exportToJson(currentMachine.value.machine, doc?.name || 'machine')
   }
 }
 
 const handleEditBasic = () => {
-  if (currentMachine.value) {
+  if (store.selectedNodeId === 'analisis' && store.currentCim) {
+    emit('edit-cim', store.currentCim)
+  } else if (currentMachine.value) {
     emit('edit-machine', currentMachine.value)
   }
 }
@@ -59,6 +63,7 @@ watch(() => store.selectedNodeId, (newId, oldId) => {
 
 const emit = defineEmits<{
   (e: 'edit-machine', machine: any): void
+  (e: 'edit-cim', cim: any): void
 }>()
 </script>
 
@@ -70,7 +75,7 @@ const emit = defineEmits<{
         :breadcrumbs="breadcrumbs"
         :visualizer-mode="(!store.selectedSubNode && store.selectedNodeId !== 'analisis') ? store.visualizerMode : undefined"
         :show-export="!store.selectedSubNode && store.selectedNodeId !== 'analisis'"
-        :description="(!store.selectedSubNode && store.selectedNodeId !== 'analisis') ? (store.selectedNode as any).description : undefined"
+        :description="(!store.selectedSubNode) ? (store.selectedNodeId === 'analisis' ? store.parsedCimRelations.description : store.parsedDocs[currentMachine?.id || 0]?.description) : undefined"
         @set-mode="setMode"
         @export="handleExport"
         @edit-basic="handleEditBasic"

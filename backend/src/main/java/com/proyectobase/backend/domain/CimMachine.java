@@ -26,16 +26,6 @@ public class CimMachine {
     @Column("id_cim")
     private Long idCim;
 
-    /** Referencia auto-generada única */
-    @Column("ref_machine")
-    private String refMachine;
-
-    /** Nombre de la máquina */
-    private String name;
-
-    /** Descripción de la máquina */
-    private String description;
-
     /** Definición de la máquina en formato JSON DSL */
     private String machine;
 }

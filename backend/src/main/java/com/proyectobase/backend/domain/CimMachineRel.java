@@ -9,33 +9,31 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
- * Entidad que representa una máquina vinculada a un proyecto para su análisis.
+ * Entidad que representa una relación o conexión entre dos máquinas dentro de un sistema CIM.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("cim_machines")
-public class CimMachine {
+@Table("cim_machines_rel")
+public class CimMachineRel {
 
     /** Identificador autoincrementado */
     @Id
     private Long id;
 
-    /** ID del registro CIM al que pertenece */
+    /** Descripción de la relación (máx 300) */
+    private String description;
+
+    /** ID del CIM al que pertenece esta relación */
     @Column("id_cim")
     private Long idCim;
 
-    /** Referencia auto-generada única */
-    @Column("ref_machine")
-    private String refMachine;
+    /** ID de la máquina origen */
+    @Column("id_src_machine")
+    private Long idSrcMachine;
 
-    /** Nombre de la máquina */
-    private String name;
-
-    /** Descripción de la máquina */
-    private String description;
-
-    /** Definición de la máquina en formato JSON DSL */
-    private String machine;
+    /** ID de la máquina destino */
+    @Column("id_dest_machine")
+    private Long idDestMachine;
 }

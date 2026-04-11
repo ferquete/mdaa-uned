@@ -12,6 +12,12 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddNodeModal: typeof import('./modules/projects/components/AddNodeModal.vue')['default']
+    AnalysisCimEditor: typeof import('./modules/analysis/components/AnalysisCimEditor.vue')['default']
+    AnalysisMachinesCimEditor: typeof import('./modules/analysis/components/AnalysisMachinesCimEditor.vue')['default']
+    AnalysisMachinesNodeEditor: typeof import('./modules/analysis/components/AnalysisMachinesNodeEditor.vue')['default']
+    AnalysisMachinesVisualizer2D: typeof import('./modules/analysis/components/AnalysisMachinesVisualizer2D.vue')['default']
+    AnalysisMachinesVisualizer3D: typeof import('./modules/analysis/components/AnalysisMachinesVisualizer3D.vue')['default']
+    AnalysisMachinesVisualizerJSON: typeof import('./modules/analysis/components/AnalysisMachinesVisualizerJSON.vue')['default']
     AnalysisNodeEditor: typeof import('./modules/analysis/components/AnalysisNodeEditor.vue')['default']
     AnalysisVisualizer2D: typeof import('./modules/analysis/components/AnalysisVisualizer2D.vue')['default']
     AnalysisVisualizer3D: typeof import('./modules/analysis/components/AnalysisVisualizer3D.vue')['default']

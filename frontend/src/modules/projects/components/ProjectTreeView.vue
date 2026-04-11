@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import TreeNode from '@/modules/projects/components/TreeNode.vue'
 import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
 import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
-import { useAnalysisStore } from '@/modules/analysis/stores/analysisStore'
+import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
 interface TreeNodeType {
@@ -18,7 +18,7 @@ interface TreeNodeType {
   canEdit?: boolean
 }
 
-const analysisStore = useAnalysisStore()
+const analysisStore = useAnalysisMachinesStore()
 const route = useRoute()
 const { runWithGuard } = useUnsavedChanges()
 
@@ -101,7 +101,17 @@ const treeData = computed<TreeNodeType[]>(() => [
   }
 ])
 
+const checkRawEditing = () => {
+  if (analysisStore.isRawEditing) {
+    alert('No se puede modificar la estructura del proyecto mientras se edita el JSON raw. Por favor, cambia a la vista 2D o 3D primero.')
+    return true
+  }
+  return false
+}
+
 const handleAddChild = (parentId: string | number) => {
+  if (checkRawEditing()) return
+
   if (parentId === 'analisis') {
     pendingParentId.value = parentId
     nodeToEdit.value = null
@@ -137,6 +147,8 @@ const confirmAddNode = async (name: string, description: string) => {
 }
 
 const handleDeleteNode = (node: TreeNodeType) => {
+  if (checkRawEditing()) return
+
   nodeToDelete.value = node
   deleteWarningDetails.value = []
 
@@ -206,9 +218,9 @@ defineExpose({ editNode: handleEditNode })
     <!-- Modales Generales -->
     <GenericAddEditModal
       :show="showAddModal"
-      :title="nodeToEdit ? 'Editar Análisis' : 'Nuevo Análisis'"
-      entity-label="Análisis"
-      :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear Análisis'"
+      :title="nodeToEdit ? 'Editar Análisis de Módulo Sintetizador' : 'Nuevo Análisis de Módulo Sintetizador'"
+      entity-label="Análisis de Módulo Sintetizador"
+      :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear Análisis de Módulo'"
       :existing-names="analysisStore.machines.map(m => m.name)"
       :initial-data="nodeToEdit ? { name: nodeToEdit.name, description: nodeToEdit.description } : null"
       @close="showAddModal = false"

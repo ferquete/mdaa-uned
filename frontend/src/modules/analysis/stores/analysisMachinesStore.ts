@@ -1,16 +1,20 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import apiClient from '@/shared/api/apiClient';
-import type { CimMachine, CimDocument } from '@/shared/types';
+import type { CimMachine, CimDocument, Cim } from '@/shared/types';
 
-export const useAnalysisStore = defineStore('analysis', () => {
+export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
   // Estado del Análisis
   const machines = ref<CimMachine[]>([]);
   const parsedDocs = ref<Record<number, CimDocument>>({});
+  const currentCim = ref<Cim | null>(null);
   const selectedNodeId = ref<string | number | null>(null);
+  const visualizerMode = ref<'2D' | '3D' | 'JSON'>('2D');
+
+  const isRawEditing = computed(() => visualizerMode.value === 'JSON');
 
   /**
    * Parsea los datos de una máquina de string JSON a CimDocument.
@@ -44,12 +48,31 @@ export const useAnalysisStore = defineStore('analysis', () => {
       data.forEach(m => {
         parsedDocs.value[m.id] = parseMachineData(m.machine);
       });
+      
+      // También cargamos el CIM del proyecto
+      const cimData = await apiClient.get<Cim>(`/api/v1/projects/${projectId}/cim`);
+      currentCim.value = cimData;
     } catch (err: any) {
-      console.error('Error al cargar máquinas:', err);
+      console.error('Error al cargar máquinas o CIM:', err);
       machines.value = [];
       parsedDocs.value = {};
+      currentCim.value = null;
     } finally {
       loading.value = false;
+    }
+  }
+
+  /**
+   * Actualiza la descripción central del CIM.
+   */
+  async function updateCimCentral(description: string) {
+    if (!currentCim.value) return { success: false, message: 'CIM no cargado' };
+    try {
+      const updated = await apiClient.put<Cim>(`/api/v1/cim/${currentCim.value.id}`, { description });
+      currentCim.value = updated;
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
     }
   }
 
@@ -142,6 +165,9 @@ export const useAnalysisStore = defineStore('analysis', () => {
    */
   const selectedNode = computed(() => {
     if (!selectedNodeId.value) return null;
+    if (selectedNodeId.value === 'analisis') {
+      return currentCim.value ? { ...currentCim.value, $type: 'CimCentral' } : null;
+    }
     if (typeof selectedNodeId.value === 'string') {
       if (selectedNodeId.value.startsWith('new-m-')) {
         const machineId = Number(selectedNodeId.value.split('-')[2]);
@@ -287,12 +313,12 @@ export const useAnalysisStore = defineStore('analysis', () => {
     const filterRefs = (arr: any[]) => arr?.filter((r: any) => (typeof r === 'string' ? r !== subId : r.id !== subId)) || [];
     
     doc.generators.forEach(g => {
-      g.refs = filterRefs(g.refs);
+      if (g.refs) g.refs = filterRefs(g.refs);
       if (g.rels) g.rels = filterRefs(g.rels);
     });
     
     doc.modificators.forEach(m => {
-      m.refs = filterRefs(m.refs);
+      if (m.refs) m.refs = filterRefs(m.refs);
     });
 
     try {
@@ -345,10 +371,14 @@ export const useAnalysisStore = defineStore('analysis', () => {
     error,
     machines,
     parsedDocs,
+    currentCim,
     selectedNodeId,
+    visualizerMode,
+    isRawEditing,
     selectedNode,
     selectedSubNode,
     fetchMachines,
+    updateCimCentral,
     addMachine,
     updateMachine,
     deleteMachine,

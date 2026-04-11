@@ -75,7 +75,7 @@ const handleClose = () => {
       <div class="space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-mono uppercase tracking-widest text-geist-accents-5">
-            Nombre de {{ entityLabel }}
+            Nombre
           </label>
           <span 
             class="text-[10px] font-mono tracking-tighter"
@@ -87,7 +87,7 @@ const handleClose = () => {
         <input 
           v-model="localName"
           type="text" 
-          :placeholder="`Ej. ${entityLabel} principal...`"
+          placeholder="Nombre del elemento..."
           :maxlength="nameMaxLength"
           class="geist-input w-full"
           :class="{ 'border-geist-error focus:ring-geist-error/20': isDuplicate }"
@@ -115,7 +115,7 @@ const handleClose = () => {
         </div>
         <textarea 
           v-model="localDescription"
-          :placeholder="`Describe el propósito de ${entityLabel}...`"
+          placeholder="Describe el propósito o detalles..."
           :maxlength="descMaxLength"
           rows="4"
           class="geist-input w-full min-h-[100px] resize-none py-2"

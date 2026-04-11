@@ -2,6 +2,7 @@ package com.proyectobase.backend.service;
 
 import com.proyectobase.backend.domain.CimMachine;
 import com.proyectobase.backend.repository.CimMachineRepository;
+import com.proyectobase.backend.repository.CimRepository;
 import com.proyectobase.backend.repository.ProjectRepository;
 import com.proyectobase.backend.repository.UserRepository;
 import com.proyectobase.backend.web.dto.CimMachineRequest;
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class CimMachineService {
 
     private final CimMachineRepository cimMachineRepository;
+    private final CimRepository cimRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
 
@@ -41,17 +43,19 @@ public class CimMachineService {
         log.info("Creando máquina '{}' para proyecto {} y usuario {}", request.getName(), projectId, externalId);
 
         return verifyProjectOwnership(externalId, projectId)
-                .flatMap(projId -> {
+                .flatMap(projId -> cimRepository.findByIdProject(projectId))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Configuración CIM no encontrada para el proyecto")))
+                .flatMap(cim -> {
                     CimMachine machine = CimMachine.builder()
-                            .idProyect(projectId)
+                            .idCim(cim.getId())
                             .refMachine(java.util.UUID.randomUUID().toString())
                             .name(request.getName())
                             .description(request.getDescription())
                             .machine("{}")
                             .build();
-                    return cimMachineRepository.save(machine);
-                })
-                .map(this::mapToResponse);
+                    return cimMachineRepository.save(machine)
+                            .map(savedMachine -> mapToResponse(savedMachine, projectId));
+                });
     }
 
     /**
@@ -68,17 +72,19 @@ public class CimMachineService {
 
         return cimMachineRepository.findById(machineId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Máquina no encontrada")))
-                .flatMap(machine -> verifyProjectOwnership(externalId, machine.getIdProyect())
-                        .flatMap(projId -> {
-                            machine.setName(request.getName());
-                            machine.setDescription(request.getDescription());
-                            if (request.getMachine() != null && !request.getMachine().isBlank()) {
-                                log.debug("Actualizando estructura JSON para máquina {}", machineId);
-                                machine.setMachine(request.getMachine());
-                            }
-                            return cimMachineRepository.save(machine);
-                        }))
-                .map(this::mapToResponse);
+                .flatMap(machine -> cimRepository.findById(machine.getIdCim())
+                        .flatMap(cim -> verifyProjectOwnership(externalId, cim.getIdProject())
+                                .flatMap(projId -> {
+                                    machine.setName(request.getName());
+                                    machine.setDescription(request.getDescription());
+                                    if (request.getMachine() != null && !request.getMachine().isBlank()) {
+                                        log.debug("Actualizando estructura JSON para máquina {}", machineId);
+                                        machine.setMachine(request.getMachine());
+                                    }
+                                    return cimMachineRepository.save(machine)
+                                            .map(saved -> mapToResponse(saved, projId));
+                                })))
+                .map(response -> response); // Tipado reactivo
     }
 
     /**
@@ -92,8 +98,9 @@ public class CimMachineService {
         log.info("Listando máquinas del proyecto {} para usuario {}", projectId, externalId);
         
         return verifyProjectOwnership(externalId, projectId)
-                .flatMapMany(projId -> cimMachineRepository.findByIdProyect(projectId))
-                .map(this::mapToResponse);
+                .flatMapMany(projId -> cimRepository.findByIdProject(projectId)
+                        .flatMapMany(cim -> cimMachineRepository.findByIdCim(cim.getId())
+                                .map(machine -> mapToResponse(machine, projectId))));
     }
 
     /**
@@ -108,11 +115,9 @@ public class CimMachineService {
 
         return cimMachineRepository.findById(machineId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Máquina no encontrada")))
-                .flatMap(machine -> {
-                    Long idProyect = machine.getIdProyect();
-                    return verifyProjectOwnership(externalId, idProyect)
-                            .flatMap(projId -> cimMachineRepository.delete(machine));
-                });
+                .flatMap(machine -> cimRepository.findById(machine.getIdCim())
+                        .flatMap(cim -> verifyProjectOwnership(externalId, cim.getIdProject())
+                                .flatMap(projId -> cimMachineRepository.delete(machine))));
     }
 
     /**
@@ -140,10 +145,11 @@ public class CimMachineService {
     /**
      * Mapea la entidad a DTO de respuesta.
      */
-    private CimMachineResponse mapToResponse(CimMachine machine) {
+    private CimMachineResponse mapToResponse(CimMachine machine, Long projectId) {
         return CimMachineResponse.builder()
                 .id(machine.getId())
-                .idProyect(machine.getIdProyect())
+                .idProyect(projectId)
+                .idCim(machine.getIdCim())
                 .refMachine(machine.getRefMachine())
                 .name(machine.getName())
                 .description(machine.getDescription())

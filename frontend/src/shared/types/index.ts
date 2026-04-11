@@ -5,6 +5,7 @@ export interface Project {
   id: number;
   name: string;
   description: string;
+  idCim: number;
   createdAt: string;
 }
 
@@ -34,10 +35,20 @@ export interface ApiResult<T = any> {
 export interface CimMachine {
   id: number;
   idProyect: number;
+  idCim: number;
   refMachine: string;
   name: string;
   description: string;
   machine: string; // JSON String
+}
+
+/**
+ * Interfaz que representa la entidad central de análisis de un proyecto.
+ */
+export interface Cim {
+  id: number;
+  description: string;
+  idProject: number;
 }
 
 /**

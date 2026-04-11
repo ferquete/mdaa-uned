@@ -12,9 +12,9 @@ import reactor.core.publisher.Flux;
 public interface CimMachineRepository extends ReactiveCrudRepository<CimMachine, Long> {
 
     /**
-     * Busca todas las máquinas asociadas a un proyecto.
-     * @param idProyect ID del proyecto padre
-     * @return Flux de máquinas encontradas
+     * Busca las máquinas asociadas a un registro CIM.
+     * @param idCim ID del CIM
+     * @return Flux de máquinas
      */
-    Flux<CimMachine> findByIdProyect(Long idProyect);
+    Flux<CimMachine> findByIdCim(Long idCim);
 }

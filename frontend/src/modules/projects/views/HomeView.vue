@@ -160,12 +160,11 @@ const openProject = (id: number) => {
     </div>
 
     <!-- Modal de Confirmación -->
-    <DeleteConfirmModal 
+    <GenericConfirmDeleteModal 
       :show="showDeleteConfirm"
-      :project-name="projectToDelete?.name"
-      :is-deleting="isDeleting"
+      :item-name="projectToDelete?.name"
+      @close="cancelDelete"
       @confirm="confirmDelete"
-      @cancel="cancelDelete"
     />
   </div>
 </template>

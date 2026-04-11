@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { useAnalysisStore } from '../stores/analysisStore'
+import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
-import { validateCimDocument } from '../utils/analysis-validation'
+import { validateCimDocument } from '../utils/analysisMachinesValidation'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import type { CimMachine } from '@/shared/types'
 
 const props = defineProps<{
-  machine: CimMachine
+  machine: CimMachine | null
 }>()
 
-const store = useAnalysisStore()
+const store = useAnalysisMachinesStore()
 const localJson = ref('')
 const isSyntaxValid = ref(true)
 const businessErrors = ref<any[]>([])
 const isSaving = ref(false)
 const saveMessage = ref('')
+
+const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
 interface DisplayError {
   message: string
@@ -41,8 +44,11 @@ const validateInternal = (val: string) => {
   }
 }
 
-watch(() => props.machine.machine, (newVal) => {
-  if (newVal === localJson.value) return
+watch(() => props.machine?.machine, (newVal) => {
+  if (!newVal || newVal === localJson.value) {
+    if (!newVal) localJson.value = ''
+    return
+  }
   
   try {
     const parsed = JSON.parse(newVal)
@@ -53,8 +59,33 @@ watch(() => props.machine.machine, (newVal) => {
   validateInternal(localJson.value)
 }, { immediate: true })
 
+// Notificar cambios sin guardar
+watch([localJson, isValid], () => {
+  if (!props.machine || isSaving.value) return
+  
+  let isDirty = false
+  try {
+    // Comprobamos si el JSON parseado es realmente diferente
+    const originalNormalized = JSON.stringify(JSON.parse(props.machine.machine))
+    const currentNormalized = JSON.stringify(JSON.parse(localJson.value))
+    isDirty = originalNormalized !== currentNormalized
+  } catch (e) {
+    // Si falla el parseo, comparamos como string
+    isDirty = localJson.value !== props.machine.machine
+  }
+  
+  if (isDirty) {
+    setUnsavedState(true, isValid.value, async () => {
+      await handleSave()
+      return true
+    })
+  } else {
+    clearUnsavedState()
+  }
+})
+
 const handleSave = async () => {
-  if (!isValid.value) return
+  if (!isValid.value || !props.machine) return
   
   isSaving.value = true
   const result = await store.updateMachineRawJson(props.machine.id, localJson.value)
@@ -62,6 +93,7 @@ const handleSave = async () => {
   
   if (result.success) {
     saveMessage.value = 'Guardado con éxito'
+    clearUnsavedState()
     setTimeout(() => saveMessage.value = '', 3000)
   } else {
     saveMessage.value = 'Error: ' + result.message

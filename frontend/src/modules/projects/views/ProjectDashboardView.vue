@@ -2,13 +2,13 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
-import ProjectTreeView from '@/modules/projects/components/ProjectTreeView.vue'
-import { useAnalysisStore } from '@/modules/analysis/stores/analysisStore'
-import AnalysisDashboard from '@/modules/analysis/views/AnalysisDashboard.vue'
+import ProjectTreeView from '../components/ProjectTreeView.vue'
+import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import AnalysisMachinesDashboard from '@/modules/analysis/views/AnalysisMachinesDashboard.vue'
 import UnsavedChangesModal from '@/shared/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
-const analysisStore = useAnalysisStore()
+const analysisStore = useAnalysisMachinesStore()
 const route = useRoute()
 const { runWithGuard, hasUnsavedChanges } = useUnsavedChanges()
 
@@ -74,7 +74,7 @@ onMounted(async () => {
         <Panel :min-size="40">
           <div class="h-full bg-geist-bg">
             <template v-if="activeModule === 'analysis'">
-              <AnalysisDashboard @edit-machine="handleEditMachine" />
+              <AnalysisMachinesDashboard @edit-machine="handleEditMachine" />
             </template>
             
             <div v-else-if="activeModule === 'design' || activeModule === 'implementation'" class="w-full h-full flex items-center justify-center">

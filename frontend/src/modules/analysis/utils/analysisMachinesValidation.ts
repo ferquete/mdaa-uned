@@ -1,8 +1,7 @@
-import type { CimDocument, CimGenerator, CimModificator } from '@/shared/types'
-
 export const ANALYSIS_RULES = {
   name: { min: 1, max: 20 },
   description: { min: 10, max: 300 },
+  cim_description: { min: 10, max: 600 },
   inputs: { min: 10, max: 300 },
   outputs: { min: 10, max: 300 },
   params: { min: 10, max: 300 }
@@ -45,7 +44,7 @@ export function validateCimDocument(doc: any): ValidationError[] {
       else ids.add(g.id)
 
       checkStrings(g, g.id || 'unknown')
-      
+
       // Validar relaciones
       if (g.rels && Array.isArray(g.rels)) {
         g.rels.forEach((r: any) => {

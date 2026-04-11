@@ -5,19 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 /**
- * DTO para representar un proyecto en las respuestas.
+ * Respuesta con los detalles de un CIM.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectResponse {
+public class CimResponse {
     private Long id;
-    private String name;
     private String description;
-    private Long idCim;
-    private LocalDateTime createdAt;
+    private Long idProject;
 }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useAnalysisStore } from '../stores/analysisStore'
+import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import RelationSelector from '@/shared/components/forms/RelationSelector.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
-import { ANALYSIS_RULES } from '../utils/analysis-validation'
+import { ANALYSIS_RULES } from '../utils/analysisMachinesValidation'
 import type { CimGenerator, CimModificator, CimDocument } from '@/shared/types'
 
-const store = useAnalysisStore()
+const store = useAnalysisMachinesStore()
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
 const localData = ref<CimGenerator | CimModificator>({ 

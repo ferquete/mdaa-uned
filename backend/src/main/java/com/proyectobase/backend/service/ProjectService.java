@@ -1,6 +1,8 @@
 package com.proyectobase.backend.service;
 
+import com.proyectobase.backend.domain.Cim;
 import com.proyectobase.backend.domain.Project;
+import com.proyectobase.backend.repository.CimRepository;
 import com.proyectobase.backend.repository.ProjectRepository;
 import com.proyectobase.backend.repository.UserRepository;
 import com.proyectobase.backend.web.dto.CreateProjectRequest;
@@ -23,6 +25,7 @@ import reactor.core.publisher.Mono;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final CimRepository cimRepository;
     private final UserRepository userRepository;
 
     private static final int MAX_PROJECTS_PER_USER = 10;
@@ -38,7 +41,8 @@ public class ProjectService {
         
         return userRepository.findByExternalId(externalId)
                 .flatMapMany(user -> projectRepository.findByUserIdOrderByCreatedAtDesc(user.getId()))
-                .map(this::mapToResponse);
+                .flatMap(project -> cimRepository.findByIdProject(project.getId())
+                        .map(cim -> mapToResponse(project, cim.getId())));
     }
 
     /**
@@ -72,11 +76,18 @@ public class ProjectService {
                                     
                             log.debug("Intentando guardar proyecto: {}", project);
                             return projectRepository.save(project)
-                                    .map(savedProject -> savedProject) // Ayuda al tipado reactivo si es necesario
-                                    .doOnError(e -> log.error("ERROR CRÍTICO AL GUARDAR PROYECTO: {}", e.getMessage(), e));
+                                    .flatMap(savedProject -> {
+                                        log.info("Proyecto {} creado. Procediendo a crear entrada CIM vinculada.", savedProject.getId());
+                                        Cim cim = Cim.builder()
+                                                .idProject(savedProject.getId())
+                                                .description(request.getDescription() != null ? request.getDescription() : "")
+                                                .build();
+                                        return cimRepository.save(cim)
+                                                .map(savedCim -> mapToResponse(savedProject, savedCim.getId()));
+                                    })
+                                    .doOnError(e -> log.error("ERROR CRÍTICO AL GUARDAR PROYECTO O CIM: {}", e.getMessage(), e));
                         })
-                )
-                .map(this::mapToResponse);
+                );
     }
 
     /**
@@ -98,7 +109,8 @@ public class ProjectService {
                             if (!java.util.Objects.equals(project.getUserId(), user.getId())) {
                                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este proyecto"));
                             }
-                            return Mono.just(mapToResponse(project));
+                            return cimRepository.findByIdProject(projectId)
+                                    .map(cim -> mapToResponse(project, cim.getId()));
                         })
                 );
     }
@@ -130,7 +142,8 @@ public class ProjectService {
                             project.setDescription(request.getDescription());
                             
                             return projectRepository.save(project)
-                                    .map(this::mapToResponse);
+                                    .flatMap(savedProject -> cimRepository.findByIdProject(projectId)
+                                            .map(cim -> mapToResponse(savedProject, cim.getId())));
                         })
                 );
     }
@@ -167,13 +180,15 @@ public class ProjectService {
     /**
      * Mapea una entidad Project a un DTO ProjectResponse.
      * @param project Entidad de origen
+     * @param idCim ID del CIM vinculado
      * @return DTO de respuesta
      */
-    private ProjectResponse mapToResponse(Project project) {
+    private ProjectResponse mapToResponse(Project project, Long idCim) {
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
+                .idCim(idCim)
                 .createdAt(project.getCreatedAt())
                 .build();
     }

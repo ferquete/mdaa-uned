@@ -9,18 +9,14 @@
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1",
       "name": "Main Oscillator",
       "description": "Primary high-fidelity oscillator for lead sounds and basslines.",
-      "inputs": "None - Internal Waveform Generator",
-      "outputs": "Clean Waveform Output (Sine, Saw, Square)",
       "params": "Frequency, Waveform, Pulse Width, Fine-tune",
-      "refs": [
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Route to main filter for spectral shaping" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Modulate amplitude via ADSR envelope" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Add spatial dimension via stereo delay" }
-      ],
-      "rels": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Combined output with noise generator" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Sync signal for drum pattern timing" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Final dry/wet mix in the hall reverb" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a1", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Route to main filter for spectral shaping" },
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a2", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Modulate amplitude via ADSR envelope" },
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a3", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Add spatial dimension via stereo delay" },
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a4", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Combined output with noise generator" },
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a5", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Sync signal for drum pattern timing" },
+        { "$type": "SendTo", "id": "a1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0a6", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Final dry/wet mix in the hall reverb" }
       ]
     },
     {
@@ -28,18 +24,14 @@
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2",
       "name": "White Noise Gen",
       "description": "Generates wide-band white noise for percussive textures and risers.",
-      "inputs": "External Trigger for sync pulses",
-      "outputs": "Broad-spectrum White Noise Channel",
       "params": "Density, Color, Stereo Spread, Gain",
-      "refs": [
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Filter high frequencies for wind effects" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Create ambient noise floors" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Glue noise with main output" }
-      ],
-      "rels": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "FM modulation carrier source" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Gated noise bursts using envelope" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Ping-pong delay for texture" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Filter high frequencies for wind effects" },
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Create ambient noise floors" },
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Glue noise with main output" },
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "FM modulation carrier source" },
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Gated noise bursts using envelope" },
+        { "$type": "SendTo", "id": "b1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b6", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Ping-pong delay for texture" }
       ]
     },
     {
@@ -47,18 +39,14 @@
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3",
       "name": "Drum Sampler",
       "description": "Multi-sample drum engine for realistic acoustic and electronic percussion.",
-      "inputs": "MIDI Input / Sample Loading trigger",
-      "outputs": "Individual Out / Stereo Sum Output",
       "params": "Pitch, Decay, Sample Select, Velocity",
-      "refs": [
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Punchy drum compression settings" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Dynamic filter for drum sweeps" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Custom decay curves for percussive hits" }
-      ],
-      "rels": [
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Rhythmic delay reflections" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Snare and kick spatialization" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Sub-oscillator layering for kicks" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c1", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Punchy drum compression settings" },
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c2", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Dynamic filter for drum sweeps" },
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c3", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Custom decay curves for percussive hits" },
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c4", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Rhythmic delay reflections" },
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c5", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Snare and kick spatialization" },
+        { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c6", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Sub-oscillator layering for kicks" }
       ]
     }
   ],
@@ -68,13 +56,11 @@
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1",
       "name": "Low Pass Filter",
       "description": "Resonant 24dB/octave Ladder Filter for subtractive synthesis.",
-      "inputs": "Audio Signal Input Bus",
-      "outputs": "Filtered Audio Stream",
       "params": "Cutoff, Resonance, Drive, Slope",
-      "refs": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Source oscillator for filtering" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Filter envelope modulation source" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Post-filter reverb processing" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "d1b1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0d1", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Source oscillator for filtering" },
+        { "$type": "SendTo", "id": "d1b1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0d2", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Filter envelope modulation source" },
+        { "$type": "SendTo", "id": "d1b1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0d3", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4", "description": "Post-filter reverb processing" }
       ]
     },
     {
@@ -82,13 +68,11 @@
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2",
       "name": "ADSR Envelope",
       "description": "Standard 4-stage envelope generator for modulation control.",
-      "inputs": "Gate / Trigger Pulse Signal",
-      "outputs": "Control Voltage Output Stream",
       "params": "Attack, Decay, Sustain, Release",
-      "refs": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Amplify control for main oscillator" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Modulate cutoff frequency dynamically" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Volume shaping for drum samples" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "e1e1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0e1", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Amplify control for main oscillator" },
+        { "$type": "SendTo", "id": "e1e1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0e2", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Modulate cutoff frequency dynamically" },
+        { "$type": "SendTo", "id": "e1e1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0e3", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Volume shaping for drum samples" }
       ]
     },
     {
@@ -96,13 +80,11 @@
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3",
       "name": "Stereo Delay",
       "description": "High-quality digital delay with feedback and modulation.",
-      "inputs": "Stereo Left/Right Audio Input",
-      "outputs": "Delayed Stereo Signal Stack",
       "params": "Time, Feedback, Mix, Modulation Depth",
-      "refs": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Echoes for lead synth lines" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Rhythmic ping-pong for percussion" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Compression on the delay tail" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "f1f1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Echoes for lead synth lines" },
+        { "$type": "SendTo", "id": "f1f1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Rhythmic ping-pong for percussion" },
+        { "$type": "SendTo", "id": "f1f1b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f3", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5", "description": "Compression on the delay tail" }
       ]
     },
     {
@@ -110,13 +92,11 @@
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4",
       "name": "Hall Reverb",
       "description": "Lush algorithmic reverb simulating large concert spaces.",
-      "inputs": "Mono or Stereo Audio Input",
-      "outputs": "Space-enhanced Signal Mix",
       "params": "Size, Decay Time, Pre-delay, Damping",
-      "refs": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Atmospheric pads spatialization" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Diffused noise floor creation" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Smoothing out filter resonances" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "0101b0b0-b0b0-b0b0-b0b0-b0b0b0b0b001", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Atmospheric pads spatialization" },
+        { "$type": "SendTo", "id": "0101b0b0-b0b0-b0b0-b0b0-b0b0b0b0b002", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2", "description": "Diffused noise floor creation" },
+        { "$type": "SendTo", "id": "0101b0b0-b0b0-b0b0-b0b0-b0b0b0b0b003", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Smoothing out filter resonances" }
       ]
     },
     {
@@ -124,13 +104,11 @@
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5",
       "name": "Master Compressor",
       "description": "Dynamics processor for glue and peak control in the final mix.",
-      "inputs": "Main Stereo Mixing Bus",
-      "outputs": "Compressed and Levelled Audio",
       "params": "Threshold, Ratio, Attack, Release, Gain",
-      "refs": [
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Tightening the percussive peaks" },
-        { "$type": "Ref", "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Ensuring consistent synth levels" },
-        { "$type": "Ref", "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Level control for heavy feedback" }
+      "sendTo": [
+        { "$type": "SendTo", "id": "1111b0b0-b0b0-b0b0-b0b0-b0b0b0b0b011", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Tightening the percussive peaks" },
+        { "$type": "SendTo", "id": "1111b0b0-b0b0-b0b0-b0b0-b0b0b0b0b012", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Ensuring consistent synth levels" },
+        { "$type": "SendTo", "id": "1111b0b0-b0b0-b0b0-b0b0-b0b0b0b0b013", "idRef": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3", "description": "Level control for heavy feedback" }
       ]
     }
   ]

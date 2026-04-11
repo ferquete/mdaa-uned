@@ -46,11 +46,17 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
         return { $type: 'Document', id: '', name: '', description: '', generators: [], modificators: [] };
       }
       const parsed = JSON.parse(machineStr);
+      
+      const fixComponent = (c: any) => ({
+        ...c,
+        sendTo: c.sendTo || []
+      });
+
       return {
         ...parsed,
         $type: parsed.$type || 'Document',
-        generators: parsed.generators || [],
-        modificators: parsed.modificators || []
+        generators: (parsed.generators || []).map(fixComponent),
+        modificators: (parsed.modificators || []).map(fixComponent)
       } as CimDocument;
     } catch (err) {
       console.error('Error parseando datos de máquina:', err);
@@ -241,11 +247,8 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
         id: newId,
         name: '',
         description: '',
-        inputs: '',
-        outputs: '',
         params: '',
-        refs: [],
-        ...(type === 'g' ? { rels: [] } : {})
+        sendTo: []
       };
     }
 
@@ -282,16 +285,22 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     const doc = parsedDocs.value[machineId];
     if (!doc) return { success: false, message: 'Documento no encontrado' };
 
+    const sanitizedData = { ...data };
+    delete sanitizedData.inputs;
+    delete sanitizedData.outputs;
+    delete sanitizedData.refs;
+    delete sanitizedData.rels;
+
     if (isNew) {
-      if (type === 'g') doc.generators.push({ ...data, $type: 'AudioGenerator' });
-      else doc.modificators.push({ ...data, $type: 'Modificator' });
+      if (type === 'g') doc.generators.push({ ...sanitizedData, $type: 'AudioGenerator' });
+      else doc.modificators.push({ ...sanitizedData, $type: 'Modificator' });
     } else {
       if (type === 'g') {
         const idx = doc.generators.findIndex(g => g.id === subNodeId);
-        if (idx !== -1) doc.generators[idx] = { ...doc.generators[idx], ...data };
+        if (idx !== -1) doc.generators[idx] = { ...doc.generators[idx], ...sanitizedData };
       } else {
         const idx = doc.modificators.findIndex(m => m.id === subNodeId);
-        if (idx !== -1) doc.modificators[idx] = { ...doc.modificators[idx], ...data };
+        if (idx !== -1) doc.modificators[idx] = { ...doc.modificators[idx], ...sanitizedData };
       }
     }
 
@@ -322,9 +331,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
 
     const references: string[] = [];
     const checkRef = (node: any, targetId: string) => {
-      const hasRef = node.refs?.some((r: any) => (typeof r === 'string' ? r === targetId : r.id === targetId));
-      const hasRel = node.rels?.some((r: any) => (typeof r === 'string' ? r === targetId : r.id === targetId));
-      return hasRef || hasRel;
+      return node.sendTo?.some((s: any) => s.idRef === targetId);
     };
 
     doc.generators.forEach(g => {
@@ -357,15 +364,14 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     }
 
     // Limpieza en cascada de referencias
-    const filterRefs = (arr: any[]) => arr?.filter((r: any) => (typeof r === 'string' ? r !== subId : r.id !== subId)) || [];
+    const filterSendTo = (arr: any[]) => arr?.filter((s: any) => s.idRef !== subId) || [];
     
     doc.generators.forEach(g => {
-      if (g.refs) g.refs = filterRefs(g.refs);
-      if (g.rels) g.rels = filterRefs(g.rels);
+      if (g.sendTo) g.sendTo = filterSendTo(g.sendTo);
     });
     
     doc.modificators.forEach(m => {
-      if (m.refs) m.refs = filterRefs(m.refs);
+      if (m.sendTo) m.sendTo = filterSendTo(m.sendTo);
     });
 
     try {

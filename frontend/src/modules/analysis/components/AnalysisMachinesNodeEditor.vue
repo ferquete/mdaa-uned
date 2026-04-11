@@ -13,11 +13,8 @@ const localData = ref<CimGenerator | CimModificator>({
   id: '', 
   name: '', 
   description: '', 
-  inputs: '', 
-  outputs: '', 
   params: '',
-  refs: [],
-  rels: [] 
+  sendTo: [] 
 } as any)
 const isSaving = ref(false)
 const saveMessage = ref('')
@@ -34,22 +31,15 @@ const validationErrors = computed(() => {
 
   validate('name', localData.value.name)
   validate('description', localData.value.description)
-  validate('inputs', localData.value.inputs)
-  validate('outputs', localData.value.outputs)
   validate('params', localData.value.params)
 
-  // Validaciones de relaciones
-  const validateRel = (arr: any[], prefix: string) => {
-    arr?.forEach(r => {
-      const v = r.description || ''
-      if (v.length < RULES.description.min || v.length > RULES.description.max) {
-        errs[`${prefix}_${r.id}`] = `Requerido (10-300)`
-      }
-    })
-  }
-
-  if (isGenerator.value) validateRel((localData.value as any).rels || [], 'rel')
-  validateRel(localData.value.refs || [], 'ref')
+  // Validaciones de relaciones sendTo
+  localData.value.sendTo?.forEach(s => {
+    const v = s.description || ''
+    if (v.length < 10 || v.length > 300) {
+      errs[`sendTo_${s.idRef}`] = `Requerido (10-300)`
+    }
+  })
 
   return errs
 })
@@ -76,12 +66,19 @@ watch(() => store.selectedSubNode, (newNode) => {
   if (newNode && !isSaving.value) {
     isInitializing = true
     const rawData = JSON.parse(JSON.stringify(newNode))
-    const mapRel = (r: any) => (typeof r === 'object' ? { id: r.id?.ref || r.id || '', description: r.description || '' } : { id: r || '', description: '' })
-    if (rawData.refs) rawData.refs = rawData.refs.map(mapRel)
-    if (rawData.rels) rawData.rels = rawData.rels.map(mapRel)
+    
+    // Normalizar sendTo
+    if (rawData.sendTo) {
+      rawData.sendTo = rawData.sendTo.map((s: any) => ({
+        id: s.id || crypto.randomUUID(),
+        idRef: s.idRef || '',
+        description: s.description || ''
+      }))
+    } else {
+      rawData.sendTo = []
+    }
+
     localData.value = rawData as any
-    if (isGenerator.value && !(localData.value as any).rels) (localData.value as any).rels = []
-    if (!localData.value.refs) localData.value.refs = []
     clearUnsavedState()
     setTimeout(() => { isInitializing = false }, 50)
   }
@@ -118,11 +115,18 @@ watch([localData, isFormValid], () => {
   setUnsavedState(true, isFormValid.value, handleSave)
 }, { deep: true })
 
-const toggleRel = (array: any[] | undefined, id: string) => {
-  if (!array) return
-  const idx = array.findIndex(a => a.id === id)
-  if (idx === -1) array.push({ id, description: '' })
-  else array.splice(idx, 1)
+const toggleSendTo = (idRef: string) => {
+  if (!localData.value.sendTo) localData.value.sendTo = []
+  const idx = localData.value.sendTo.findIndex(s => s.idRef === idRef)
+  if (idx === -1) {
+    localData.value.sendTo.push({ 
+      id: crypto.randomUUID(), 
+      idRef, 
+      description: '' 
+    })
+  } else {
+    localData.value.sendTo.splice(idx, 1)
+  }
 }
 </script>
 
@@ -158,7 +162,7 @@ const toggleRel = (array: any[] | undefined, id: string) => {
             <div class="h-px flex-1 bg-geist-border opacity-50"></div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-2" v-for="field in ['name', 'inputs', 'outputs' , 'params']" :key="field">
+            <div class="space-y-2" v-for="field in ['name', 'params']" :key="field">
               <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
                 {{ field.charAt(0).toUpperCase() + field.slice(1) }}
                 <span v-if="validationErrors[field]" class="text-geist-error normal-case">{{ validationErrors[field] }}</span>
@@ -175,30 +179,17 @@ const toggleRel = (array: any[] | undefined, id: string) => {
           </div>
         </section>
 
-        <!-- Use Generic RelationSelector -->
-        <RelationSelector v-if="isGenerator" 
-          title="Relaciones (rel)" 
-          subtitle="Generadores vinculados dinámicamente"
-          :options="options.generators.filter(g => g.id !== localData.id)"
-          :selected="(localData as any).rels"
-          color-class="text-node-generator"
-          bg-class="bg-node-generator/10"
-          ring-class="ring-node-generator/30"
-          :validation-error="(id) => validationErrors[`rel_${id}`]"
-          @toggle="(id) => toggleRel((localData as any).rels, id)"
-          @update-description="(id, val) => { const r = (localData as any).rels?.find((r:any) => r.id === id); if(r) r.description = val }"
-        />
-
+        <!-- Use Unified RelationSelector for sendTo -->
         <RelationSelector 
-          title="Referencias (ref)" 
-          subtitle="Dependencias estáticas de otros componentes"
-          :options="[...options.generators.map(g => ({...g, name: `[GEN] ${g.name}`})), ...options.modificators.map(m => ({...m, name: `[MOD] ${m.name}`}))]"
-          :selected="localData.refs!"
+          title="Modifica los siguientes elementos" 
+          subtitle="Componentes vinculados a través de sendTo"
+          :options="[...options.generators.map(g => ({...g, name: `[GEN] ${g.name}`})), ...options.modificators.map(m => ({...m, name: `[MOD] ${m.name}`}))].filter(o => o.id !== localData.id)"
+          :selected="localData.sendTo?.map(s => ({ id: s.idRef, description: s.description })) || []"
           color-class="text-geist-fg"
           bg-class="bg-geist-accents-2"
-          :validation-error="(id) => validationErrors[`ref_${id}`]"
-          @toggle="(id) => toggleRel(localData.refs, id)"
-          @update-description="(id, val) => { const r = localData.refs?.find(r => r.id === id); if(r) r.description = val }"
+          :validation-error="(idRef) => validationErrors[`sendTo_${idRef}`]"
+          @toggle="(idRef) => toggleSendTo(idRef)"
+          @update-description="(idRef, val) => { const s = localData.sendTo?.find(s => s.idRef === idRef); if(s) s.description = val }"
         />
       </div>
     </div>

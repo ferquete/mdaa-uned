@@ -1,8 +1,6 @@
 export const ANALYSIS_RULES = {
   name: { min: 1, max: 20 },
-  description: { min: 10, max: 300 },
-  inputs: { min: 10, max: 300 },
-  outputs: { min: 10, max: 300 },
+  description: { min: 10, max: 6000 },
   params: { min: 10, max: 300 },
   id: { min: 36, max: 36 }
 }
@@ -79,41 +77,41 @@ export function validateCimDocument(doc: any, existingMachineIds: Record<number,
   }
 
   // 2. Validación estructural y referencial
+  const validateSendTo = (node: any) => {
+    if (node.sendTo && Array.isArray(node.sendTo)) {
+      const sendToIds = new Set<string>();
+      node.sendTo.forEach((s: any) => {
+        // Validar ID único de la entrada sendTo dentro del array
+        if (!s.id || s.id.length !== 36) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: 'Entrada sendTo con ID inválido o ausente (36 caracteres requeridos)' })
+        } else if (sendToIds.has(s.id)) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: `ID de sendTo duplicado: ${s.id}` })
+        }
+        sendToIds.add(s.id);
+
+        // Validar idRef
+        if (!s.idRef) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: 'Referencia sendTo sin idRef' })
+        } else if (s.idRef === node.id) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: 'Un elemento no puede referenciarse a sí mismo en sendTo' })
+        } else if (!allDefinedIds.has(s.idRef)) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: `Referencia hacia ID inexistente: ${s.idRef}` })
+        }
+
+        const desc = s.description || ''
+        if (desc.length < 10 || desc.length > 300) {
+          errors.push({ nodeId: node.id, field: 'sendTo', message: `Referencia hacia ${s.idRef || '?'}: Descripción requerida (10-300)` })
+        }
+      })
+    }
+  }
+
   // Validar generadores
   if (Array.isArray(doc.generators)) {
     doc.generators.forEach((g: any) => {
       if (!g.id) errors.push({ field: 'id', message: 'Generador sin ID detectado' })
       checkStrings(g, g.id || 'unknown')
-
-      // Validar relaciones e integridad
-      if (g.rels && Array.isArray(g.rels)) {
-        g.rels.forEach((r: any) => {
-          if (!r.id) {
-            errors.push({ nodeId: g.id, field: 'rels', message: 'Relación sin ID de destino' })
-          } else if (!allDefinedIds.has(r.id)) {
-            errors.push({ nodeId: g.id, field: 'rels', message: `Relación hacia ID inexistente: ${r.id}` })
-          }
-          const desc = r.description || ''
-          if (desc.length < 10 || desc.length > 300) {
-            errors.push({ nodeId: g.id, field: 'rels', message: `Relación hacia ${r.id || '?'}: Descripción requerida (10-300)` })
-          }
-        })
-      }
-
-      // Validar referencias e integridad
-      if (g.refs && Array.isArray(g.refs)) {
-        g.refs.forEach((r: any) => {
-          if (!r.id) {
-            errors.push({ nodeId: g.id, field: 'refs', message: 'Referencia sin ID de destino' })
-          } else if (!allDefinedIds.has(r.id)) {
-            errors.push({ nodeId: g.id, field: 'refs', message: `Referencia hacia ID inexistente: ${r.id}` })
-          }
-          const desc = r.description || ''
-          if (desc.length < 10 || desc.length > 300) {
-            errors.push({ nodeId: g.id, field: 'refs', message: `Referencia hacia ${r.id || '?'}: Descripción requerida (10-300)` })
-          }
-        })
-      }
+      validateSendTo(g)
     })
   }
 
@@ -122,21 +120,7 @@ export function validateCimDocument(doc: any, existingMachineIds: Record<number,
     doc.modificators.forEach((m: any) => {
       if (!m.id) errors.push({ field: 'id', message: 'Modificador sin ID detectado' })
       checkStrings(m, m.id || 'unknown')
-
-      // Validar referencias e integridad
-      if (m.refs && Array.isArray(m.refs)) {
-        m.refs.forEach((r: any) => {
-          if (!r.id) {
-            errors.push({ nodeId: m.id, field: 'refs', message: 'Referencia sin ID de destino' })
-          } else if (!allDefinedIds.has(r.id)) {
-            errors.push({ nodeId: m.id, field: 'refs', message: `Referencia hacia ID inexistente: ${r.id}` })
-          }
-          const desc = r.description || ''
-          if (desc.length < 10 || desc.length > 300) {
-            errors.push({ nodeId: m.id, field: 'refs', message: `Referencia hacia ${r.id || '?'}: Descripción requerida (10-300)` })
-          }
-        })
-      }
+      validateSendTo(m)
     })
   }
 

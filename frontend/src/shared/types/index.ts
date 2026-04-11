@@ -52,24 +52,24 @@ export interface Cim {
  * Interfaces para el DSL CIM (basado en la gramática Langium)
  */
 
+export interface CimSendTo {
+  id: string;
+  idRef: string;
+  description: string;
+}
+
 export interface CimBaseComponent {
   id: string;
   name: string;
   description: string;
-  inputs?: string;
-  outputs?: string;
   params?: string;
   $type?: string;
+  sendTo: CimSendTo[];
 }
 
-export interface CimGenerator extends CimBaseComponent {
-  refs?: any[];
-  rels?: any[];
-}
+export interface CimGenerator extends CimBaseComponent {}
 
-export interface CimModificator extends CimBaseComponent {
-  refs?: any[];
-}
+export interface CimModificator extends CimBaseComponent {}
 
 export interface CimDocument {
   $type: 'Document';

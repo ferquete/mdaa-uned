@@ -12,15 +12,11 @@ interface Base {
     id: string
     name: string
     description: string
-    inputs: string
-    outputs: string
     params: string
-    refs: Ref[]
+    sendTo: SendTo[]
 }
 
-interface AudioGenerator extends Base {
-    rels: Ref[]
-}
+interface AudioGenerator extends Base {}
 
 interface Modificator extends Base {}
 
@@ -29,11 +25,8 @@ AudioGenerator returns AudioGenerator:
         'id' id=STRING
         'name' name=STRING
         'description' description=STRING
-        'inputs' inputs=STRING
-        'outputs' outputs=STRING
         'params' params=STRING
-        'ref' '[' (refs+=Ref (',' refs+=Ref)*)? ']'
-        'rel' '[' (rels+=Ref (',' rels+=Ref)*)? ']'
+        'sendTo' '[' (sendTo+=SendTo (',' sendTo+=SendTo)*)? ']'
     '}';
 
 Modificator returns Modificator:
@@ -41,19 +34,17 @@ Modificator returns Modificator:
         'id' id=STRING
         'name' name=STRING
         'description' description=STRING
-        'inputs' inputs=STRING
-        'outputs' outputs=STRING
         'params' params=STRING
-        'ref' '[' (refs+=Ref (',' refs+=Ref)*)? ']'
+        'sendTo' '[' (sendTo+=SendTo (',' sendTo+=SendTo)*)? ']'
     '}';
 
-Ref:
+SendTo:
     '{'
-        'id' id=[Base:STRING]
+        'id' id=STRING
+        'idRef' idRef=[Base:STRING]
         'description' description=STRING
     '}';
 
-terminal ID: /[_a-zA-Z][\w_]*/;
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 
 hidden terminal WS: /\s+/;

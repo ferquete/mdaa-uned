@@ -13,8 +13,8 @@ const legend = [
 ]
 
 const edgeLegend = [
-  { color: 'var(--color-node-rel)', label: 'rel', dashed: true },
-  { color: 'var(--color-node-ref)', label: 'ref', dashed: true }
+  { color: 'var(--color-node-generator)', label: 'Desde Generador', dashed: true },
+  { color: 'var(--color-node-modificator)', label: 'Desde Modificador', dashed: true }
 ]
 
 const graphData = computed(() => {
@@ -36,7 +36,7 @@ const graphData = computed(() => {
       const x = centerX + Math.cos(angle) * radius
       const y = centerY + Math.sin(angle) * radius
 
-      const isGenerator = (node as any).$type === 'CimGenerator' || generators.includes(node as any)
+      const isGenerator = (node as any).$type === 'AudioGenerator' || (node as any).$type === 'CimGenerator'
 
       nodes.push({
         id: node.id,
@@ -64,51 +64,26 @@ const graphData = computed(() => {
       })
     })
 
-    // Mapeo de aristas
-    generators.forEach(gen => {
-      if (gen.refs) gen.refs.forEach((ref: any) => {
-        const targetId = typeof ref === 'string' ? ref : ref?.id
+    // Mapeo de aristas sendTo (Unificado con colores dinámicos)
+    allNodes.forEach(sourceNode => {
+      const isGenerator = (sourceNode as any).$type === 'AudioGenerator' || (sourceNode as any).$type === 'CimGenerator'
+      const edgeColor = isGenerator ? 'var(--color-node-generator)' : 'var(--color-node-modificator)'
+      
+      const sendToList = (sourceNode as any).sendTo || [];
+      sendToList.forEach((s: any) => {
+        const targetId = s.idRef;
         if (targetId && allNodes.some(n => n.id === targetId)) {
           edges.push({
-            id: `e-${gen.id}-${targetId}-ref`,
-            source: gen.id,
+            id: `e-${sourceNode.id}-${targetId}-${s.id || s.idRef}`,
+            source: sourceNode.id,
             target: targetId,
             type: 'draggable',
-            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
+            style: { stroke: edgeColor, strokeWidth: 2, strokeDasharray: '5,5' },
             animated: true,
           })
         }
-      })
-      if (gen.rels) gen.rels.forEach((rel: any) => {
-        const targetId = typeof rel === 'string' ? rel : rel?.id
-        if (targetId && allNodes.some(n => n.id === targetId)) {
-          edges.push({
-            id: `e-${gen.id}-${targetId}-rel`,
-            source: gen.id,
-            target: targetId,
-            type: 'draggable',
-            style: { stroke: 'var(--color-node-rel)', strokeWidth: 2, strokeDasharray: '5,5' },
-            animated: true,
-          })
-        }
-      })
-    })
-
-    modificators.forEach(mod => {
-      if (mod.refs) mod.refs.forEach((ref: any) => {
-        const targetId = typeof ref === 'string' ? ref : ref?.id
-        if (targetId && allNodes.some(n => n.id === targetId)) {
-          edges.push({
-            id: `e-${mod.id}-${targetId}-ref`,
-            source: mod.id,
-            target: targetId,
-            type: 'draggable',
-            style: { stroke: 'var(--color-node-ref)', strokeWidth: 2, strokeDasharray: '5,5' },
-            animated: true,
-          })
-        }
-      })
-    })
+      });
+    });
 
     return { nodes, edges }
   } catch (e) {

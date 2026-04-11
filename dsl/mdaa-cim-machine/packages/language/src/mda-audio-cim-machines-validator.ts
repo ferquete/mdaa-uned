@@ -1,5 +1,5 @@
 import { type ValidationAcceptor, type ValidationChecks, AstUtils } from 'langium';
-import { type MdaAudioCimMachineAstType, type Document, isBase, isAudioGenerator, isRef, type Base } from './generated/ast.js';
+import { type MdaAudioCimMachineAstType, type Document, isBase, type Base, type SendTo } from './generated/ast.js';
 import type { MdaAudioCimMachineServices } from './mda-audio-cim-machines-module.js';
 
 /**
@@ -10,9 +10,9 @@ export function registerValidationChecks(services: MdaAudioCimMachineServices) {
     const validator = services.validation.MdaAudioCimMachineValidator;
     const checks: ValidationChecks<MdaAudioCimMachineAstType> = {
         Document: [validator.checkUniqueIds, validator.checkDocumentProperties],
-        AudioGenerator: [validator.checkBaseProperties, validator.checkRefProperties],
-        Modificator: [validator.checkBaseProperties, validator.checkRefProperties],
-        Ref: validator.checkRefDescription
+        AudioGenerator: [validator.checkBaseProperties, validator.checkSendToProperties],
+        Modificator: [validator.checkBaseProperties, validator.checkSendToProperties],
+        SendTo: [validator.checkSendToPropertiesSingle]
     };
     registry.register(checks, validator);
 }
@@ -44,13 +44,13 @@ export class MdaAudioCimMachineValidator {
     checkDocumentProperties(node: Document, accept: ValidationAcceptor): void {
         this.checkStringLength(node, 'id', node.id, 36, 36, accept);
         this.checkStringLength(node, 'name', node.name, 1, 20, accept);
-        this.checkStringLength(node, 'description', node.description, 10, 300, accept);
+        this.checkStringLength(node, 'description', node.description, 10, 6000, accept);
         if (!node.generators) accept('error', 'El documento debe contener una lista de generadores.', { node, property: 'generators' });
         if (!node.modificators) accept('error', 'El documento debe contener una lista de modificadores.', { node, property: 'modificators' });
     }
 
     /**
-     * Verifica las propiedades comunes de Base (id, name, description, inputs, outputs, params).
+     * Verifica las propiedades comunes de Base (id, name, description, params).
      */
     checkBaseProperties(node: Base, accept: ValidationAcceptor): void {
         // Validar id: 36 caracteres
@@ -59,44 +59,45 @@ export class MdaAudioCimMachineValidator {
         // Validar name: 1-20 caracteres
         this.checkStringLength(node, 'name', node.name, 1, 20, accept);
         
-        // Validar description: 10-300 caracteres
-        this.checkStringLength(node, 'description', node.description, 10, 300, accept);
-        
-        // Validar inputs: 10-300 caracteres
-        this.checkStringLength(node, 'inputs', node.inputs, 10, 300, accept);
-        
-        // Validar outputs: 10-300 caracteres
-        this.checkStringLength(node, 'outputs', node.outputs, 10, 300, accept);
+        // Validar description: 10-6000 caracteres
+        this.checkStringLength(node, 'description', node.description, 10, 6000, accept);
         
         // Validar params: 10-300 caracteres
         this.checkStringLength(node, 'params', node.params, 10, 300, accept);
     }
 
     /**
-     * Verifica que las referencias (rel y ref) tengan descriptions válidas.
+     * Verifica que el array sendTo sea válido.
      */
-    checkRefProperties(node: Base, accept: ValidationAcceptor): void {
-        if (node.refs) {
-            node.refs.forEach(ref => this.checkRefDescription(ref, accept));
-        }
-        if (isAudioGenerator(node) && node.rels) {
-            node.rels.forEach(rel => {
-                this.checkRefDescription(rel, accept);
-                // Validar que la referencia en rel sea de tipo AudioGenerator
-                if (rel.id && rel.id.ref && !isAudioGenerator(rel.id.ref)) {
-                    accept('error', 'Solo se permiten referencias a objetos de tipo AudioGenerator en el array rel.', { node: rel, property: 'id' });
+    checkSendToProperties(node: Base, accept: ValidationAcceptor): void {
+        if (node.sendTo) {
+            const sendToIds = new Set<string>();
+            node.sendTo.forEach(item => {
+                // Unicidad interna de IDs en sendTo
+                if (sendToIds.has(item.id)) {
+                    accept('error', `El ID '${item.id}' está duplicado en la lista sendTo.`, { node: item, property: 'id' });
+                } else {
+                    sendToIds.add(item.id);
+                }
+                
+                // No auto-referencia
+                const targetRefId = (item.idRef as any)?.$refText ?? (typeof item.idRef === 'string' ? item.idRef : undefined);
+                if (targetRefId === node.id) {
+                    accept('error', 'Un elemento no puede referenciarse a sí mismo en la lista sendTo.', { node: item, property: 'idRef' });
                 }
             });
         }
     }
 
     /**
-     * Verifica la longitud de la descripción de un Ref.
+     * Verifica las propiedades de un SendTo individual.
      */
-    checkRefDescription(ref: any, accept: ValidationAcceptor): void {
-        if (isRef(ref)) {
-            this.checkStringLength(ref, 'description', ref.description, 10, 300, accept);
-        }
+    checkSendToPropertiesSingle(item: SendTo, accept: ValidationAcceptor): void {
+        // Validar id: 36 caracteres
+        this.checkStringLength(item, 'id', item.id, 36, 36, accept);
+        
+        // Validar description: 10-300 caracteres
+        this.checkStringLength(item, 'description', item.description, 10, 300, accept);
     }
 
     /**

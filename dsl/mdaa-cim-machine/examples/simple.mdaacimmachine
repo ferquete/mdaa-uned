@@ -6,11 +6,8 @@ generators [
         id "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"
         name "Gen1"
         description "Oscilador de onda senoidal base con descripcion larga"
-        inputs "Sin entradas externas requeridas"
-        outputs "Salida Mono principal del sistema"
         params "Frecuencia de oscilacion base"
-        ref []
-        rel []
+        sendTo []
     }
 ]
 modificators []

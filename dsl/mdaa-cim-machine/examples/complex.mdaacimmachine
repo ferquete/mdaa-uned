@@ -6,13 +6,10 @@ generators [
         id "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c1"
         name "RackPrincipal"
         description "Generador de señal principal con modulación"
-        inputs "LFO1, ADRS1 modulation sources"
-        outputs "Bus Estéreo 1 de procesamiento"
         params "Frecuencia, Amplitud de señal"
-        ref [
-            { id "FiltroPasoBajo" description "Referencia a filtro paso bajo" }
+        sendTo [
+            { id "f1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1" idRef "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1" description "Referencia a filtro paso bajo" }
         ]
-        rel []
     }
 ]
 modificators [
@@ -20,29 +17,23 @@ modificators [
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1"
         name "FiltroPasoBajo"
         description "Filtro para suavizar armónicos de la señal"
-        inputs "Bus Estéreo 1 de entrada"
-        outputs "Bus Estéreo 1 de salida procesada"
         params "Cutoff, Resonancia del filtro"
-        ref [
-             { id "Resonancia" description "Referencia a resonancia interna" }
+        sendTo [
+             { id "f1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2" idRef "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2" description "Referencia a resonancia interna" }
         ]
     },
     Modificator {
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2"
         name "Resonancia"
         description "Control de resonancia interno del filtro"
-        inputs "Control de señal de entrada"
-        outputs "Control de señal de salida"
         params "Q Factor de calidad resonante"
-        ref []
+        sendTo []
     },
     Modificator {
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0r1"
         name "ReverbGlobal"
         description "Reverberación de sala para todo el generador"
-        inputs "Bus Estéreo 1 de entrada audio"
-        outputs "Salida Master final procesada"
         params "Size, Decay de la reverberacion"
-        ref []
+        sendTo []
     }
 ]

@@ -25,11 +25,14 @@ export function validateCimDocument(doc: any): ValidationError[] {
 
   const checkStrings = (node: any, nodeId: string) => {
     Object.entries(ANALYSIS_RULES).forEach(([key, rule]) => {
-      const val = node[key] || ''
-      if (val.length < rule.min) {
-        errors.push({ nodeId, field: key, message: `${key.toUpperCase()}: Mínimo ${rule.min} caracteres` })
-      } else if (val.length > rule.max) {
-        errors.push({ nodeId, field: key, message: `${key.toUpperCase()}: Máximo ${rule.max} caracteres` })
+      // Solo validamos si la propiedad existe en el nodo (ej: cim_description no existe en nodos de máquina)
+      if (key in node) {
+        const val = node[key] || ''
+        if (val.length < rule.min) {
+          errors.push({ nodeId, field: key, message: `${key.toUpperCase()}: Mínimo ${rule.min} caracteres` })
+        } else if (val.length > rule.max) {
+          errors.push({ nodeId, field: key, message: `${key.toUpperCase()}: Máximo ${rule.max} caracteres` })
+        }
       }
     })
   }
@@ -48,8 +51,25 @@ export function validateCimDocument(doc: any): ValidationError[] {
       // Validar relaciones
       if (g.rels && Array.isArray(g.rels)) {
         g.rels.forEach((r: any) => {
-          if (r.description && (r.description.length < 10 || r.description.length > 300)) {
-            errors.push({ nodeId: g.id, field: 'rels', message: `Relación hacia ${r.id}: Descripción inválida (10-300)` })
+          if (!r.id) {
+            errors.push({ nodeId: g.id, field: 'rels', message: 'Relación sin ID de destino' })
+          }
+          const desc = r.description || ''
+          if (desc.length < 10 || desc.length > 300) {
+            errors.push({ nodeId: g.id, field: 'rels', message: `Relación hacia ${r.id || '?'}: Descripción requerida (10-300)` })
+          }
+        })
+      }
+
+      // Validar referencias en generadores
+      if (g.refs && Array.isArray(g.refs)) {
+        g.refs.forEach((r: any) => {
+          if (!r.id) {
+            errors.push({ nodeId: g.id, field: 'refs', message: 'Referencia sin ID de destino' })
+          }
+          const desc = r.description || ''
+          if (desc.length < 10 || desc.length > 300) {
+            errors.push({ nodeId: g.id, field: 'refs', message: `Referencia hacia ${r.id || '?'}: Descripción requerida (10-300)` })
           }
         })
       }
@@ -64,6 +84,19 @@ export function validateCimDocument(doc: any): ValidationError[] {
       else ids.add(m.id)
 
       checkStrings(m, m.id || 'unknown')
+
+      // Validar referencias en modificadores
+      if (m.refs && Array.isArray(m.refs)) {
+        m.refs.forEach((r: any) => {
+          if (!r.id) {
+            errors.push({ nodeId: m.id, field: 'refs', message: 'Referencia sin ID de destino' })
+          }
+          const desc = r.description || ''
+          if (desc.length < 10 || desc.length > 300) {
+            errors.push({ nodeId: m.id, field: 'refs', message: `Referencia hacia ${r.id || '?'}: Descripción requerida (10-300)` })
+          }
+        })
+      }
     })
   }
 

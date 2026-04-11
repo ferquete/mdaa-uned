@@ -24,11 +24,7 @@ const emit = defineEmits<{
 
 const { isDark } = useTheme()
 
-const editorTheme = computed(() => isDark.value ? 'vs-dark' : 'light')
-
-const onEditorMount = (editor: any, monaco: any) => {
-  emit('editorDidMount', editor)
-}
+const editorTheme = computed(() => isDark.value ? 'dracula' : 'vs')
 
 const defaultOptions = computed(() => ({
   automaticLayout: true,
@@ -45,7 +41,37 @@ const defaultOptions = computed(() => ({
 }))
 
 const handleEditorWillMount = (monaco: any) => {
-  // Aquí se podrían registrar lenguajes personalizados o temas si fuera necesario
+  // Registrar tema Dracula
+  monaco.editor.defineTheme('dracula', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
+      { token: 'string', foreground: 'f1fa8c' },
+      { token: 'string.key', foreground: '50fa7b' },
+      { token: 'number', foreground: 'bd93f9' },
+      { token: 'keyword', foreground: 'ff79c6' },
+      { token: 'delimiter', foreground: 'f8f8f2' },
+      { token: 'attribute.name', foreground: '50fa7b' },
+      { token: 'attribute.value', foreground: 'f1fa8c' },
+    ],
+    colors: {
+      'editor.background': '#282a36',
+      'editor.foreground': '#f8f8f2',
+      'editor.lineHighlightBackground': '#44475a',
+      'editor.selectionBackground': '#44475a',
+      'editor.inactiveSelectionBackground': '#3d404f',
+      'editorCursor.foreground': '#f8f8f2',
+      'editorIndentGuide.background': '#44475a',
+      'editorIndentGuide.activeBackground': '#6272a4',
+      'editorLineNumber.foreground': '#6272a4',
+      'editorLineNumber.activeForeground': '#f8f8f2',
+    }
+  })
+}
+
+const onEditorMount = (editor: any) => {
+  emit('editorDidMount', editor)
 }
 
 const handleEditorDidMount = (editor: any) => {
@@ -102,8 +128,15 @@ defineExpose({ formatJson })
 .base-json-editor .monaco-editor {
   padding: 0 !important;
 }
-/* Asegurar que el fondo del editor coincida con el tema de la app si hay transparencia */
-.vs-dark .monaco-editor, .vs-dark .monaco-editor-background, .vs-dark .margin-view-overlays {
-  background-color: #1a1a1a !important;
+
+/* Limpieza de fondos para que brille el tema Dracula */
+.base-json-editor .monaco-editor, 
+.base-json-editor .monaco-editor-background, 
+.base-json-editor .margin-view-overlays {
+  background-color: transparent !important;
+}
+
+.base-json-editor .monaco-editor .margin {
+  background-color: transparent !important;
 }
 </style>

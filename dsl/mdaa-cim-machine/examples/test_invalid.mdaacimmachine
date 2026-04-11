@@ -1,0 +1,16 @@
+id "550e8400-e29b-41d4-a716-446655440005"
+name "InvalidTestFixed"
+description "A system that was once invalid but now has 36 char ids"
+generators [
+    AudioGenerator {
+        id "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0e1"
+        name "ValidGen"
+        description "This generator now has a 36 character ID"
+        inputs "Audio In source signal"
+        outputs "Audio Out processed signal"
+        params "Settings for main engine"
+        ref []
+        rel []
+    }
+]
+modificators []

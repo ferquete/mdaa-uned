@@ -1,14 +1,14 @@
 import { type ValidationAcceptor, type ValidationChecks, AstUtils } from 'langium';
-import { type MdaAudioCimAstType, type Document, isBase, isAudioGenerator, isRef, type Base } from './generated/ast.js';
-import type { MdaAudioCimServices } from './mda-audio-cim-module.js';
+import { type MdaAudioCimMachineAstType, type Document, isBase, isAudioGenerator, isRef, type Base } from './generated/ast.js';
+import type { MdaAudioCimMachineServices } from './mda-audio-cim-machines-module.js';
 
 /**
  * Registra los chequeos de validación personalizados.
  */
-export function registerValidationChecks(services: MdaAudioCimServices) {
+export function registerValidationChecks(services: MdaAudioCimMachineServices) {
     const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.MdaAudioCimValidator;
-    const checks: ValidationChecks<MdaAudioCimAstType> = {
+    const validator = services.validation.MdaAudioCimMachineValidator;
+    const checks: ValidationChecks<MdaAudioCimMachineAstType> = {
         Document: [validator.checkUniqueIds, validator.checkDocumentProperties],
         AudioGenerator: [validator.checkBaseProperties, validator.checkRefProperties],
         Modificator: [validator.checkBaseProperties, validator.checkRefProperties],
@@ -20,7 +20,7 @@ export function registerValidationChecks(services: MdaAudioCimServices) {
 /**
  * Implementación de validaciones personalizadas.
  */
-export class MdaAudioCimValidator {
+export class MdaAudioCimMachineValidator {
 
     /**
      * Verifica que todos los IDs sean únicos en todo el documento.

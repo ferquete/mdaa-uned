@@ -1,14 +1,14 @@
 import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
-import { MdaAudioCimGeneratedModule, MdaAudioCimGeneratedSharedModule } from './generated/module.js';
-import { MdaAudioCimValidator, registerValidationChecks } from './mda-audio-cim-validator.js';
+import { MdaAudioCimMachineGeneratedModule, MdaAudioCimMachineGeneratedSharedModule } from './generated/module.js';
+import { MdaAudioCimMachineValidator, registerValidationChecks } from './mda-audio-cim-machines-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-export type MdaAudioCimAddedServices = {
+export type MdaAudioCimMachineAddedServices = {
     validation: {
-        MdaAudioCimValidator: MdaAudioCimValidator
+        MdaAudioCimMachineValidator: MdaAudioCimMachineValidator
     }
 }
 
@@ -16,16 +16,16 @@ export type MdaAudioCimAddedServices = {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type MdaAudioCimServices = LangiumServices & MdaAudioCimAddedServices
+export type MdaAudioCimMachineServices = LangiumServices & MdaAudioCimMachineAddedServices
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const MdaAudioCimModule: Module<MdaAudioCimServices, PartialLangiumServices & MdaAudioCimAddedServices> = {
+export const MdaAudioCimMachineModule: Module<MdaAudioCimMachineServices, PartialLangiumServices & MdaAudioCimMachineAddedServices> = {
     validation: {
-        MdaAudioCimValidator: () => new MdaAudioCimValidator()
+        MdaAudioCimMachineValidator: () => new MdaAudioCimMachineValidator()
     }
 };
 
@@ -44,25 +44,25 @@ export const MdaAudioCimModule: Module<MdaAudioCimServices, PartialLangiumServic
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createMdaAudioCimServices(context: DefaultSharedModuleContext): {
+export function createMdaAudioCimMachineServices(context: DefaultSharedModuleContext): {
     shared: LangiumSharedServices,
-    MdaAudioCim: MdaAudioCimServices
+    MdaAudioCimMachine: MdaAudioCimMachineServices
 } {
     const shared = inject(
         createDefaultSharedModule(context),
-        MdaAudioCimGeneratedSharedModule
+        MdaAudioCimMachineGeneratedSharedModule
     );
-    const MdaAudioCim = inject(
+    const MdaAudioCimMachine = inject(
         createDefaultModule({ shared }),
-        MdaAudioCimGeneratedModule,
-        MdaAudioCimModule
+        MdaAudioCimMachineGeneratedModule,
+        MdaAudioCimMachineModule
     );
-    shared.ServiceRegistry.register(MdaAudioCim);
-    registerValidationChecks(MdaAudioCim);
+    shared.ServiceRegistry.register(MdaAudioCimMachine);
+    registerValidationChecks(MdaAudioCimMachine);
     if (!context.connection) {
         // We don't run inside a language server
         // Therefore, initialize the configuration provider instantly
         shared.workspace.ConfigurationProvider.initialized({});
     }
-    return { shared, MdaAudioCim };
+    return { shared, MdaAudioCimMachine };
 }

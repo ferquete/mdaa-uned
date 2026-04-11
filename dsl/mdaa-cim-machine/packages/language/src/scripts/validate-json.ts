@@ -1,10 +1,10 @@
-import { createMdaAudioCimServices } from '../mda-audio-cim-module.js';
+import { createMdaAudioCimMachineServices } from '../mda-audio-cim-machines-module.js';
 import { NodeFileSystem } from 'langium/node';
 import path from 'path';
 import fs from 'fs';
 import { URI } from 'vscode-uri';
 
-const services = createMdaAudioCimServices(NodeFileSystem).MdaAudioCim;
+const services = createMdaAudioCimMachineServices(NodeFileSystem).MdaAudioCimMachine;
 const jsonSerializer = services.serializer.JsonSerializer;
 const documentValidator = services.validation.DocumentValidator;
 
@@ -31,8 +31,8 @@ async function validateJson(filePath: string) {
         const astNode = jsonSerializer.deserialize(JSON.stringify(data));
         
         // 2. Crear un documento virtual con una extensión reconocida por Langium
-        // Usamos una extensión falsa para que la ServiceRegistry asocie el documento con MDAA-CIM
-        const dummyUri = URI.file(absolutePath + '.mdaacim');
+        // Usamos una extensión falsa para que la ServiceRegistry asocie el documento con MDAA-CIM-MACHINE
+        const dummyUri = URI.file(absolutePath + '.mdaacimmachine');
         const document = services.shared.workspace.LangiumDocuments.createDocument(dummyUri, jsonContent);
         
         // Inyectar el AST deserializado y marcar como parseado para saltar el parser de texto

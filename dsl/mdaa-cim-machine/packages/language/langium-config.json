@@ -1,0 +1,16 @@
+{
+    "projectName": "MdaAudioCimMachine",
+    "languages": [
+        {
+            "id": "mda-audio-cim-machine",
+            "grammar": "src/mda-audio-cim-machine.langium",
+            "fileExtensions": [
+                "mdaacimmachine"
+            ],
+            "textMate": {
+                "out": "syntaxes/mda-audio-cim-machine.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}

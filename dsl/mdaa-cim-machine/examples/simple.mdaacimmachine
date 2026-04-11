@@ -1,0 +1,16 @@
+id "550e8400-e29b-41d4-a716-446655440001"
+name "SimpleSystem"
+description "A simple system description with enough length"
+generators [
+    AudioGenerator {
+        id "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b0"
+        name "Gen1"
+        description "Oscilador de onda senoidal base con descripcion larga"
+        inputs "Sin entradas externas requeridas"
+        outputs "Salida Mono principal del sistema"
+        params "Frecuencia de oscilacion base"
+        ref []
+        rel []
+    }
+]
+modificators []

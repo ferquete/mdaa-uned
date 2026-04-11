@@ -1,4 +1,4 @@
-grammar MdaAudioCim
+grammar MdaAudioCimMachine
 
 entry Document:
     'id' id=STRING

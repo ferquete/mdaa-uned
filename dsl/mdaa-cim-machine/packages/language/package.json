@@ -1,5 +1,5 @@
 {
-    "name": "mda-audio-cim-language",
+    "name": "mda-audio-cim-machine-language",
     "description": "The language specific package",
     "version": "0.0.1",
     "type": "module",

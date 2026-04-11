@@ -10,23 +10,32 @@ interface Breadcrumb {
 interface Props {
   moduleName: string
   breadcrumbs: Breadcrumb[]
-  visualizerMode?: '2D' | '3D' | 'JSON'
+  visualizerMode?: '2D' | 'JSON'
   showExport?: boolean
   description?: string
 }
 
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'set-mode', mode: '2D' | '3D' | 'JSON'): void
+  (e: 'set-mode', mode: '2D' | 'JSON'): void
   (e: 'export'): void
   (e: 'edit-basic'): void
 }>()
 
+const { runWithGuard } = useUnsavedChanges()
 const showDescription = ref(false)
 
 const toggleDescription = () => {
   showDescription.value = !showDescription.value
+}
+
+const handleSetMode = (mode: '2D' | 'JSON') => {
+  runWithGuard(() => {
+    emit('set-mode', mode)
+  })
 }
 </script>
 
@@ -62,21 +71,15 @@ const toggleDescription = () => {
         <!-- Visualizer Switches -->
         <div v-if="visualizerMode" class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
           <button 
-            @click="emit('set-mode', '2D')"
+            @click="handleSetMode('2D')"
             class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
             :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
           >
             <i class="fa-solid fa-diagram-project"></i> 2D
           </button>
+
           <button 
-            @click="emit('set-mode', '3D')"
-            class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
-            :class="visualizerMode === '3D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
-          >
-            <i class="fa-solid fa-cube"></i> 3D
-          </button>
-          <button 
-            @click="emit('set-mode', 'JSON')"
+            @click="handleSetMode('JSON')"
             class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
             :class="visualizerMode === 'JSON' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
           >

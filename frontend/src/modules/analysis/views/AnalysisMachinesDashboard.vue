@@ -5,7 +5,7 @@ import type { CimMachine } from '@/shared/types'
 import AnalysisCimEditor from '../components/AnalysisCimEditor.vue'
 import AnalysisMachinesNodeEditor from '../components/AnalysisMachinesNodeEditor.vue'
 import AnalysisMachinesVisualizer2D from '../components/AnalysisMachinesVisualizer2D.vue'
-import AnalysisMachinesVisualizer3D from '../components/AnalysisMachinesVisualizer3D.vue'
+
 import AnalysisMachinesVisualizerJSON from '../components/AnalysisMachinesVisualizerJSON.vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 
@@ -46,7 +46,7 @@ const handleEditBasic = () => {
   }
 }
 
-const setMode = (mode: '2D' | '3D' | 'JSON') => {
+const setMode = (mode: '2D' | 'JSON') => {
   store.visualizerMode = mode
 }
 
@@ -87,7 +87,7 @@ const emit = defineEmits<{
             <template v-if="currentMachine">
               <AnalysisMachinesVisualizerJSON v-if="store.visualizerMode === 'JSON'" :machine="currentMachine" />
               <AnalysisMachinesVisualizer2D v-else-if="store.visualizerMode === '2D'" :machine-json="currentMachine.machine" />
-              <AnalysisMachinesVisualizer3D v-else :machine-json="currentMachine.machine" />
+
             </template>
           </div>
         </div>

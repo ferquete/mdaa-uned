@@ -12,7 +12,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   const parsedDocs = ref<Record<number, CimDocument>>({});
   const currentCim = ref<Cim | null>(null);
   const selectedNodeId = ref<string | number | null>(null);
-  const visualizerMode = ref<'2D' | '3D' | 'JSON'>('2D');
+  const visualizerMode = ref<'2D' | 'JSON'>('2D');
 
   const isRawEditing = computed(() => visualizerMode.value === 'JSON');
 

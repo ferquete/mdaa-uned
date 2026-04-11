@@ -103,7 +103,7 @@ const treeData = computed<TreeNodeType[]>(() => [
 
 const checkRawEditing = () => {
   if (analysisStore.isRawEditing) {
-    alert('No se puede modificar la estructura del proyecto mientras se edita el JSON raw. Por favor, cambia a la vista 2D o 3D primero.')
+    alert('No se puede modificar la estructura del proyecto mientras se edita el JSON raw. Por favor, cambia a la vista 2D primero.')
     return true
   }
   return false

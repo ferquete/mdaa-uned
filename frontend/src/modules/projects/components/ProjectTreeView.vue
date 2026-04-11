@@ -55,7 +55,6 @@ const treeData = computed<TreeNodeType[]>(() => [
         text: 'Análisis', 
         icon: 'fa-solid fa-microscope',
         open: true,
-        showAdd: analysisStore.machines.length < 10,
         children: analysisStore.machines.map(m => {
           const doc = analysisStore.parsedDocs[m.id];
           const children: TreeNodeType[] = [];
@@ -65,7 +64,6 @@ const treeData = computed<TreeNodeType[]>(() => [
               id: m.id,
               text: 'Cargando...',
               icon: 'fa-solid fa-microchip',
-              canDelete: true,
               canEdit: true,
               children: []
             };
@@ -75,12 +73,10 @@ const treeData = computed<TreeNodeType[]>(() => [
             id: `m-${m.id}-generators`,
             text: 'Generadores',
             icon: 'fa-solid fa-volume-high',
-            showAdd: true,
             children: doc.generators.map(g => ({
               id: `m-${m.id}-g-${g.id}`,
               text: g.name,
-              icon: 'fa-solid fa-wave-square',
-              canDelete: true
+              icon: 'fa-solid fa-wave-square'
             }))
           });
 
@@ -88,12 +84,10 @@ const treeData = computed<TreeNodeType[]>(() => [
             id: `m-${m.id}-modificators`,
             text: 'Modificadores',
             icon: 'fa-solid fa-sliders',
-            showAdd: true,
             children: doc.modificators.map(mod => ({
               id: `m-${m.id}-mod-${mod.id}`,
               text: mod.name,
-              icon: 'fa-solid fa-wand-magic-sparkles',
-              canDelete: true
+              icon: 'fa-solid fa-wand-magic-sparkles'
             }))
           });
 
@@ -101,7 +95,6 @@ const treeData = computed<TreeNodeType[]>(() => [
             id: m.id,
             text: doc.name,
             icon: 'fa-solid fa-microchip',
-            canDelete: true,
             canEdit: true,
             children
           };

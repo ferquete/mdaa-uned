@@ -26,6 +26,21 @@ onBeforeRouteLeave((to, from, next) => {
 })
 
 const treeRef = ref<InstanceType<typeof ProjectTreeView> | null>(null)
+const sidebarPanelRef = ref<any>(null)
+const isCollapsed = ref(false)
+
+const toggleSidebar = () => {
+  const panel = sidebarPanelRef.value
+  if (!panel) return
+  
+  if (isCollapsed.value) {
+    panel.expand()
+    isCollapsed.value = false
+  } else {
+    panel.collapse()
+    isCollapsed.value = true
+  }
+}
 
 /**
  * Determina qué módulo mostrar basado en el nodo seleccionado.
@@ -72,14 +87,32 @@ onMounted(async () => {
 
 <template>
   <div class="project-dashboard flex flex-col h-[calc(100vh-3rem)] bg-geist-bg">
-    <main class="flex-1 overflow-hidden">
+    <main class="flex-1 overflow-hidden relative">
       <PanelGroup direction="horizontal">
         <!-- Sidebar: Explorador -->
-        <Panel :default-size="25" :min-size="12" :max-size="35">
+        <Panel 
+          ref="sidebarPanelRef"
+          :default-size="25" 
+          :min-size="12" 
+          :max-size="35" 
+          collapsible
+          @collapse="isCollapsed = true"
+          @expand="isCollapsed = false"
+        >
           <ProjectTreeView ref="treeRef" />
         </Panel>
 
-        <PanelResizeHandle class="w-px bg-geist-border hover:bg-geist-accents-2 transition-colors cursor-col-resize relative">
+        <PanelResizeHandle class="w-1.5 bg-geist-border hover:bg-geist-accents-2 transition-colors cursor-col-resize relative group/handle">
+          <!-- Toggle Button in the center of the handle - Always Visible -->
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+            <button 
+              @click.stop="toggleSidebar"
+              class="w-6 h-10 rounded-full bg-geist-bg border border-geist-border text-geist-fg transition-all shadow-md flex items-center justify-center cursor-pointer hover:border-geist-accents-4 hover:bg-geist-accents-1 active:scale-95"
+              title="Alternar explorador"
+            >
+              <i class="fa-solid" :class="isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+            </button>
+          </div>
           <div class="absolute inset-y-0 -left-1 -right-1 z-10"></div>
         </PanelResizeHandle>
 

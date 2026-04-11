@@ -10,8 +10,20 @@ import AnalysisMachinesVisualizer2D from '../components/AnalysisMachinesVisualiz
 import AnalysisMachinesVisualizerJSON from '../components/AnalysisMachinesVisualizerJSON.vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 
+import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
+import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
+import { useRoute } from 'vue-router'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+
 const store = useAnalysisMachinesStore()
 const { exportToJson } = useExport()
+const route = useRoute()
+const { runWithGuard } = useUnsavedChanges()
+
+const showDeleteModal = ref(false)
+const showAddMachineModal = ref(false)
+
+const projectId = computed(() => Number(route.params.id))
 
 const currentMachine = computed(() => {
   if (store.selectedNode && 'machine' in store.selectedNode) {
@@ -23,15 +35,28 @@ const currentMachine = computed(() => {
 const breadcrumbs = computed(() => {
   const list = []
   if (store.selectedNodeId === 'analisis') {
-    list.push({ label: 'Análisis del Proyecto', active: true })
+    list.push({ 
+      label: 'Análisis del Proyecto', 
+      active: true,
+      canAddMachine: store.machines.length < 10 // Límite de 10 máquinas
+    })
     return list
   }
   if (currentMachine.value) {
     const doc = store.parsedDocs[currentMachine.value.id]
-    list.push({ label: doc?.name || 'Máquina', active: !store.selectedSubNode })
+    list.push({ 
+      label: doc?.name || 'Máquina', 
+      active: !store.selectedSubNode,
+      canDelete: !store.selectedSubNode,
+      canAddSubnodes: !store.selectedSubNode // Habilitar botones de +Generador/+Modificador en la vista de máquina
+    })
   }
   if (store.selectedSubNode) {
-    list.push({ label: store.selectedSubNode.name || 'Nuevo Componente', active: true })
+    list.push({ 
+      label: store.selectedSubNode.name || 'Nuevo Componente', 
+      active: true,
+      canDelete: !String(store.selectedNodeId).startsWith('new-') // Solo si no es nuevo
+    })
   }
   return list
 })
@@ -53,6 +78,43 @@ const handleEditBasic = () => {
   }
 }
 
+const handleDelete = () => {
+  showDeleteModal.value = true
+}
+
+const confirmDelete = async () => {
+  if (store.selectedSubNode) {
+    const id = store.selectedNodeId as string
+    const parts = id.split('-')
+    if (parts.length >= 4) {
+      const machineId = Number(parts[1])
+      const type = parts[2] as 'g' | 'mod'
+      const subId = parts.slice(3).join('-')
+      await store.deleteSubNode(machineId, subId, type)
+    }
+  } else if (currentMachine.value) {
+    await store.deleteMachine(currentMachine.value.id)
+  }
+  showDeleteModal.value = false
+}
+
+const deleteWarningDetails = computed(() => {
+  const warnings: string[] = []
+  if (store.selectedSubNode) {
+    const id = store.selectedNodeId as string
+    const parts = id.split('-')
+    if (parts.length >= 4) {
+      warnings.push(...store.getSubNodeReferences(Number(parts[1]), parts.slice(3).join('-')))
+    }
+  } else if (currentMachine.value) {
+    const relCount = store.getMachineRelationsCount(currentMachine.value.id)
+    if (relCount > 0) {
+      warnings.push(`Se eliminarán ${relCount} relaciones de esta máquina en el Análisis (CIM)`)
+    }
+  }
+  return warnings
+})
+
 const setMode = (mode: '2D' | 'JSON' | 'FORM') => {
   store.visualizerMode = mode
 }
@@ -68,6 +130,27 @@ const emit = defineEmits<{
   (e: 'edit-machine', machine: any): void
   (e: 'edit-cim', cim: any): void
 }>()
+
+const handleAddMachine = () => {
+  runWithGuard(() => {
+    showAddMachineModal.value = true
+  })
+}
+
+const confirmAddMachine = async (name: string, description: string) => {
+  if (projectId.value) {
+    await store.addMachine(projectId.value, name, description)
+    showAddMachineModal.value = false
+  }
+}
+
+const handleAddSubNode = (type: 'g' | 'mod') => {
+  runWithGuard(() => {
+    if (currentMachine.value) {
+      store.selectNewSubNode(currentMachine.value.id, type)
+    }
+  })
+}
 </script>
 
 <template>
@@ -83,6 +166,9 @@ const emit = defineEmits<{
         @set-mode="setMode"
         @export="handleExport"
         @edit-basic="handleEditBasic"
+        @delete="handleDelete"
+        @add-subnode="handleAddSubNode"
+        @add-machine="handleAddMachine"
       />
   
         <div class="flex-1 relative overflow-hidden">
@@ -118,5 +204,24 @@ const emit = defineEmits<{
         <p class="text-xs text-geist-accents-5">Selecciona una máquina para comenzar</p>
       </div>
     </div>
+
+    <GenericConfirmDeleteModal
+      :show="showDeleteModal"
+      :item-name="store.selectedSubNode?.name || store.parsedDocs[currentMachine?.id || 0]?.name || 'Elemento'"
+      :extra-warnings="deleteWarningDetails"
+      @close="showDeleteModal = false"
+      @confirm="confirmDelete"
+    />
+
+    <GenericAddEditModal
+      :show="showAddMachineModal"
+      title="Nueva Máquina (Análisis)"
+      entity-label="Máquina"
+      confirm-text="Crear"
+      :show-name-field="true"
+      :existing-names="store.machines.map(m => store.parsedDocs[m.id]?.name || '')"
+      @close="showAddMachineModal = false"
+      @confirm="confirmAddMachine"
+    />
   </div>
 </template>

@@ -5,6 +5,9 @@ interface Breadcrumb {
   label: string
   active?: boolean
   opacity?: number
+  canDelete?: boolean
+  canAddSubnodes?: boolean
+  canAddMachine?: boolean
 }
 
 interface Props {
@@ -24,6 +27,9 @@ const emit = defineEmits<{
   (e: 'set-mode', mode: '2D' | 'JSON' | 'FORM'): void
   (e: 'export'): void
   (e: 'edit-basic'): void
+  (e: 'delete'): void
+  (e: 'add-subnode', type: 'g' | 'mod'): void
+  (e: 'add-machine'): void
 }>()
 
 const { runWithGuard } = useUnsavedChanges()
@@ -61,13 +67,56 @@ const handleEditBasic = () => {
             >
               {{ bc.label }}
             </span>
+            <!-- Botón de Editar (Pencil) - Visible permanentemente -->
             <button 
               v-if="bc.active && index === 0"
               @click="handleEditBasic"
-              class="flex items-center justify-center w-5 h-5 rounded-md hover:bg-geist-accents-2 text-geist-accents-5 transition-all border border-transparent hover:border-geist-accents-3 cursor-pointer"
+              class="flex items-center justify-center w-5 h-5 rounded-md bg-geist-accents-2/40 text-geist-fg hover:bg-geist-accents-2 transition-all border border-geist-border cursor-pointer ml-1"
               title="Editar información básica"
             >
               <i class="fa-solid fa-pencil text-[10px]"></i>
+            </button>
+
+            <!-- Botón de Eliminar (Trash) - Visible permanentemente en rojo suave -->
+            <button 
+              v-if="bc.active && bc.canDelete"
+              @click="emit('delete')"
+              class="flex items-center justify-center w-5 h-5 rounded-md bg-geist-error/5 text-geist-error/60 hover:text-geist-error hover:bg-geist-error/15 transition-all border border-geist-error/20 cursor-pointer ml-1"
+              title="Eliminar elemento"
+            >
+              <i class="fa-solid fa-trash-can text-[10px]"></i>
+            </button>
+
+            <!-- Botones de Añadir Sub-nodos -->
+            <div v-if="bc.canAddSubnodes" class="flex items-center gap-1.5 ml-2">
+              <button 
+                @click="emit('add-subnode', 'g')"
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-node-generator/10 text-node-generator hover:bg-node-generator/20 transition-all border border-node-generator/20 cursor-pointer shadow-sm text-[9px] font-bold uppercase tracking-wider"
+                title="Añadir Generador"
+              >
+                <i class="fa-solid fa-plus overflow-hidden"></i>
+                Generador
+              </button>
+              
+              <button 
+                @click="emit('add-subnode', 'mod')"
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-geist-success/10 text-geist-success hover:bg-geist-success/20 transition-all border border-geist-success/20 cursor-pointer shadow-sm text-[9px] font-bold uppercase tracking-wider"
+                title="Añadir Modificador"
+              >
+                <i class="fa-solid fa-plus overflow-hidden"></i>
+                Modificador
+              </button>
+            </div>
+
+            <!-- Botón de Añadir Máquina -->
+            <button 
+              v-if="bc.canAddMachine"
+              @click="emit('add-machine')"
+              class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-geist-success/10 text-geist-success hover:bg-geist-success/20 transition-all border border-geist-success/20 cursor-pointer shadow-sm text-[9px] font-bold uppercase tracking-wider ml-2"
+              title="Añadir Nueva Máquina"
+            >
+              <i class="fa-solid fa-plus overflow-hidden"></i>
+              Máquina
             </button>
           </div>
         </template>

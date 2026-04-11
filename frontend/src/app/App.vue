@@ -79,8 +79,9 @@ onMounted(async () => {
           @click="router.push(`/projects/${currentProject.id}/edit`)"
           class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer group z-50 h-full px-4"
         >
-          <div class="retro-monitor-text text-sm md:text-base font-mono font-bold tracking-[0.2em] uppercase group-hover:text-geist-fg transition-colors">
+          <div class="retro-monitor-text text-sm md:text-base font-mono font-bold tracking-[0.2em] uppercase group-hover:text-geist-fg transition-colors flex items-center gap-3">
             {{ currentProject.name }}
+            <i class="fa-solid fa-pen-to-square text-[10px] opacity-20 group-hover:opacity-100 transition-opacity"></i>
           </div>
         </div>
       </transition>

@@ -1,0 +1,16 @@
+{
+    "projectName": "MdaAudioPimMachine",
+    "languages": [
+        {
+            "id": "mda-audio-pim-machine",
+            "grammar": "src/mda-audio-pim-machine.langium",
+            "fileExtensions": [
+                "mdaapimmachine"
+            ],
+            "textMate": {
+                "out": "syntaxes/mda-audio-pim-machine.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}

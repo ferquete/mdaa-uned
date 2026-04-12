@@ -1,0 +1,70 @@
+{
+    "nodes": [
+        {
+            "type": "oscillator",
+            "id": "e4f5a6b7-c8d9-4a0b-1c2d-3e4f5a6b7c8d",
+            "description": "Oscilador principal",
+            "ids_references": ["ref_cim_machine_description"],
+            "waveform": { "id": "88880000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "triangle", "isModifiable": false },
+            "frequency": { "id": "88880000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 220, "isModifiable": true },
+            "pulseWidth": { "id": "88880000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
+            "gain": { "id": "88880000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
+            "phase": { "id": "88880000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "pan": { "id": "88880000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": -0.5, "isModifiable": true },
+            "stereo": { "id": "88880000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "output_1": { "id": "88880000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_2": { "id": "88880000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        },
+        {
+            "type": "lfo",
+            "id": "a9b8c7d6-e5f4-4a3b-2c1d-0e9f8a7b6c5d",
+            "description": "Modulador de paneo",
+            "ids_references": ["ref_cim_machine_description"],
+            "waveform": { "id": "99990000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
+            "rate": { "id": "99990000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
+            "amplitude": { "id": "99990000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 1.0, "isModifiable": true },
+            "phase": { "id": "99990000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "sync": { "id": "99990000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "output": { "id": "99990000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        },
+        {
+            "type": "delay",
+            "id": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+            "description": "Eco ambiental",
+            "ids_references": ["ref_cim_machine_description"],
+            "delayTime": { "id": "aaaa0000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 500, "isModifiable": true },
+            "feedback": { "id": "aaaa0000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.4, "isModifiable": true },
+            "lowPassCutoff": { "id": "aaaa0000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 2000, "isModifiable": true },
+            "highPassCutoff": { "id": "aaaa0000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 100, "isModifiable": true },
+            "dryWet": { "id": "aaaa0000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.3, "isModifiable": true },
+            "stereo": { "id": "aaaa0000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "ping_pong": { "id": "aaaa0000-0000-0000-0000-000000001003", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": true },
+            "input_1": { "id": "aaaa0000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "input_2": { "id": "aaaa0000-0000-0000-0000-000000001002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_1": { "id": "aaaa0000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_2": { "id": "aaaa0000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        }
+    ],
+    "edges": [
+        {
+            "id": "bbbb0000-0000-0000-0000-000000000001",
+            "description": "LFO -> Osc Pan",
+            "ids_references": ["ref_cim_machine_description"],
+            "sourceNode": "a9b8c7d6-e5f4-4a3b-2c1d-0e9f8a7b6c5d",
+            "sourceParam": "99990000-0000-0000-0000-000000000006",
+            "targetNode": "e4f5a6b7-c8d9-4a0b-1c2d-3e4f5a6b7c8d",
+            "targetParam": "88880000-0000-0000-0000-000000000006",
+            "type": "modification"
+        },
+        {
+            "id": "bbbb0000-0000-0000-0000-000000000002",
+            "description": "Osc L -> Delay",
+            "ids_references": ["ref_cim_machine_description"],
+            "sourceNode": "e4f5a6b7-c8d9-4a0b-1c2d-3e4f5a6b7c8d",
+            "sourceParam": "88880000-0000-0000-0000-000000000007",
+            "targetNode": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+            "targetParam": "aaaa0000-0000-0000-0000-000000001001",
+            "type": "audio"
+        }
+    ]
+}

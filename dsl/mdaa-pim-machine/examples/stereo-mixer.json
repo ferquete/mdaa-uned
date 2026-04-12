@@ -1,0 +1,67 @@
+{
+    "nodes": [
+        {
+            "type": "oscillator",
+            "id": "7a8b9c0d-e1f2-4a3b-b4c5-d6e7f8a9b0c1",
+            "description": "Oscilador 1 (Lead)",
+            "ids_references": ["ref_project_description"],
+            "waveform": { "id": "10000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "square", "isModifiable": false },
+            "frequency": { "id": "10000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 220, "isModifiable": true },
+            "pulseWidth": { "id": "10000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.3, "isModifiable": true },
+            "gain": { "id": "10000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.6, "isModifiable": true },
+            "phase": { "id": "10000000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "pan": { "id": "10000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": -0.7, "isModifiable": true },
+            "stereo": { "id": "10000000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "output_1": { "id": "10000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_2": { "id": "10000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        },
+        {
+            "type": "oscillator",
+            "id": "8b9c0d1e-f2a3-4b4c-c5d6-e7f8a9b0c1d2",
+            "description": "Oscilador 2 (Sub)",
+            "ids_references": ["ref_project_description"],
+            "waveform": { "id": "20000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
+            "frequency": { "id": "20000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 55, "isModifiable": true },
+            "pulseWidth": { "id": "20000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
+            "gain": { "id": "20000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.9, "isModifiable": true },
+            "phase": { "id": "20000000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "pan": { "id": "20000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.7, "isModifiable": true },
+            "stereo": { "id": "20000000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "output_1": { "id": "20000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_2": { "id": "20000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        },
+        {
+            "type": "mixer",
+            "id": "9c0d1e2f-a3b4-4b4c-d5e6-f7a8b9c0d1e2",
+            "description": "Mezclador de fuentes",
+            "ids_references": ["ref_project_description"],
+            "stereo": { "id": "30000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
+            "inputs_number": { "id": "30000000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "initialValue": 2, "isModifiable": false },
+            "input_1": { "id": "30000000-0000-0000-0000-000000001011", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "input_2": { "id": "30000000-0000-0000-0000-000000001012", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_1": { "id": "30000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        }
+    ],
+    "edges": [
+        {
+            "id": "40000000-0000-0000-0000-000000000001",
+            "description": "Osc1 L -> Mixer",
+            "ids_references": ["ref_project_description"],
+            "sourceNode": "7a8b9c0d-e1f2-4a3b-b4c5-d6e7f8a9b0c1",
+            "sourceParam": "10000000-0000-0000-0000-000000000007",
+            "targetNode": "9c0d1e2f-a3b4-4b4c-d5e6-f7a8b9c0d1e2",
+            "targetParam": "30000000-0000-0000-0000-000000001011",
+            "type": "audio"
+        },
+        {
+            "id": "40000000-0000-0000-0000-000000000002",
+            "description": "Osc2 L -> Mixer",
+            "ids_references": ["ref_project_description"],
+            "sourceNode": "8b9c0d1e-f2a3-4b4c-c5d6-e7f8a9b0c1d2",
+            "sourceParam": "20000000-0000-0000-0000-000000000007",
+            "targetNode": "9c0d1e2f-a3b4-4b4c-d5e6-f7a8b9c0d1e2",
+            "targetParam": "30000000-0000-0000-0000-000000001012",
+            "type": "audio"
+        }
+    ]
+}

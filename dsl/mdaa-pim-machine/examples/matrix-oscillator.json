@@ -1,0 +1,30 @@
+{
+    "nodes": [
+        {
+            "type": "oscillator",
+            "id": "m1m1m1m1-m1m1-4m1m-m1m1-m1m1m1m1m1m1",
+            "description": "Oscilador con forma de onda personalizada",
+            "ids_references": ["ref_project_description"],
+            "waveform": { 
+                "id": "77770000-0000-0000-0000-000000000001", 
+                "ids_references": ["ref_cim_machine_description"], 
+                "initialValue": [
+                    [1, 0, 1, 0],
+                    [0, 1, 0, 1],
+                    [1, 1, 0, 0],
+                    [0, 0, 1, 1]
+                ], 
+                "isModifiable": false 
+            },
+            "frequency": { "id": "77770000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 100, "isModifiable": true },
+            "pulseWidth": { "id": "77770000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
+            "gain": { "id": "77770000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.7, "isModifiable": true },
+            "phase": { "id": "77770000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "pan": { "id": "77770000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
+            "stereo": { "id": "00000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
+            "output_1": { "id": "77770000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
+            "output_2": { "id": "77770000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+        }
+    ],
+    "edges": []
+}

@@ -1,0 +1,126 @@
+{
+    "nodes": [
+        {
+            "type": "oscillator",
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "description": "Oscilador básico senoidal a 440Hz",
+            "ids_references": ["ref_project_description"],
+            "waveform": {
+                "id": "550e8400-e29b-41d4-a716-446655440001",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": "sine",
+                "isModifiable": false
+            },
+            "frequency": {
+                "id": "550e8400-e29b-41d4-a716-446655440002",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 440,
+                "isModifiable": true
+            },
+            "pulseWidth": {
+                "id": "550e8400-e29b-41d4-a716-446655440003",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0.5,
+                "isModifiable": false
+            },
+            "gain": {
+                "id": "550e8400-e29b-41d4-a716-446655440004",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0.8,
+                "isModifiable": true
+            },
+            "phase": {
+                "id": "550e8400-e29b-41d4-a716-446655440005",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false
+            },
+            "pan": {
+                "id": "550e8400-e29b-41d4-a716-446655440006",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": true
+            },
+            "stereo": {
+                "id": "550e8400-e29b-41d4-a716-446655440201",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": true,
+                "isModifiable": false
+            },
+            "output_1": {
+                "id": "550e8400-e29b-41d4-a716-446655440007",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false,
+                "description": "Salida Izquierda"
+            },
+            "output_2": {
+                "id": "550e8400-e29b-41d4-a716-446655440008",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false,
+                "description": "Salida Derecha"
+            }
+        },
+        {
+            "type": "gain_pan",
+            "id": "550e8400-e29b-41d4-a716-446655440100",
+            "description": "Control de volumen final",
+            "ids_references": ["ref_project_description"],
+            "gain": {
+                "id": "550e8400-e29b-41d4-a716-446655440101",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 1.0,
+                "isModifiable": true
+            },
+            "pan": {
+                "id": "550e8400-e29b-41d4-a716-446655440103",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": true
+            },
+            "stereo": {
+                "id": "550e8400-e29b-41d4-a716-446655440102",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": true,
+                "isModifiable": false
+            },
+            "ping_pong": {
+                "id": "550e8400-e29b-41d4-a716-446655440202",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": false,
+                "isModifiable": true
+            },
+            "input_1": {
+                "id": "550e8400-e29b-41d4-a716-446655440203",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false
+            },
+            "output_1": {
+                "id": "550e8400-e29b-41d4-a716-446655440104",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false
+            },
+            "output_2": {
+                "id": "550e8400-e29b-41d4-a716-446655440105",
+                "ids_references": ["ref_cim_machine_description"],
+                "initialValue": 0,
+                "isModifiable": false
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "550e8400-e29b-41d4-a716-446655440900",
+            "description": "Conexión canal izquierdo",
+            "ids_references": ["ref_project_description"],
+            "sourceNode": "550e8400-e29b-41d4-a716-446655440000",
+            "sourceParam": "550e8400-e29b-41d4-a716-446655440007",
+            "targetNode": "550e8400-e29b-41d4-a716-446655440100",
+            "targetParam": "550e8400-e29b-41d4-a716-446655440203",
+            "type": "audio"
+        }
+    ]
+}

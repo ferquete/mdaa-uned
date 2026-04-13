@@ -90,7 +90,18 @@ const handleClose = () => {
             {{ localName.length }}/{{ nameMaxLength }}
           </span>
         </div>
+        <textarea 
+          v-if="nameMaxLength > 100"
+          v-model="localName"
+          placeholder="Nombre del elemento..."
+          :maxlength="nameMaxLength"
+          rows="2"
+          class="geist-input w-full resize-none py-2"
+          :class="{ 'border-geist-error focus:ring-geist-error/20': isDuplicate }"
+          v-focus
+        ></textarea>
         <input 
+          v-else
           v-model="localName"
           type="text" 
           placeholder="Nombre del elemento..."

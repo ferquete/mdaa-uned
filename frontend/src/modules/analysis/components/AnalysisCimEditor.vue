@@ -127,6 +127,7 @@ const handleSave = async () => {
         <label class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] px-1">Descripción General del Análisis</label>
         <textarea 
           v-model="formData.description"
+          maxlength="300"
           placeholder="Escribe el propósito de este análisis de relaciones..."
           class="w-full bg-geist-accents-1 border border-geist-border rounded-xl p-4 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[100px] outline-none"
         ></textarea>
@@ -206,6 +207,7 @@ const handleSave = async () => {
                   <div class="relative">
                     <textarea 
                       v-model="rel.description"
+                      maxlength="300"
                       placeholder="Describe por qué están conectadas..."
                       class="w-full bg-geist-accents-1 border border-geist-border rounded-xl px-4 py-3 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[80px] outline-none"
                     ></textarea>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import RelationSelector from '@/shared/components/forms/RelationSelector.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
+import type { CimDocument, CimGenerator, CimModificator } from '@/shared/types'
+import { computed, ref, watch } from 'vue'
+import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import { ANALYSIS_RULES } from '../utils/analysisMachinesValidation'
-import type { CimGenerator, CimModificator, CimDocument } from '@/shared/types'
 
 const store = useAnalysisMachinesStore()
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
@@ -162,19 +162,35 @@ const toggleSendTo = (idRef: string) => {
             <div class="h-px flex-1 bg-geist-border opacity-50"></div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-2" v-for="field in ['name', 'params']" :key="field">
+            <div class="space-y-2">
               <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
-                {{ field.charAt(0).toUpperCase() + field.slice(1) }}
-                <span v-if="validationErrors[field]" class="text-geist-error normal-case">{{ validationErrors[field] }}</span>
+                Nombre
+                <div class="flex items-center gap-2">
+                  <span v-if="validationErrors.name" class="text-geist-error normal-case">{{ validationErrors.name }}</span>
+                  <span class="text-[10px] font-mono opacity-50">{{ localData.name?.length || 0 }}/{{ RULES.name.max }}</span>
+                </div>
               </label>
-              <input v-model="(localData as any)[field]" type="text" class="geist-input w-full" :class="{'border-geist-error/50': validationErrors[field]}">
+              <input v-model="localData.name" type="text" :maxlength="RULES.name.max" class="geist-input w-full" :class="{'border-geist-error/50': validationErrors.name}">
+            </div>
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
+                Parámetros
+                <div class="flex items-center gap-2">
+                  <span v-if="validationErrors.params" class="text-geist-error normal-case">{{ validationErrors.params }}</span>
+                  <span class="text-[10px] font-mono opacity-50">{{ localData.params?.length || 0 }}/{{ RULES.params.max }}</span>
+                </div>
+              </label>
+              <textarea v-model="localData.params" rows="2" :maxlength="RULES.params.max" class="geist-input w-full resize-none py-2" :class="{'border-geist-error/50': validationErrors.params}"></textarea>
             </div>
             <div class="md:col-span-2 space-y-2">
               <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
                 Descripción
-                <span v-if="validationErrors.description" class="text-geist-error normal-case">{{ validationErrors.description }}</span>
+                <div class="flex items-center gap-2">
+                  <span v-if="validationErrors.description" class="text-geist-error normal-case">{{ validationErrors.description }}</span>
+                  <span class="text-[10px] font-mono opacity-50">{{ localData.description?.length || 0 }}/{{ RULES.description.max }}</span>
+                </div>
               </label>
-              <textarea v-model="localData.description" rows="3" class="geist-input w-full resize-none" :class="{'border-geist-error/50': validationErrors.description}"></textarea>
+              <textarea v-model="localData.description" rows="3" :maxlength="RULES.description.max" class="geist-input w-full resize-none" :class="{'border-geist-error/50': validationErrors.description}"></textarea>
             </div>
           </div>
         </section>
@@ -182,7 +198,7 @@ const toggleSendTo = (idRef: string) => {
         <!-- Use Unified RelationSelector for sendTo -->
         <RelationSelector 
           title="Modifica los siguientes elementos" 
-          subtitle="Componentes vinculados a través de sendTo"
+          subtitle="Componentes vinculados a los cuales envía información"
           :options="[...options.generators.map(g => ({...g, name: `[GEN] ${g.name}`})), ...options.modificators.map(m => ({...m, name: `[MOD] ${m.name}`}))].filter(o => o.id !== localData.id)"
           :selected="localData.sendTo?.map(s => ({ id: s.idRef, description: s.description })) || []"
           color-class="text-geist-fg"

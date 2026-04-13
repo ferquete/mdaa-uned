@@ -69,27 +69,21 @@ const treeData = computed<TreeNodeType[]>(() => [
             };
           }
 
-          children.push({
-            id: `m-${m.id}-generators`,
-            text: 'Generadores',
-            icon: 'fa-solid fa-volume-high',
-            children: doc.generators.map(g => ({
-              id: `m-${m.id}-g-${g.id}`,
-              text: g.name,
-              icon: 'fa-solid fa-wave-square'
-            }))
-          });
+          const genNodes: TreeNodeType[] = doc.generators.map(g => ({
+            id: `m-${m.id}-g-${g.id}`,
+            text: g.name,
+            icon: 'fa-solid fa-wave-square',
+            canDelete: true
+          }));
 
-          children.push({
-            id: `m-${m.id}-modificators`,
-            text: 'Modificadores',
-            icon: 'fa-solid fa-sliders',
-            children: doc.modificators.map(mod => ({
-              id: `m-${m.id}-mod-${mod.id}`,
-              text: mod.name,
-              icon: 'fa-solid fa-wand-magic-sparkles'
-            }))
-          });
+          const modNodes: TreeNodeType[] = doc.modificators.map(mod => ({
+            id: `m-${m.id}-mod-${mod.id}`,
+            text: mod.name,
+            icon: 'fa-solid fa-wand-magic-sparkles',
+            canDelete: true
+          }));
+
+          children.push(...genNodes, ...modNodes);
 
           return {
             id: m.id,
@@ -124,15 +118,6 @@ const handleAddChild = (parentId: string | number) => {
     pendingParentId.value = parentId
     nodeToEdit.value = null
     showAddModal.value = true
-  } else if (typeof parentId === 'string' && parentId.startsWith('m-')) {
-    const parts = parentId.split('-');
-    if (parts.length === 3 && (parts[2] === 'generators' || parts[2] === 'modificators')) {
-      const machineId = Number(parts[1]);
-      const type = parts[2] === 'generators' ? 'g' : 'mod';
-      runWithGuard(() => {
-        analysisStore.selectNewSubNode(machineId, type);
-      })
-    }
   }
 }
 

@@ -15,13 +15,40 @@ El lenguaje MDA-Audio-PIM define un grafo dirigido de audio y control. Todos los
 | `description` | STRING | Información textual sobre el propósito del elemento. | Opcional. Máximo 600 caracteres. |
 | `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM. | Obligatorio. Array no vacío. Mínimo 1 referencia. |
 
-#### Estructura de Parámetro (`Parameter`)
-Cualquier propiedad de un nodo es un objeto de tipo `Parameter`.
-| Atributo | Tipo | Descripción |
+#### Estructura de Parámetro de Configuración (`Parameter`)
+Cualquier propiedad de configuración de un nodo es un objeto de tipo `Parameter`.
+| Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
-| `id` | STRING | UUID del parámetro. |
-| `initialValue` | Any | Valor inicial. Puede ser número, cadena, booleano o matriz. |
-| `isModifiable` | BOOLEAN | Indica si el parámetro puede ser destino de una arista de tipo `modification`. |
+| `id` | UUID | Identificador único del parámetro. |
+| `ids_references` | string[] | Referencias a elementos externos (CIM/PIM). |
+| `ids_source_machines` | string[] | Referencias a máquinas PIM **externas** que modulan este parámetro. **Solo permitido si `isModifiable` es `true`.** |
+| `initialValue` | any | Valor inicial del parámetro. |
+| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones externas. |
+| `description` | string | (Opcional) Descripción del propósito del parámetro. |
+
+### Puntos de Conexión (InputPoint / OutputPoint)
+
+Los puntos de conexión se dividen estrictamente en entradas y salidas para garantizar la integridad del flujo de datos.
+
+#### InputPoint (Entradas)
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | UUID | Identificador único de la entrada. |
+| `ids_source_machines` | string[] | Referencias a máquinas PIM **externas** de origen. |
+| `description` | string | (Opcional) Descripción de la entrada. |
+
+#### OutputPoint (Salidas)
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | UUID | Identificador único de la salida. |
+| `ids_destination_machines` | string[] | Referencias a máquinas PIM **externas** de destino. |
+| `description` | string | (Opcional) Descripción de la salida. |
+
+> [!IMPORTANT]
+> Los campos `ids_source_machines` e `ids_destination_machines` contienen exclusivamente referencias a **máquinas PIM externas** (identificadas por su UUID de 36 caracteres). No se utilizan para conexiones internas dentro del mismo grafo (estas se definen en la sección `edges`). Opcional. |
+
+> [!IMPORTANT]
+> Los puntos de conexión **NO** disponen de los campos `initialValue` ni `isModifiable`. Su configuración es puramente topológica.
 
 ---
 
@@ -186,8 +213,8 @@ Este nodo permite la suma de hasta 10 señales.
 | `stereo` | BOOLEAN | `true`, `false` | Modo de salida. |
 | `ping_pong` | BOOLEAN | `true`, `false` | Solo válido si `stereo` es `true`. |
 | `inputs_number`| NUMBER | 1 - 10 | Número de entradas `input_x` habilitadas. |
-| `input_1..10` | - | Puntos de entrada| Conexiones de audio. |
-| `output_1..2` | - | Puntos de salida | Salida principal (L) y (R). |
+| `input_1..10` | - | `ConnectionPoint` | Conexiones de audio. |
+| `output_1..2` | - | `ConnectionPoint` | Salida principal (L) y (R). |
 
 #### Ganancia y Paneo (`gain_pan`)
 Nodo destinado al control de volumen y posicionamiento antes de la salida final.
@@ -196,7 +223,8 @@ Nodo destinado al control de volumen y posicionamiento antes de la salida final.
 | `gain` | NUMBER | 0 - 1 | Nivel de ganancia. |
 | `pan` | NUMBER | -1 a 1 | Posicionamiento estéreo. |
 | `stereo` | BOOLEAN | `true`, `false` | Modo estéreo. |
-| `input_1` | - | Punto de entrada| Nodo de audio a procesar (fijo 1 entrada). |
+| `input_1` | - | `ConnectionPoint` | Nodo de audio a procesar (fijo 1 entrada). |
+| `output_1..2` | - | `ConnectionPoint` | Salidas de audio. |
 
 ---
 

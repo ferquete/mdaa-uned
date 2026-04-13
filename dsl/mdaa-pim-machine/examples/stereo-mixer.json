@@ -6,14 +6,14 @@
             "description": "Oscilador 1 (Lead)",
             "ids_references": ["ref_project_description"],
             "waveform": { "id": "10000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "square", "isModifiable": false },
-            "frequency": { "id": "10000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 220, "isModifiable": true },
-            "pulseWidth": { "id": "10000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.3, "isModifiable": true },
-            "gain": { "id": "10000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.6, "isModifiable": true },
+            "frequency": { "id": "10000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 220, "isModifiable": true },
+            "pulseWidth": { "id": "10000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.3, "isModifiable": true },
+            "gain": { "id": "10000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.6, "isModifiable": true },
             "phase": { "id": "10000000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "pan": { "id": "10000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": -0.7, "isModifiable": true },
+            "pan": { "id": "10000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": -0.7, "isModifiable": true },
             "stereo": { "id": "10000000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "10000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "output_2": { "id": "10000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+            "output_1": { "id": "10000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] },
+            "output_2": { "id": "10000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
         },
         {
             "type": "oscillator",
@@ -21,14 +21,14 @@
             "description": "Oscilador 2 (Sub)",
             "ids_references": ["ref_project_description"],
             "waveform": { "id": "20000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
-            "frequency": { "id": "20000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 55, "isModifiable": true },
+            "frequency": { "id": "20000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 55, "isModifiable": true },
             "pulseWidth": { "id": "20000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
-            "gain": { "id": "20000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.9, "isModifiable": true },
+            "gain": { "id": "20000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.9, "isModifiable": true },
             "phase": { "id": "20000000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "pan": { "id": "20000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.7, "isModifiable": true },
+            "pan": { "id": "20000000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.7, "isModifiable": true },
             "stereo": { "id": "20000000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "20000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "output_2": { "id": "20000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+            "output_1": { "id": "20000000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] },
+            "output_2": { "id": "20000000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
         },
         {
             "type": "mixer",
@@ -37,9 +37,9 @@
             "ids_references": ["ref_project_description"],
             "stereo": { "id": "30000000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
             "inputs_number": { "id": "30000000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "initialValue": 2, "isModifiable": false },
-            "input_1": { "id": "30000000-0000-0000-0000-000000001011", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "input_2": { "id": "30000000-0000-0000-0000-000000001012", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "output_1": { "id": "30000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+            "input_1": { "id": "30000000-0000-0000-0000-000000001011", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [] },
+            "input_2": { "id": "30000000-0000-0000-0000-000000001012", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [] },
+            "output_1": { "id": "30000000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
         }
     ],
     "edges": [

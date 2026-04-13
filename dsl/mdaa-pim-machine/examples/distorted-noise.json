@@ -6,25 +6,25 @@
             "description": "Noise Source",
             "ids_references": ["ref_project_description"],
             "noiseType": { "id": "44440000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "brownian", "isModifiable": false },
-            "amplitude": { "id": "44440000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 1.0, "isModifiable": true },
-            "gain": { "id": "44440000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
-            "pan": { "id": "44440000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
+            "amplitude": { "id": "44440000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 1.0, "isModifiable": true },
+            "gain": { "id": "44440000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.5, "isModifiable": true },
+            "pan": { "id": "44440000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0, "isModifiable": true },
             "stereo": { "id": "44440000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "44440000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "output_2": { "id": "44440000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+            "output_1": { "id": "44440000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] },
+            "output_2": { "id": "44440000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
         },
         {
             "type": "distortion",
             "id": "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
             "description": "Ruido sucio",
             "ids_references": ["ref_project_description"],
-            "drive": { "id": "55550000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.9, "isModifiable": true },
-            "tone": { "id": "55550000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
+            "drive": { "id": "55550000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.9, "isModifiable": true },
+            "tone": { "id": "55550000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.5, "isModifiable": true },
             "distType": { "id": "55550000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": "Hard-clipping", "isModifiable": false },
-            "outputLevel": { "id": "55550000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.4, "isModifiable": true },
+            "outputLevel": { "id": "55550000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.4, "isModifiable": true },
             "stereo": { "id": "55550000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
-            "input_1": { "id": "55550000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "output_1": { "id": "55550000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false }
+            "input_1": { "id": "55550000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [] },
+            "output_1": { "id": "55550000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
         }
     ],
     "edges": [

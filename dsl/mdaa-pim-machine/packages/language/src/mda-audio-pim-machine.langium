@@ -83,7 +83,7 @@ LFONode:
         '"amplitude"' ':' amplitude=Parameter ','
         '"phase"' ':' phase=Parameter ','
         '"sync"' ':' sync=Parameter ','
-        '"output"' ':' output=Parameter
+        '"output"' ':' output=OutputPoint
     '}';
 
 EnvelopeNode:
@@ -98,7 +98,7 @@ EnvelopeNode:
         '"delay"' ':' delay=Parameter ','
         '"hold"' ':' hold=Parameter ','
         '"curve"' ':' curve=Parameter ','
-        '"output"' ':' output=Parameter
+        '"output"' ':' output=OutputPoint
     '}';
 
 // --- MIXER, GAIN Y PAN ---
@@ -110,17 +110,17 @@ MixerNode:
         '"stereo"' ':' stereo=Parameter ','
         ( '"ping_pong"' ':' ping_pong=Parameter ',')?
         '"inputs_number"' ':' inputs_number=Parameter ','
-        '"output_1"' ':' output_1=Parameter (',' '"output_2"' ':' output_2=Parameter)?
-        (',' '"input_1"' ':' input_1=Parameter)?
-        (',' '"input_2"' ':' input_2=Parameter)?
-        (',' '"input_3"' ':' input_3=Parameter)?
-        (',' '"input_4"' ':' input_4=Parameter)?
-        (',' '"input_5"' ':' input_5=Parameter)?
-        (',' '"input_6"' ':' input_6=Parameter)?
-        (',' '"input_7"' ':' input_7=Parameter)?
-        (',' '"input_8"' ':' input_8=Parameter)?
-        (',' '"input_9"' ':' input_9=Parameter)?
-        (',' '"input_10"' ':' input_10=Parameter)?
+        '"output_1"' ':' output_1=OutputPoint (',' '"output_2"' ':' output_2=OutputPoint)?
+        (',' '"input_1"' ':' input_1=InputPoint)?
+        (',' '"input_2"' ':' input_2=InputPoint)?
+        (',' '"input_3"' ':' input_3=InputPoint)?
+        (',' '"input_4"' ':' input_4=InputPoint)?
+        (',' '"input_5"' ':' input_5=InputPoint)?
+        (',' '"input_6"' ':' input_6=InputPoint)?
+        (',' '"input_7"' ':' input_7=InputPoint)?
+        (',' '"input_8"' ':' input_8=InputPoint)?
+        (',' '"input_9"' ':' input_9=InputPoint)?
+        (',' '"input_10"' ':' input_10=InputPoint)?
     '}';
 
 GainAndPanNode:
@@ -131,8 +131,8 @@ GainAndPanNode:
         '"pan"' ':' pan=Parameter ','
         '"stereo"' ':' stereo=Parameter ','
         ( '"ping_pong"' ':' ping_pong=Parameter ',')?
-        '"input_1"' ':' input_1=Parameter ','
-        '"output_1"' ':' output_1=Parameter (',' '"output_2"' ':' output_2=Parameter)?
+        '"input_1"' ':' input_1=InputPoint ','
+        '"output_1"' ':' output_1=OutputPoint (',' '"output_2"' ':' output_2=OutputPoint)?
     '}';
 
 // --- NODOS DE EFECTOS (MODIFICADORES DE SONIDO) ---
@@ -140,14 +140,14 @@ GainAndPanNode:
 fragment SoundModifierFields:
     '"stereo"' ':' stereo=Parameter ','
     ( '"ping_pong"' ':' ping_pong=Parameter ',')?
-    '"input_1"' ':' input_1=Parameter ','
-    ( '"input_2"' ':' input_2=Parameter ',')?
-    '"output_1"' ':' output_1=Parameter (',' '"output_2"' ':' output_2=Parameter)?;
+    '"input_1"' ':' input_1=InputPoint ','
+    ( '"input_2"' ':' input_2=InputPoint ',')?
+    '"output_1"' ':' output_1=OutputPoint (',' '"output_2"' ':' output_2=OutputPoint)?;
 
 fragment AudioOutputFields:
     '"stereo"' ':' stereo=Parameter ','
-    '"output_1"' ':' output_1=Parameter
-    (',' '"output_2"' ':' output_2=Parameter)?;
+    '"output_1"' ':' output_1=OutputPoint
+    (',' '"output_2"' ':' output_2=OutputPoint)?;
 
 ReverbNode:
     '{'
@@ -227,9 +227,26 @@ Parameter:
     '{'
         '"id"' ':' id=STRING ','
         '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+        ( '"ids_source_machines"' ':' '[' (ids_source_machines+=STRING (',' ids_source_machines+=STRING)*)? ']' ',' )?
         '"initialValue"' ':' initialValue=Value ','
         '"isModifiable"' ':' isModifiable=BOOLEAN
         (',' '"description"' ':' description=STRING)?
+    '}';
+
+InputPoint:
+    '{'
+        '"id"' ':' id=STRING ','
+        '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+        ( '"ids_source_machines"' ':' '[' (ids_source_machines+=STRING (',' ids_source_machines+=STRING)*)? ']' ',' )?
+        ( '"description"' ':' description=STRING )?
+    '}';
+
+OutputPoint:
+    '{'
+        '"id"' ':' id=STRING ','
+        '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+        ( '"ids_destination_machines"' ':' '[' (ids_destination_machines+=STRING (',' ids_destination_machines+=STRING)*)? ']' ',' )?
+        ( '"description"' ':' description=STRING )?
     '}';
 
 Value:

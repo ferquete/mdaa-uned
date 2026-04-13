@@ -16,14 +16,14 @@
                 ], 
                 "isModifiable": false 
             },
-            "frequency": { "id": "77770000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 100, "isModifiable": true },
+            "frequency": { "id": "77770000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 100, "isModifiable": true },
             "pulseWidth": { "id": "77770000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
-            "gain": { "id": "77770000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0.7, "isModifiable": true },
+            "gain": { "id": "77770000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.7, "isModifiable": true },
             "phase": { "id": "77770000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "pan": { "id": "77770000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0, "isModifiable": true },
+            "pan": { "id": "77770000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
             "stereo": { "id": "00000000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "77770000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] },
-            "output_2": { "id": "77770000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
+            "output_1": { "id": "77770000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"] },
+            "output_2": { "id": "77770000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"] }
         }
     ],
     "edges": []

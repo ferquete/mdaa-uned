@@ -1,17 +1,24 @@
 grammar MdaAudioPimRelationsMachines
-
-// TODO: Declare your grammar
-// See doc : https://langium.org/docs/learn/workflow/write_grammar/
-
-entry Model: (elements += Element)*;
-
-Element:
-    'element' name=ID;
-
-hidden terminal WS: /\s+/;
-terminal ID: /[_a-zA-Z][\w_]*/;
-terminal INT returns number: /[0-9]+/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
-
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+ 
+ entry RelationDocument:
+     '{'
+         (
+             '"description"' ':' description=STRING (',' '"relations"' ':' '[' (relations+=Relation (',' relations+=Relation)*)? ']')?
+             |
+             '"relations"' ':' '[' (relations+=Relation (',' relations+=Relation)*)? ']' (',' '"description"' ':' description=STRING)?
+         )?
+     '}';
+ 
+ Relation:
+     '{'
+         '"id"' ':' id=STRING ','
+         '"source"' ':' source=STRING ','
+         '"destination"' ':' destination=STRING ','
+         '"description"' ':' description=STRING
+     '}';
+ 
+ hidden terminal WS: /\s+/;
+ terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+ 
+ hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+ hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

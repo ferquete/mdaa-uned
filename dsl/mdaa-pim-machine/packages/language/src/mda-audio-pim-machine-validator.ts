@@ -1,6 +1,6 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 import { 
-    MdaAudioPimMachineAstType, Model, Parameter, InputPoint, OutputPoint, Edge, Matrix, OscillatorNode, NoiseNode, SampleNode, 
+    MdaAudioPimMachineAstType, Model, Parameter, ConnectionPoint, Edge, Matrix, OscillatorNode, NoiseNode, SampleNode, 
     FrequencyFilterNode, LFONode, EnvelopeNode, GainAndPanNode, ReverbNode, DelayNode, DistortionNode, 
     ChorusFlangerNode, CompressorNode, EqualizerNode, MixerNode, isNumberValue, isStringValue, isBooleanValue, isMatrix 
 } from './generated/ast.js';
@@ -15,8 +15,7 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
     const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
         Model: [validator.checkModelIntegrity],
         Parameter: [validator.checkParameter],
-        InputPoint: [validator.checkInputPoint],
-        OutputPoint: [validator.checkOutputPoint],
+        ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
         Matrix: [validator.checkMatrix],
         OscillatorNode: [validator.checkOscillator, validator.checkAudioOutputs],
@@ -97,7 +96,7 @@ export class MdaAudioPimMachineValidator {
         let tParamName = '';
         for (const key in tNode) {
             const val = tNode[key];
-            if (val && (val.$type === 'Parameter' || val.$type === 'InputPoint' || val.$type === 'OutputPoint') && (val as any).id.replace(/"/g, '') === tParamId) {
+            if (val && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint') && (val as any).id.replace(/"/g, '') === tParamId) {
                 tParamName = key;
                 break;
             }
@@ -127,11 +126,11 @@ export class MdaAudioPimMachineValidator {
     private collectParamIds(node: any, paramIds: Set<string>): void {
         for (const key in node) {
             const val = node[key];
-            if (val && typeof val === 'object' && (val.$type === 'Parameter' || val.$type === 'InputPoint' || val.$type === 'OutputPoint')) {
+            if (val && typeof val === 'object' && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint')) {
                 paramIds.add((val as any).id.replace(/"/g, ''));
             } else if (Array.isArray(val)) {
                 val.forEach(item => {
-                    if (item && typeof item === 'object' && (item.$type === 'Parameter' || item.$type === 'InputPoint' || item.$type === 'OutputPoint')) {
+                    if (item && typeof item === 'object' && (item.$type === 'Parameter' || item.$type === 'ConnectionPoint')) {
                         paramIds.add((item as any).id.replace(/"/g, ''));
                     }
                 });
@@ -141,8 +140,6 @@ export class MdaAudioPimMachineValidator {
 
     /**
      * Valida los campos comunes de un parámetro de configuración.
-     * Solo permite ids_source_machines si isModifiable es true.
-     * NUNCA permite ids_destination_machines.
      */
     checkParameter(param: Parameter, accept: ValidationAcceptor): void {
         const id = param.id.replace(/"/g, '');
@@ -151,27 +148,6 @@ export class MdaAudioPimMachineValidator {
         }
         if (param.ids_references.length === 0) {
             accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: param, property: 'ids_references' });
-        }
-        
-        // Un parámetro NUNCA puede ser origen de máquinas (no es una salida)
-        if ((param as any).ids_destination_machines) {
-            accept('error', 'Los parámetros de configuración no pueden tener ids_destination_machines. Usa OutputPoint para salidas.', { node: param, property: 'ids_destination_machines' as any });
-        }
-
-        // ids_source_machines SOLO si es modificable
-        if (param.isModifiable) {
-            if (param.ids_source_machines) {
-                param.ids_source_machines.forEach((machineId, index) => {
-                    const cleanId = machineId.replace(/"/g, '');
-                    if (cleanId.length !== 36) {
-                        accept('error', 'Cada ID de máquina de origen debe tener exactamente 36 caracteres.', { node: param, property: 'ids_source_machines', index });
-                    }
-                });
-            }
-        } else {
-            if (param.ids_source_machines) {
-                accept('error', 'Un parámetro no modificable (isModifiable: false) no puede tener ids_source_machines.', { node: param, property: 'ids_source_machines' });
-            }
         }
 
         if (param.description && param.description.length > 600) {
@@ -196,44 +172,9 @@ export class MdaAudioPimMachineValidator {
     }
 
     /**
-     * Valida los campos de un punto de entrada.
-     * Solo permite ids_source_machines.
+     * Valida los campos de un punto de conexión.
      */
-    checkInputPoint(ip: InputPoint, accept: ValidationAcceptor): void {
-        this.checkCommonPointFields(ip, accept);
-        if ((ip as any).ids_destination_machines) {
-            accept('error', 'Un punto de entrada no puede tener ids_destination_machines.', { node: ip, property: 'ids_destination_machines' as any });
-        }
-        if (ip.ids_source_machines) {
-            ip.ids_source_machines.forEach((machineId, index) => {
-                const cleanId = machineId.replace(/"/g, '');
-                if (cleanId.length !== 36) {
-                    accept('error', 'Cada ID de máquina de origen debe tener exactamente 36 caracteres.', { node: ip, property: 'ids_source_machines', index });
-                }
-            });
-        }
-    }
-
-    /**
-     * Valida los campos de un punto de salida.
-     * Solo permite ids_destination_machines.
-     */
-    checkOutputPoint(op: OutputPoint, accept: ValidationAcceptor): void {
-        this.checkCommonPointFields(op, accept);
-        if ((op as any).ids_source_machines) {
-            accept('error', 'Un punto de salida no puede tener ids_source_machines.', { node: op, property: 'ids_source_machines' as any });
-        }
-        if (op.ids_destination_machines) {
-            op.ids_destination_machines.forEach((machineId, index) => {
-                const cleanId = machineId.replace(/"/g, '');
-                if (cleanId.length !== 36) {
-                    accept('error', 'Cada ID de máquina de destino debe tener exactamente 36 caracteres.', { node: op, property: 'ids_destination_machines', index });
-                }
-            });
-        }
-    }
-
-    private checkCommonPointFields(cp: any, accept: ValidationAcceptor): void {
+    checkConnectionPoint(cp: ConnectionPoint, accept: ValidationAcceptor): void {
         const id = cp.id.replace(/"/g, '');
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: cp, property: 'id' });

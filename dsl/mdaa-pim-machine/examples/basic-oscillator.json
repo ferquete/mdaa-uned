@@ -14,7 +14,6 @@
             "frequency": {
                 "id": "550e8400-e29b-41d4-a716-446655440002",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 440,
                 "isModifiable": true
             },
@@ -27,7 +26,6 @@
             "gain": {
                 "id": "550e8400-e29b-41d4-a716-446655440004",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 0.8,
                 "isModifiable": true
             },
@@ -40,7 +38,6 @@
             "pan": {
                 "id": "550e8400-e29b-41d4-a716-446655440006",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 0,
                 "isModifiable": true
             },
@@ -53,13 +50,11 @@
             "output_1": {
                 "id": "550e8400-e29b-41d4-a716-446655440007",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": [],
                 "description": "Salida Izquierda"
             },
             "output_2": {
                 "id": "550e8400-e29b-41d4-a716-446655440008",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": [],
                 "description": "Salida Derecha"
             }
         },
@@ -71,14 +66,12 @@
             "gain": {
                 "id": "550e8400-e29b-41d4-a716-446655440101",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 1.0,
                 "isModifiable": true
             },
             "pan": {
                 "id": "550e8400-e29b-41d4-a716-446655440103",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 0,
                 "isModifiable": true
             },
@@ -91,24 +84,20 @@
             "ping_pong": {
                 "id": "550e8400-e29b-41d4-a716-446655440202",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": false,
                 "isModifiable": true
             },
             "input_1": {
                 "id": "550e8400-e29b-41d4-a716-446655440203",
-                "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": []
+                "ids_references": ["ref_cim_machine_description"]
             },
             "output_1": {
                 "id": "550e8400-e29b-41d4-a716-446655440104",
-                "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": []
+                "ids_references": ["ref_cim_machine_description"]
             },
             "output_2": {
                 "id": "550e8400-e29b-41d4-a716-446655440105",
-                "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": []
+                "ids_references": ["ref_cim_machine_description"]
             }
         }
     ],

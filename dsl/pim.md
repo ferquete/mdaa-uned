@@ -20,32 +20,19 @@ Cualquier propiedad de configuración de un nodo es un objeto de tipo `Parameter
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del parámetro. |
-| `ids_references` | string[] | Referencias a elementos externos (CIM/PIM). |
-| `ids_source_machines` | string[] | Referencias a máquinas PIM **externas** que modulan este parámetro. **Solo permitido si `isModifiable` es `true`.** |
+| `ids_references` | string[] | Referencias a elementos externos (CIM). |
 | `initialValue` | any | Valor inicial del parámetro. |
-| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones externas. |
+| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
 
-### Puntos de Conexión (InputPoint / OutputPoint)
+### Puntos de Conexión (`ConnectionPoint`)
 
-Los puntos de conexión se dividen estrictamente en entradas y salidas para garantizar la integridad del flujo de datos.
+Los puntos de conexión son los puertos de entrada o salida de audio y control de los nodos.
 
-#### InputPoint (Entradas)
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
-| `id` | UUID | Identificador único de la entrada. |
-| `ids_source_machines` | string[] | Referencias a máquinas PIM **externas** de origen. |
-| `description` | string | (Opcional) Descripción de la entrada. |
-
-#### OutputPoint (Salidas)
-| Campo | Tipo | Descripción |
-| :--- | :--- | :--- |
-| `id` | UUID | Identificador único de la salida. |
-| `ids_destination_machines` | string[] | Referencias a máquinas PIM **externas** de destino. |
-| `description` | string | (Opcional) Descripción de la salida. |
-
-> [!IMPORTANT]
-> Los campos `ids_source_machines` e `ids_destination_machines` contienen exclusivamente referencias a **máquinas PIM externas** (identificadas por su UUID de 36 caracteres). No se utilizan para conexiones internas dentro del mismo grafo (estas se definen en la sección `edges`). Opcional. |
+| `id` | UUID | Identificador único del punto de conexión. |
+| `description` | string | (Opcional) Descripción del propósito del punto. |
 
 > [!IMPORTANT]
 > Los puntos de conexión **NO** disponen de los campos `initialValue` ni `isModifiable`. Su configuración es puramente topológica.

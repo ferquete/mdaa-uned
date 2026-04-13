@@ -20,14 +20,12 @@
             "gain": {
                 "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400003",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 1.0,
                 "isModifiable": true
             },
             "pan": {
                 "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400004",
                 "ids_references": ["ref_cim_machine_description"],
-                "ids_source_machines": [],
                 "initialValue": 0.2,
                 "isModifiable": true
             },
@@ -39,13 +37,11 @@
             },
             "output_1": {
                 "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400005",
-                "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": []
+                "ids_references": ["ref_cim_machine_description"]
             },
             "output_2": {
                 "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400006",
-                "ids_references": ["ref_cim_machine_description"],
-                "ids_destination_machines": []
+                "ids_references": ["ref_cim_machine_description"]
             }
         }
     ],

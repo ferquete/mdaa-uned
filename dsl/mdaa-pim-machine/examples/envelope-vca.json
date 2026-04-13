@@ -5,26 +5,26 @@
             "id": "e1e2e3e4-e5e6-4e7e-8e9e-a1b2c3d4e5f6",
             "description": "Generador de envolvente ADSR",
             "ids_references": ["ref_project_description"],
-            "attack": { "id": "11110000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.1, "isModifiable": true, "ids_source_machines": [] },
+            "attack": { "id": "11110000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.1, "isModifiable": true },
             "decay": { "id": "11110000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.2, "isModifiable": false },
-            "sustain": { "id": "11110000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true, "ids_source_machines": [] },
+            "sustain": { "id": "11110000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
             "release": { "id": "11110000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
             "envelopeType": { "id": "11110000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": "ADSR", "isModifiable": false },
             "delay": { "id": "11110000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
             "hold": { "id": "11110000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
             "curve": { "id": "11110000-0000-0000-0000-000000000008", "ids_references": ["ref_cim_machine_description"], "initialValue": "Exponential", "isModifiable": false },
-            "output": { "id": "11110000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
+            "output": { "id": "11110000-0000-0000-0000-000000000009", "ids_references": ["ref_cim_machine_description"] }
         },
         {
             "type": "gain_pan",
             "id": "g1g2g3g4-g5g6-4g7g-8g9g-a1b2c3d4e5f6",
             "description": "VCA controlado por envolvente",
             "ids_references": ["ref_project_description"],
-            "gain": { "id": "22220000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0, "isModifiable": true },
+            "gain": { "id": "22220000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
             "stereo": { "id": "22220000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
-            "pan": { "id": "22220000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [], "initialValue": 0, "isModifiable": true },
-            "input_1": { "id": "22220000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"], "ids_source_machines": [] },
-            "output_1": { "id": "22220000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "ids_destination_machines": [] }
+            "pan": { "id": "22220000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
+            "input_1": { "id": "22220000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"] },
+            "output_1": { "id": "22220000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"] }
         }
     ],
     "edges": [

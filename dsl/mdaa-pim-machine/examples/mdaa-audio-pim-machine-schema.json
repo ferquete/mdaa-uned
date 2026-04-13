@@ -55,11 +55,6 @@
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "ids_source_machines": {
-          "type": "array",
-          "items": { "type": "string", "length": 36 },
-          "description": "IDs de las máquinas PIM externas de origen (solo si isModifiable es true)"
-        },
         "initialValue": {
           "anyOf": [
             { "type": "number" },
@@ -71,39 +66,13 @@
         "isModifiable": { "type": "boolean" },
         "description": { "$ref": "#/definitions/Description" }
       },
-      "required": ["id", "ids_references", "initialValue", "isModifiable"],
-      "if": {
-        "properties": { "isModifiable": { "const": false } }
-      },
-      "then": {
-        "properties": { "ids_source_machines": false }
-      }
+      "required": ["id", "ids_references", "initialValue", "isModifiable"]
     },
-    "InputPoint": {
+    "ConnectionPoint": {
       "type": "object",
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "ids_source_machines": {
-          "type": "array",
-          "items": { "type": "string", "length": 36 },
-          "description": "IDs de las máquinas PIM externas de origen"
-        },
-        "description": { "$ref": "#/definitions/Description" }
-      },
-      "required": ["id", "ids_references"],
-      "additionalProperties": false
-    },
-    "OutputPoint": {
-      "type": "object",
-      "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "ids_destination_machines": {
-          "type": "array",
-          "items": { "type": "string", "length": 36 },
-          "description": "IDs de las máquinas PIM externas de destino"
-        },
         "description": { "$ref": "#/definitions/Description" }
       },
       "required": ["id", "ids_references"],
@@ -129,8 +98,8 @@
     "AudioOutputProperties": {
       "properties": {
         "stereo": { "$ref": "#/definitions/Parameter" },
-        "output_1": { "$ref": "#/definitions/OutputPoint" },
-        "output_2": { "$ref": "#/definitions/OutputPoint" }
+        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["stereo", "output_1"]
     },
@@ -138,10 +107,10 @@
       "properties": {
         "stereo": { "$ref": "#/definitions/Parameter" },
         "ping_pong": { "$ref": "#/definitions/Parameter" },
-        "input_1": { "$ref": "#/definitions/InputPoint" },
-        "input_2": { "$ref": "#/definitions/InputPoint" },
-        "output_1": { "$ref": "#/definitions/OutputPoint" },
-        "output_2": { "$ref": "#/definitions/OutputPoint" }
+        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["stereo", "input_1", "output_1"]
     },
@@ -235,7 +204,7 @@
         "amplitude": { "$ref": "#/definitions/Parameter" },
         "phase": { "$ref": "#/definitions/Parameter" },
         "sync": { "$ref": "#/definitions/Parameter" },
-        "output": { "$ref": "#/definitions/OutputPoint" }
+        "output": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["type", "waveform", "rate", "amplitude", "phase", "sync", "output"]
     },
@@ -252,7 +221,7 @@
         "delay": { "$ref": "#/definitions/Parameter" },
         "hold": { "$ref": "#/definitions/Parameter" },
         "curve": { "$ref": "#/definitions/Parameter" },
-        "output": { "$ref": "#/definitions/OutputPoint" }
+        "output": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["type", "envelopeType", "attack", "decay", "sustain", "release", "delay", "hold", "curve", "output"]
     },
@@ -266,18 +235,18 @@
         "stereo": { "$ref": "#/definitions/Parameter" },
         "ping_pong": { "$ref": "#/definitions/Parameter" },
         "inputs_number": { "$ref": "#/definitions/Parameter" },
-        "output_1": { "$ref": "#/definitions/OutputPoint" },
-        "output_2": { "$ref": "#/definitions/OutputPoint" },
-        "input_1": { "$ref": "#/definitions/InputPoint" },
-        "input_2": { "$ref": "#/definitions/InputPoint" },
-        "input_3": { "$ref": "#/definitions/InputPoint" },
-        "input_4": { "$ref": "#/definitions/InputPoint" },
-        "input_5": { "$ref": "#/definitions/InputPoint" },
-        "input_6": { "$ref": "#/definitions/InputPoint" },
-        "input_7": { "$ref": "#/definitions/InputPoint" },
-        "input_8": { "$ref": "#/definitions/InputPoint" },
-        "input_9": { "$ref": "#/definitions/InputPoint" },
-        "input_10": { "$ref": "#/definitions/InputPoint" }
+        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_3": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_4": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_5": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_6": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_7": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_8": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_9": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_10": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["type", "stereo", "inputs_number", "output_1"]
     },
@@ -292,9 +261,9 @@
         "pan": { "$ref": "#/definitions/Parameter" },
         "stereo": { "$ref": "#/definitions/Parameter" },
         "ping_pong": { "$ref": "#/definitions/Parameter" },
-        "input_1": { "$ref": "#/definitions/InputPoint" },
-        "output_1": { "$ref": "#/definitions/OutputPoint" },
-        "output_2": { "$ref": "#/definitions/OutputPoint" }
+        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["type", "gain", "pan", "stereo", "input_1", "output_1"]
     },

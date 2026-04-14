@@ -19,6 +19,7 @@ interface Props {
   showFormMode?: boolean
   showInfo?: boolean
   description?: string
+  label2D?: string
 }
 
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
@@ -130,10 +131,11 @@ const handleEditBasic = () => {
         <div v-if="visualizerMode" class="flex items-center gap-1 bg-geist-bg border border-geist-border rounded-lg p-0.5">
           <button 
             @click="handleSetMode('2D')"
-            class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-2"
+            class="px-3 py-1 rounded-md text-[10px] uppercase font-bold transition-all flex items-center gap-1.5"
             :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
           >
-            <i class="fa-solid fa-diagram-project"></i> 2D
+            <i class="fa-solid fa-diagram-project"></i>
+            {{ label2D || '2D' }}
           </button>
 
           <button 

@@ -110,10 +110,16 @@ export const PIM_MACHINE_SCHEMA = {
       "type": "object",
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Nombre representativo del nodo"
+        },
         "description": { "$ref": "#/definitions/Description" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" }
       },
-      "required": ["id", "description", "ids_references"]
+      "required": ["id", "name", "description", "ids_references"]
     },
     "AudioOutputProperties": {
       "properties": {

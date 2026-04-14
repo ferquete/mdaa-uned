@@ -6,6 +6,7 @@
         {
             "type": "oscillator",
             "id": "e4f5a6b7-c8d9-4a0b-1c2d-3e4f5a6b7c8d",
+            "name": "Primary Osc",
             "description": "Oscilador principal",
             "ids_references": ["ref_cim_machine_description"],
             "waveform": { "id": "88880000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "triangle", "isModifiable": false },
@@ -21,6 +22,7 @@
         {
             "type": "lfo",
             "id": "a9b8c7d6-e5f4-4a3b-2c1d-0e9f8a7b6c5d",
+            "name": "Pan Modulator",
             "description": "Modulador de paneo",
             "ids_references": ["ref_cim_machine_description"],
             "waveform": { "id": "99990000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
@@ -33,6 +35,7 @@
         {
             "type": "delay",
             "id": "d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a",
+            "name": "Ambient Delay",
             "description": "Eco ambiental",
             "ids_references": ["ref_cim_machine_description"],
             "delayTime": { "id": "aaaa0000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 500, "isModifiable": true },

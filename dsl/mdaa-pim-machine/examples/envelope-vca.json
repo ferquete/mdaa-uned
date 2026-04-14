@@ -6,6 +6,7 @@
         {
             "type": "envelope",
             "id": "e1e2e3e4-e5e6-4e7e-8e9e-a1b2c3d4e5f6",
+            "name": "Main Envelope",
             "description": "Generador de envolvente ADSR",
             "ids_references": ["ref_project_description"],
             "attack": { "id": "11110000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.1, "isModifiable": true },
@@ -21,6 +22,7 @@
         {
             "type": "gain_pan",
             "id": "g1g2g3g4-g5g6-4g7g-8g9g-a1b2c3d4e5f6",
+            "name": "VCA",
             "description": "VCA controlado por envolvente",
             "ids_references": ["ref_project_description"],
             "gain": { "id": "22220000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },

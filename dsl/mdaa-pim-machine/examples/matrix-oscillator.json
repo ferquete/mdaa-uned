@@ -6,6 +6,7 @@
         {
             "type": "oscillator",
             "id": "m1m1m1m1-m1m1-4m1m-m1m1-m1m1m1m1m1m1",
+            "name": "Custom Matrix Osc",
             "description": "Oscilador con forma de onda personalizada",
             "ids_references": ["ref_project_description"],
             "waveform": { 

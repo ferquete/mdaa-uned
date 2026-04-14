@@ -12,6 +12,7 @@ entry Model:
 
 interface BaseElement {
     id: string
+    name: string
     description: string
     ids_references: string[]
 }
@@ -224,6 +225,7 @@ EqualizerNode:
 
 fragment CommonNodeFields:
     '"id"' ':' id=STRING ','
+    '"name"' ':' name=STRING ','
     '"description"' ':' description=STRING ','
     '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ',';
 

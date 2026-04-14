@@ -18,20 +18,20 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
         ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
         Matrix: [validator.checkMatrix],
-        OscillatorNode: [validator.checkOscillator, validator.checkAudioOutputs],
-        NoiseNode: [validator.checkNoise, validator.checkAudioOutputs],
-        SampleNode: [validator.checkSample, validator.checkAudioOutputs],
-        FrequencyFilterNode: [validator.checkFilter, validator.checkSoundModifier],
-        LFONode: [validator.checkLFO],
-        EnvelopeNode: [validator.checkEnvelope],
-        MixerNode: [validator.checkMixer],
-        GainAndPanNode: [validator.checkGainAndPan, validator.checkGainAndPanStructure],
-        ReverbNode: [validator.checkReverb, validator.checkSoundModifier],
-        DelayNode: [validator.checkDelay, validator.checkSoundModifier],
-        DistortionNode: [validator.checkDistortion, validator.checkSoundModifier],
-        ChorusFlangerNode: [validator.checkChorusFlanger, validator.checkSoundModifier],
-        CompressorNode: [validator.checkCompressor, validator.checkSoundModifier],
-        EqualizerNode: [validator.checkEqualizer, validator.checkSoundModifier]
+        OscillatorNode: [validator.checkNodeName, validator.checkOscillator, validator.checkAudioOutputs],
+        NoiseNode: [validator.checkNodeName, validator.checkNoise, validator.checkAudioOutputs],
+        SampleNode: [validator.checkNodeName, validator.checkSample, validator.checkAudioOutputs],
+        FrequencyFilterNode: [validator.checkNodeName, validator.checkFilter, validator.checkSoundModifier],
+        LFONode: [validator.checkNodeName, validator.checkLFO],
+        EnvelopeNode: [validator.checkNodeName, validator.checkEnvelope],
+        MixerNode: [validator.checkNodeName, validator.checkMixer],
+        GainAndPanNode: [validator.checkNodeName, validator.checkGainAndPan, validator.checkGainAndPanStructure],
+        ReverbNode: [validator.checkNodeName, validator.checkReverb, validator.checkSoundModifier],
+        DelayNode: [validator.checkNodeName, validator.checkDelay, validator.checkSoundModifier],
+        DistortionNode: [validator.checkNodeName, validator.checkDistortion, validator.checkSoundModifier],
+        ChorusFlangerNode: [validator.checkNodeName, validator.checkChorusFlanger, validator.checkSoundModifier],
+        CompressorNode: [validator.checkNodeName, validator.checkCompressor, validator.checkSoundModifier],
+        EqualizerNode: [validator.checkNodeName, validator.checkEqualizer, validator.checkSoundModifier]
     };
     registry.register(checks, validator);
 }
@@ -43,6 +43,18 @@ export class MdaAudioPimMachineValidator {
 
     private uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     
+    /**
+     * Valida que el nombre del nodo tenga entre 1 y 20 caracteres.
+     */
+    checkNodeName(node: any, accept: ValidationAcceptor): void {
+        const name = node.name?.replace(/"/g, '');
+        if (!name || name.trim().length === 0) {
+            accept('error', 'El nombre del nodo es obligatorio y no puede estar vacío.', { node, property: 'name' });
+        } else if (name.length > 20) {
+            accept('error', 'El nombre del nodo no puede superar los 20 caracteres.', { node, property: 'name' });
+        }
+    }
+
     /**
      * Valida los campos de cabecera del modelo (id, name, description, references).
      */

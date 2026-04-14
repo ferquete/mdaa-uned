@@ -7,6 +7,7 @@ import { useExport } from '@/shared/composables/useExport'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { usePimStore } from '../stores/pimStore'
 import PimEditor from '../components/PimEditor.vue'
+import PimVisualEditor from '../components/PimVisualEditor.vue'
 import PimMachineModal from '../components/PimMachineModal.vue'
 
 const analysisStore = useAnalysisMachinesStore()
@@ -102,6 +103,7 @@ const confirmDelete = async () => {
         module-name="Conceptual"
         :breadcrumbs="breadcrumbs"
         :visualizer-mode="store.visualizerMode"
+        :label-2d="isMachineSelected ? 'Diseñador Gráfico' : '2D'"
         :show-export="true"
         :show-form-mode="false"
         :show-info="false"
@@ -117,13 +119,16 @@ const confirmDelete = async () => {
         <div v-if="store.visualizerMode === 'JSON'" class="w-full h-full">
           <PimEditor />
         </div>
+        <div v-else-if="isMachineSelected" class="w-full h-full">
+          <PimVisualEditor />
+        </div>
         <div v-else class="w-full h-full flex items-center justify-center p-8 bg-geist-accents-1">
           <div class="text-center opacity-30 select-none">
             <div class="w-24 h-24 rounded-full bg-geist-accents-2 flex items-center justify-center mx-auto mb-6 border border-geist-border shadow-inner">
                <i class="fa-solid fa-draw-polygon text-5xl"></i>
             </div>
-            <h3 class="text-2xl font-bold uppercase tracking-[0.2em] text-geist-fg">Vista 2D PIM</h3>
-            <p class="text-[10px] font-mono mt-4 text-geist-accents-4">Próximamente: Editor visual de diseño conceptual</p>
+            <h3 class="text-2xl font-bold uppercase tracking-[0.2em] text-geist-fg">Análisis PIM</h3>
+            <p class="text-[10px] font-mono mt-4 text-geist-accents-4">Vista general de relaciones (Próximamente)</p>
           </div>
         </div>
       </div>

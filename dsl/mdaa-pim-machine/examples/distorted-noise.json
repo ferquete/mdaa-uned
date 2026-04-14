@@ -6,6 +6,7 @@
         {
             "type": "noise",
             "id": "n1n1n1n1-n1n1-4n1n-n1n1-n1n1n1n1n1n1",
+            "name": "Noise Source",
             "description": "Noise Source",
             "ids_references": ["ref_project_description"],
             "noiseType": { "id": "44440000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "brownian", "isModifiable": false },
@@ -19,6 +20,7 @@
         {
             "type": "distortion",
             "id": "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
+            "name": "Hard Distortion",
             "description": "Ruido sucio",
             "ids_references": ["ref_project_description"],
             "drive": { "id": "55550000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.9, "isModifiable": true },

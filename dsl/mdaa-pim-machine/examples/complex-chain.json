@@ -6,6 +6,7 @@
         {
             "type": "oscillator",
             "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+            "name": "Carrier Osc",
             "description": "Portadora de la cadena",
             "ids_references": ["ref_project_description"],
             "waveform": { "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c", "ids_references": ["ref_cim_machine_description"], "initialValue": "sawtooth", "isModifiable": false },
@@ -21,6 +22,7 @@
         {
             "type": "frequency_filter",
             "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+            "name": "Dynamic Filter",
             "description": "Filtro pasa-bajos dinámico",
             "ids_references": ["ref_project_description"],
             "filterType": { "id": "f6g7h8i9-j0k1-l2m3-n4o5-p6q7r8s9t0u1", "ids_references": ["ref_cim_machine_description"], "initialValue": "LPF", "isModifiable": false },
@@ -34,6 +36,7 @@
         {
             "type": "reverb",
             "id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+            "name": "Plate Reverb",
             "description": "Espacialización",
             "ids_references": ["ref_project_description"],
             "roomSize": { "id": "k1l2m3n4-o5p6-q7r8-s9t0-u1v2w3x4y5z6", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.8, "isModifiable": true },

@@ -41,6 +41,7 @@ declare module 'vue' {
     MachineVisualizerJSON: typeof import('./modules/projects/components/MachineVisualizerJSON.vue')['default']
     ModuleViewHeader: typeof import('./shared/components/layout/ModuleViewHeader.vue')['default']
     NodeEditor: typeof import('./modules/projects/components/NodeEditor.vue')['default']
+    PimCustomNode: typeof import('./modules/pim/components/PimCustomNode.vue')['default']
     PimEditor: typeof import('./modules/pim/components/PimEditor.vue')['default']
     PimEditorPalette: typeof import('./modules/pim/components/PimEditorPalette.vue')['default']
     PimEditorProperties: typeof import('./modules/pim/components/PimEditorProperties.vue')['default']

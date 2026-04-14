@@ -67,6 +67,10 @@ const isDescriptionValid = computed(() => {
 
 const isValid = computed(() => isNameValid.value && isDescriptionValid.value)
 
+const vFocus = {
+  mounted: (el: HTMLElement) => el.focus()
+}
+
 const handleConfirm = () => {
   if (isValid.value) {
     emit('confirm', localName.value.trim(), localDescription.value.trim())

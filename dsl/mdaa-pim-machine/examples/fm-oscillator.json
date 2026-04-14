@@ -1,43 +1,8 @@
 {
-    "nodes": [
-        {
-            "type": "lfo",
-            "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
-            "description": "LFO para modulación de frecuencia",
-            "ids_references": ["ref_project_description"],
-            "waveform": { "id": "11111111-1111-1111-1111-111111111111", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
-            "rate": { "id": "22222222-2222-2222-2222-222222222222", "ids_references": ["ref_cim_machine_description"], "initialValue": 5.0, "isModifiable": true },
-            "amplitude": { "id": "33333333-3333-3333-3333-333333333333", "ids_references": ["ref_cim_machine_description"], "initialValue": 1.0, "isModifiable": true },
-            "phase": { "id": "44444444-4444-4444-4444-444444444444", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "sync": { "id": "55555555-5555-5555-5555-555555555555", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
-            "output": { "id": "66666666-6666-6666-6666-666666666666", "ids_references": ["ref_cim_machine_description"] }
-        },
-        {
-            "type": "oscillator",
-            "id": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
-            "description": "Oscilador modulado",
-            "ids_references": ["ref_project_description"],
-            "waveform": { "id": "77777777-7777-7777-7777-777777777777", "ids_references": ["ref_cim_machine_description"], "initialValue": "sine", "isModifiable": false },
-            "frequency": { "id": "88888888-8888-8888-8888-888888888888", "ids_references": ["ref_cim_machine_description"], "initialValue": 440, "isModifiable": true },
-            "pulseWidth": { "id": "99999999-9999-9999-9999-999999999999", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": false },
-            "gain": { "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.8, "isModifiable": true },
-            "phase": { "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": false },
-            "pan": { "id": "cccccccc-cccc-cccc-cccc-cccccccccccc", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
-            "stereo": { "id": "00000000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "dddddddd-dddd-dddd-dddd-dddddddddddd", "ids_references": ["ref_cim_machine_description"] },
-            "output_2": { "id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", "ids_references": ["ref_cim_machine_description"] }
-        }
-    ],
-    "edges": [
-        {
-            "id": "ffffffff-ffff-ffff-ffff-ffffffffffff",
-            "description": "LFO -> Osc Frequency",
-            "ids_references": ["ref_project_description"],
-            "sourceNode": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
-            "sourceParam": "66666666-6666-6666-6666-666666666666",
-            "targetNode": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
-            "targetParam": "88888888-8888-8888-8888-888888888888",
-            "type": "modification"
-        }
-    ]
+    "id": "770e8400-e29b-41d4-a716-446655440008",
+    "name": "FM Oscillator",
+    "description": "Ejemplo de oscilador FM",
+    "ids_cim_reference": [],
+    "nodes": [],
+    "edges": []
 }

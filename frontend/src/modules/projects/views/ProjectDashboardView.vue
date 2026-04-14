@@ -4,13 +4,16 @@ import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
 import ProjectTreeView from '../components/ProjectTreeView.vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { usePimStore } from '@/modules/pim/stores/pimStore'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import AnalysisMachinesDashboard from '@/modules/analysis/views/AnalysisMachinesDashboard.vue'
+import PimDashboard from '@/modules/pim/views/PimDashboard.vue'
 import UnsavedChangesModal from '@/shared/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import type { Project } from '@/shared/types'
 
 const analysisStore = useAnalysisMachinesStore()
+const pimStore = usePimStore()
 const projectStore = useProjectStore()
 const route = useRoute()
 const { runWithGuard, hasUnsavedChanges } = useUnsavedChanges()
@@ -60,6 +63,11 @@ const activeModule = computed(() => {
   if (id === 'diseno') return 'design'
   if (id === 'implementacion') return 'implementation'
   
+  // Nodos específicos de PIM o máquinas PIM
+  if (typeof id === 'string' && (id.startsWith('pim-') || id.startsWith('new-pim-'))) {
+    return 'design'
+  }
+
   return null
 })
 
@@ -80,7 +88,11 @@ onMounted(async () => {
   const projectId = Number(route.params.id)
   if (projectId) {
     currentProject.value = await projectStore.fetchProjectById(projectId)
-    await analysisStore.fetchMachines(projectId)
+    // Carga paralela de CIM y PIM
+    await Promise.all([
+      analysisStore.fetchMachines(projectId),
+      pimStore.fetchPimData(projectId)
+    ])
   }
 })
 </script>
@@ -126,7 +138,11 @@ onMounted(async () => {
               />
             </template>
             
-            <div v-else-if="activeModule === 'design' || activeModule === 'implementation'" class="w-full h-full flex items-center justify-center">
+            <template v-else-if="activeModule === 'design'">
+              <PimDashboard />
+            </template>
+            
+            <div v-else-if="activeModule === 'implementation'" class="w-full h-full flex items-center justify-center">
               <div class="text-center opacity-30">
                 <i class="fa-solid fa-tools text-4xl mb-4"></i>
                 <h3 class="text-xl font-bold uppercase tracking-widest">En Desarrollo</h3>

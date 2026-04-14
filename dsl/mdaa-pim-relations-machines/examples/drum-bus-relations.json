@@ -1,5 +1,4 @@
 {
-    "$schema": "./mdaa-audio-pim-relations-machines-schema.json",
     "description": "Configuración de efectos en paralelo para procesamiento de batería.",
     "relations": [
         {

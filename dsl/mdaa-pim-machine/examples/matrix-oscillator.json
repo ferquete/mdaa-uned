@@ -1,4 +1,7 @@
 {
+    "id": "770e8400-e29b-41d4-a716-446655440006",
+    "name": "Matrix Oscillator",
+    "ids_cim_reference": [],
     "nodes": [
         {
             "type": "oscillator",

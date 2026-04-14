@@ -6,9 +6,23 @@ Este documento constituye la especificación técnica completa del lenguaje **MD
 
 El lenguaje MDA-Audio-PIM define un grafo dirigido de audio y control. Todos los elementos del grafo (nodos, aristas y parámetros) comparten una estructura base.
 
-### 1.1. Interfaces Base
+### 1.1. Modelo Raíz (`Model`)
+
+El objeto raíz de un archivo MDA-Audio-PIM contiene la identificación global y los contenedores de nodos y aristas.
+
+| Atributo | Tipo | Descripción | Restricciones |
+| :--- | :--- | :--- | :--- |
+| `id` | STRING | Identificador único de la máquina PIM. | Obligatorio. Formato UUIDv4 (36 caracteres). |
+| `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. Máximo 20 caracteres. |
+| `description` | STRING | Información general sobre la máquina. | Opcional. Máximo 600 caracteres. |
+| `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. | Obligatorio. Puede estar vacío. |
+| `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. |
+| `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. |
+
+### 1.2. Interfaces Base
 
 #### Elementos Principales (Nodos y Aristas)
+
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único universal. | Obligatorio. Formato UUIDv4 (36 caracteres). |

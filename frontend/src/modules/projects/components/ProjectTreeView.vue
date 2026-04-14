@@ -6,6 +6,7 @@ import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.
 import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
 import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { usePimStore } from '@/modules/pim/stores/pimStore'
 import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import { onMounted } from 'vue'
@@ -22,6 +23,7 @@ interface TreeNodeType {
 }
 
 const analysisStore = useAnalysisMachinesStore()
+const pimStore = usePimStore()
 const projectStore = useProjectStore()
 const route = useRoute()
 const { runWithGuard } = useUnsavedChanges()
@@ -42,6 +44,10 @@ const alertMessage = ref('')
 const alertType = ref<'warning' | 'error' | 'info'>('warning')
 
 const projectId = computed(() => Number(route.params.id))
+
+const modalDescMinLength = computed(() => {
+  return nodeToEdit.value?.id === 'analisis' ? 1 : 10
+})
 
 const treeData = computed<TreeNodeType[]>(() => [
   {
@@ -94,7 +100,21 @@ const treeData = computed<TreeNodeType[]>(() => [
           };
         })
       },
-      { id: 'diseno', text: 'Diseño Conceptual', icon: 'fa-solid fa-pen-nib' },
+      {
+        id: 'diseno', 
+        text: 'Diseño Conceptual', 
+        icon: 'fa-solid fa-pen-nib',
+        open: true,
+        children: pimStore.machines.map(m => {
+          const doc = pimStore.parsedDocs[m.id];
+          return {
+            id: `pim-m-${m.id}`,
+            text: doc?.name || `Máquina PIM ${m.id}`,
+            icon: 'fa-solid fa-microchip',
+            canEdit: false
+          };
+        })
+      },
       { id: 'implementacion', text: 'Implementación', icon: 'fa-solid fa-code' },
     ]
   }
@@ -217,6 +237,11 @@ const confirmDeleteNode = async () => {
 const handleSelect = (node: TreeNodeType) => {
   runWithGuard(() => {
     analysisStore.selectNode(node.id)
+    if (String(node.id).startsWith('pim-m-') || node.id === 'diseno') {
+      pimStore.selectNode(node.id)
+    } else {
+      pimStore.selectNode(null)
+    }
   })
 }
 
@@ -262,6 +287,7 @@ onMounted(async () => {
       :confirm-text="nodeToEdit ? 'Guardar Cambios' : 'Crear'"
       :show-name-field="nodeToEdit?.id !== 'analisis'"
       :existing-names="analysisStore.machines.map(m => analysisStore.parsedDocs[m.id]?.name || '')"
+      :desc-min-length="modalDescMinLength"
       :initial-data="nodeToEdit ? { name: nodeToEdit.name, description: nodeToEdit.description } : null"
       @close="showAddModal = false"
       @confirm="confirmAddNode"

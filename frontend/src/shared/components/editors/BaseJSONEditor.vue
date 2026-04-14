@@ -9,19 +9,22 @@ interface Props {
   height?: string
   options?: any
   schema?: any // Esquema JSON opcional
+  path?: string // Ruta única para aislamiento de esquemas en Monaco
 }
 
 const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
   height: '100%',
   options: () => ({}),
-  schema: null
+  schema: null,
+  path: 'model.json'
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'change', value: string): void
   (e: 'editorDidMount', editor: any, monaco: any): void
+  (e: 'validation-change', markers: any[]): void
 }>()
 
 const { isDark } = useTheme()
@@ -50,7 +53,26 @@ const defaultOptions = computed(() => ({
   ...props.options
 }))
 
+const monacoInstance = ref<any>(null)
+
+const updateSchema = (monaco: any) => {
+  if (!monaco || !props.schema) return
+  
+  // Limpiar configuraciones previas para evitar conflictos de esquemas antiguos
+  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+    allowComments: false,
+    schemas: [{
+      uri: `mda://schema/${props.path}`,
+      fileMatch: [props.path, `inmemory://model/${props.path}`, `file:///${props.path}`],
+      schema: props.schema
+    }]
+  })
+}
+
 const handleEditorWillMount = (monaco: any) => {
+  monacoInstance.value = monaco
+  
   // Registrar tema Dracula
   monaco.editor.defineTheme('dracula', {
     base: 'vs-dark',
@@ -79,21 +101,36 @@ const handleEditorWillMount = (monaco: any) => {
     }
   })
 
-  // Configurar esquema si se proporciona
-  if (props.schema) {
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-      validate: true,
-      allowComments: false,
-      schemas: [{
-        uri: 'http://mda-audio/machine-schema.json',
-        fileMatch: ['model.json'],
-        schema: props.schema
-      }]
-    })
-  }
+  updateSchema(monaco)
 }
 
+watch([() => props.path, () => props.schema], () => {
+  if (monacoInstance.value) {
+    updateSchema(monacoInstance.value)
+  }
+})
+
 const onEditorMount = (editor: any, monaco: any) => {
+  const getMarkers = () => {
+    const model = editor.getModel();
+    if (model) {
+      // Capturar todos los marcadores para la URI del modelo actual
+      const markers = monaco.editor.getModelMarkers({ resource: model.uri });
+      emit('validation-change', markers);
+    }
+  }
+
+  // Listener global de cambios en marcadores
+  const disposable = monaco.editor.onDidChangeMarkers(() => {
+    getMarkers();
+  });
+
+  // Verificación inmediata y periódica inicial (Monaco puede tardar en validar)
+  getMarkers();
+  setTimeout(getMarkers, 200);
+  setTimeout(getMarkers, 1000);
+  setTimeout(getMarkers, 3000);
+
   emit('editorDidMount', editor, monaco)
 }
 
@@ -123,7 +160,7 @@ defineExpose({ formatJson })
       <VueMonacoEditor
         :value="modelValue"
         language="json"
-        path="model.json"
+        :path="path"
         :theme="editorTheme"
         :options="defaultOptions"
         @before-mount="handleEditorWillMount"

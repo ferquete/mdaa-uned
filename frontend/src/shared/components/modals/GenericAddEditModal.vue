@@ -11,12 +11,14 @@ interface Props {
   initialData?: { name: string, description: string } | null
   nameMaxLength?: number
   descMaxLength?: number
+  descMinLength?: number
   showNameField?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   nameMaxLength: 20,
   descMaxLength: 600,
+  descMinLength: 1,
   showNameField: true
 })
 
@@ -49,15 +51,21 @@ const isDuplicate = computed(() => {
   return props.existingNames.some(existing => existing.trim().toLowerCase() === name)
 })
 
-const isValid = computed(() => {
+const isNameValid = computed(() => {
   const nameLen = localName.value.trim().length
-  const descLen = localDescription.value.trim().length
-  
-  const nameValid = !props.showNameField || (nameLen >= 1 && nameLen <= props.nameMaxLength && !isDuplicate.value)
-  const descValid = descLen >= 1 && descLen <= props.descMaxLength
-  
-  return nameValid && descValid
+  return !props.showNameField || (nameLen >= 1 && nameLen <= props.nameMaxLength && !isDuplicate.value)
 })
+
+const isDescriptionTooShort = computed(() => {
+  return localDescription.value.trim().length > 0 && localDescription.value.trim().length < props.descMinLength
+})
+
+const isDescriptionValid = computed(() => {
+  const descLen = localDescription.value.trim().length
+  return descLen >= props.descMinLength && descLen <= props.descMaxLength
+})
+
+const isValid = computed(() => isNameValid.value && isDescriptionValid.value)
 
 const handleConfirm = () => {
   if (isValid.value) {
@@ -137,6 +145,10 @@ const handleClose = () => {
           rows="4"
           class="geist-input w-full min-h-[100px] resize-none py-2"
         ></textarea>
+        <p v-if="isDescriptionTooShort" class="text-[10px] text-geist-error font-mono flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          Mínimo {{ props.descMinLength }} caracteres requeridos
+        </p>
       </div>
 
       <!-- Acciones -->

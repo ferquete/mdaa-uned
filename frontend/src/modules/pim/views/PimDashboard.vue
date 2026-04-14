@@ -1,0 +1,175 @@
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import ModuleViewHeader from '@/shared/components/layout/ModuleViewHeader.vue'
+import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
+import { useExport } from '@/shared/composables/useExport'
+import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { usePimStore } from '../stores/pimStore'
+import PimEditor from '../components/PimEditor.vue'
+import PimMachineModal from '../components/PimMachineModal.vue'
+
+const analysisStore = useAnalysisMachinesStore()
+const store = usePimStore()
+const { exportToJson } = useExport()
+const route = useRoute()
+
+const projectId = computed(() => Number(route.params.id))
+
+// Modales
+const showPimModal = ref(false)
+const showDeleteConfirm = ref(false)
+
+const isMachineSelected = computed(() => store.selectedMachine !== null)
+
+const breadcrumbs = computed(() => {
+  const list = []
+  if (analysisStore.selectedNodeId === 'diseno') {
+    list.push({ 
+      label: 'Diseño Conceptual', 
+      active: true,
+      showPencil: false,
+      canAddMachine: true
+    })
+  } else if (isMachineSelected.value) {
+    const machine = store.selectedMachine!
+    const doc = store.parsedDocs[machine.id]
+    list.push({ label: 'Conceptual', active: false })
+    list.push({ 
+      label: doc?.name || `Máquina PIM ${machine.id}`, 
+      active: true,
+      canDelete: true,
+      showPencil: true
+    })
+  }
+  return list
+})
+
+const handleExport = () => {
+  if (analysisStore.selectedNodeId === 'diseno' && store.currentPim) {
+    exportToJson(store.currentPim.machinesRelations, 'diseno-pim-relations')
+  } else if (isMachineSelected.value) {
+    const machine = store.selectedMachine!
+    const doc = store.parsedDocs[machine.id]
+    exportToJson(JSON.stringify(doc, null, 2), `pim-machine-${doc?.name || machine.id}`)
+  }
+}
+
+const setMode = (mode: '2D' | 'JSON' | 'FORM') => {
+  if (mode === 'JSON' || mode === '2D') {
+    store.visualizerMode = mode
+  }
+}
+
+// Reset mode to 2D when switching nodes
+watch(() => analysisStore.selectedNodeId, (newId, oldId) => {
+  if (newId !== oldId) {
+    store.visualizerMode = '2D'
+  }
+})
+
+const handleAddMachine = () => {
+  showPimModal.value = true
+}
+
+const handleConfirmPimSave = async (name: string, description: string, cimReferences: string[]) => {
+  if (isMachineSelected.value) {
+    // Editar existente
+    await store.updateMachine(store.selectedMachine!.id, name, description, cimReferences)
+  } else {
+    // Nueva máquina
+    await store.addMachine(projectId.value, name, description, cimReferences)
+  }
+  showPimModal.value = false
+}
+
+const handleDeleteRequest = () => {
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (isMachineSelected.value) {
+    await store.deleteMachine(store.selectedMachine!.id)
+  }
+  showDeleteConfirm.value = false
+}
+</script>
+
+<template>
+  <div class="pim-dashboard flex flex-col h-full bg-geist-bg font-sans">
+    <template v-if="analysisStore.selectedNodeId === 'diseno' || isMachineSelected">
+      <ModuleViewHeader 
+        module-name="Conceptual"
+        :breadcrumbs="breadcrumbs"
+        :visualizer-mode="store.visualizerMode"
+        :show-export="true"
+        :show-form-mode="false"
+        :show-info="false"
+        :description="isMachineSelected ? store.parsedDocs[store.selectedMachine!.id]?.description : store.parsedPimRelations.description"
+        @set-mode="setMode"
+        @export="handleExport"
+        @add-machine="handleAddMachine"
+        @edit-basic="showPimModal = true"
+        @delete="handleDeleteRequest"
+      />
+  
+      <div class="flex-1 relative overflow-hidden">
+        <div v-if="store.visualizerMode === 'JSON'" class="w-full h-full">
+          <PimEditor />
+        </div>
+        <div v-else class="w-full h-full flex items-center justify-center p-8 bg-geist-accents-1">
+          <div class="text-center opacity-30 select-none">
+            <div class="w-24 h-24 rounded-full bg-geist-accents-2 flex items-center justify-center mx-auto mb-6 border border-geist-border shadow-inner">
+               <i class="fa-solid fa-draw-polygon text-5xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold uppercase tracking-[0.2em] text-geist-fg">Vista 2D PIM</h3>
+            <p class="text-[10px] font-mono mt-4 text-geist-accents-4">Próximamente: Editor visual de diseño conceptual</p>
+          </div>
+        </div>
+      </div>
+    </template>
+    
+    <div v-else class="w-full h-full flex items-center justify-center">
+      <div class="text-center opacity-50 px-4">
+        <div class="w-20 h-20 rounded-3xl bg-geist-accents-1 flex items-center justify-center mx-auto mb-6 border border-geist-border rotate-3 shadow-sm">
+          <i class="fa-solid fa-pen-nib text-3xl text-geist-accents-4 -rotate-3"></i>
+        </div>
+        <h3 class="text-xl font-bold text-geist-fg tracking-tight">Diseño Conceptual</h3>
+        <p class="text-xs text-geist-accents-5 mt-2 max-w-[240px] mx-auto leading-relaxed">Selecciona el nodo principal o una máquina PIM en el árbol para comenzar el modelado conceptual.</p>
+      </div>
+    </div>
+
+    <!-- Modal de Creación/Edición -->
+    <PimMachineModal
+      :show="showPimModal"
+      :title="isMachineSelected ? 'Editar Máquina PIM' : 'Nueva Máquina PIM'"
+      :confirm-text="isMachineSelected ? 'Guardar Cambios' : 'Crear Máquina'"
+      :initial-data="isMachineSelected ? { 
+        name: store.parsedDocs[store.selectedMachine!.id]?.name || '', 
+        description: store.parsedDocs[store.selectedMachine!.id]?.description || '',
+        ids_cim_reference: store.parsedDocs[store.selectedMachine!.id]?.ids_cim_reference || []
+      } : null"
+      @close="showPimModal = false"
+      @confirm="handleConfirmPimSave"
+    />
+
+    <!-- Confirmación de Borrado -->
+    <GenericConfirmDeleteModal
+      :show="showDeleteConfirm"
+      :item-name="isMachineSelected ? store.parsedDocs[store.selectedMachine!.id]?.name : ''"
+      @close="showDeleteConfirm = false"
+      @confirm="confirmDelete"
+    />
+  </div>
+</template>
+
+<style scoped>
+.pim-dashboard {
+  animation: fade-in 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

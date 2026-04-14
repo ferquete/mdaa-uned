@@ -13,7 +13,7 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.MdaAudioPimMachineValidator;
     const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
-        Model: [validator.checkModelIntegrity],
+        Model: [validator.checkModelHeader, validator.checkModelIntegrity],
         Parameter: [validator.checkParameter],
         ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
@@ -42,6 +42,39 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
 export class MdaAudioPimMachineValidator {
 
     private uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    
+    /**
+     * Valida los campos de cabecera del modelo (id, name, description, references).
+     */
+    checkModelHeader(model: Model, accept: ValidationAcceptor): void {
+        const id = model.id.replace(/"/g, '');
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID del modelo debe ser un UUID válido de 36 caracteres.', { node: model, property: 'id' });
+        }
+        
+        const name = model.name.replace(/"/g, '');
+        if (!name || name.trim().length === 0) {
+            accept('error', 'El nombre no puede ser nulo ni estar vacío.', { node: model, property: 'name' });
+        } else if (name.length > 20) {
+            accept('error', 'El nombre no puede superar los 20 caracteres.', { node: model, property: 'name' });
+        }
+
+        if (model.description) {
+            const desc = model.description.replace(/"/g, '');
+            if (desc.length < 20 || desc.length > 600) {
+                accept('error', 'La descripción debe tener entre 20 y 600 caracteres.', { node: model, property: 'description' });
+            }
+        }
+
+        if (model.ids_cim_reference) {
+            model.ids_cim_reference.forEach((ref, index) => {
+                const refId = ref.replace(/"/g, '');
+                if (refId.length !== 36) {
+                    accept('error', 'Cada ID de referencia CIM debe tener exactamente 36 caracteres.', { node: model, property: 'ids_cim_reference', index });
+                }
+            });
+        }
+    }
 
     /**
      * Valida la integridad referencial del modelo (nodos y parámetros existentes en las aristas).

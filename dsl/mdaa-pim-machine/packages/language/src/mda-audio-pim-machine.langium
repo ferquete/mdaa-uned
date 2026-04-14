@@ -2,6 +2,10 @@ grammar MdaAudioPimMachine
 
 entry Model:
     '{'
+        '"id"' ':' id=STRING ','
+        '"name"' ':' name=STRING ','
+        ( '"description"' ':' description=STRING ',')?
+        '"ids_cim_reference"' ':' '[' (ids_cim_reference+=STRING (',' ids_cim_reference+=STRING)*)? ']' ','
         '"nodes"' ':' '[' (nodes+=Node (',' nodes+=Node)*)? ']' ','
         '"edges"' ':' '[' (edges+=Edge (',' edges+=Edge)*)? ']'
     '}';

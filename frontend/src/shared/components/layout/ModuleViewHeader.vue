@@ -5,9 +5,10 @@ interface Breadcrumb {
   label: string
   active?: boolean
   opacity?: number
-  canDelete?: boolean
-  canAddSubnodes?: boolean
-  canAddMachine?: boolean
+  canDelete?: boolean;
+  canAddSubnodes?: boolean;
+  canAddMachine?: boolean;
+  showPencil?: boolean;
 }
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
   visualizerMode?: '2D' | 'JSON' | 'FORM'
   showExport?: boolean
   showFormMode?: boolean
+  showInfo?: boolean
   description?: string
 }
 
@@ -69,7 +71,7 @@ const handleEditBasic = () => {
             </span>
             <!-- Botón de Editar (Pencil) - Visible permanentemente -->
             <button 
-              v-if="bc.active && index === 0"
+              v-if="bc.active && bc.showPencil"
               @click="handleEditBasic"
               class="flex items-center justify-center w-5 h-5 rounded-md bg-geist-accents-2/40 text-geist-fg hover:bg-geist-accents-2 transition-all border border-geist-border cursor-pointer ml-1"
               title="Editar información básica"
@@ -169,7 +171,7 @@ const handleEditBasic = () => {
 
         <!-- Info Toggle -->
         <button 
-          v-if="description"
+          v-if="description && showInfo !== false"
           @click="toggleDescription"
           class="flex items-center gap-2 px-2 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold transition-all hover:bg-geist-accents-2"
           :class="showDescription ? 'text-geist-fg' : 'text-geist-accents-5'"

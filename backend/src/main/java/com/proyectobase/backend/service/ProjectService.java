@@ -1,8 +1,10 @@
 package com.proyectobase.backend.service;
 
 import com.proyectobase.backend.domain.Cim;
+import com.proyectobase.backend.domain.Pim;
 import com.proyectobase.backend.domain.Project;
 import com.proyectobase.backend.repository.CimRepository;
+import com.proyectobase.backend.repository.PimRepository;
 import com.proyectobase.backend.repository.ProjectRepository;
 import com.proyectobase.backend.repository.UserRepository;
 import com.proyectobase.backend.web.dto.CreateProjectRequest;
@@ -26,6 +28,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final CimRepository cimRepository;
+    private final PimRepository pimRepository;
     private final UserRepository userRepository;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
@@ -42,8 +45,10 @@ public class ProjectService {
         
         return userRepository.findByExternalId(externalId)
                 .flatMapMany(user -> projectRepository.findByUserIdOrderByCreatedAtDesc(user.getId()))
-                .flatMap(project -> cimRepository.findByIdProject(project.getId())
-                        .map(cim -> mapToResponse(project, cim.getId())));
+                .flatMap(project -> Mono.zip(
+                        cimRepository.findByIdProject(project.getId()),
+                        pimRepository.findByIdProject(project.getId())
+                ).map(tuple -> mapToResponse(project, tuple.getT1().getId(), tuple.getT2().getId())));
     }
 
     /**
@@ -94,10 +99,28 @@ public class ProjectService {
                                                 .idProject(savedProject.getId())
                                                 .machinesRelations(initialRelationsJson)
                                                 .build();
+                                        
+                                        // PIM initialization (Conceptual Design)
+                                        String initialPimJson = "";
+                                        try {
+                                            com.fasterxml.jackson.databind.node.ObjectNode pimRoot = objectMapper.createObjectNode();
+                                            pimRoot.put("description", request.getDescription() != null ? request.getDescription() : "");
+                                            pimRoot.putArray("relations");
+                                            initialPimJson = objectMapper.writeValueAsString(pimRoot);
+                                        } catch (Exception e) {
+                                            log.error("Error serializando JSON PIM inicial", e);
+                                        }
+
+                                        Pim pim = Pim.builder()
+                                                .idProject(savedProject.getId())
+                                                .machinesRelations(initialPimJson)
+                                                .build();
+
                                         return cimRepository.save(cim)
-                                                .map(savedCim -> mapToResponse(savedProject, savedCim.getId()));
+                                                .flatMap(savedCim -> pimRepository.save(pim)
+                                                        .map(savedPim -> mapToResponse(savedProject, savedCim.getId(), savedPim.getId())));
                                     })
-                                    .doOnError(e -> log.error("ERROR CRÍTICO AL GUARDAR PROYECTO O CIM: {}", e.getMessage(), e));
+                                    .doOnError(e -> log.error("ERROR CRÍTICO AL GUARDAR PROYECTO O CIM/PIM: {}", e.getMessage(), e));
                         })
                 );
     }
@@ -121,8 +144,10 @@ public class ProjectService {
                             if (!java.util.Objects.equals(project.getUserId(), user.getId())) {
                                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver este proyecto"));
                             }
-                            return cimRepository.findByIdProject(projectId)
-                                    .map(cim -> mapToResponse(project, cim.getId()));
+                            return Mono.zip(
+                                    cimRepository.findByIdProject(projectId),
+                                    pimRepository.findByIdProject(projectId)
+                            ).map(tuple -> mapToResponse(project, tuple.getT1().getId(), tuple.getT2().getId()));
                         })
                 );
     }
@@ -154,8 +179,10 @@ public class ProjectService {
                             project.setDescription(request.getDescription());
                             
                             return projectRepository.save(project)
-                                    .flatMap(savedProject -> cimRepository.findByIdProject(projectId)
-                                            .map(cim -> mapToResponse(savedProject, cim.getId())));
+                                    .flatMap(savedProject -> Mono.zip(
+                                            cimRepository.findByIdProject(projectId),
+                                            pimRepository.findByIdProject(projectId)
+                                    ).map(tuple -> mapToResponse(savedProject, tuple.getT1().getId(), tuple.getT2().getId())));
                         })
                 );
     }
@@ -195,12 +222,13 @@ public class ProjectService {
      * @param idCim ID del CIM vinculado
      * @return DTO de respuesta
      */
-    private ProjectResponse mapToResponse(Project project, Long idCim) {
+    private ProjectResponse mapToResponse(Project project, Long idCim, Long idPim) {
         return ProjectResponse.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
                 .idCim(idCim)
+                .idPim(idPim)
                 .createdAt(project.getCreatedAt())
                 .build();
     }

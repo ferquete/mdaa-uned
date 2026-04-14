@@ -1,6 +1,12 @@
 -- Script de inicialización de base de datos para MariaDB
 -- Este script se ejecuta automáticamente la primera vez que arranca el contenedor.
 
+-- Usuario minimo
+--CREATE USER 'fer'@'localhost' IDENTIFIED BY 'fer';
+--GRANT ALL PRIVILEGES ON basedb.* TO 'fer'@'localhost';
+--FLUSH PRIVILEGES;
+
+
 -- Creación de la tabla de usuarios
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -43,3 +49,20 @@ CREATE TABLE IF NOT EXISTS cim_machines (
     machine LONGTEXT NOT NULL CHECK (JSON_VALID(machine)),
     CONSTRAINT fk_cim_machine FOREIGN KEY (id_cim) REFERENCES cim(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Creación de la tabla pim (Centralización de máquinas y relaciones de diseño conceptual)
+CREATE TABLE IF NOT EXISTS pim (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    machines_relations LONGTEXT DEFAULT NULL CHECK (JSON_VALID(machines_relations)),
+    id_project BIGINT NOT NULL UNIQUE,
+    CONSTRAINT fk_project_pim FOREIGN KEY (id_project) REFERENCES projects(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Creación de la tabla pim_machines
+CREATE TABLE IF NOT EXISTS pim_machines (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_pim BIGINT NOT NULL,
+    machine LONGTEXT NOT NULL CHECK (JSON_VALID(machine)),
+    CONSTRAINT fk_pim_machine FOREIGN KEY (id_pim) REFERENCES pim(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

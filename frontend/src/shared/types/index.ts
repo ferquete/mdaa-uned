@@ -6,6 +6,7 @@ export interface Project {
   name: string;
   description: string;
   idCim: number;
+  idPim: number;
   createdAt: string;
 }
 
@@ -34,8 +35,10 @@ export interface ApiResult<T = any> {
  */
 export interface CimMachine {
   id: number;
-  idProyect: number;
+  idProject: number;
   idCim: number;
+  name: string;
+  description: string;
   machine: string; // JSON String
 }
 
@@ -43,6 +46,27 @@ export interface CimMachine {
  * Interfaz que representa la entidad central de análisis de un proyecto.
  */
 export interface Cim {
+  id: number;
+  machinesRelations: string; // JSON String
+  idProject: number;
+}
+
+/**
+ * Interfaz que representa una máquina PIM persistida en base de datos.
+ */
+export interface PimMachine {
+  id: number;
+  idProject: number;
+  idPim: number;
+  name: string;
+  description: string;
+  machine: string; // JSON String
+}
+
+/**
+ * Interfaz que representa la entidad central de diseño conceptual de un proyecto.
+ */
+export interface Pim {
   id: number;
   machinesRelations: string; // JSON String
   idProject: number;
@@ -79,6 +103,7 @@ export interface CimDocument {
   generators: CimGenerator[];
   modificators: CimModificator[];
 }
+
 export interface CimRelation {
   id: string;
   source: string;
@@ -89,4 +114,29 @@ export interface CimRelation {
 export interface CimRelationsDocument {
   description: string;
   relations: CimRelation[];
+}
+
+/**
+ * Interfaces para el DSL PIM (Diseño Conceptual)
+ */
+
+export interface PimRelation {
+  id: string;
+  source: string;
+  destination: string;
+  description: string;
+}
+
+export interface PimRelationsDocument {
+  description: string;
+  relations: PimRelation[];
+}
+
+export interface PimMachineDocument {
+  id: string;
+  name: string;
+  description?: string;
+  ids_cim_reference: string[];
+  nodes: any[];
+  edges: any[];
 }

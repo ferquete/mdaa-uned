@@ -1,4 +1,4 @@
-{
+export const PIM_MACHINE_SCHEMA = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "MdaAudioPimMachine Model Schema",
   "description": "Schema for validating PIM Audio Machine models according to pim.md specifications",
@@ -10,6 +10,7 @@
     },
     "name": {
       "type": "string",
+      "minLength": 1,
       "maxLength": 20,
       "description": "Nombre de la máquina (máx. 20 caracteres)"
     },
@@ -50,7 +51,7 @@
       "items": { "$ref": "#/definitions/Edge" }
     }
   },
-  "required": ["id", "name", "ids_cim_reference", "nodes", "edges"],
+  "required": ["id", "name", "description", "ids_cim_reference", "nodes", "edges"],
   "definitions": {
     "UUID": {
       "type": "string",
@@ -59,7 +60,8 @@
     },
     "Description": {
       "type": "string",
-      "description": "Text description, max 600 characters",
+      "description": "Text description, between 20 and 600 characters",
+      "minLength": 20,
       "maxLength": 600
     },
     "IdsReferences": {
@@ -177,27 +179,9 @@
         "gain": { "$ref": "#/definitions/Parameter" },
         "pan": { "$ref": "#/definitions/Parameter" }
       },
-      "required": ["type", "file", "loop", "gain", "pan"],
-      "if": {
-        "properties": {
-          "stereo": {
-            "properties": {
-              "initialValue": { "const": false }
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "pan": {
-            "properties": {
-              "initialValue": { "const": 0 }
-            }
-          }
-        }
-      }
+      "required": ["type", "file", "loop", "gain", "pan"]
     },
-    "FrequencyFilterNode": {
+    "FilterNode": {
       "type": "object",
       "allOf": [
         { "$ref": "#/definitions/CommonNodeFields" },
@@ -254,17 +238,7 @@
         "ping_pong": { "$ref": "#/definitions/Parameter" },
         "inputs_number": { "$ref": "#/definitions/Parameter" },
         "output_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_3": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_4": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_5": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_6": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_7": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_8": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_9": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_10": { "$ref": "#/definitions/ConnectionPoint" }
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
       },
       "required": ["type", "stereo", "inputs_number", "output_1"]
     },

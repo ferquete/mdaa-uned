@@ -220,6 +220,7 @@ const handleAddSubNode = (type: 'g' | 'mod') => {
       confirm-text="Crear"
       :show-name-field="true"
       :existing-names="store.machines.map(m => store.parsedDocs[m.id]?.name || '')"
+      :desc-min-length="10"
       @close="showAddMachineModal = false"
       @confirm="confirmAddMachine"
     />

@@ -1,49 +1,8 @@
 {
-    "nodes": [
-        {
-            "type": "sample",
-            "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
-            "description": "Reproductor de muestras de audio",
-            "ids_references": ["ref_project_description"],
-            "file": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400001",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": "samples/kick.wav",
-                "isModifiable": false
-            },
-            "loop": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400002",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": true,
-                "isModifiable": false
-            },
-            "gain": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400003",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": 1.0,
-                "isModifiable": true
-            },
-            "pan": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400004",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": 0.2,
-                "isModifiable": true
-            },
-            "stereo": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400007",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": true,
-                "isModifiable": false
-            },
-            "output_1": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400005",
-                "ids_references": ["ref_cim_machine_description"]
-            },
-            "output_2": {
-                "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b400006",
-                "ids_references": ["ref_cim_machine_description"]
-            }
-        }
-    ],
+    "id": "770e8400-e29b-41d4-a716-446655440010",
+    "name": "Sample Player",
+    "description": "Reproductor de muestras de audio",
+    "ids_cim_reference": [],
+    "nodes": [],
     "edges": []
 }

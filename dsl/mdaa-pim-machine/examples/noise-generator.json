@@ -1,49 +1,8 @@
 {
-    "nodes": [
-        {
-            "type": "noise",
-            "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
-            "description": "Generador de ruido blanco",
-            "ids_references": ["ref_project_description"],
-            "noiseType": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4001",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": "white",
-                "isModifiable": false
-            },
-            "amplitude": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4002",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": 0.5,
-                "isModifiable": true
-            },
-            "gain": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4003",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": 0.7,
-                "isModifiable": true
-            },
-            "pan": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4004",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": -0.5,
-                "isModifiable": true
-            },
-            "stereo": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4007",
-                "ids_references": ["ref_cim_machine_description"],
-                "initialValue": true,
-                "isModifiable": false
-            },
-            "output_1": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4005",
-                "ids_references": ["ref_cim_machine_description"]
-            },
-            "output_2": {
-                "id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4006",
-                "ids_references": ["ref_cim_machine_description"]
-            }
-        }
-    ],
+    "id": "770e8400-e29b-41d4-a716-446655440009",
+    "name": "Noise Generator",
+    "description": "Generador de ruido aleatorio",
+    "ids_cim_reference": [],
+    "nodes": [],
     "edges": []
 }

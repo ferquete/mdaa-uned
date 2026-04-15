@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import ModuleViewHeader from '@/shared/components/layout/ModuleViewHeader.vue'
 import GenericConfirmDeleteModal from '@/shared/components/modals/GenericConfirmDeleteModal.vue'
 import { useExport } from '@/shared/composables/useExport'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { usePimStore } from '../stores/pimStore'
 import PimEditor from '../components/PimEditor.vue'
@@ -13,6 +14,7 @@ import PimMachineModal from '../components/PimMachineModal.vue'
 const analysisStore = useAnalysisMachinesStore()
 const store = usePimStore()
 const { exportToJson } = useExport()
+const { runWithGuard } = useUnsavedChanges()
 const route = useRoute()
 
 const projectId = computed(() => Number(route.params.id))
@@ -58,14 +60,19 @@ const handleExport = () => {
 
 const setMode = (mode: '2D' | 'JSON' | 'FORM') => {
   if (mode === 'JSON' || mode === '2D') {
-    store.visualizerMode = mode
+    // Proteger cambio de modo si hay cambios sin guardar en el editor gráfico
+    runWithGuard(() => {
+      store.visualizerMode = mode
+    })
   }
 }
 
-// Reset mode to 2D when switching nodes
+// Proteger cambio de nodo si hay cambios sin guardar en el editor gráfico
 watch(() => analysisStore.selectedNodeId, (newId, oldId) => {
   if (newId !== oldId) {
-    store.visualizerMode = '2D'
+    runWithGuard(() => {
+      store.visualizerMode = '2D'
+    })
   }
 })
 
@@ -103,7 +110,7 @@ const confirmDelete = async () => {
         module-name="Conceptual"
         :breadcrumbs="breadcrumbs"
         :visualizer-mode="store.visualizerMode"
-        :label-2d="isMachineSelected ? 'Diseñador Gráfico' : '2D'"
+        :label-2d="isMachineSelected ? 'Editor gráfico' : '2D'"
         :show-export="true"
         :show-form-mode="false"
         :show-info="false"
@@ -119,7 +126,7 @@ const confirmDelete = async () => {
         <div v-if="store.visualizerMode === 'JSON'" class="w-full h-full">
           <PimEditor />
         </div>
-        <div v-else-if="isMachineSelected" class="w-full h-full">
+        <div v-else-if="isMachineSelected" class="w-full h-full text-geist-fg">
           <PimVisualEditor />
         </div>
         <div v-else class="w-full h-full flex items-center justify-center p-8 bg-geist-accents-1">

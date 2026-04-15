@@ -72,7 +72,7 @@ const validateInternal = (val: string) => {
     if (isMachineView.value) {
       if (!parsed.id) manualErrors.push({ message: 'Estructura: Falta el campo "id"' })
       if (!parsed.name) manualErrors.push({ message: 'Estructura: Falta el campo "name"' })
-      if (!parsed.description) manualErrors.push({ message: 'Estructura: Falta el campo "description"' })
+      // La descripción es opcional en PIM, el esquema ya valida su formato si se incluye
     } else {
       // Relaciones
       if (!parsed.relations) manualErrors.push({ message: 'Estructura: Falta el campo "relations"' })

@@ -21,8 +21,8 @@ public class PimMachineRequest {
     @Size(min = 1, max = 20, message = "El nombre debe tener entre 1 y 20 caracteres")
     private String name;
 
-    /** Descripción de la máquina (20-600 caracteres) */
-    @Size(min = 20, max = 600, message = "La descripción debe tener entre 20 y 600 caracteres")
+    /** Descripción de la máquina (0-600 caracteres) */
+    @Size(max = 600, message = "La descripción debe tener máximo 600 caracteres")
     private String description;
 
     /** Estructura JSON de la máquina PIM */

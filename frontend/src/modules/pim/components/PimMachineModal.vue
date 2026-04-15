@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { computed, ref, watch } from 'vue'
 
 interface Props {
   show: boolean
@@ -29,7 +29,6 @@ const nameError = computed(() => {
 })
 
 const descriptionError = computed(() => {
-  if (description.value.length < 20) return `Mínimo 20 caracteres (faltan ${20 - description.value.length})`
   if (description.value.length > 600) return 'Máximo 600 caracteres'
   return ''
 })
@@ -132,7 +131,7 @@ const availableCimMachines = computed(() => {
 
             <!-- Referencias de Análisis (CIM) -->
             <div class="space-y-2.5">
-              <label class="text-[10px] uppercase font-bold text-geist-accents-5 tracking-wider px-1">Referencias de Análisis (Máquinas CIM)</label>
+              <label class="text-[10px] uppercase font-bold text-geist-accents-5 tracking-wider px-1">Referencias a Máquinas de Análisis</label>
               
               <div v-if="availableCimMachines.length === 0" class="p-4 rounded-xl border border-dashed border-geist-border bg-geist-accents-1/30 text-center">
                 <p class="text-[10px] text-geist-accents-4 italic">No hay máquinas de análisis definidas en este proyecto.</p>

@@ -49,16 +49,30 @@ public class PimMachineService {
                 .flatMap(projId -> pimRepository.findByIdProject(projectId))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Configuración PIM no encontrada para el proyecto")))
                 .flatMap(pim -> {
-                    String initialJson = "{}";
+                    String initialJson = request.getMachine();
                     try {
-                        ObjectNode root = objectMapper.createObjectNode();
-                        root.put("id", java.util.UUID.randomUUID().toString());
+                        ObjectNode root;
+                        if (initialJson == null || initialJson.isBlank()) {
+                            root = objectMapper.createObjectNode();
+                            root.put("id", java.util.UUID.randomUUID().toString());
+                        } else {
+                            root = (ObjectNode) objectMapper.readTree(initialJson);
+                        }
+                        
+                        // Sincronizar metadatos del request al JSON
+                        root.put("name", request.getName());
                         root.put("description", request.getDescription());
-                        root.putArray("nodes");
-                        root.putArray("edges");
+                        
+                        // Asegurar colecciones
+                        if (!root.has("nodes")) root.putArray("nodes");
+                        if (!root.has("edges")) root.putArray("edges");
+                        
                         initialJson = objectMapper.writeValueAsString(root);
                     } catch (Exception e) {
-                        log.error("Error creando JSON inicial PIM", e);
+                        log.error("Error procesando JSON de máquina PIM", e);
+                        // Fallback básico si falla el parseo
+                        initialJson = String.format("{\"id\":\"%s\",\"name\":\"%s\",\"description\":\"%s\",\"nodes\":[],\"edges\":[]}", 
+                            java.util.UUID.randomUUID(), request.getName(), request.getDescription());
                     }
 
                     PimMachine machine = PimMachine.builder()
@@ -92,11 +106,11 @@ public class PimMachineService {
                                             json = machine.getMachine();
                                         }
                                         ObjectNode root = (ObjectNode) objectMapper.readTree(json);
-                                        // En PIM, el nombre puede estar dentro de los nodos si fuera un Document, 
-                                        // pero aquí seguimos el patrón de guardar descripción y asegurar estructura.
+                                        // En PIM, sincronizamos metadatos desde el request
+                                        root.put("name", request.getName());
                                         root.put("description", request.getDescription());
                                         
-                                        // Asegurar que las colecciones obligatorias existen según la gramática PIM
+                                        // Asegurar que las colecciones obligatorias existen
                                         if (!root.has("nodes")) root.putArray("nodes");
                                         if (!root.has("edges")) root.putArray("edges");
                                         

@@ -44,25 +44,20 @@ const router = createRouter({
 
 import keycloak from '@/app/plugins/keycloak'
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   
-  // Si la ruta requiere autenticación y no estamos autenticados
   if (requiresAuth && !keycloak.authenticated) {
-    // Evitar disparar login() si ya hay un código o error en la URL (evita bucles)
     const hasAuthParams = window.location.hash.includes('code=') || 
                          window.location.hash.includes('error=') ||
                          window.location.search.includes('code=');
                          
     if (!hasAuthParams) {
       keycloak.login();
-    } else {
-      // Dejar que Keycloak procese los parámetros
-      next();
+      return false;
     }
-  } else {
-    next();
   }
+  return true;
 })
 
 export default router

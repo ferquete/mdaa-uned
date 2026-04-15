@@ -51,7 +51,7 @@ export const PIM_MACHINE_SCHEMA = {
       "items": { "$ref": "#/definitions/Edge" }
     }
   },
-  "required": ["id", "name", "description", "ids_cim_reference", "nodes", "edges"],
+  "required": ["id", "name", "ids_cim_reference", "nodes", "edges"],
   "definitions": {
     "UUID": {
       "type": "string",
@@ -60,8 +60,7 @@ export const PIM_MACHINE_SCHEMA = {
     },
     "Description": {
       "type": "string",
-      "description": "Text description, between 20 and 600 characters",
-      "minLength": 20,
+      "description": "Descripción opcional, máximo 600 caracteres",
       "maxLength": 600
     },
     "IdsReferences": {
@@ -119,7 +118,7 @@ export const PIM_MACHINE_SCHEMA = {
         "description": { "$ref": "#/definitions/Description" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" }
       },
-      "required": ["id", "name", "description", "ids_references"]
+      "required": ["id", "name", "ids_references"]
     },
     "AudioOutputProperties": {
       "properties": {
@@ -368,7 +367,7 @@ export const PIM_MACHINE_SCHEMA = {
         "targetParam": { "type": "string" },
         "type": { "enum": ["audio", "modification"] }
       },
-      "required": ["id", "description", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"]
+      "required": ["id", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"]
     }
   }
 }

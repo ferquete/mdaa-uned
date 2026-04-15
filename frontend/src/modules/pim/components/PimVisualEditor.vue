@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, markRaw, onMounted } from 'vue'
+import { ref, computed, markRaw, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { VueFlow, useVueFlow, Panel, type NodeTypesObject } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
@@ -10,12 +10,17 @@ import PimEditorPalette from './PimEditorPalette.vue'
 import PimEditorToolbar from './PimEditorToolbar.vue'
 import PimEditorProperties from './PimEditorProperties.vue'
 import PimCustomNode from './PimCustomNode.vue'
+import PimNodeModal from './PimNodeModal.vue'
 import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
+import BaseModal from '@/shared/components/BaseModal.vue'
 
 import { usePimStore } from '../stores/pimStore'
+import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import { PIM_NODE_METADATA, PIM_MODIFIABLE_PARAMS } from '../utils/pim-node-metadata'
 
 const store = usePimStore()
+const analysisStore = useAnalysisMachinesStore()
 const localNodes = ref<any[]>([])
 const localEdges = ref<any[]>([])
 
@@ -26,11 +31,17 @@ const nodeTypes: NodeTypesObject = {
 const { 
   onConnect, addEdges, addNodes, toObject, fromObject, project, findNode,
   onNodeClick, onPaneClick
-} = useVueFlow()
+} = useVueFlow({ id: 'pim-flow' })
 
 const isSaving = ref(false)
 const showProperties = ref(false)
 const selectedNodeId = ref<string | undefined>(undefined)
+const showSaveConfirm = ref(false)
+const saveMessage = ref('')
+
+// --- Snapshot para detectar cambios ---
+const snapshotJson = ref('')
+const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
 // --- Gestión de Selección ---
 onNodeClick(({ node }) => {
@@ -52,8 +63,43 @@ const pendingNodeData = ref<any>(null)
 const showEdgeModal = ref(false)
 const pendingEdgeData = ref<any>(null)
 
+// --- Referencias CIM Disponibles ---
+const availableCimComponents = computed(() => {
+  if (!store.selectedMachine) return []
+  const machineId = store.selectedMachine.id
+  const doc = store.parsedDocs[machineId]
+  if (!doc || !doc.ids_cim_reference) return []
+  
+  const components: any[] = []
+  
+  // Buscar en todos los documentos CIM cargados en analysisStore
+  doc.ids_cim_reference.forEach(uuid => {
+    // Encontrar qué máquina CIM tiene este UUID
+    const machine = analysisStore.machines.find(m => {
+      const d = analysisStore.parsedDocs[m.id]
+      return d?.id === uuid
+    })
+    
+    if (machine) {
+      const cimDoc = analysisStore.parsedDocs[machine.id]
+      if (cimDoc) {
+        cimDoc.generators.forEach(g => {
+          components.push({ id: g.id, name: `[${cimDoc.name}] ${g.name}`, type: 'g' })
+          g.sendTo.forEach(s => components.push({ id: s.id, name: `[${cimDoc.name}] ${g.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+        })
+        cimDoc.modificators.forEach(m => {
+          components.push({ id: m.id, name: `[${cimDoc.name}] ${m.name}`, type: 'mod' })
+          m.sendTo.forEach(s => components.push({ id: s.id, name: `[${cimDoc.name}] ${m.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+        })
+      }
+    }
+  })
+  
+  return components
+})
+
 // --- Carga Inicial ---
-onMounted(() => {
+const loadMachineData = () => {
   if (store.selectedMachine) {
     const doc = store.parsedDocs[store.selectedMachine.id]
     if (doc) {
@@ -84,8 +130,23 @@ onMounted(() => {
       localNodes.value = flowNodes
       localEdges.value = flowEdges
       setTimeout(() => fromObject({ nodes: flowNodes, edges: flowEdges }), 50)
+      
+      // Capturar snapshot del JSON original para detección de cambios
+      nextTick(() => {
+        snapshotJson.value = JSON.stringify(doc)
+        clearUnsavedState()
+      })
     }
   }
+}
+
+// Carga inicial y reactividad ante cambio de máquina
+onMounted(loadMachineData)
+watch(() => store.selectedMachine?.id, loadMachineData)
+
+// Limpiar estado al desmontar
+onBeforeUnmount(() => {
+  clearUnsavedState()
 })
 
 // --- Lógica de Drag & Drop ---
@@ -110,13 +171,13 @@ const onDrop = (event: DragEvent) => {
   showNodeModal.value = true
 }
 
-const handleConfirmNode = (name: string, description: string) => {
+const handleConfirmNode = (name: string, description: string, ids_references: string[]) => {
   if (!pendingNodeData.value) return
   
   const { type, position } = pendingNodeData.value
   const id = crypto.randomUUID()
   
-  const defaultParams: any = { id, name, type, description, ids_references: ["ref_project_description"] }
+  const defaultParams: any = { id, name, type, description, ids_references }
   
   if (type === 'oscillator') {
     defaultParams.waveform = 'sine'; defaultParams.frequency = 440; defaultParams.gain = 0.5; defaultParams.pan = 0; defaultParams.pulseWidth = 0.5; defaultParams.phase = 0
@@ -143,7 +204,11 @@ const handleConfirmNode = (name: string, description: string) => {
   showNodeModal.value = false
   pendingNodeData.value = null
   selectedNodeId.value = id
-  showProperties.value = true
+  
+  // Forzar apertura del panel después de crear
+  setTimeout(() => {
+    showProperties.value = true
+  }, 100)
 }
 
 // --- Lógica de Conexión ---
@@ -153,7 +218,7 @@ onConnect((params) => {
   
   if (!sourceNode || !targetNode) return
 
-  const sourceIsMod = params.sourceHandle === 'output' && (sourceNode.data.type === 'lfo' || sourceNode.data.type === 'envelope')
+  const sourceIsMod = params.sourceHandle === 'output' && (sourceNode.data?.type === 'lfo' || sourceNode.data?.type === 'envelope')
   const targetIsMod = !params.targetHandle?.startsWith('input_') 
   
   if (sourceIsMod !== targetIsMod) {
@@ -185,9 +250,12 @@ const handleConfirmEdge = (_name: string, description: string) => {
 }
 
 // --- Persistencia ---
-const handleSave = async () => {
-  if (!store.selectedMachine) return
-  isSaving.value = true
+
+/**
+ * Genera el JSON final de la máquina PIM a partir del estado del grafo.
+ */
+const buildFinalJson = () => {
+  if (!store.selectedMachine) return null
   
   const flowState = toObject()
   
@@ -206,11 +274,12 @@ const handleSave = async () => {
 
     const wrapParam = (key: string, value: any) => {
       const existing = rawData?.[key] || {}
+      const modFlags = rawData?._isModifiable || {}
       return {
         id: existing.id || crypto.randomUUID(),
         ids_references: existing.ids_references || ["ref_cim_machine_description"],
         initialValue: value,
-        isModifiable: existing.isModifiable ?? true,
+        isModifiable: modFlags[key] ?? existing.isModifiable ?? true,
         description: existing.description || ''
       }
     }
@@ -261,18 +330,69 @@ const handleSave = async () => {
     ids_references: ["ref_project_description"]
   }))
 
-  const finalJson = {
+  return {
     id: store.parsedDocs[store.selectedMachine.id]?.id || crypto.randomUUID(),
-    name: store.selectedMachine.name,
-    description: store.selectedMachine.description,
+    name: store.parsedDocs[store.selectedMachine.id]?.name || '',
+    description: store.parsedDocs[store.selectedMachine.id]?.description || '',
     ids_cim_reference: store.parsedDocs[store.selectedMachine.id]?.ids_cim_reference || [],
     nodes: pimNodes,
     edges: pimEdges
   }
+}
+
+/**
+ * Detecta si hay cambios respecto al snapshot original.
+ */
+const checkDirtyState = () => {
+  const currentJson = JSON.stringify(buildFinalJson())
+  const isDirty = currentJson !== snapshotJson.value
+  
+  if (isDirty) {
+    setUnsavedState(true, true, async () => {
+      await executeSave()
+      return true
+    })
+  } else {
+    clearUnsavedState()
+  }
+}
+
+// Detectar cambios en nodos y aristas (profundo)
+watch([localNodes, localEdges], checkDirtyState, { deep: true })
+
+/**
+ * Abre la confirmación antes de guardar.
+ */
+const handleSave = () => {
+  showSaveConfirm.value = true
+}
+
+/**
+ * Ejecuta el guardado real tras la confirmación.
+ */
+const executeSave = async () => {
+  if (!store.selectedMachine) return
+  isSaving.value = true
+  showSaveConfirm.value = false
+  
+  const finalJson = buildFinalJson()
+  if (!finalJson) {
+    isSaving.value = false
+    return
+  }
 
   const result = await store.updateMachineRawJson(store.selectedMachine.id, JSON.stringify(finalJson, null, 2))
-  if (result.success) console.log('Modelo PIM guardado con éxito')
+  
   isSaving.value = false
+  if (result.success) {
+    // Actualizar snapshot para resetear el dirty state
+    snapshotJson.value = JSON.stringify(finalJson)
+    clearUnsavedState()
+    saveMessage.value = 'Guardado con éxito'
+    setTimeout(() => saveMessage.value = '', 3000)
+  } else {
+    saveMessage.value = 'Error: ' + result.message
+  }
 }
 
 const handleCapture = () => console.log('Capturando imagen...')
@@ -280,7 +400,11 @@ const handleCapture = () => console.log('Capturando imagen...')
 
 <template>
   <div class="pim-visual-editor flex flex-col h-full bg-geist-bg select-none relative overflow-hidden">
-    <PimEditorToolbar @save="handleSave" @capture="handleCapture" />
+    <PimEditorToolbar @save="handleSave" @capture="handleCapture">
+      <template #feedback>
+        <span v-if="saveMessage" class="text-[10px] font-mono" :class="saveMessage.includes('Error') ? 'text-geist-error' : 'text-geist-success'">{{ saveMessage }}</span>
+      </template>
+    </PimEditorToolbar>
 
     <div class="flex-1 flex overflow-hidden relative">
       <PimEditorPalette />
@@ -323,11 +447,11 @@ const handleCapture = () => console.log('Capturando imagen...')
       </transition>
     </div>
 
-    <GenericAddEditModal
+    <PimNodeModal
       :show="showNodeModal"
-      title="Configurar Nuevo Nodo"
-      entity-label="Nodo"
+      title="Configurar Nuevo Nodo PIM"
       confirm-text="Crear Nodo"
+      :available-cim-components="availableCimComponents"
       @close="showNodeModal = false"
       @confirm="handleConfirmNode"
     />
@@ -341,6 +465,40 @@ const handleCapture = () => console.log('Capturando imagen...')
       @close="showEdgeModal = false"
       @confirm="handleConfirmEdge"
     />
+
+    <!-- Modal de Confirmación de Guardado -->
+    <BaseModal :show="showSaveConfirm" title="Guardar Cambios" @close="showSaveConfirm = false">
+      <div class="space-y-6">
+        <div class="p-4 bg-geist-warning/5 border border-geist-warning/20 rounded-xl flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-geist-warning/10 flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-floppy-disk text-geist-warning text-xl"></i>
+          </div>
+          <div>
+            <p class="text-sm text-geist-fg font-medium mb-1">
+              Estás a punto de sobrescribir el modelo de la máquina PIM.
+            </p>
+            <p class="text-xs text-geist-accents-5 leading-relaxed">
+              Los cambios realizados en el editor gráfico reemplazarán el JSON almacenado actualmente. Esta acción actualizará tanto la base de datos como el editor JSON.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button 
+            class="geist-button-secondary flex-1" 
+            @click="showSaveConfirm = false"
+          >
+            Cancelar
+          </button>
+          <button 
+            class="geist-button-primary flex-1" 
+            @click="executeSave"
+          >
+            Confirmar y Guardar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
 
     <transition name="fade">
       <div v-if="isSaving" class="absolute inset-0 bg-geist-bg/40 backdrop-blur-[2px] z-50 flex items-center justify-center">

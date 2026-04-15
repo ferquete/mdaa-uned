@@ -34,6 +34,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="flex items-center gap-3">
+      <slot name="feedback"></slot>
       <div class="px-2 py-0.5 rounded-full bg-geist-success/10 text-geist-success border border-geist-success/20 text-[8px] font-bold uppercase tracking-tighter">
         Editor Visual Activo
       </div>

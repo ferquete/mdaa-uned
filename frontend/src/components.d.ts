@@ -47,6 +47,7 @@ declare module 'vue' {
     PimEditorProperties: typeof import('./modules/pim/components/PimEditorProperties.vue')['default']
     PimEditorToolbar: typeof import('./modules/pim/components/PimEditorToolbar.vue')['default']
     PimMachineModal: typeof import('./modules/pim/components/PimMachineModal.vue')['default']
+    PimNodeModal: typeof import('./modules/pim/components/PimNodeModal.vue')['default']
     PimVisualEditor: typeof import('./modules/pim/components/PimVisualEditor.vue')['default']
     PimVisualizerJSON: typeof import('./modules/pim/components/PimVisualizerJSON.vue')['default']
     ProjectCard: typeof import('./modules/projects/components/ProjectCard.vue')['default']

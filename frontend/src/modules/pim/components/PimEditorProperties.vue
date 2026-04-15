@@ -11,7 +11,7 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const { findNode, nodes } = useVueFlow()
+const { findNode, nodes } = useVueFlow({ id: 'pim-flow' })
 
 const selectedNode = computed(() => {
   if (!props.nodeId) return null
@@ -24,37 +24,84 @@ const metadata = computed(() => PIM_NODE_METADATA[nodeType.value])
 // --- Estado local para edición ---
 const localName = ref('')
 const localDescription = ref('')
+const localRefs = ref<string[]>([])
 const localParams = ref<Record<string, any>>({})
+const localModifiable = ref<Record<string, boolean>>({})
 const errors = ref<Record<string, string>>({})
 
-// Sincronizar estado local cuando cambia el nodo seleccionado
-watch(() => props.nodeId, (newId) => {
-  if (newId && selectedNode.value) {
-    const data = selectedNode.value.data
-    localName.value = data.name || ''
-    localDescription.value = data.description || ''
-    // Inicializar parámetros si no existen
-    localParams.value = JSON.parse(JSON.stringify(data.parameters || {}))
-    validateAll()
+// Sincronizar estado local cuando cambia el nodo seleccionado.
+// Usamos nextTick como fallback porque addNodes() en VueFlow puede ser asíncrono
+// y findNode puede devolver null en el mismo ciclo en que se actualiza nodeId.
+const syncNodeData = async (nodeId: string | undefined) => {
+  if (!nodeId) return
+  
+  // Primer intento inmediato
+  let node = findNode(nodeId)
+  
+  // Si no lo encuentra (race condition), reintentamos hasta 5 veces con 50ms de espera
+  if (!node) {
+    for (let i = 0; i < 5; i++) {
+      await new Promise(r => setTimeout(r, 50))
+      node = findNode(nodeId)
+      if (node) break
+    }
   }
-}, { immediate: true })
+  
+  if (!node) return
+  
+  const data = node.data
+  localName.value = data.name || ''
+  localDescription.value = data.description || ''
+  localRefs.value = [...(data.parameters?.ids_references || [])]
+  localParams.value = JSON.parse(JSON.stringify(data.parameters || {}))
+  
+  // Inicializar flags de isModifiable por parámetro
+  const modParams = PIM_MODIFIABLE_PARAMS[data.type] || []
+  const modFlags: Record<string, boolean> = {}
+  modParams.forEach(p => {
+    // Si ya tiene un flag almacenado en _isModifiable, usarlo
+    const existingFlags = data.parameters?._isModifiable
+    if (existingFlags && typeof existingFlags === 'object' && p in existingFlags) {
+      modFlags[p] = existingFlags[p]
+    } else {
+      modFlags[p] = true // Por defecto siempre true
+    }
+  })
+  localModifiable.value = modFlags
+  
+  validateAll()
+}
+
+watch(() => props.nodeId, syncNodeData, { immediate: true })
 
 const updateNode = () => {
-  if (!selectedNode.value) return
+  const node = props.nodeId ? findNode(props.nodeId) : null
+  if (!node) return
   
-  // Actualizar el nodo en Vue Flow
-  selectedNode.value.data = {
-    ...selectedNode.value.data,
+  // Actualizar el nodo en Vue Flow, incluyendo los flags de isModifiable
+  node.data = {
+    ...node.data,
     name: localName.value,
     description: localDescription.value,
     parameters: {
       ...localParams.value,
       name: localName.value,
-      description: localDescription.value
+      description: localDescription.value,
+      _isModifiable: { ...localModifiable.value }
     },
     isValid: Object.keys(errors.value).length === 0
   }
 }
+
+/**
+ * Alterna el flag isModifiable de un parámetro y actualiza el nodo.
+ */
+const handleToggleModifiable = (paramName: string) => {
+  localModifiable.value[paramName] = !localModifiable.value[paramName]
+  updateNode()
+}
+
+const modifiableParamsList = computed(() => PIM_MODIFIABLE_PARAMS[nodeType.value] || [])
 
 // --- Validaciones ---
 const validateField = (field: string, value: any) => {
@@ -64,6 +111,8 @@ const validateField = (field: string, value: any) => {
     if (!value || value.length < 1) errors.value.name = 'El nombre es obligatorio'
     if (value.length > 20) errors.value.name = 'Máximo 20 caracteres'
   }
+  
+  // La descripción es opcional, no tiene validación mínima
 
   // Validaciones técnicas basadas en dsl/pim.md
   if (field === 'frequency' && (value < 0 || value > 20000)) {
@@ -151,20 +200,25 @@ const toggleModifiable = (paramName: string) => {
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-geist-accents-5 uppercase tracking-widest">Descripción</label>
-            <textarea 
-              v-model="localDescription"
-              @input="updateNode"
-              rows="3"
-              class="geist-input w-full text-xs resize-none"
-              placeholder="Añade una descripción técnica..."
-            ></textarea>
+            <label class="text-[10px] font-bold text-geist-accents-5 uppercase tracking-widest">Referencias CIM vinculadas</label>
+            <div v-if="localRefs.length === 0" class="p-2 border border-dashed border-geist-border rounded-lg bg-geist-accents-1/50">
+              <p class="text-[9px] text-geist-accents-4 italic">Sin referencias seleccionadas</p>
+            </div>
+            <div v-else class="flex flex-wrap gap-1.5 pt-1">
+              <span 
+                v-for="refUuid in localRefs" 
+                :key="refUuid"
+                class="px-2 py-0.5 rounded-full bg-geist-fg/5 border border-geist-border text-[8px] font-mono text-geist-accents-5"
+              >
+                {{ refUuid.substring(0, 12) }}...
+              </span>
+            </div>
           </div>
         </div>
 
         <div class="h-px bg-geist-border"></div>
 
-        <!-- Parámetros Técnicos (Ejemplos basados en tipos comunes) -->
+        <!-- Parámetros Técnicos -->
         <div class="space-y-5">
           <h4 class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] mb-4">Parámetros de {{ metadata?.label }}</h4>
           
@@ -218,6 +272,43 @@ const toggleModifiable = (paramName: string) => {
               <option value="HPF">High Pass (Pasa-Altos)</option>
               <option value="BPF">Band Pass (Pasa-Banda)</option>
             </select>
+          </div>
+        </div>
+
+        <div class="h-px bg-geist-border"></div>
+
+        <!-- Flags isModifiable -->
+        <div v-if="modifiableParamsList.length > 0" class="space-y-3">
+          <div class="flex items-center gap-2">
+            <h4 class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em]">Modulabilidad</h4>
+            <div class="h-px flex-1 bg-geist-border opacity-30"></div>
+          </div>
+          <p class="text-[8px] text-geist-accents-4 italic leading-relaxed -mt-1">
+            Controla qué parámetros aceptan modulación externa (LFO, Envolvente, etc.)
+          </p>
+          <div 
+            v-for="paramName in modifiableParamsList" 
+            :key="paramName"
+            class="flex items-center justify-between py-1.5 px-2 rounded-lg transition-colors"
+            :class="localModifiable[paramName] ? 'bg-emerald-500/5' : 'bg-geist-accents-1/50'"
+          >
+            <div class="flex items-center gap-2">
+              <i 
+                class="fa-solid text-[9px]" 
+                :class="localModifiable[paramName] ? 'fa-link text-emerald-500' : 'fa-link-slash text-geist-accents-3'"
+              ></i>
+              <span class="text-[10px] font-medium capitalize" :class="localModifiable[paramName] ? 'text-geist-fg' : 'text-geist-accents-4'">{{ paramName }}</span>
+            </div>
+            <button 
+              @click="handleToggleModifiable(paramName)"
+              class="relative w-8 h-[18px] rounded-full transition-colors duration-200 border"
+              :class="localModifiable[paramName] ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
+            >
+              <div 
+                class="absolute top-[2px] w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200"
+                :class="localModifiable[paramName] ? 'translate-x-[16px]' : 'translate-x-[2px]'"
+              ></div>
+            </button>
           </div>
         </div>
 

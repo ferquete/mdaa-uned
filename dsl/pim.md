@@ -34,9 +34,9 @@ Cualquier propiedad de configuración de un nodo es un objeto de tipo `Parameter
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del parámetro. |
-| `ids_references` | string[] | Referencias a elementos externos (CIM). |
+| `ids_references` | string[] | Referencias a elementos externos (CIM), dentro de las máquinas referenciadas en `ids_cim_reference`. |
 | `initialValue` | any | Valor inicial del parámetro. |
-| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. |
+| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. De inicio, siempre será true |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
 
 ### Puntos de Conexión (`ConnectionPoint`)

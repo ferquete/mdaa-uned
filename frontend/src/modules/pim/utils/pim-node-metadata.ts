@@ -231,7 +231,7 @@ export const PIM_NODE_METADATA: Record<string, PimNodeTypeMetadata> = {
  * Estos generarán puertos de entrada (Handles) de tipo 'modification' (verdes).
  */
 export const PIM_MODIFIABLE_PARAMS: Record<string, string[]> = {
-  oscillator: ['frequency', 'gain', 'pan'],
+  oscillator: ['waveform', 'frequency', 'pulseWidth', 'gain', 'phase', 'pan'],
   noise: ['amplitude', 'gain', 'pan'],
   sample: ['gain', 'pan'],
   lfo: ['rate', 'amplitude'],

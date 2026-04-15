@@ -27,7 +27,7 @@ El objeto raíz de un archivo MDA-Audio-PIM contiene la identificación global y
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único universal. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `description` | STRING | Información textual sobre el propósito del elemento. | Opcional. Máximo 600 caracteres. |
-| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM. | Obligatorio. Array no vacío. Mínimo 1 referencia. |
+| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM. | Obligatorio. Puede estar vacío. |
 
 #### Estructura de Parámetro de Configuración (`Parameter`)
 Cualquier propiedad de configuración de un nodo es un objeto de tipo `Parameter`.

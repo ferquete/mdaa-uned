@@ -5,6 +5,7 @@ import { PIM_NODE_METADATA, PIM_MODIFIABLE_PARAMS } from '../utils/pim-node-meta
 
 const props = defineProps<{
   nodeId?: string
+  availableCimComponents?: { id: string; name: string; type: string }[]
 }>()
 
 const emit = defineEmits<{
@@ -50,21 +51,45 @@ const syncNodeData = async (nodeId: string | undefined) => {
   if (!node) return
   
   const data = node.data
-  localName.value = data.name || ''
-  localDescription.value = data.description || ''
+
+  // Normalizar: tras guardar desde el editor gráfico, los parámetros pueden ser objetos
+  // con forma { id, initialValue, isModifiable, ... }. Extraer solo el valor primitivo.
+  const extractValue = (raw: any): any => {
+    if (raw !== null && typeof raw === 'object' && 'initialValue' in raw) {
+      return raw.initialValue
+    }
+    return raw
+  }
+
+  // data.name puede venir como string o como propiedad dentro de parameters
+  const rawName = data.name
+  localName.value = (typeof rawName === 'string' ? rawName : String(rawName ?? ''))
+  localDescription.value = typeof data.description === 'string' ? data.description : ''
   localRefs.value = [...(data.parameters?.ids_references || [])]
-  localParams.value = JSON.parse(JSON.stringify(data.parameters || {}))
+
+  // Normalizar localParams: extraer initialValues de los parámetros envueltos
+  const rawParams = data.parameters || {}
+  const flatParams: Record<string, any> = {}
+  Object.entries(rawParams).forEach(([k, v]) => {
+    flatParams[k] = extractValue(v)
+  })
+  // Preservar campos de control interno
+  flatParams._isModifiable = rawParams._isModifiable
+  localParams.value = flatParams
   
   // Inicializar flags de isModifiable por parámetro
   const modParams = PIM_MODIFIABLE_PARAMS[data.type] || []
   const modFlags: Record<string, boolean> = {}
   modParams.forEach(p => {
-    // Si ya tiene un flag almacenado en _isModifiable, usarlo
-    const existingFlags = data.parameters?._isModifiable
+    // Prioridad: _isModifiable local > isModifiable del parámetro envuelto > true por defecto
+    const existingFlags = rawParams._isModifiable
+    const wrappedModifiable = (rawParams[p] && typeof rawParams[p] === 'object') ? rawParams[p].isModifiable : undefined
     if (existingFlags && typeof existingFlags === 'object' && p in existingFlags) {
       modFlags[p] = existingFlags[p]
+    } else if (wrappedModifiable !== undefined) {
+      modFlags[p] = wrappedModifiable
     } else {
-      modFlags[p] = true // Por defecto siempre true
+      modFlags[p] = true
     }
   })
   localModifiable.value = modFlags
@@ -87,6 +112,7 @@ const updateNode = () => {
       ...localParams.value,
       name: localName.value,
       description: localDescription.value,
+      ids_references: [...localRefs.value],
       _isModifiable: { ...localModifiable.value }
     },
     isValid: Object.keys(errors.value).length === 0
@@ -200,18 +226,28 @@ const toggleModifiable = (paramName: string) => {
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-geist-accents-5 uppercase tracking-widest">Referencias CIM vinculadas</label>
-            <div v-if="localRefs.length === 0" class="p-2 border border-dashed border-geist-border rounded-lg bg-geist-accents-1/50">
-              <p class="text-[9px] text-geist-accents-4 italic">Sin referencias seleccionadas</p>
+            <label class="text-[10px] font-bold text-geist-accents-5 uppercase tracking-widest">Referencias CIM del Nodo</label>
+            <div v-if="(props.availableCimComponents || []).length === 0" class="p-2 border border-dashed border-geist-border rounded-lg bg-geist-accents-1/50">
+              <p class="text-[9px] text-geist-accents-4 italic">Sin componentes CIM disponibles</p>
             </div>
-            <div v-else class="flex flex-wrap gap-1.5 pt-1">
-              <span 
-                v-for="refUuid in localRefs" 
-                :key="refUuid"
-                class="px-2 py-0.5 rounded-full bg-geist-fg/5 border border-geist-border text-[8px] font-mono text-geist-accents-5"
+            <div v-else class="space-y-1 max-h-32 overflow-y-auto custom-scrollbar border border-geist-border rounded-lg p-2 bg-geist-accents-1/30">
+              <label 
+                v-for="comp in props.availableCimComponents" 
+                :key="comp.id"
+                class="flex items-center gap-2 py-0.5 cursor-pointer hover:bg-geist-accents-1/50 rounded px-1 transition-colors"
               >
-                {{ refUuid.substring(0, 12) }}...
-              </span>
+                <input 
+                  type="checkbox" 
+                  :value="comp.id" 
+                  v-model="localRefs"
+                  @change="updateNode"
+                  class="accent-emerald-500 w-3 h-3 rounded"
+                >
+                <span class="text-[9px] text-geist-fg truncate">{{ comp.name }}</span>
+                <span class="text-[7px] px-1 py-0.5 rounded-full ml-auto flex-shrink-0"
+                  :class="comp.type === 'g' ? 'bg-rose-500/10 text-rose-500' : comp.type === 'mod' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500'"
+                >{{ comp.type === 'g' ? 'GEN' : comp.type === 'mod' ? 'MOD' : 'EDGE' }}</span>
+              </label>
             </div>
           </div>
         </div>

@@ -98,15 +98,36 @@ const availableCimComponents = computed(() => {
   return components
 })
 
+// --- Utilidades para posiciones GUI (no forman parte de la gramática) ---
+const GUI_STORAGE_PREFIX = 'pim-gui-'
+
+const loadGuiPositions = (machineId: number): Record<string, { x: number; y: number }> => {
+  try {
+    const raw = localStorage.getItem(`${GUI_STORAGE_PREFIX}${machineId}`)
+    return raw ? JSON.parse(raw) : {}
+  } catch { return {} }
+}
+
+const saveGuiPositions = (machineId: number) => {
+  const flowState = toObject()
+  const positions: Record<string, { x: number; y: number }> = {}
+  flowState.nodes.forEach((n: any) => {
+    positions[n.id] = n.position
+  })
+  localStorage.setItem(`${GUI_STORAGE_PREFIX}${machineId}`, JSON.stringify(positions))
+}
+
 // --- Carga Inicial ---
 const loadMachineData = () => {
   if (store.selectedMachine) {
     const doc = store.parsedDocs[store.selectedMachine.id]
     if (doc) {
+      const guiPositions = loadGuiPositions(store.selectedMachine.id)
+      
       const flowNodes = doc.nodes.map((n: any) => ({
         id: n.id,
         type: 'custom',
-        position: n.gui || { x: Math.random() * 400, y: Math.random() * 300 },
+        position: guiPositions[n.id] || { x: Math.random() * 400, y: Math.random() * 300 },
         data: { 
           name: n.name, 
           type: n.type, 
@@ -268,8 +289,7 @@ const buildFinalJson = () => {
       name: n.data.name,
       description: n.data.description || '',
       type: n.data.type,
-      ids_references: rawData?.ids_references || ["ref_project_description"],
-      gui: n.position
+      ids_references: rawData?.ids_references || []
     }
 
     const wrapParam = (key: string, value: any) => {
@@ -277,7 +297,7 @@ const buildFinalJson = () => {
       const modFlags = rawData?._isModifiable || {}
       return {
         id: existing.id || crypto.randomUUID(),
-        ids_references: existing.ids_references || ["ref_cim_machine_description"],
+        ids_references: existing.ids_references || [],
         initialValue: value,
         isModifiable: modFlags[key] ?? existing.isModifiable ?? true,
         description: existing.description || ''
@@ -288,7 +308,7 @@ const buildFinalJson = () => {
       const existing = rawData?.[key] || {}
       return {
         id: existing.id || crypto.randomUUID(),
-        ids_references: existing.ids_references || ["ref_cim_machine_description"],
+        ids_references: existing.ids_references || [],
         description: existing.description || ''
       }
     }
@@ -327,7 +347,7 @@ const buildFinalJson = () => {
     targetNode: e.target,
     targetParam: e.targetHandle,
     type: e.data?.type || 'audio',
-    ids_references: ["ref_project_description"]
+    ids_references: e.data?.ids_references || []
   }))
 
   return {
@@ -385,6 +405,8 @@ const executeSave = async () => {
   
   isSaving.value = false
   if (result.success) {
+    // Guardar posiciones GUI en localStorage (separadas de la gramática)
+    saveGuiPositions(store.selectedMachine.id)
     // Actualizar snapshot para resetear el dirty state
     snapshotJson.value = JSON.stringify(finalJson)
     clearUnsavedState()
@@ -442,6 +464,7 @@ const handleCapture = () => console.log('Capturando imagen...')
         <PimEditorProperties 
           v-if="showProperties"
           :node-id="selectedNodeId"
+          :available-cim-components="availableCimComponents"
           @close="showProperties = false"
         />
       </transition>

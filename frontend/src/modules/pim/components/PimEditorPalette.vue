@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const isCollapsed = ref(false)
+
+const toggleCollapse = () => {
+  isCollapsed.value = !isCollapsed.value
+}
+
 interface NodeItem {
   id: string
   label: string
@@ -77,13 +83,32 @@ const onDragStart = (event: DragEvent, nodeType: string) => {
 </script>
 
 <template>
-  <aside class="pim-editor-palette w-64 border-r border-geist-border bg-geist-accents-1/20 flex flex-col overflow-hidden">
-    <div class="px-4 py-3 border-b border-geist-border bg-geist-bg/50">
-      <h3 class="text-[10px] font-bold uppercase tracking-[0.15em] text-geist-accents-5 flex items-center gap-2">
-        <i class="fa-solid fa-palette text-geist-accents-3"></i>
-        Paleta de Nodos
-      </h3>
-    </div>
+  <div class="palette-container relative h-full flex transition-all duration-300" :class="{ 'is-collapsed': isCollapsed }">
+    <!-- Botón de expansión flotante cuando está colapsado -->
+    <button 
+      v-if="isCollapsed"
+      @click="toggleCollapse"
+      class="expand-trigger absolute left-2 top-4 w-10 h-10 rounded-full bg-geist-bg border border-geist-border shadow-lg flex items-center justify-center text-geist-accents-4 hover:text-geist-fg hover:bg-geist-accents-1 transition-all z-40 active:scale-95"
+      title="Expandir Paleta"
+    >
+      <i class="fa-solid fa-palette text-sm"></i>
+    </button>
+
+    <aside class="pim-editor-palette w-64 border-r border-geist-border bg-geist-accents-1/20 flex flex-col overflow-hidden relative transition-all duration-300">
+      <div class="px-4 py-3 border-b border-geist-border bg-geist-bg/50 flex items-center justify-between">
+        <h3 class="text-[10px] font-bold uppercase tracking-[0.15em] text-geist-accents-5 flex items-center gap-2">
+          <i class="fa-solid fa-palette text-geist-accents-3"></i>
+          Paleta de Nodos
+        </h3>
+        <!-- Botón de colapso -->
+        <button 
+          @click="toggleCollapse"
+          class="w-6 h-6 flex items-center justify-center rounded-md hover:bg-geist-accents-2 text-geist-accents-4 hover:text-geist-fg transition-colors"
+          title="Colapsar"
+        >
+          <i class="fa-solid fa-chevron-left text-[10px]"></i>
+        </button>
+      </div>
 
     <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
       <div v-for="cat in categories" :key="cat.id" class="border-b border-geist-border/50 last:border-0">
@@ -131,8 +156,9 @@ const onDragStart = (event: DragEvent, nodeType: string) => {
           </div>
         </transition>
       </div>
-    </div>
-  </aside>
+      </div>
+    </aside>
+  </div>
 </template>
 
 <style scoped>
@@ -169,5 +195,21 @@ const onDragStart = (event: DragEvent, nodeType: string) => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--color-geist-accents-3);
+}
+
+.palette-container.is-collapsed .pim-editor-palette {
+  width: 0;
+  border-right-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expand-trigger {
+  animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+  from { transform: scale(0) rotate(-45deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, markRaw, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { VueFlow, useVueFlow, Panel, type NodeTypesObject } from '@vue-flow/core'
+import { VueFlow, useVueFlow, Panel, type NodeTypesObject, type EdgeTypesObject } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import '@vue-flow/core/dist/style.css'
@@ -10,8 +10,9 @@ import PimEditorPalette from './PimEditorPalette.vue'
 import PimEditorToolbar from './PimEditorToolbar.vue'
 import PimEditorProperties from './PimEditorProperties.vue'
 import PimCustomNode from './PimCustomNode.vue'
+import PimCustomEdge from './PimCustomEdge.vue'
 import PimNodeModal from './PimNodeModal.vue'
-import GenericAddEditModal from '@/shared/components/modals/GenericAddEditModal.vue'
+import PimEdgeModal from './PimEdgeModal.vue'
 import BaseModal from '@/shared/components/BaseModal.vue'
 
 import { usePimStore } from '../stores/pimStore'
@@ -28,15 +29,21 @@ const nodeTypes: NodeTypesObject = {
   custom: markRaw(PimCustomNode) as any,
 }
 
+const edgeTypes: EdgeTypesObject = {
+  custom: markRaw(PimCustomEdge) as any,
+}
+
 const { 
   onConnect, addEdges, addNodes, toObject, fromObject, project, findNode,
-  onNodeClick, onPaneClick
+  onNodeClick, onPaneClick, removeEdges, removeNodes, getEdges
 } = useVueFlow({ id: 'pim-flow' })
 
 const isSaving = ref(false)
 const showProperties = ref(false)
 const selectedNodeId = ref<string | undefined>(undefined)
 const showSaveConfirm = ref(false)
+const showErrorModal = ref(false)
+const errorMessage = ref('')
 const saveMessage = ref('')
 
 // --- Snapshot para detectar cambios ---
@@ -60,8 +67,11 @@ const vueFlowContainer = ref<HTMLElement | null>(null)
 // --- Estados para Modales ---
 const showNodeModal = ref(false)
 const pendingNodeData = ref<any>(null)
+
+// Estados para modal de arista (crear / editar)
 const showEdgeModal = ref(false)
-const pendingEdgeData = ref<any>(null)
+const pendingEdgeData = ref<any>(null)  // datos para nueva arista
+const editingEdgeId = ref<string | null>(null) // id de arista en edición
 
 // --- Referencias CIM Disponibles ---
 const availableCimComponents = computed(() => {
@@ -72,9 +82,7 @@ const availableCimComponents = computed(() => {
   
   const components: any[] = []
   
-  // Buscar en todos los documentos CIM cargados en analysisStore
-  doc.ids_cim_reference.forEach(uuid => {
-    // Encontrar qué máquina CIM tiene este UUID
+  doc.ids_cim_reference.forEach((uuid: string) => {
     const machine = analysisStore.machines.find(m => {
       const d = analysisStore.parsedDocs[m.id]
       return d?.id === uuid
@@ -83,13 +91,13 @@ const availableCimComponents = computed(() => {
     if (machine) {
       const cimDoc = analysisStore.parsedDocs[machine.id]
       if (cimDoc) {
-        cimDoc.generators.forEach(g => {
+        cimDoc.generators.forEach((g: any) => {
           components.push({ id: g.id, name: `[${cimDoc.name}] ${g.name}`, type: 'g' })
-          g.sendTo.forEach(s => components.push({ id: s.id, name: `[${cimDoc.name}] ${g.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+          g.sendTo.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${g.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
         })
-        cimDoc.modificators.forEach(m => {
+        cimDoc.modificators.forEach((m: any) => {
           components.push({ id: m.id, name: `[${cimDoc.name}] ${m.name}`, type: 'mod' })
-          m.sendTo.forEach(s => components.push({ id: s.id, name: `[${cimDoc.name}] ${m.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+          m.sendTo.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${m.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
         })
       }
     }
@@ -98,7 +106,7 @@ const availableCimComponents = computed(() => {
   return components
 })
 
-// --- Utilidades para posiciones GUI (no forman parte de la gramática) ---
+// --- Utilidades para posiciones GUI ---
 const GUI_STORAGE_PREFIX = 'pim-gui-'
 
 const loadGuiPositions = (machineId: number): Record<string, { x: number; y: number }> => {
@@ -139,12 +147,12 @@ const loadMachineData = () => {
 
       const flowEdges = doc.edges.map((e: any) => ({
         id: e.id,
+        type: 'custom',
         source: e.sourceNode,
         target: e.targetNode,
         sourceHandle: e.sourceParam,
         targetHandle: e.targetParam,
-        label: e.description,
-        data: { type: e.type, description: e.description },
+        data: { type: e.type, description: e.description, ids_references: e.ids_references || [] },
         style: { stroke: e.type === 'audio' ? '#e11d48' : '#10b981', strokeWidth: 2 }
       }))
 
@@ -152,7 +160,6 @@ const loadMachineData = () => {
       localEdges.value = flowEdges
       setTimeout(() => fromObject({ nodes: flowNodes, edges: flowEdges }), 50)
       
-      // Capturar snapshot del JSON original para detección de cambios
       nextTick(() => {
         snapshotJson.value = JSON.stringify(doc)
         clearUnsavedState()
@@ -161,11 +168,9 @@ const loadMachineData = () => {
   }
 }
 
-// Carga inicial y reactividad ante cambio de máquina
 onMounted(loadMachineData)
 watch(() => store.selectedMachine?.id, loadMachineData)
 
-// Limpiar estado al desmontar
 onBeforeUnmount(() => {
   clearUnsavedState()
 })
@@ -226,10 +231,26 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
   pendingNodeData.value = null
   selectedNodeId.value = id
   
-  // Forzar apertura del panel después de crear
   setTimeout(() => {
     showProperties.value = true
   }, 100)
+}
+
+// --- Eliminación de Nodo ---
+/**
+ * Elimina el nodo seleccionado junto con todas sus aristas entrantes y salientes.
+ */
+const handleDeleteNode = (nodeId: string) => {
+  const allEdges = getEdges.value
+  const edgesToRemove = allEdges.filter(e => e.source === nodeId || e.target === nodeId)
+  
+  if (edgesToRemove.length > 0) {
+    removeEdges(edgesToRemove.map(e => e.id))
+  }
+  removeNodes([nodeId])
+  
+  showProperties.value = false
+  selectedNodeId.value = undefined
 }
 
 // --- Lógica de Conexión ---
@@ -243,31 +264,97 @@ onConnect((params) => {
   const targetIsMod = !params.targetHandle?.startsWith('input_') 
   
   if (sourceIsMod !== targetIsMod) {
-    alert('Error: No se pueden mezclar señales de Audio con señales de Modulación.')
+    errorMessage.value = 'No se pueden mezclar señales de Audio con señales de Modulación.'
+    showErrorModal.value = true
     return
   }
 
   const type = sourceIsMod ? 'modification' : 'audio'
   pendingEdgeData.value = { ...params, type }
+  editingEdgeId.value = null
   showEdgeModal.value = true
 })
 
-const handleConfirmEdge = (_name: string, description: string) => {
-  if (!pendingEdgeData.value) return
-  
-  const { type } = pendingEdgeData.value
-  const id = crypto.randomUUID()
-  
-  addEdges([{
-    ...pendingEdgeData.value,
-    id,
-    label: description,
-    data: { type, description },
-    style: { stroke: type === 'audio' ? '#e11d48' : '#10b981', strokeWidth: 2 }
-  }])
+/**
+ * Datos iniciales para el modal de arista (creación o edición).
+ */
+const edgeModalInitialData = computed(() => {
+  if (!editingEdgeId.value) return null
+  const edge = localEdges.value.find(e => e.id === editingEdgeId.value)
+  if (!edge) return null
+  return {
+    description: edge.data?.description || '',
+    ids_references: edge.data?.ids_references || []
+  }
+})
+
+const edgeModalTitle = computed(() =>
+  editingEdgeId.value ? 'Editar Arista' : 'Nueva Conexión'
+)
+
+const edgeModalConfirmText = computed(() =>
+  editingEdgeId.value ? 'Guardar Cambios' : 'Conectar'
+)
+
+/**
+ * Confirma la creación o edición de una arista.
+ */
+const handleConfirmEdge = (description: string, ids_references: string[]) => {
+  if (editingEdgeId.value) {
+    // Edición: actualizar datos en localEdges
+    const edge = localEdges.value.find(e => e.id === editingEdgeId.value)
+    if (edge) {
+      edge.data = {
+        ...edge.data,
+        description,
+        ids_references
+      }
+    }
+  } else if (pendingEdgeData.value) {
+    const { type } = pendingEdgeData.value
+    const id = crypto.randomUUID()
+    addEdges([{
+      ...pendingEdgeData.value,
+      id,
+      type: 'custom',
+      data: { type, description, ids_references },
+      style: { stroke: type === 'audio' ? '#e11d48' : '#10b981', strokeWidth: 2 }
+    }])
+  }
   
   showEdgeModal.value = false
   pendingEdgeData.value = null
+  editingEdgeId.value = null
+}
+
+/**
+ * Abre el modal de edición para una arista existente.
+ */
+const handleEditEdge = (edgeId: string) => {
+  editingEdgeId.value = edgeId
+  showEdgeModal.value = true
+}
+
+/**
+ * Elimina una arista por su id.
+ */
+const handleDeleteEdge = (edgeId: string) => {
+  removeEdges([edgeId])
+}
+
+/**
+ * Elimina las aristas que entren al handle de un parámetro cuando se desactiva isModifiable.
+ * El handle de entrada de un parámetro modifiable tiene la forma "mod_<paramName>".
+ */
+const handleRemoveEdgesForParam = (nodeId: string, paramName: string) => {
+  const targetHandle = `mod_${paramName}`
+  const allEdges = getEdges.value
+  const toRemove = allEdges
+    .filter(e => e.target === nodeId && e.targetHandle === targetHandle)
+    .map(e => e.id)
+  if (toRemove.length > 0) {
+    removeEdges(toRemove)
+  }
 }
 
 // --- Persistencia ---
@@ -314,7 +401,7 @@ const buildFinalJson = () => {
     }
 
     const paramsList = PIM_MODIFIABLE_PARAMS[n.data.type] || []
-    paramsList.forEach(p => {
+    paramsList.forEach((p: string) => {
       if (rawData?.[p] !== undefined) {
         node[p] = wrapParam(p, rawData[p])
       }
@@ -377,7 +464,6 @@ const checkDirtyState = () => {
   }
 }
 
-// Detectar cambios en nodos y aristas (profundo)
 watch([localNodes, localEdges], checkDirtyState, { deep: true })
 
 /**
@@ -405,9 +491,7 @@ const executeSave = async () => {
   
   isSaving.value = false
   if (result.success) {
-    // Guardar posiciones GUI en localStorage (separadas de la gramática)
     saveGuiPositions(store.selectedMachine.id)
-    // Actualizar snapshot para resetear el dirty state
     snapshotJson.value = JSON.stringify(finalJson)
     clearUnsavedState()
     saveMessage.value = 'Guardado con éxito'
@@ -441,8 +525,10 @@ const handleCapture = () => console.log('Capturando imagen...')
           v-model:nodes="localNodes"
           v-model:edges="localEdges"
           :node-types="nodeTypes"
+          :edge-types="edgeTypes"
           fit-view-on-init
           class="pim-flow-canvas"
+          @edge-double-click="({ edge }) => handleEditEdge(edge.id)"
         >
           <Background pattern-color="#888" :gap="20" />
           <Controls />
@@ -457,6 +543,23 @@ const handleCapture = () => console.log('Capturando imagen...')
               <i class="fa-solid fa-sliders"></i>
             </button>
           </Panel>
+
+          <!-- Nodos personalizados con sus eventos -->
+          <template #node-custom="nodeProps">
+            <PimCustomNode
+              v-bind="nodeProps"
+              @delete-node="handleDeleteNode"
+            />
+          </template>
+
+          <!-- Eventos de aristas personalizadas delegados a través de VueFlow -->
+          <template #edge-custom="edgeProps">
+            <PimCustomEdge
+              v-bind="edgeProps"
+              @delete-edge="handleDeleteEdge"
+              @edit-edge="handleEditEdge"
+            />
+          </template>
         </VueFlow>
       </main>
 
@@ -466,6 +569,8 @@ const handleCapture = () => console.log('Capturando imagen...')
           :node-id="selectedNodeId"
           :available-cim-components="availableCimComponents"
           @close="showProperties = false"
+          @delete-node="handleDeleteNode"
+          @remove-edges-for-param="handleRemoveEdgesForParam"
         />
       </transition>
     </div>
@@ -479,14 +584,15 @@ const handleCapture = () => console.log('Capturando imagen...')
       @confirm="handleConfirmNode"
     />
 
-    <GenericAddEditModal
+    <PimEdgeModal
       :show="showEdgeModal"
-      title="Descripción de la Conexión"
-      entity-label="Conexión"
-      confirm-text="Conectar"
-      :show-name-field="false"
-      @close="showEdgeModal = false"
+      :title="edgeModalTitle"
+      :confirm-text="edgeModalConfirmText"
+      :available-cim-components="availableCimComponents"
+      :initial-data="edgeModalInitialData"
+      @close="showEdgeModal = false; editingEdgeId = null; pendingEdgeData = null"
       @confirm="handleConfirmEdge"
+      @delete="() => { if (editingEdgeId) { handleDeleteEdge(editingEdgeId); showEdgeModal = false; editingEdgeId = null; } }"
     />
 
     <!-- Modal de Confirmación de Guardado -->
@@ -518,6 +624,34 @@ const handleCapture = () => console.log('Capturando imagen...')
             @click="executeSave"
           >
             Confirmar y Guardar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+
+    <!-- Modal de Error de Conexión -->
+    <BaseModal :show="showErrorModal" title="Conexión Inválida" @close="showErrorModal = false">
+      <div class="space-y-6">
+        <div class="p-4 bg-geist-error/5 border border-geist-error/20 rounded-xl flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-geist-error/10 flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-circle-exclamation text-geist-error text-xl"></i>
+          </div>
+          <div>
+            <p class="text-sm text-geist-fg font-medium mb-1">
+              Incompatibilidad de Señal
+            </p>
+            <p class="text-xs text-geist-accents-5 leading-relaxed">
+              {{ errorMessage }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button 
+            class="geist-button-primary flex-1 !bg-geist-fg" 
+            @click="showErrorModal = false"
+          >
+            Entendido
           </button>
         </div>
       </div>

@@ -12,6 +12,10 @@ interface PimNodeData {
   isValid?: boolean
 }
 
+const emit = defineEmits<{
+  (e: 'delete-node', nodeId: string): void
+}>()
+
 const props = defineProps<NodeProps<PimNodeData>>()
 
 const metadata = computed(() => PIM_NODE_METADATA[props.data.type] || {
@@ -69,8 +73,8 @@ const allOutputs = computed(() => {
  */
 const nodeMinHeight = computed(() => {
   const maxHandles = Math.max(allInputs.value.length, allOutputs.value.length, 1)
-  // Cabecera ~48px + 28px por cada handle
-  return 48 + maxHandles * 28
+  // Cabecera ~26px + 14px por cada handle + padding inferior
+  return 26 + maxHandles * 14 + 1
 })
 
 const getHandleColor = (type: string) => {
@@ -80,41 +84,54 @@ const getHandleColor = (type: string) => {
 
 <template>
   <div 
-    class="pim-custom-node relative rounded-xl border-2 transition-all duration-300 min-w-[180px]"
+    class="pim-custom-node group relative rounded border transition-all duration-300 min-w-[110px]"
     :class="[
       data.isValid === false 
         ? 'border-geist-error bg-geist-error/5 shadow-lg shadow-geist-error/10' 
         : 'border-geist-border bg-geist-bg shadow-sm hover:shadow-md'
     ]"
-    :style="{ minHeight: `${nodeMinHeight}px` }"
+    :style="{ 
+      minHeight: `${nodeMinHeight}px`,
+      boxShadow: selected ? '0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4)' : undefined,
+      zIndex: selected ? 10 : 1
+    }"
   >
     <!-- Cabecera del nodo -->
-    <div class="flex items-center gap-3 px-4 py-3 border-b border-geist-border/50">
+    <div class="flex items-center gap-1.5 px-2 py-1 border-b border-geist-border/50">
       <div 
-        class="w-8 h-8 rounded-lg flex items-center justify-center border border-geist-border shadow-inner flex-shrink-0"
+        class="w-5 h-5 rounded flex items-center justify-center border border-geist-border shadow-inner flex-shrink-0"
         :class="metadata.colorClass.replace('text-', 'bg-') + '/10'"
       >
-        <i :class="['fa-solid', metadata.icon, metadata.colorClass, 'text-base']"></i>
+        <i :class="['fa-solid', metadata.icon, metadata.colorClass, 'text-[10px]']"></i>
       </div>
       
-      <div class="flex flex-col min-w-0">
-        <span class="text-[11px] font-bold text-geist-fg truncate uppercase tracking-wider">
+      <div class="flex flex-col min-w-0 flex-1">
+        <span class="text-[8px] font-bold text-geist-fg truncate uppercase tracking-tight leading-none">
           {{ data.name }}
         </span>
-        <span class="text-[8px] text-geist-accents-4 font-mono">
+        <span class="text-[6px] text-geist-accents-4 font-mono leading-none mt-0.5">
           {{ metadata.label }}
         </span>
       </div>
+
+      <!-- Botón de borrado rápido (siempre visible) -->
+      <button 
+        @click.stop="emit('delete-node', id)"
+        class="node-delete-btn w-4 h-4 rounded flex items-center justify-center text-geist-accents-2 hover:text-geist-error hover:bg-geist-error/10 transition-all"
+        title="Eliminar nodo"
+      >
+        <i class="fa-solid fa-trash-can text-[8px]"></i>
+      </button>
     </div>
 
     <!-- Zona de Handles -->
-    <div class="flex justify-between px-1 py-1">
+    <div class="flex justify-between px-0.5 py-0.5">
       <!-- Columna Izquierda: Entradas -->
-      <div class="flex flex-col gap-0.5">
+      <div class="flex flex-col gap-0">
         <div 
           v-for="input in allInputs" 
           :key="input.id" 
-          class="relative flex items-center h-[26px]"
+          class="relative flex items-center h-[14px]"
         >
           <Handle
             :id="input.id"
@@ -123,15 +140,15 @@ const getHandleColor = (type: string) => {
             class="!absolute !left-0 !translate-x-[-50%]"
             :style="{
               backgroundColor: getHandleColor(input.type),
-              width: '10px',
-              height: '10px',
+              width: '8px',
+              height: '8px',
               borderRadius: '50%',
-              border: '2px solid white',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+              border: '1.5px solid white',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
             }"
           />
           <span 
-            class="ml-3 px-1.5 py-0.5 rounded text-[7px] font-bold uppercase tracking-tight whitespace-nowrap"
+            class="ml-2 px-1 py-0 rounded text-[5px] font-bold uppercase tracking-tighter whitespace-nowrap"
             :class="input.isMod ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'"
           >
             {{ input.name }}
@@ -140,14 +157,14 @@ const getHandleColor = (type: string) => {
       </div>
 
       <!-- Columna Derecha: Salidas -->
-      <div class="flex flex-col gap-0.5 items-end">
+      <div class="flex flex-col gap-0 items-end">
         <div 
           v-for="output in allOutputs" 
           :key="output.id" 
-          class="relative flex items-center justify-end h-[26px]"
+          class="relative flex items-center justify-end h-[14px]"
         >
           <span 
-            class="mr-3 px-1.5 py-0.5 rounded text-[7px] font-bold uppercase tracking-tight whitespace-nowrap"
+            class="mr-2 px-1 py-0 rounded text-[5px] font-bold uppercase tracking-tighter whitespace-nowrap"
             :class="output.type === 'modification' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'"
           >
             {{ output.name }}
@@ -163,19 +180,19 @@ const getHandleColor = (type: string) => {
               width: '0',
               height: '0',
               borderRadius: '0',
-              borderTop: '6px solid transparent',
-              borderBottom: '6px solid transparent',
-              borderLeft: `10px solid ${getHandleColor(output.type)}`,
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderLeft: `8px solid ${getHandleColor(output.type)}`,
               boxShadow: 'none',
               border: 'none'
             }"
           />
           <!-- Flecha SVG superpuesta para la representación visual -->
           <div 
-            class="absolute right-0 translate-x-[50%] pointer-events-none"
+            class="absolute right-0 translate-x-[100%] pointer-events-none"
             :style="{ color: getHandleColor(output.type) }"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor">
               <path d="M2 1 L12 7 L2 13 Z" />
             </svg>
           </div>

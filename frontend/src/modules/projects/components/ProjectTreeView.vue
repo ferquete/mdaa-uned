@@ -78,15 +78,13 @@ const treeData = computed<TreeNodeType[]>(() => [
           const genNodes: TreeNodeType[] = doc.generators.map(g => ({
             id: `m-${m.id}-g-${g.id}`,
             text: g.name,
-            icon: 'fa-solid fa-wave-square',
-            canDelete: true
+            icon: 'fa-solid fa-wave-square'
           }));
 
           const modNodes: TreeNodeType[] = doc.modificators.map(mod => ({
             id: `m-${m.id}-mod-${mod.id}`,
             text: mod.name,
-            icon: 'fa-solid fa-wand-magic-sparkles',
-            canDelete: true
+            icon: 'fa-solid fa-wand-magic-sparkles'
           }));
 
           children.push(...genNodes, ...modNodes);

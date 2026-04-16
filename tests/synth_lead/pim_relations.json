@@ -1,0 +1,23 @@
+{
+  "description": "Conexiones físicas para el Lead con Sub y Percusión.",
+  "relations": [
+    {
+      "id": "88888888-8888-8888-8888-888888888888",
+      "source": "55555555-5555-5555-5555-555555555563",
+      "destination": "66666666-6666-6666-6666-666666666669",
+      "description": "Vínculo técnico entre el oscilador y la entrada de filtro."
+    },
+    {
+      "id": "eeee1111-eeee-1111-eeee-111111111111",
+      "source": "aaaa4444-aaaa-4444-aaaa-444444444449",
+      "destination": "master-bus-ch1",
+      "description": "Señal de sub-grave al canal de mezcla 1."
+    },
+    {
+      "id": "eeee2222-eeee-2222-eeee-222222222222",
+      "source": "bbbb4444-bbbb-4444-bbbb-444444444449",
+      "destination": "master-bus-ch2",
+      "description": "Señal de bombo al canal de mezcla 2."
+    }
+  ]
+}

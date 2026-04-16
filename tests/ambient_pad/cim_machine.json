@@ -1,0 +1,61 @@
+[
+  {
+    "id": "e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e1e1",
+    "name": "Ethereal Pad Machine",
+    "description": "Máquina conceptual de texturas ambientales.",
+    "generators": [
+      {
+        "id": "f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1",
+        "name": "Noise Engine",
+        "description": "Fuente de ruido para texturas base.",
+        "params": "Noise Type, Amplitude",
+        "sendTo": [
+          {
+            "id": "a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1",
+            "idRef": "b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2",
+            "description": "Señal a la unidad de efectos."
+          }
+        ]
+      }
+    ],
+    "modificators": [
+      {
+        "id": "b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2",
+        "name": "Space Processor",
+        "description": "Eslabón de procesamiento espacial.",
+        "params": "Dry/Wet, Decay, Space Size",
+        "sendTo": []
+      }
+    ]
+  },
+  {
+    "id": "1111aaaa-1111-aaaa-1111-aaaaaaaaaaaa",
+    "name": "Texture Granular Machine",
+    "description": "Generador de micro-eventos sonoros aleatorios.",
+    "generators": [
+      {
+        "id": "2222aaaa-2222-aaaa-2222-aaaaaaaaaaaa",
+        "name": "Grain Generator",
+        "description": "Motor de granos de audio.",
+        "params": "Density, Pitch Scatter",
+        "sendTo": []
+      }
+    ],
+    "modificators": []
+  },
+  {
+    "id": "3333aaaa-3333-aaaa-3333-aaaaaaaaaaaa",
+    "name": "Global Modulation Machine",
+    "description": "Controlador de movimiento unificado para todo el proyecto.",
+    "generators": [],
+    "modificators": [
+      {
+        "id": "4444aaaa-4444-aaaa-4444-aaaaaaaaaaaa",
+        "name": "Project LFO",
+        "description": "Oscilador de baja frecuencia para modulaciones globales.",
+        "params": "Rate, Depth, Waveform",
+        "sendTo": []
+      }
+    ]
+  }
+]

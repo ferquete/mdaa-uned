@@ -1,0 +1,23 @@
+{
+  "description": "Conexiones técnicas del Pad expandido con modulación global.",
+  "relations": [
+    {
+      "id": "04040404-0404-0404-0404-040404040404",
+      "source": "01010101-0101-0101-0101-010101010106",
+      "destination": "02020202-0202-0202-0202-020202020207",
+      "description": "Ruta de la señal de ruido hacia la reverberación."
+    },
+    {
+      "id": "bbbb5555-bbbb-5555-bbbb-bbbbbbbbbbbb",
+      "source": "0000aaaa-0000-aaaa-0000-aaaaaaaaaaaf",
+      "destination": "02020202-0202-0202-0202-020202020206",
+      "description": "LFO Global modulando el Mix (Dry/Wet) de la Reverb."
+    },
+    {
+      "id": "cccc5555-cccc-5555-cccc-cccccccccccc",
+      "source": "8888aaaa-8888-aaaa-8888-aaaaaaaaaaag",
+      "destination": "02020202-0202-0202-0202-020202020207",
+      "description": "Señal granular inyectada en la entrada de la Reverb."
+    }
+  ]
+}

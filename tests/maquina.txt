@@ -1,5 +1,0 @@
-Vamos a cambiar la gramática 
-mda-audio-cim-relations-machines.langium
-, ahora las relations del array tendrán un campo id que será único entre todas las relations que tenga el json, y será un campo obligatorio que tendrá 36 caracteres.
-
-Tras realizar los cambios, actualiza también los validadores de la gramatica, y los ejemplos, comprobando que lso ejemplos se comportan como se espera. También compila la gramática para ver si todo es correcto

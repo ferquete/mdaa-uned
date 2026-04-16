@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   (e: 'save'): void
-  (e: 'capture'): void
 }>()
 </script>
 
@@ -22,14 +21,7 @@ const emit = defineEmits<{
           Guardar
         </button>
 
-        <button 
-          @click="emit('capture')"
-          class="flex items-center gap-2 px-3 py-1 rounded-md border border-geist-border bg-geist-accents-1 text-geist-accents-7 text-[10px] font-bold uppercase transition-all hover:border-geist-accents-4 hover:text-geist-fg active:scale-95"
-          title="Capturar imagen del editor"
-        >
-          <i class="fa-solid fa-camera text-[11px]"></i>
-          Capturar
-        </button>
+
       </div>
     </div>
 

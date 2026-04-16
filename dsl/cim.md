@@ -1,10 +1,10 @@
 # Modelo Independiente de Computación (CIM)
 
-Este documento describe los lenguajes específicos de dominio (DSL) utilizados para definir el Modelo Independiente de Computación (CIM) en el sistema MDA-Audio. El CIM se divide en dos gramáticas principales: una para la definición interna de las máquinas de audio y otra para establecer las relaciones de alto nivel entre ellas.
+Este documento describe los lenguajes específicos de dominio (DSL) utilizados para definir el Modelo Independiente de Computación (CIM) en el sistema MDA-Audio. El CIM se divide en dos gramáticas principales: una para la definición interna de las máquinas de audio y otra para establecer las relaciones de alto nivel entre ellas. En este documento hablamos de la definición interna de estas máquinas.
 
 ## 1. Lenguaje de Definición de Máquinas de Audio (CIM Machine)
 
-Este lenguaje permite definir la estructura lógica y los componentes internos de una máquina de síntesis o procesamiento de audio.
+Este lenguaje permite definir la estructura lógica y los componentes internos de una máquina de síntesis o procesamiento de audio. Una máquina es un componente compuesto por generadores de sonidos y/o modificadores de parámetros internos de esos u otros generadores.
 
 ### 1.1. Estructura y Gramática
 

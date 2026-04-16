@@ -501,12 +501,12 @@ const executeSave = async () => {
   }
 }
 
-const handleCapture = () => console.log('Capturando imagen...')
+
 </script>
 
 <template>
   <div class="pim-visual-editor flex flex-col h-full bg-geist-bg select-none relative overflow-hidden">
-    <PimEditorToolbar @save="handleSave" @capture="handleCapture">
+    <PimEditorToolbar @save="handleSave">
       <template #feedback>
         <span v-if="saveMessage" class="text-[10px] font-mono" :class="saveMessage.includes('Error') ? 'text-geist-error' : 'text-geist-success'">{{ saveMessage }}</span>
       </template>

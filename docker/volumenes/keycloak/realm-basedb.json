@@ -11,7 +11,11 @@
     "en"
   ],
   "defaultLocale": "es",
-  "passwordPolicy": "length(8)",
+  "accessTokenLifespan": 1200,
+  "ssoSessionIdleTimeout": 1200,
+  "ssoSessionMaxLifespan": 1200,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
   "smtpServer": {
     "host": "mailhog",
     "port": "1025",

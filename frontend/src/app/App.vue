@@ -15,6 +15,8 @@ const router = useRouter()
 const isDarkMode = ref(true) // Skills.sh (Geist) es oscuro por defecto
 const isAuthenticated = ref(false)
 const showLogoutModal = ref(false)
+const showSessionWarningModal = ref(false)
+const sessionTimeoutCheckInterval = 30000 // 30 segundos
 
 const firstName = computed(() => userStore.user?.firstName || 'Usuario')
 
@@ -58,7 +60,26 @@ onMounted(async () => {
 
   // Configuración de Autenticación
   isAuthenticated.value = keycloak.authenticated || false
+
+  if (isAuthenticated.value) {
+    // Monitoreo de Sesión
+    setInterval(() => {
+      if (keycloak.tokenParsed?.exp) {
+        const remainingTime = keycloak.tokenParsed.exp - Math.floor(Date.now() / 1000)
+        
+        // Mostrar aviso cuando falte 1 minuto (60 segundos)
+        if (remainingTime <= 60 && remainingTime > 0 && !showSessionWarningModal.value) {
+          showSessionWarningModal.value = true
+        }
+      }
+    }, sessionTimeoutCheckInterval)
+  }
 })
+
+const handleSessionWarning = () => {
+  showSessionWarningModal.value = false
+  keycloak.login()
+}
 </script>
 
 <template>
@@ -145,6 +166,34 @@ onMounted(async () => {
             class="w-full bg-geist-bg border border-geist-border text-geist-fg font-medium py-2.5 rounded-lg hover:border-geist-fg transition-all active:scale-[0.98] text-sm"
           >
             Cancelar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+
+    <!-- Modal de Aviso de Expiración de Sesión -->
+    <BaseModal 
+      :show="showSessionWarningModal" 
+      title="Sesión a punto de caducar" 
+      @close="showSessionWarningModal = false"
+    >
+      <div class="space-y-6">
+        <p class="text-sm text-geist-accents-5 leading-relaxed">
+          Tu sesión está a punto de caducar en menos de un minuto. Por seguridad, debes volver a iniciar sesión para continuar trabajando.
+        </p>
+        
+        <div class="flex flex-col gap-3">
+          <button 
+            @click="handleSessionWarning"
+            class="w-full bg-geist-fg text-geist-bg font-medium py-2.5 rounded-lg hover:opacity-90 transition-all active:scale-[0.98] text-sm"
+          >
+            Iniciar Sesión de nuevo
+          </button>
+          <button 
+            @click="showSessionWarningModal = false"
+            class="w-full bg-geist-bg border border-geist-border text-geist-fg font-medium py-2.5 rounded-lg hover:border-geist-fg transition-all active:scale-[0.98] text-sm"
+          >
+            Ignorar
           </button>
         </div>
       </div>

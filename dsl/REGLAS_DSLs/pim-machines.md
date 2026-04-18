@@ -27,16 +27,16 @@ El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación 
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único universal. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `description` | STRING | Información textual sobre el propósito del elemento. | Opcional. Máximo 600 caracteres. |
-| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máuinas, no se podrá elegir la máuina en si, ya que eso se selecciona en `ids_cim_reference`.  | Obligatorio. Puede estar vacío. |
+| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`.  | Obligatorio. Puede estar vacío. |
 
 #### Estructura de Parámetro de Configuración (`Parameter`)
 Cualquier propiedad de configuración de un nodo (excepto el listado `others`) es un objeto de tipo `Parameter`.
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del parámetro. |
-| `ids_references` | string[] | Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máuinas, no se podrá elegir la máuina en si, ya que eso se selecciona en `ids_cim_reference`. |
+| `ids_references` | string[] | Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`. |
 | `initialValue` | any | Valor inicial del parámetro. |
-| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. De inicio, siempre será true. Cuando está a true, podemos conectar una arista de tipo modification a este parámetro.  |
+| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos de la máquina. De inicio, siempre será true. Cuando está a true, podemos conectar una arista de tipo modification a este parámetro.  |
 | `isExternalInput` | boolean | Flag de externalización. Si es `true`, indica que este parámetro puede recibir modificaciones desde fuera de esta máquina PIM. Por defecto es `false` para parámetros. |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
 
@@ -46,9 +46,9 @@ Todos los nodos disponen obligatoriamente de un array interno `others` (aunque e
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del parámetro customizado. |
 | `name` | string | **Obligatorio.** Nombre del parámetro (1 a 20 caracteres). |
-| `ids_references` | string[] | Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máuinas, no se podrá elegir la máuina en si, ya que eso se selecciona en `ids_cim_reference`. |
+| `ids_references` | string[] | Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`. |
 | `initialValue` | string | **Obligatorio y estricto.** Únicamente string, de 1 a 100 caracteres. |
-| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. De inicio, siempre será true. Cuando está a true, podemos conectar una arista de tipo modification a este parámetro.  |
+| `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos de la máquina. De inicio, siempre será true. Cuando está a true, podemos conectar una arista de tipo modification a este parámetro.  |
 | `isExternalInput` | boolean | Flag de externalización. Si es `true`, indica que este parámetro dinámico puede recibir modificaciones desde fuera de esta máquina PIM. Por defecto es `false`. |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
 
@@ -251,14 +251,6 @@ Utilizada en generadores para formas de onda personalizadas.
 - **Tamaño**: Variable entre 4x4 y 1000x1000 elementos.
 - **Estructura**: Debe ser estrictamente cuadrada (filas == columnas).
 - **Contenido**: Solo se permiten valores binarios (0 o 1).
-
-### 4.2. Identificadores de Referencia Especiales
-En el array `ids_references` de cualquier elemento, se permiten los siguientes literales:
-- `ref_project_description`: Referencia a la descripción global del proyecto.
-- `ref_cim_machine_description`: Referencia a la descripción técnica de la máquina en CIM.
-
-> [!CAUTION]
-> El incumplimiento de los rangos numéricos o la omisión de parámetros requeridos (como `input_2` cuando `stereo` es `true`) disparará errores fatales en el compilador MDA-Audio-PIM.
 
 ---
 

@@ -1,6 +1,7 @@
 # Relaciones PIM (`PIM Relations`)
 
-Este lenguaje permite orquestar las interconexiones granulares entre máquinas PIM. A diferencia del nivel CIM, donde las relaciones son entre máquinas completas, el nivel PIM establece vínculos directos entre puntos de conexión y parámetros específicos.
+Este lenguaje, MDA-Audio-PIM-Relations-Machines, permite orquestar las interconexiones entre máquinas PIM. A diferencia del nivel CIM, donde las relaciones son entre máquinas completas, el nivel PIM (Platform Independence Model) establece vínculos directos entre puntos de conexión y parámetros específicos. 
+
 
 ## 1. Estructura del Documento
 
@@ -11,7 +12,7 @@ El lenguaje utiliza una estructura JSON para definir el grafo de relaciones.
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
 | `description` | STRING | Propósito de la red de relaciones. | Opcional. 1 a 600 caracteres. |
-| `relations` | ARRAY | Lista de objetos de relación detallada. | Obligatorio. |
+| `relations` | ARRAY | Lista de objetos de relación detallada. | Obligatorio. Puede estar vacío. |
 
 ### 1.2. Objeto Relation (Relación PIM)
 
@@ -20,8 +21,8 @@ Define un vínculo técnico entre un punto de salida y un punto de entrada o par
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único de la relación. | Obligatorio. UUID de 36 caracteres. |
-| `source` | STRING | ID del **output** de la máquina PIM origen. | Obligatorio. UUID de 36 caracteres. |
-| `destination`| STRING | ID del **input** o **parámetro** de destino. | Obligatorio. UUID de 36 caracteres. |
+| `source` | STRING | ID del **output** de una máquina PIM, que tenga su propiedad `isExternalOutput` en true. | Obligatorio. UUID de 36 caracteres. |
+| `destination`| STRING | ID del **input** o **parámetro** de una máquina PIM, que tenga su propiedad `isExternalInput` en true. | Obligatorio. UUID de 36 caracteres. |
 | `description` | STRING | Descripción de la modulación o flujo. | Obligatorio. 10 a 300 caracteres. |
 
 ---
@@ -43,4 +44,4 @@ El compilador de PIM Relations aplica las siguientes reglas de integridad:
 Este lenguaje es el puente final antes de la generación de código de bajo nivel. Mientras que en **CIM Relations** decimos *La Máquina A se conecta a la B*, en **PIM Relations** especificamos *El `output_1` de la instancia 550e8400... se conecta al `frequency` de la instancia a1b2c3d4...*.
 
 > [!IMPORTANT]
-> Los IDs utilizados en `source` y `destination` deben corresponder a identificadores definidos en los archivos `.json` de máquinas PIM correspondientes.
+> Los IDs utilizados en `source` y `destination` deben corresponder a identificadores definidos en los archivos `.json` de máquinas PIM correspondientes, siguiendo las reglas ya expuestas.

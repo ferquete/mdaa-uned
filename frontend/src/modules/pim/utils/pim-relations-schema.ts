@@ -7,7 +7,7 @@ export const PIM_RELATIONS_SCHEMA = {
   properties: {
     description: { 
       type: 'string', 
-      minLength: 10, 
+      minLength: 1, 
       maxLength: 600, 
       description: 'Descripción general del diseño conceptual' 
     },

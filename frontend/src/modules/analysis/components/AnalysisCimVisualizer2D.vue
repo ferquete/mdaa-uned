@@ -3,10 +3,11 @@ import { computed } from 'vue'
 import { Position, Handle } from '@vue-flow/core'
 import BaseGraph2D from '@/shared/components/visualizers/BaseGraph2D.vue'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
+import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 
-import SynthSketchIcon from '@/shared/components/icons/SynthSketchIcon.vue'
 
 const store = useAnalysisMachinesStore()
+const { runWithGuard } = useUnsavedChanges()
 
 const nodesAndEdges = computed(() => {
   const rawRelations = store.parsedCimRelations?.relations
@@ -49,6 +50,7 @@ const nodesAndEdges = computed(() => {
       type: 'custom',
       data: { 
         name: m.name,
+        dbId: m.dbId,
         type: 'machine' 
       },
       style: {
@@ -97,6 +99,16 @@ const legend = [
 const edgeLegend = [
   { color: '#F59827', label: 'Relación', dashed: true }
 ]
+
+const handleNodeDoubleClick = (node: any) => {
+  const dbId = node.data.dbId
+  if (!dbId) return
+
+  runWithGuard(() => {
+    store.selectedNodeId = dbId
+    store.visualizerMode = '2D'
+  })
+}
 </script>
 
 <template>
@@ -106,20 +118,13 @@ const edgeLegend = [
       :edges="nodesAndEdges.edges"
       :legend="legend"
       :edge-legend="edgeLegend"
+      @node-double-click="handleNodeDoubleClick"
     >
       <!-- Nodo Personalizado con Icono de Sintetizador Estilo Boceto -->
       <template #node="nodeProps">
         <div 
           class="flex items-center justify-center px-5 py-1.5 rounded-full bg-[#F0CDAF] text-[#3d2b1f] text-[10px] font-bold shadow-lg tracking-tight whitespace-nowrap border border-white/10 pointer-events-auto group relative min-w-[100px]"
         >
-          <!-- Icono de Sintetizador (Posicionado absolutamente encima del óvalo) -->
-          <div 
-            class="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2 w-24 h-24 text-[#F0CDAF] transition-transform duration-300 group-hover:scale-110 pointer-events-auto"
-            style="filter: drop-shadow(0 0 8px rgba(240, 205, 175, 0.2))"
-          >
-            <SynthSketchIcon />
-          </div>
-          
           <!-- Texto del Nodo -->
           {{ (nodeProps as any).data.name }}
           

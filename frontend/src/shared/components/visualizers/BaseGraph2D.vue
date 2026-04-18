@@ -21,6 +21,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'node-click', node: any): void
+  (e: 'node-double-click', node: any): void
   (e: 'edge-click', edge: any): void
   (e: 'pane-click'): void
 }>()
@@ -30,7 +31,7 @@ const localEdges = ref<any[]>([])
 const selectedNodeId = ref<string | null>(null)
 const selectedEdgeId = ref<string | null>(null)
 
-const { onPaneReady, fitView, onNodeClick, onPaneClick, onEdgeClick } = useVueFlow()
+const { onPaneReady, fitView, onNodeClick, onNodeDoubleClick, onPaneClick, onEdgeClick } = useVueFlow()
 
 /**
  * Aplica el efecto de atenuación (dimming) a los elementos no relacionados.
@@ -82,6 +83,10 @@ onNodeClick(({ node }) => {
   selectedNodeId.value = selectedNodeId.value === node.id ? null : node.id
   applyDimming()
   emit('node-click', node)
+})
+
+onNodeDoubleClick(({ node }) => {
+  emit('node-double-click', node)
 })
 
 onEdgeClick(({ edge }) => {

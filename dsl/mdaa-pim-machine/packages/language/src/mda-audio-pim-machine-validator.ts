@@ -1,6 +1,6 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 import { 
-    MdaAudioPimMachineAstType, Model, Parameter, ConnectionPoint, Edge, Matrix, OscillatorNode, NoiseNode, SampleNode, 
+    MdaAudioPimMachineAstType, Model, Parameter, OthersParameter, ConnectionPoint, Edge, Matrix, OscillatorNode, NoiseNode, SampleNode, 
     FrequencyFilterNode, LFONode, EnvelopeNode, GainAndPanNode, ReverbNode, DelayNode, DistortionNode, 
     ChorusFlangerNode, CompressorNode, EqualizerNode, MixerNode, isNumberValue, isStringValue, isBooleanValue, isMatrix 
 } from './generated/ast.js';
@@ -15,6 +15,7 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
     const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
         Model: [validator.checkModelHeader, validator.checkModelIntegrity],
         Parameter: [validator.checkParameter],
+        OthersParameter: [validator.checkOthersParameter],
         ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
         Matrix: [validator.checkMatrix],
@@ -193,6 +194,33 @@ export class MdaAudioPimMachineValidator {
         }
         if (param.ids_references.length === 0) {
             accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: param, property: 'ids_references' });
+        }
+
+        if (param.description && param.description.length > 600) {
+            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        }
+    }
+
+    /**
+     * Valida los campos de un objeto OthersParameter dinamico.
+     */
+    checkOthersParameter(param: OthersParameter, accept: ValidationAcceptor): void {
+        const id = param.id.replace(/"/g, '');
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
+        }
+        if (param.ids_references.length === 0) {
+            accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: param, property: 'ids_references' });
+        }
+        
+        const name = param.name.replace(/"/g, '');
+        if (!name || name.trim().length === 0 || name.length > 20) {
+            accept('error', 'El nombre del parámetro dinámico debe tener entre 1 y 20 caracteres.', { node: param, property: 'name' });
+        }
+
+        const value = param.initialValue.replace(/"/g, '');
+        if (!value || value.length === 0 || value.length > 100) {
+            accept('error', 'El valor inicial de initialValue debe ser un String de 1 a 100 caracteres.', { node: param, property: 'initialValue' });
         }
 
         if (param.description && param.description.length > 600) {

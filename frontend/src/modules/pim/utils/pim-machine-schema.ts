@@ -65,9 +65,38 @@ export const PIM_MACHINE_SCHEMA = {
           "type": "boolean",
           "description": "Si el parámetro acepta modulación de otros nodos"
         },
+        "isExternalInput": {
+          "type": "boolean",
+          "description": "Si el parámetro puede ser controlado externamente a la máquina"
+        },
         "description": { "$ref": "#/definitions/Description" }
       },
-      "required": ["id", "ids_references", "initialValue", "isModifiable"]
+      "required": ["id", "ids_references", "initialValue", "isModifiable"],
+      "additionalProperties": false
+    },
+    "OthersParameter": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/definitions/UUID" },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Nombre del control dinámico"
+        },
+        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "initialValue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Valor inicial obligatorio del control dinámico"
+        },
+        "isModifiable": { "type": "boolean" },
+        "isExternalInput": { "type": "boolean" },
+        "description": { "$ref": "#/definitions/Description" }
+      },
+      "required": ["id", "name", "ids_references", "initialValue", "isModifiable"],
+      "additionalProperties": false
     },
     "ConnectionPoint": {
       "type": "object",
@@ -75,9 +104,12 @@ export const PIM_MACHINE_SCHEMA = {
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "isExternalInput": { "type": "boolean" },
+        "isExternalOutput": { "type": "boolean" },
         "description": { "$ref": "#/definitions/Description" }
       },
-      "required": ["id", "ids_references"]
+      "required": ["id", "ids_references"],
+      "additionalProperties": false
     },
     "CommonNodeFields": {
       "type": "object",
@@ -90,9 +122,14 @@ export const PIM_MACHINE_SCHEMA = {
         },
         "description": { "$ref": "#/definitions/Description" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "type": { "type": "string" }
+        "type": { "type": "string" },
+        "others": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OthersParameter" }
+        }
       },
-      "required": ["id", "name", "ids_references", "type"]
+      "required": ["id", "name", "ids_references", "type", "others"],
+      "additionalProperties": true
     },
     "AnyNode": {
       "type": "object",
@@ -110,6 +147,11 @@ export const PIM_MACHINE_SCHEMA = {
             "frequency_filter", "reverb", "delay", "distortion", "chorus_flanger", "compressor", "equalizer",
             "mixer", "gain_pan"
           ]
+        },
+        "others": {
+          "type": "array",
+          "description": "Lista de otros parámetros de control dinámicos",
+          "items": { "$ref": "#/definitions/OthersParameter" }
         },
         "stereo":        { "$ref": "#/definitions/Parameter" },
         "ping_pong":     { "$ref": "#/definitions/Parameter" },
@@ -171,7 +213,8 @@ export const PIM_MACHINE_SCHEMA = {
         "output_2":  { "$ref": "#/definitions/ConnectionPoint" },
         "output":    { "$ref": "#/definitions/ConnectionPoint" }
       },
-      "required": ["id", "name", "ids_references", "type"]
+      "required": ["id", "name", "ids_references", "type", "others"],
+      "additionalProperties": false
     },
     "Edge": {
       "type": "object",
@@ -186,7 +229,8 @@ export const PIM_MACHINE_SCHEMA = {
         "targetParam": { "type": "string" },
         "type": { "enum": ["audio", "modification"] }
       },
-      "required": ["id", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"]
+      "required": ["id", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"],
+      "additionalProperties": false
     }
   }
 }

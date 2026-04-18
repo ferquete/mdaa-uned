@@ -82,6 +82,7 @@
           ]
         },
         "isModifiable": { "type": "boolean" },
+        "isExternalInput": { "type": "boolean" },
         "description": { "$ref": "#/definitions/Description" }
       },
       "required": ["id", "ids_references", "initialValue", "isModifiable"]
@@ -91,6 +92,8 @@
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "isExternalInput": { "type": "boolean" },
+        "isExternalOutput": { "type": "boolean" },
         "description": { "$ref": "#/definitions/Description" }
       },
       "required": ["id", "ids_references"],
@@ -104,6 +107,29 @@
         "items": { "type": "number", "enum": [0, 1] }
       }
     },
+    "OthersParameter": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/definitions/UUID" },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Nombre del control dinámico"
+        },
+        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "initialValue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Valor inicial obligatorio del control dinámico"
+        },
+        "isModifiable": { "type": "boolean" },
+        "isExternalInput": { "type": "boolean" },
+        "description": { "$ref": "#/definitions/Description" }
+      },
+      "required": ["id", "name", "ids_references", "initialValue", "isModifiable"]
+    },
     "CommonNodeFields": {
       "type": "object",
       "properties": {
@@ -115,9 +141,14 @@
           "description": "Nombre representativo del nodo"
         },
         "description": { "$ref": "#/definitions/Description" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" }
+        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "others": {
+          "type": "array",
+          "description": "Lista de otros parámetros de control dinámicos",
+          "items": { "$ref": "#/definitions/OthersParameter" }
+        }
       },
-      "required": ["id", "name", "description", "ids_references"]
+      "required": ["id", "name", "description", "ids_references", "others"]
     },
     "AudioOutputProperties": {
       "properties": {

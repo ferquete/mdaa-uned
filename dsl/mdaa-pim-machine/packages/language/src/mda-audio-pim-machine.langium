@@ -227,7 +227,8 @@ fragment CommonNodeFields:
     '"id"' ':' id=STRING ','
     '"name"' ':' name=STRING ','
     '"description"' ':' description=STRING ','
-    '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ',';
+    '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+    '"others"' ':' '[' (others+=OthersParameter (',' others+=OthersParameter)*)? ']' ',';
 
 Parameter:
     '{'
@@ -235,6 +236,18 @@ Parameter:
         '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
         '"initialValue"' ':' initialValue=Value ','
         '"isModifiable"' ':' isModifiable=BOOLEAN
+        (',' '"isExternalInput"' ':' isExternalInput=BOOLEAN)?
+        (',' '"description"' ':' description=STRING)?
+    '}';
+
+OthersParameter:
+    '{'
+        '"id"' ':' id=STRING ','
+        '"name"' ':' name=STRING ','
+        '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+        '"initialValue"' ':' initialValue=STRING ','
+        '"isModifiable"' ':' isModifiable=BOOLEAN
+        (',' '"isExternalInput"' ':' isExternalInput=BOOLEAN)?
         (',' '"description"' ':' description=STRING)?
     '}';
 
@@ -242,6 +255,8 @@ ConnectionPoint:
     '{'
         '"id"' ':' id=STRING ','
         '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']'
+        (',' '"isExternalInput"' ':' isExternalInput=BOOLEAN)?
+        (',' '"isExternalOutput"' ':' isExternalOutput=BOOLEAN)?
         (',' '"description"' ':' description=STRING )?
     '}';
 

@@ -19,7 +19,7 @@ interface Props {
   showFormMode?: boolean
   showInfo?: boolean
   description?: string
-  label2D?: string
+  graphLabel?: string
 }
 
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
@@ -126,7 +126,7 @@ const handleEditBasic = () => {
             :class="visualizerMode === '2D' ? 'bg-geist-accents-2 text-geist-fg shadow-sm' : 'text-geist-accents-4 hover:text-geist-accents-6'"
           >
             <i class="fa-solid fa-diagram-project"></i>
-            {{ label2D || '2D' }}
+            {{ graphLabel || '2D' }}
           </button>
 
           <button 

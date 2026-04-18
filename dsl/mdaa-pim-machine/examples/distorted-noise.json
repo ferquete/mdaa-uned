@@ -1,47 +1,154 @@
 {
-    "id": "770e8400-e29b-41d4-a716-446655440002",
-    "name": "Distorted Noise",
-    "ids_cim_reference": [],
-    "nodes": [
-        {
-            "type": "noise",
-            "id": "n1n1n1n1-n1n1-4n1n-n1n1-n1n1n1n1n1n1",
-            "name": "Noise Source",
-            "description": "Noise Source",
-            "ids_references": ["ref_project_description"],
-            "noiseType": { "id": "44440000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": "brownian", "isModifiable": false },
-            "amplitude": { "id": "44440000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 1.0, "isModifiable": true },
-            "gain": { "id": "44440000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
-            "pan": { "id": "44440000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0, "isModifiable": true },
-            "stereo": { "id": "44440000-0000-0000-0000-000000000007", "ids_references": ["ref_cim_machine_description"], "initialValue": true, "isModifiable": false },
-            "output_1": { "id": "44440000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"] },
-            "output_2": { "id": "44440000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"] }
-        },
-        {
-            "type": "distortion",
-            "id": "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
-            "name": "Hard Distortion",
-            "description": "Ruido sucio",
-            "ids_references": ["ref_project_description"],
-            "drive": { "id": "55550000-0000-0000-0000-000000000001", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.9, "isModifiable": true },
-            "tone": { "id": "55550000-0000-0000-0000-000000000002", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.5, "isModifiable": true },
-            "distType": { "id": "55550000-0000-0000-0000-000000000003", "ids_references": ["ref_cim_machine_description"], "initialValue": "Hard-clipping", "isModifiable": false },
-            "outputLevel": { "id": "55550000-0000-0000-0000-000000000004", "ids_references": ["ref_cim_machine_description"], "initialValue": 0.4, "isModifiable": true },
-            "stereo": { "id": "55550000-0000-0000-0000-000000000005", "ids_references": ["ref_cim_machine_description"], "initialValue": false, "isModifiable": false },
-            "input_1": { "id": "55550000-0000-0000-0000-000000001001", "ids_references": ["ref_cim_machine_description"] },
-            "output_1": { "id": "55550000-0000-0000-0000-000000000006", "ids_references": ["ref_cim_machine_description"] }
-        }
-    ],
-    "edges": [
-        {
-            "id": "66660000-0000-0000-0000-000000000001",
-            "description": "Noise L -> Distortion",
-            "ids_references": ["ref_project_description"],
-            "sourceNode": "n1n1n1n1-n1n1-4n1n-n1n1-n1n1n1n1n1n1",
-            "sourceParam": "44440000-0000-0000-0000-000000000005",
-            "targetNode": "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
-            "targetParam": "55550000-0000-0000-0000-000000001001",
-            "type": "audio"
-        }
-    ]
+   "ids_cim_reference" : [],
+   "id" : "770e8400-e29b-41d4-a716-446655440002",
+   "name" : "Distorted Noise",
+   "nodes" : [
+      {
+         "name" : "Noise Source",
+         "ids_references" : [
+            "ref_project_description"
+         ],
+         "id" : "n1n1n1n1-n1n1-4n1n-n1n1-n1n1n1n1n1n1",
+         "output_1" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "44440000-0000-0000-0000-000000000005"
+         },
+         "output_2" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "44440000-0000-0000-0000-000000000006"
+         },
+         "noiseType" : {
+            "id" : "44440000-0000-0000-0000-000000000001",
+            "isModifiable" : false,
+            "initialValue" : "brownian",
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ]
+         },
+         "gain" : {
+            "initialValue" : 0.5,
+            "isModifiable" : true,
+            "id" : "44440000-0000-0000-0000-000000000003",
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ]
+         },
+         "amplitude" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "isModifiable" : true,
+            "initialValue" : 1,
+            "id" : "44440000-0000-0000-0000-000000000002"
+         },
+         "type" : "noise",
+         "description" : "Noise Source",
+         "pan" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "44440000-0000-0000-0000-000000000004",
+            "isModifiable" : true,
+            "initialValue" : 0
+         },
+         "stereo" : {
+            "id" : "44440000-0000-0000-0000-000000000007",
+            "initialValue" : true,
+            "isModifiable" : false,
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ]
+         },
+         "others" : []
+      },
+      {
+         "output_1" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "55550000-0000-0000-0000-000000000006"
+         },
+         "distType" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "55550000-0000-0000-0000-000000000003",
+            "initialValue" : "Hard-clipping",
+            "isModifiable" : false
+         },
+         "input_1" : {
+            "id" : "55550000-0000-0000-0000-000000001001",
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ]
+         },
+         "id" : "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
+         "name" : "Hard Distortion",
+         "drive" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "55550000-0000-0000-0000-000000000001",
+            "initialValue" : 0.9,
+            "isModifiable" : true
+         },
+         "ids_references" : [
+            "ref_project_description"
+         ],
+         "tone" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "isModifiable" : true,
+            "initialValue" : 0.5,
+            "id" : "55550000-0000-0000-0000-000000000002"
+         },
+         "outputLevel" : {
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ],
+            "id" : "55550000-0000-0000-0000-000000000004",
+            "isModifiable" : true,
+            "initialValue" : 0.4
+         },
+         "others" : [
+            {
+               "id": "55550000-1111-0000-0000-00000000abc1",
+               "name": "Custom Drive",
+               "ids_references": ["ref_cim_machine_description"],
+               "initialValue": "Agresividad alta",
+               "isModifiable": true,
+               "description": "Control dinámico del drive"
+            }
+         ],
+         "stereo" : {
+            "id" : "55550000-0000-0000-0000-000000000005",
+            "isModifiable" : false,
+            "initialValue" : false,
+            "ids_references" : [
+               "ref_cim_machine_description"
+            ]
+         },
+         "type" : "distortion",
+         "description" : "Ruido sucio"
+      }
+   ],
+   "edges" : [
+      {
+         "description" : "Noise L -> Distortion",
+         "type" : "audio",
+         "targetParam" : "55550000-0000-0000-0000-000000001001",
+         "targetNode" : "d1d1d1d1-d1d1-4d1d-d1d1-d1d1d1d1d1d1",
+         "id" : "66660000-0000-0000-0000-000000000001",
+         "sourceParam" : "44440000-0000-0000-0000-000000000005",
+         "sourceNode" : "n1n1n1n1-n1n1-4n1n-n1n1-n1n1n1n1n1n1",
+         "ids_references" : [
+            "ref_project_description"
+         ]
+      }
+   ]
 }

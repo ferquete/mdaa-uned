@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref, computed, markRaw, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { VueFlow, useVueFlow, Panel, type NodeTypesObject, type EdgeTypesObject } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
+import { Panel, VueFlow, useVueFlow, type EdgeTypesObject, type NodeTypesObject } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import PimEditorPalette from './PimEditorPalette.vue'
-import PimEditorToolbar from './PimEditorToolbar.vue'
-import PimEditorProperties from './PimEditorProperties.vue'
-import PimCustomNode from './PimCustomNode.vue'
-import PimCustomEdge from './PimCustomEdge.vue'
-import PimNodeModal from './PimNodeModal.vue'
-import PimEdgeModal from './PimEdgeModal.vue'
 import BaseModal from '@/shared/components/BaseModal.vue'
+import PimCustomEdge from './PimCustomEdge.vue'
+import PimCustomNode from './PimCustomNode.vue'
+import PimEdgeModal from './PimEdgeModal.vue'
+import PimEditorPalette from './PimEditorPalette.vue'
+import PimEditorProperties from './PimEditorProperties.vue'
+import PimEditorToolbar from './PimEditorToolbar.vue'
+import PimNodeModal from './PimNodeModal.vue'
 
-import { usePimStore } from '../stores/pimStore'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
-import { PIM_NODE_METADATA, PIM_MODIFIABLE_PARAMS } from '../utils/pim-node-metadata'
+import { usePimStore } from '../stores/pimStore'
+import { PIM_MODIFIABLE_PARAMS, PIM_NODE_METADATA } from '../utils/pim-node-metadata'
 
 const store = usePimStore()
 const analysisStore = useAnalysisMachinesStore()
@@ -46,8 +46,16 @@ const showErrorModal = ref(false)
 const errorMessage = ref('')
 const saveMessage = ref('')
 
+/**
+ * El grafo es válido solo si todos los nodos locales tienen isValid !== false.
+ */
+const isGraphValid = computed(() => {
+  return localNodes.value.every(n => n.data.isValid !== false)
+})
+
 // --- Snapshot para detectar cambios ---
 const snapshotJson = ref('')
+const snapshotPositions = ref('')
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
 // --- Gestión de Selección ---
@@ -121,6 +129,14 @@ const saveGuiPositions = (machineId: number) => {
   localStorage.setItem(`${GUI_STORAGE_PREFIX}${machineId}`, JSON.stringify(positions))
 }
 
+const getCurrentPositionsJson = () => {
+  return JSON.stringify(
+    localNodes.value
+      .map(n => ({ id: n.id, x: Math.round(n.position.x), y: Math.round(n.position.y) }))
+      .sort((a, b) => a.id.localeCompare(b.id))
+  )
+}
+
 // --- Carga Inicial ---
 const loadMachineData = () => {
   if (store.selectedMachine) {
@@ -157,7 +173,12 @@ const loadMachineData = () => {
       setTimeout(() => fromObject({ nodes: flowNodes, edges: flowEdges }), 50)
       
       nextTick(() => {
-        snapshotJson.value = JSON.stringify(doc)
+        // Inicializar snapshots usando buildFinalJson para asegurar que el formato sea idéntico al comparado después
+        const initialModel = buildFinalJson()
+        if (initialModel) {
+          snapshotJson.value = JSON.stringify(initialModel)
+        }
+        snapshotPositions.value = getCurrentPositionsJson()
         clearUnsavedState()
       })
     }
@@ -198,15 +219,30 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
   
   const { type, position } = pendingNodeData.value
   const id = crypto.randomUUID()
+  const meta = PIM_NODE_METADATA[type]
+  const defaultParams: any = { id, name, type, description, ids_references, others: [] }
   
-  const defaultParams: any = { id, name, type, description, ids_references }
+  // Inicializar puertos de audio por defecto para que pulsen desde el inicio
+  if (meta) {
+    meta.inputs.forEach(i => {
+      defaultParams[i.id] = { id: crypto.randomUUID(), ids_references: [], isExternalInput: true }
+    })
+    meta.outputs.forEach(o => {
+      defaultParams[o.id] = { id: crypto.randomUUID(), ids_references: [], isExternalOutput: true }
+    })
+  }
   
   if (type === 'oscillator') {
-    defaultParams.waveform = 'sine'; defaultParams.frequency = 440; defaultParams.gain = 0.5; defaultParams.pan = 0; defaultParams.pulseWidth = 0.5; defaultParams.phase = 0
+    defaultParams.waveform = { initialValue: 'sine', id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.frequency = { initialValue: 440, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.gain = { initialValue: 0.5, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.pan = { initialValue: 0, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
   } else if (type === 'mixer') {
     defaultParams.inputs_number = 2; defaultParams.stereo = false
   } else if (type === 'lfo') {
-    defaultParams.waveform = 'sine'; defaultParams.rate = 1; defaultParams.amplitude = 1
+    defaultParams.waveform = { initialValue: 'sine', id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.rate = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.amplitude = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
   }
 
   const newNode = {
@@ -367,33 +403,54 @@ const buildFinalJson = () => {
     const rawData = n.data.parameters
     const metadata = PIM_NODE_METADATA[n.data.type]
     
+    // Add raw others if existing, else empty array
+    const othersArr = rawData?.others || []
+    
     const node: any = {
       id: n.id,
       name: n.data.name,
       description: n.data.description || '',
       type: n.data.type,
-      ids_references: rawData?.ids_references || []
+      ids_references: rawData?.ids_references || [],
+      others: othersArr
     }
 
     const wrapParam = (key: string, value: any) => {
-      const existing = rawData?.[key] || {}
+      const existing = rawData?.[key]
       const modFlags = rawData?._isModifiable || {}
+      
+      const paramId = (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID()
+
       return {
-        id: existing.id || crypto.randomUUID(),
-        ids_references: existing.ids_references || [],
+        id: paramId,
+        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
         initialValue: value,
-        isModifiable: modFlags[key] ?? existing.isModifiable ?? true,
-        description: existing.description || ''
+        isModifiable: modFlags[key] ?? (existing && typeof existing === 'object' && 'isModifiable' in existing ? existing.isModifiable : true),
+        isExternalInput: (existing && typeof existing === 'object') ? (existing.isExternalInput ?? false) : false,
+        description: (existing && typeof existing === 'object') ? (existing.description || '') : ''
       }
     }
 
     const wrapCP = (key: string) => {
-      const existing = rawData?.[key] || {}
-      return {
-        id: existing.id || crypto.randomUUID(),
-        ids_references: existing.ids_references || [],
-        description: existing.description || ''
+      const existing = rawData?.[key]
+      const isInput = metadata?.inputs.some(i => i.id === key)
+      const isOutput = metadata?.outputs.some(o => o.id === key)
+
+      const cpId = (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID()
+      
+      const res: any = {
+        id: cpId,
+        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
+        description: (existing && typeof existing === 'object') ? (existing.description || '') : ''
       }
+
+      if (isInput) {
+        res.isExternalInput = (existing && typeof existing === 'object') ? (existing.isExternalInput ?? true) : true
+      }
+      if (isOutput) {
+        res.isExternalOutput = (existing && typeof existing === 'object') ? (existing.isExternalOutput ?? true) : true
+      }
+      return res
     }
 
     const paramsList = PIM_MODIFIABLE_PARAMS[n.data.type] || []
@@ -446,11 +503,16 @@ const buildFinalJson = () => {
 /**
  * Detecta si hay cambios respecto al snapshot original.
  */
-const checkDirtyState = () => {
+const isDirty = computed(() => {
+  if (!snapshotJson.value) return false
   const currentJson = JSON.stringify(buildFinalJson())
-  const isDirty = currentJson !== snapshotJson.value
-  
-  if (isDirty) {
+  const technicalDirty = currentJson !== snapshotJson.value
+  const graphicalDirty = getCurrentPositionsJson() !== snapshotPositions.value
+  return technicalDirty || graphicalDirty
+})
+
+const checkDirtyState = () => {
+  if (isDirty.value) {
     setUnsavedState(true, true, async () => {
       await executeSave()
       return true
@@ -489,6 +551,7 @@ const executeSave = async () => {
   if (result.success) {
     saveGuiPositions(store.selectedMachine.id)
     snapshotJson.value = JSON.stringify(finalJson)
+    snapshotPositions.value = getCurrentPositionsJson()
     clearUnsavedState()
     saveMessage.value = 'Guardado con éxito'
     setTimeout(() => saveMessage.value = '', 3000)
@@ -502,7 +565,10 @@ const executeSave = async () => {
 
 <template>
   <div class="pim-visual-editor flex flex-col h-full bg-geist-bg select-none relative overflow-hidden">
-    <PimEditorToolbar @save="handleSave">
+    <PimEditorToolbar 
+      @save="handleSave"
+      :disabled="!isGraphValid || !isDirty"
+    >
       <template #feedback>
         <span v-if="saveMessage" class="text-[10px] font-mono" :class="saveMessage.includes('Error') ? 'text-geist-error' : 'text-geist-success'">{{ saveMessage }}</span>
       </template>
@@ -518,6 +584,7 @@ const executeSave = async () => {
         @drop="onDrop"
       >
         <VueFlow
+          id="pim-flow"
           v-model:nodes="localNodes"
           v-model:edges="localEdges"
           :node-types="nodeTypes"
@@ -573,8 +640,8 @@ const executeSave = async () => {
 
     <PimNodeModal
       :show="showNodeModal"
-      title="Configurar Nuevo Nodo PIM"
-      confirm-text="Crear Nodo"
+      title="Configurar Nuevo Elemento"
+      confirm-text="Crear Elemento"
       :available-cim-components="availableCimComponents"
       @close="showNodeModal = false"
       @confirm="handleConfirmNode"
@@ -600,7 +667,7 @@ const executeSave = async () => {
           </div>
           <div>
             <p class="text-sm text-geist-fg font-medium mb-1">
-              Estás a punto de sobrescribir el modelo de la máquina PIM.
+              Estás a punto de sobrescribir el modelo de la máquina.
             </p>
             <p class="text-xs text-geist-accents-5 leading-relaxed">
               Los cambios realizados en el editor gráfico reemplazarán el JSON almacenado actualmente. Esta acción actualizará tanto la base de datos como el editor JSON.

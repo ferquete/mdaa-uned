@@ -58,7 +58,20 @@ const allInputs = computed(() => {
       isInput: true,
       isMod: true
     }))
-  return [...audioInputs, ...modInputs]
+
+  const othersRaw = props.data.parameters?.others
+  const otherInputs = (Array.isArray(othersRaw) ? othersRaw : [])
+    .filter((o: any) => o.isModifiable)
+    .map((o: any) => ({
+      id: o.id,
+      name: o.name,
+      type: 'modification' as const,
+      position: 'left' as const,
+      isInput: true,
+      isMod: true
+    }))
+
+  return [...audioInputs, ...modInputs, ...otherInputs]
 })
 
 /**
@@ -79,6 +92,33 @@ const nodeMinHeight = computed(() => {
 
 const getHandleColor = (type: string) => {
   return type === 'audio' ? '#e11d48' : '#10b981'
+}
+
+const isPortExternal = (portId: string, isInput: boolean) => {
+  const param = props.data.parameters?.[portId]
+  
+  // 1. Si existe el objeto, priorizar sus flags
+  if (param && typeof param === 'object') {
+    return isInput ? param.isExternalInput === true : param.isExternalOutput === true
+  }
+  
+  // 2. Si es un puerto de audio estándar (ConnectionPoint), por defecto es EXTERNO (true)
+  if (isInput) {
+    if (metadata.value.inputs.some(i => i.id === portId)) return true
+  } else {
+    if (metadata.value.outputs.some(o => o.id === portId)) return true
+  }
+
+  // 3. Buscar en 'others' si no se encontró arriba (para parámetros dinámicos)
+  const others = props.data.parameters?.others
+  if (Array.isArray(others)) {
+    const otherParam = others.find((o: any) => o.id === portId)
+    if (otherParam) {
+      return isInput ? otherParam.isExternalInput === true : otherParam.isExternalOutput === true
+    }
+  }
+  
+  return false
 }
 </script>
 
@@ -133,6 +173,12 @@ const getHandleColor = (type: string) => {
           :key="input.id" 
           class="relative flex items-center h-[14px]"
         >
+          <!-- Halo para entrada externa -->
+          <div 
+            v-if="isPortExternal(input.id, true)"
+            class="absolute left-0 -translate-x-[50%] w-[14px] h-[14px] rounded-full opacity-20 animate-pulse-slow pointer-events-none"
+            :style="{ backgroundColor: getHandleColor(input.type) }"
+          ></div>
           <Handle
             :id="input.id"
             type="target"
@@ -189,10 +235,15 @@ const getHandleColor = (type: string) => {
           />
           <!-- Flecha SVG superpuesta para la representación visual -->
           <div 
-            class="absolute right-0 translate-x-[100%] pointer-events-none"
+            class="absolute right-0 translate-x-[100%] pointer-events-none flex items-center justify-center w-[14px] h-[14px]"
             :style="{ color: getHandleColor(output.type) }"
           >
-            <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor">
+            <!-- Halo para salida externa -->
+            <div 
+              v-if="isPortExternal(output.id, false)"
+              class="absolute inset-0 rounded-full bg-current opacity-20 animate-pulse-slow"
+            ></div>
+            <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" class="relative z-10">
               <path d="M2 1 L12 7 L2 13 Z" />
             </svg>
           </div>
@@ -228,5 +279,18 @@ const getHandleColor = (type: string) => {
 
 :deep(.vue-flow__handle:hover) {
   transform: scale(1.4);
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.3); opacity: 0.25; }
+}
+
+.external-port-glow {
+  /* El estilo se maneja principalmente vía :style por el color dinámico */
 }
 </style>

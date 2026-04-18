@@ -160,6 +160,7 @@ const handleAddSubNode = (type: 'el') => {
         module-name="Análisis"
         :breadcrumbs="breadcrumbs"
         :visualizer-mode="(!store.selectedSubNode) ? store.visualizerMode : undefined"
+        :graph-label="'Visor Gráfico'"
         :show-export="!store.selectedSubNode"
         :show-form-mode="store.selectedNodeId === 'analisis'"
         :description="(!store.selectedSubNode) ? (store.selectedNodeId === 'analisis' ? store.parsedCimRelations.description : store.parsedDocs[currentMachine?.id || 0]?.description) : undefined"

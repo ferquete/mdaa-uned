@@ -50,9 +50,9 @@ const errors = computed(() => {
   if (!isSyntaxValid.value) errs.push({ message: 'Error de sintaxis JSON' })
   businessErrors.value.forEach(e => errs.push(e))
   
-  // Añadir errores de esquema (Monaco severity >= 4 captura Advertencias y Errores)
+  // Añadir errores de esquema (Monaco severity >= 3 captura Advertencias y Errores)
   schemaMarkers.value.forEach(m => {
-    if (m.severity >= 4) {
+    if (m.severity >= 3) {
       errs.push({ message: `${m.message} (línea ${m.startLineNumber})` })
     }
   })
@@ -110,13 +110,17 @@ watch(originalJsonStr, (newVal) => {
   clearUnsavedState()
 }, { immediate: true })
 
-watch([localJson, isValid], () => {
-  if ((!store.currentPim && !isMachineView.value) || isSaving.value) return
+const isDirty = computed(() => {
+  if (!localJson.value) return false
   const currentClean = localJson.value.replace(/\s/g, '')
   const originalClean = originalJsonStr.value.replace(/\s/g, '')
-  const isDirty = currentClean !== originalClean
+  return currentClean !== originalClean
+})
+
+watch([isDirty, isValid], () => {
+  if ((!store.currentPim && !isMachineView.value) || isSaving.value) return
   
-  if (isDirty) {
+  if (isDirty.value) {
     setUnsavedState(true, isValid.value, async () => {
       await handleSave()
       return true
@@ -179,9 +183,9 @@ const handleSave = async () => {
 
         <button 
           @click="handleSave"
-          :disabled="!isValid || isSaving"
+          :disabled="!isValid || isSaving || !isDirty"
           class="geist-button-primary !px-6 !py-2 gap-2 text-[10px] font-bold uppercase transition-all shadow-sm"
-          :class="{ 'opacity-50 grayscale cursor-not-allowed': !isValid || isSaving }"
+          :class="{ 'opacity-50 grayscale cursor-not-allowed': !isValid || isSaving || !isDirty }"
         >
           <i class="fa-solid" :class="isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>
           {{ isSaving ? 'Guardando...' : 'Aplicar Cambios' }}
@@ -214,9 +218,10 @@ const handleSave = async () => {
         <div class="flex-1 overflow-hidden">
           <p class="text-[10px] font-bold text-geist-error uppercase tracking-widest mb-1">Errores de Validación</p>
           <div class="flex flex-wrap gap-x-4 gap-y-1">
-            <div v-for="(err, idx) in errors.slice(0, 3)" :key="idx" class="flex items-center gap-2">
+            <div v-for="(err, idx) in errors.slice(0, 5)" :key="idx" class="flex items-center gap-2">
               <span class="text-[10px] font-mono text-geist-error">{{ err.message }}</span>
             </div>
+            <span v-if="errors.length > 5" class="text-[10px] font-mono text-geist-error opacity-60">...y {{ errors.length - 5 }} más</span>
           </div>
         </div>
       </div>

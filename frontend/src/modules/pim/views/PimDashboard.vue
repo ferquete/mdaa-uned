@@ -110,7 +110,7 @@ const confirmDelete = async () => {
         module-name="Conceptual"
         :breadcrumbs="breadcrumbs"
         :visualizer-mode="store.visualizerMode"
-        :label-2d="isMachineSelected ? 'Editor gráfico' : '2D'"
+        :graph-label="'Editor Gráfico'"
         :show-export="true"
         :show-form-mode="false"
         :show-info="false"

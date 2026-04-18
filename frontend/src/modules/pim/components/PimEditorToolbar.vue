@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const props = defineProps<{
+  disabled?: boolean
+}>()
+
 const emit = defineEmits<{
   (e: 'save'): void
 }>()
@@ -13,8 +17,10 @@ const emit = defineEmits<{
       
       <div class="flex items-center gap-1.5">
         <button 
-          @click="emit('save')"
-          class="flex items-center gap-2 px-3 py-1 rounded-md bg-geist-fg text-geist-bg text-[10px] font-bold uppercase transition-all hover:bg-geist-fg/90 active:scale-95 shadow-sm"
+          @click="!disabled && emit('save')"
+          :disabled="disabled"
+          class="flex items-center gap-2 px-3 py-1 rounded-md bg-geist-fg text-geist-bg text-[10px] font-bold uppercase transition-all shadow-sm"
+          :class="disabled ? 'opacity-30 grayscale cursor-not-allowed pointer-events-none' : 'hover:bg-geist-fg/90 active:scale-95'"
           title="Guardar cambios en el modelo PIM"
         >
           <i class="fa-solid fa-floppy-disk text-[11px]"></i>

@@ -19,13 +19,29 @@ const saveMessage = ref('')
 const availableMachines = computed(() => {
   return store.machines.map(m => {
     const doc = store.parsedDocs[m.id]
+    const hasExternalOutput = doc?.elements?.some((e: any) => e.externalOutput?.hasExternalOutput) || false;
+    const hasExternalInput = doc?.elements?.some((e: any) => e.externalInput?.hasExternalInput) || false;
     return {
       id: doc?.id, // Business UUID
       name: doc?.name || `Máquina ${m.id}`,
-      dbId: m.id
+      dbId: m.id,
+      hasExternalOutput,
+      hasExternalInput
     }
   }).filter(m => m.id)
 })
+
+const getValidSources = (destId: string) => {
+  let list = availableMachines.value.filter(m => m.hasExternalOutput);
+  if (destId) list = list.filter(m => m.id !== destId);
+  return list;
+}
+
+const getValidDestinations = (sourceId: string) => {
+  let list = availableMachines.value.filter(m => m.hasExternalInput);
+  if (sourceId) list = list.filter(m => m.id !== sourceId);
+  return list;
+}
 
 // Cargar datos iniciales
 watch(() => store.parsedCimRelations, (newVal) => {
@@ -34,8 +50,12 @@ watch(() => store.parsedCimRelations, (newVal) => {
 }, { immediate: true })
 
 const validationErrors = computed(() => {
-  const machineUuids = availableMachines.value.map(m => m.id as string)
-  return validateCimRelations(formData.value, machineUuids)
+  const validMachines = availableMachines.value.map(m => ({
+    id: m.id as string,
+    hasExternalOutput: m.hasExternalOutput,
+    hasExternalInput: m.hasExternalInput
+  }))
+  return validateCimRelations(formData.value, validMachines)
 })
 
 const isValid = computed(() => validationErrors.value.length === 0)
@@ -127,13 +147,13 @@ const handleSave = async () => {
         <label class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] px-1">Descripción General del Análisis</label>
         <textarea 
           v-model="formData.description"
-          maxlength="300"
+          maxlength="600"
           placeholder="Escribe el propósito de este análisis de relaciones..."
           class="w-full bg-geist-accents-1 border border-geist-border rounded-xl p-4 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[100px] outline-none"
         ></textarea>
         <div class="flex justify-end px-1">
           <span class="text-[9px] font-mono text-geist-accents-4 uppercase">
-            {{ formData.description.length }} / 300
+            {{ formData.description.length }} / 600
           </span>
         </div>
       </div>
@@ -182,8 +202,8 @@ const handleSave = async () => {
                     v-model="rel.source"
                     class="w-full bg-geist-accents-1 border border-geist-border rounded-xl px-4 py-3 text-sm text-geist-fg focus:border-geist-fg outline-none appearance-none"
                   >
-                    <option value="" disabled>Selecciona máquina...</option>
-                    <option v-for="m in availableMachines" :key="m.id" :value="m.id">{{ m.name }}</option>
+                    <option value="" disabled>Selecciona máquina origen...</option>
+                    <option v-for="m in getValidSources(rel.destination)" :key="m.id" :value="m.id">{{ m.name }}</option>
                   </select>
                 </div>
 
@@ -196,8 +216,8 @@ const handleSave = async () => {
                     v-model="rel.destination"
                     class="w-full bg-geist-accents-1 border border-geist-border rounded-xl px-4 py-3 text-sm text-geist-fg focus:border-geist-fg outline-none appearance-none"
                   >
-                    <option value="" disabled>Selecciona máquina...</option>
-                    <option v-for="m in availableMachines" :key="m.id" :value="m.id">{{ m.name }}</option>
+                    <option value="" disabled>Selecciona máquina destino...</option>
+                    <option v-for="m in getValidDestinations(rel.source)" :key="m.id" :value="m.id">{{ m.name }}</option>
                   </select>
                 </div>
 
@@ -207,13 +227,13 @@ const handleSave = async () => {
                   <div class="relative">
                     <textarea 
                       v-model="rel.description"
-                      maxlength="300"
+                      maxlength="600"
                       placeholder="Describe por qué están conectadas..."
                       class="w-full bg-geist-accents-1 border border-geist-border rounded-xl px-4 py-3 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[80px] outline-none"
                     ></textarea>
                     <div class="flex justify-end mt-1 px-1">
-                      <span class="text-[9px] font-mono text-geist-accents-4 uppercase" :class="{ 'text-geist-error': rel.description.length < 10 || rel.description.length > 300 }">
-                        {{ rel.description.length }} / 300
+                      <span class="text-[9px] font-mono text-geist-accents-4 uppercase" :class="{ 'text-geist-error': rel.description.length < 10 || rel.description.length > 600 }">
+                        {{ rel.description.length }} / 600
                       </span>
                     </div>
                   </div>

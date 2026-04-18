@@ -1,11 +1,17 @@
 import type { ValidationError } from './analysisMachinesValidation'
 
+export interface ValidMachine {
+  id: string
+  hasExternalOutput: boolean
+  hasExternalInput: boolean
+}
+
 /**
  * Valida el documento de relaciones CIM.
  * @param doc El documento JSON de relaciones
- * @param machineUuids Lista de UUIDs de máquinas válidos en el proyecto
+ * @param validMachines Lista de máquinas válidas en el proyecto con sus metadatos
  */
-export function validateCimRelations(doc: any, machineUuids: string[] = []): ValidationError[] {
+export function validateCimRelations(doc: any, validMachines: ValidMachine[] = []): ValidationError[] {
   const errors: ValidationError[] = []
 
   if (!doc || typeof doc !== 'object') {
@@ -16,8 +22,8 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
   const desc = doc.description || ''
   if (!doc.description && doc.description !== '') {
     errors.push({ field: 'description', message: 'La descripción es obligatoria' })
-  } else if (desc.length > 300) {
-    errors.push({ field: 'description', message: 'Descripción: Máximo 300 caracteres' })
+  } else if (desc.length > 600) {
+    errors.push({ field: 'description', message: 'Descripción: Máximo 600 caracteres' })
   }
 
   // 2. Validar array de relaciones
@@ -26,7 +32,8 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
     return errors
   }
 
-  const validUuidSet = new Set(machineUuids)
+  const validUuidMap = new Map(validMachines.map(m => [m.id, m]))
+  const validUuidSet = new Set(validMachines.map(m => m.id))
   const seenRelations = new Set<string>()
   const seenIds = new Set<string>()
 
@@ -46,15 +53,19 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
     // Validar source
     if (!rel.source) {
       errors.push({ nodeId: relIdPrefix, field: 'source', message: 'Origen obligatorio' })
-    } else if (validUuidSet.size > 0 && !validUuidSet.has(rel.source)) {
+    } else if (validUuidMap.size > 0 && !validUuidMap.has(rel.source)) {
       errors.push({ nodeId: relIdPrefix, field: 'source', message: `ID Origen inexistente: ${rel.source}` })
+    } else if (validUuidMap.size > 0 && !validUuidMap.get(rel.source)?.hasExternalOutput) {
+      errors.push({ nodeId: relIdPrefix, field: 'source', message: 'La máquina de origen no tiene salida externa habilitada' })
     }
 
     // Validar destination
     if (!rel.destination) {
       errors.push({ nodeId: relIdPrefix, field: 'destination', message: 'Destino obligatorio' })
-    } else if (validUuidSet.size > 0 && !validUuidSet.has(rel.destination)) {
+    } else if (validUuidMap.size > 0 && !validUuidMap.has(rel.destination)) {
       errors.push({ nodeId: relIdPrefix, field: 'destination', message: `ID Destino inexistente: ${rel.destination}` })
+    } else if (validUuidMap.size > 0 && !validUuidMap.get(rel.destination)?.hasExternalInput) {
+      errors.push({ nodeId: relIdPrefix, field: 'destination', message: 'La máquina de destino no tiene entrada externa habilitada' })
     }
 
     // Validar que no sea la misma máquina
@@ -75,8 +86,8 @@ export function validateCimRelations(doc: any, machineUuids: string[] = []): Val
     const relDesc = rel.description || ''
     if (relDesc.length < 10) {
        errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Mínimo 10 caracteres' })
-    } else if (relDesc.length > 300) {
-       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Máximo 300 caracteres' })
+    } else if (relDesc.length > 600) {
+       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Máximo 600 caracteres' })
     }
   })
 

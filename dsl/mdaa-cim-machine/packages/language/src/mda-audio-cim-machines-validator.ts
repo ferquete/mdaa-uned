@@ -10,8 +10,7 @@ export function registerValidationChecks(services: MdaAudioCimMachineServices) {
     const validator = services.validation.MdaAudioCimMachineValidator;
     const checks: ValidationChecks<MdaAudioCimMachineAstType> = {
         Document: [validator.checkUniqueIds, validator.checkDocumentProperties],
-        AudioGenerator: [validator.checkBaseProperties, validator.checkSendToProperties],
-        Modificator: [validator.checkBaseProperties, validator.checkSendToProperties],
+        Element: [validator.checkBaseProperties, validator.checkSendToProperties, validator.checkExternalConnections],
         SendTo: [validator.checkSendToPropertiesSingle]
     };
     registry.register(checks, validator);
@@ -44,9 +43,8 @@ export class MdaAudioCimMachineValidator {
     checkDocumentProperties(node: Document, accept: ValidationAcceptor): void {
         this.checkStringLength(node, 'id', node.id, 36, 36, accept);
         this.checkStringLength(node, 'name', node.name, 1, 20, accept);
-        this.checkStringLength(node, 'description', node.description, 10, 6000, accept);
-        if (!node.generators) accept('error', 'El documento debe contener una lista de generadores.', { node, property: 'generators' });
-        if (!node.modificators) accept('error', 'El documento debe contener una lista de modificadores.', { node, property: 'modificators' });
+        this.checkStringLength(node, 'description', node.description, 10, 600, accept);
+        if (!node.elements) accept('error', 'El documento debe contener una lista de elementos.', { node, property: 'elements' });
     }
 
     /**
@@ -59,11 +57,27 @@ export class MdaAudioCimMachineValidator {
         // Validar name: 1-20 caracteres
         this.checkStringLength(node, 'name', node.name, 1, 20, accept);
         
-        // Validar description: 10-6000 caracteres
-        this.checkStringLength(node, 'description', node.description, 10, 6000, accept);
+        // Validar description: 10-600 caracteres
+        this.checkStringLength(node, 'description', node.description, 10, 600, accept);
         
-        // Validar params: 10-300 caracteres
-        this.checkStringLength(node, 'params', node.params, 10, 300, accept);
+        // Validar params: 10-600 caracteres
+        this.checkStringLength(node, 'params', node.params, 10, 600, accept);
+    }
+
+    /**
+     * Verifica las propiedades de las conexiones externas (ExternalInput / ExternalOutput)
+     */
+    checkExternalConnections(node: Base, accept: ValidationAcceptor): void {
+        if (node.externalOutput && node.externalOutput.description) {
+            if (node.externalOutput.description.length > 600) {
+                accept('error', 'El campo description de externalOutput no puede exceder 600 caracteres.', { node: node.externalOutput, property: 'description' });
+            }
+        }
+        if (node.externalInput && node.externalInput.description) {
+            if (node.externalInput.description.length > 600) {
+                accept('error', 'El campo description de externalInput no puede exceder 600 caracteres.', { node: node.externalInput, property: 'description' });
+            }
+        }
     }
 
     /**
@@ -96,8 +110,8 @@ export class MdaAudioCimMachineValidator {
         // Validar id: 36 caracteres
         this.checkStringLength(item, 'id', item.id, 36, 36, accept);
         
-        // Validar description: 10-300 caracteres
-        this.checkStringLength(item, 'description', item.description, 10, 300, accept);
+        // Validar description: 10-600 caracteres
+        this.checkStringLength(item, 'description', item.description, 10, 600, accept);
     }
 
     /**

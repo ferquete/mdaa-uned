@@ -3,9 +3,9 @@
   "id": "550e8400-e29b-41d4-a716-446655440002",
   "name": "Electronic Synth",
   "description": "A high-fidelity synthesizer module for modern electronic music production.",
-  "generators": [
+  "elements": [
     {
-      "$type": "AudioGenerator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1",
       "name": "Main Oscillator",
       "description": "Primary high-fidelity oscillator for lead sounds and basslines.",
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "$type": "AudioGenerator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2",
       "name": "White Noise Gen",
       "description": "Generates wide-band white noise for percussive textures and risers.",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "$type": "AudioGenerator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3",
       "name": "Drum Sampler",
       "description": "Multi-sample drum engine for realistic acoustic and electronic percussion.",
@@ -49,10 +49,9 @@
         { "$type": "SendTo", "id": "c1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c6", "idRef": "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1", "description": "Sub-oscillator layering for kicks" }
       ]
     }
-  ],
-  "modificators": [
+  ,
     {
-      "$type": "Modificator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b1",
       "name": "Low Pass Filter",
       "description": "Resonant 24dB/octave Ladder Filter for subtractive synthesis.",
@@ -64,7 +63,7 @@
       ]
     },
     {
-      "$type": "Modificator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b2",
       "name": "ADSR Envelope",
       "description": "Standard 4-stage envelope generator for modulation control.",
@@ -76,7 +75,7 @@
       ]
     },
     {
-      "$type": "Modificator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b3",
       "name": "Stereo Delay",
       "description": "High-quality digital delay with feedback and modulation.",
@@ -88,7 +87,7 @@
       ]
     },
     {
-      "$type": "Modificator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b4",
       "name": "Hall Reverb",
       "description": "Lush algorithmic reverb simulating large concert spaces.",
@@ -100,7 +99,7 @@
       ]
     },
     {
-      "$type": "Modificator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0b5",
       "name": "Master Compressor",
       "description": "Dynamics processor for glue and peak control in the final mix.",

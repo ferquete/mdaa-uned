@@ -1,23 +1,23 @@
 # Manual de Referencia Técnica MDA-Audio-PIM
 
-Este documento constituye la especificación técnica completa del lenguaje **MDA-Audio-PIM**. Define todos los nodos, parámetros, reglas de conectividad y restricciones de validación que rigen la gramática.
+Este documento constituye la especificación técnica completa del lenguaje **MDA-Audio-PIM-Machines**. Define todos los nodos, parámetros, reglas de conectividad y restricciones de validación que rigen la gramática. Hay que ver el modelo que especifica este lenguaje como una concretización del modelo CIM, ya con nomenclatura tecnológica orientada a la implementación del sistema de sonido, pero sin llegar a atarse a ningún lenguaje de programación o tecnología específica. Un amáuina PIM no es mas que una concretización de N máquinas CIM, por lo que es fundamental que el modelo PIM sea coherente con el modelo CIM del que se deriva.
 
 ## 1. Bases del Modelo
 
-El lenguaje MDA-Audio-PIM define un grafo dirigido de audio y control. Todos los elementos del grafo (nodos, aristas y parámetros) comparten una estructura base.
+El lenguaje MDA-Audio-PIM-Machine define un grafo dirigido de audio y control. Todos los elementos del grafo (nodos, aristas y parámetros) comparten una estructura base.
 
 ### 1.1. Modelo Raíz (`Model`)
 
-El objeto raíz de un archivo MDA-Audio-PIM contiene la identificación global y los contenedores de nodos y aristas.
+El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación global y los contenedores de nodos y aristas.
 
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único de la máquina PIM. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. Máximo 20 caracteres. |
 | `description` | STRING | Información general sobre la máquina. | Opcional. Máximo 600 caracteres. |
-| `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. | Obligatorio. Puede estar vacío. |
-| `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. |
-| `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. |
+| `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. Piensa que una máquina PIM puede querer implementar varias máquinas CIM, no siempre es una relación 1:1. Este array define el universo de elementos en los que se moverá el modelo PIM de esta máquina. | Obligatorio. Puede estar vacío. |
+| `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. Puede estar vacío (para cuando iniciamos el diseño). |
+| `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. Puede estar vacío (para cuando iniciamos el diseño). |
 
 ### 1.2. Interfaces Base
 
@@ -27,14 +27,14 @@ El objeto raíz de un archivo MDA-Audio-PIM contiene la identificación global y
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único universal. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `description` | STRING | Información textual sobre el propósito del elemento. | Opcional. Máximo 600 caracteres. |
-| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM. | Obligatorio. Puede estar vacío. |
+| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. | Obligatorio. Puede estar vacío. |
 
 #### Estructura de Parámetro de Configuración (`Parameter`)
 Cualquier propiedad de configuración de un nodo es un objeto de tipo `Parameter`.
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del parámetro. |
-| `ids_references` | string[] | Referencias a elementos externos (CIM), dentro de las máquinas referenciadas en `ids_cim_reference`. |
+| `ids_references` | string[] | Referencias a elementos externos CIM, dentro de (como siempre) las máquinas referenciadas en `ids_cim_reference`. |
 | `initialValue` | any | Valor inicial del parámetro. |
 | `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos. De inicio, siempre será true |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
@@ -247,49 +247,3 @@ En el array `ids_references` de cualquier elemento, se permiten los siguientes l
 
 ---
 
-## 5. Relaciones PIM (`PIM Relations`)
-
-Este lenguaje permite orquestar las interconexiones granulares entre máquinas PIM. A diferencia del nivel CIM, donde las relaciones son entre máquinas completas, el nivel PIM establece vínculos directos entre puntos de conexión y parámetros específicos.
-
-### 5.1. Estructura del Documento
-
-El lenguaje utiliza una estructura JSON para definir el grafo de relaciones.
-
-#### Propiedades Raíz
-
-| Atributo | Tipo | Descripción | Restricciones |
-| :--- | :--- | :--- | :--- |
-| `description` | STRING | Propósito de la red de relaciones. | Opcional. 1 a 600 caracteres. |
-| `relations` | ARRAY | Lista de objetos de relación detallada. | Obligatorio. |
-
-#### Objeto Relation (Relación PIM)
-
-Define un vínculo técnico entre un punto de salida y un punto de entrada o parámetro.
-
-| Atributo | Tipo | Descripción | Restricciones |
-| :--- | :--- | :--- | :--- |
-| `id` | STRING | Identificador único de la relación. | Obligatorio. UUID de 36 caracteres. |
-| `source` | STRING | ID del **output** de la máquina PIM origen. | Obligatorio. UUID de 36 caracteres. |
-| `destination`| STRING | ID del **input** o **parámetro** de destino. | Obligatorio. UUID de 36 caracteres. |
-| `description` | STRING | Descripción de la modulación o flujo. | Obligatorio. 10 a 300 caracteres. |
-
----
-
-### 5.2. Reglas de Validación
-
-El compilador de PIM Relations aplica las siguientes reglas de integridad:
-
-1. **Formato UUID Estricto**: Los campos `id`, `source` y `destination` deben tener exactamente 36 caracteres. No se permiten nombres descriptivos; solo identificadores técnicos.
-2. **Unicidad de IDs**: El `id` de cada relación debe ser único en todo el documento.
-3. **Restricciones de Texto**:
-    - Descripción del documento: máx. 600 caracteres.
-    - Descripción de relación: entre 10 y 300 caracteres.
-
----
-
-### 5.3. Guía de Uso Táctico
-
-Este lenguaje es el puente final antes de la generación de código de bajo nivel. Mientras que en **CIM Relations** decimos "La Máquina A se conecta a la B", en **PIM Relations** especificamos "El `output_1` de la instancia 550e8400... se conecta al `frequency` de la instancia a1b2c3d4...".
-
-> [!IMPORTANT]
-> Los IDs utilizados en `source` y `destination` deben corresponder a identificadores definidos en los archivos `.json` de máquinas PIM correspondientes.

@@ -88,7 +88,7 @@ const confirmDelete = async () => {
     const parts = id.split('-')
     if (parts.length >= 4) {
       const machineId = Number(parts[1])
-      const type = parts[2] as 'g' | 'mod'
+      const type = parts[2] as 'el'
       const subId = parts.slice(3).join('-')
       await store.deleteSubNode(machineId, subId, type)
     }
@@ -144,7 +144,7 @@ const confirmAddMachine = async (name: string, description: string) => {
   }
 }
 
-const handleAddSubNode = (type: 'g' | 'mod') => {
+const handleAddSubNode = (type: 'el') => {
   runWithGuard(() => {
     if (currentMachine.value) {
       store.selectNewSubNode(currentMachine.value.id, type)

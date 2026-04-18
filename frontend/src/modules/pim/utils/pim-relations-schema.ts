@@ -8,7 +8,7 @@ export const PIM_RELATIONS_SCHEMA = {
     description: { 
       type: 'string', 
       minLength: 10, 
-      maxLength: 300, 
+      maxLength: 600, 
       description: 'Descripción general del diseño conceptual' 
     },
     relations: {
@@ -38,7 +38,7 @@ export const PIM_RELATIONS_SCHEMA = {
           description: { 
             type: 'string', 
             minLength: 10, 
-            maxLength: 300, 
+            maxLength: 600, 
             description: 'Descripción de la relación' 
           }
         }

@@ -81,9 +81,9 @@ const handleUpdateDescription = (id: string, event: Event) => {
               <span v-if="validationError?.(opt.id)" class="text-[9px] text-geist-error normal-case font-mono">{{ validationError(opt.id) }}</span>
               <span 
                 class="text-[9px] font-mono opacity-50"
-                :class="{ 'text-geist-error': (getSelection(opt.id)?.description.length || 0) >= 300 }"
+                :class="{ 'text-geist-error': (getSelection(opt.id)?.description.length || 0) >= 600 }"
               >
-                {{ getSelection(opt.id)?.description.length || 0 }}/300
+                {{ getSelection(opt.id)?.description.length || 0 }}/600
               </span>
             </div>
           </label>
@@ -91,7 +91,7 @@ const handleUpdateDescription = (id: string, event: Event) => {
             :value="getSelection(opt.id)?.description"
             @input="handleUpdateDescription(opt.id, $event)"
             rows="2"
-            maxlength="300"
+            maxlength="600"
             class="geist-input !text-[11px] !py-1.5 resize-none transition-colors"
             :class="{'border-geist-error bg-geist-error/10': validationError?.(opt.id)}"
             placeholder="Obligatorio (min 10 caracteres)..."

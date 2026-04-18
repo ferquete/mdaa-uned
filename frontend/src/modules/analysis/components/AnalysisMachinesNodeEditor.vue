@@ -9,13 +9,15 @@ import { ANALYSIS_RULES } from '../utils/analysisMachinesValidation'
 const store = useAnalysisMachinesStore()
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
 
-const localData = ref<CimGenerator | CimModificator>({ 
+const localData = ref<any>({ 
   id: '', 
   name: '', 
   description: '', 
   params: '',
-  sendTo: [] 
-} as any)
+  sendTo: [],
+  externalOutput: { hasExternalOutput: false, description: '' },
+  externalInput: { hasExternalInput: false, description: '' }
+})
 const isSaving = ref(false)
 const saveMessage = ref('')
 
@@ -33,11 +35,18 @@ const validationErrors = computed(() => {
   validate('description', localData.value.description)
   validate('params', localData.value.params)
 
+  if (localData.value.externalOutput?.description && localData.value.externalOutput.description.length > 600) {
+    errs['extOutDesc'] = 'Máximo 600 caracteres'
+  }
+  if (localData.value.externalInput?.description && localData.value.externalInput.description.length > 600) {
+    errs['extInDesc'] = 'Máximo 600 caracteres'
+  }
+
   // Validaciones de relaciones sendTo
-  localData.value.sendTo?.forEach(s => {
+  localData.value.sendTo?.forEach((s: any) => {
     const v = s.description || ''
-    if (v.length < 10 || v.length > 300) {
-      errs[`sendTo_${s.idRef}`] = `Requerido (10-300)`
+    if (v.length < 10 || v.length > 600) {
+      errs[`sendTo_${s.idRef}`] = `Requerido (10-600)`
     }
   })
 
@@ -51,14 +60,12 @@ const nodeInfo = computed(() => {
   if (!id || typeof id !== 'string') return null
   if (id.startsWith('new-m-')) {
     const parts = id.split('-');
-    return { machineId: Number(parts[2]), type: parts[3] as 'g' | 'mod', subId: localData.value?.id || 'new', isNew: true }
+    return { machineId: Number(parts[2]), type: parts[3] as 'el', subId: localData.value?.id || 'new', isNew: true }
   }
   if (!id.startsWith('m-')) return null
   const parts = id.split('-');
-  return { machineId: Number(parts[1]), type: parts[2] as 'g' | 'mod', subId: parts.slice(3).join('-'), isNew: false }
+  return { machineId: Number(parts[1]), type: parts[2] as 'el', subId: parts.slice(3).join('-'), isNew: false }
 })
-
-const isGenerator = computed(() => nodeInfo.value?.type === 'g')
 
 let isInitializing = false
 
@@ -67,7 +74,7 @@ watch(() => store.selectedSubNode, (newNode) => {
     isInitializing = true
     const rawData = JSON.parse(JSON.stringify(newNode))
     
-    // Normalizar sendTo
+    // Normalizar sendTo y externals
     if (rawData.sendTo) {
       rawData.sendTo = rawData.sendTo.map((s: any) => ({
         id: s.id || crypto.randomUUID(),
@@ -77,6 +84,9 @@ watch(() => store.selectedSubNode, (newNode) => {
     } else {
       rawData.sendTo = []
     }
+    
+    if (!rawData.externalOutput) rawData.externalOutput = { hasExternalOutput: false, description: '' };
+    if (!rawData.externalInput) rawData.externalInput = { hasExternalInput: false, description: '' };
 
     localData.value = rawData as any
     clearUnsavedState()
@@ -85,12 +95,11 @@ watch(() => store.selectedSubNode, (newNode) => {
 }, { immediate: true })
 
 const options = computed(() => {
-  if (!store.selectedNode) return { generators: [], modificators: [] }
+  if (!store.selectedNode) return { elements: [] }
   const doc = store.parsedDocs[store.selectedNode.id] as CimDocument
-  if (!doc) return { generators: [], modificators: [] }
+  if (!doc) return { elements: [] }
   return {
-    generators: doc.generators.map(g => ({ id: g.id, name: g.name })),
-    modificators: doc.modificators.map(m => ({ id: m.id, name: m.name }))
+    elements: (doc.elements || []).map(e => ({ id: e.id, name: e.name }))
   }
 })
 
@@ -135,12 +144,11 @@ const toggleSendTo = (idRef: string) => {
     <!-- Header -->
     <div class="px-8 py-6 border-b border-geist-border bg-geist-accents-1/20 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg"
-          :class="isGenerator ? 'bg-node-generator shadow-node-generator' : 'bg-node-modificator shadow-node-modificator'">
-          <i :class="isGenerator ? 'fa-solid fa-wave-square' : 'fa-solid fa-wand-magic-sparkles'"></i>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg bg-node-generator shadow-node-generator">
+          <i class="fa-solid fa-cube"></i>
         </div>
         <div>
-          <h2 class="text-xl font-bold text-geist-fg">{{ isGenerator ? 'Generador' : 'Modificador' }}: <span class="font-mono text-geist-accents-5">{{ localData.name || 'Nuevo' }}</span></h2>
+          <h2 class="text-xl font-bold text-geist-fg">Elemento: <span class="font-mono text-geist-accents-5">{{ localData.name || 'Nuevo' }}</span></h2>
           <p class="text-[10px] font-mono text-geist-accents-4 uppercase tracking-widest">ID: {{ localData.id }}</p>
         </div>
       </div>
@@ -195,17 +203,62 @@ const toggleSendTo = (idRef: string) => {
           </div>
         </section>
 
+        <!-- Interfaz Externa -->
+        <section class="space-y-6">
+          <div class="flex items-center gap-2">
+            <h3 class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Interfaz Externa</h3>
+            <div class="h-px flex-1 bg-geist-border opacity-50"></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- External Input -->
+            <div class="space-y-4 bg-geist-accents-1/30 p-4 rounded-xl border border-geist-border">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" v-model="localData.externalInput.hasExternalInput" class="rounded text-geist-success focus:ring-geist-success">
+                <span class="text-sm font-bold text-geist-fg">Permite Entrada Externa</span>
+              </label>
+              <div class="space-y-2" :class="{ 'opacity-50 pointer-events-none': !localData.externalInput.hasExternalInput }">
+                <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
+                  Descripción Entrada
+                  <div class="flex items-center gap-2">
+                    <span v-if="validationErrors.extInDesc" class="text-geist-error normal-case">{{ validationErrors.extInDesc }}</span>
+                    <span class="text-[10px] font-mono opacity-50">{{ localData.externalInput.description?.length || 0 }}/600</span>
+                  </div>
+                </label>
+                <textarea v-model="localData.externalInput.description" rows="3" maxlength="600" class="geist-input w-full resize-none" :class="{'border-geist-error/50': validationErrors.extInDesc}" placeholder="Describe el puerto de entrada externo..."></textarea>
+              </div>
+            </div>
+            
+            <!-- External Output -->
+            <div class="space-y-4 bg-geist-accents-1/30 p-4 rounded-xl border border-geist-border">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" v-model="localData.externalOutput.hasExternalOutput" class="rounded text-geist-success focus:ring-geist-success">
+                <span class="text-sm font-bold text-geist-fg">Ofrece Salida Externa</span>
+              </label>
+              <div class="space-y-2" :class="{ 'opacity-50 pointer-events-none': !localData.externalOutput.hasExternalOutput }">
+                <label class="text-[11px] font-bold uppercase text-geist-accents-5 flex justify-between">
+                  Descripción Salida
+                  <div class="flex items-center gap-2">
+                    <span v-if="validationErrors.extOutDesc" class="text-geist-error normal-case">{{ validationErrors.extOutDesc }}</span>
+                    <span class="text-[10px] font-mono opacity-50">{{ localData.externalOutput.description?.length || 0 }}/600</span>
+                  </div>
+                </label>
+                <textarea v-model="localData.externalOutput.description" rows="3" maxlength="600" class="geist-input w-full resize-none" :class="{'border-geist-error/50': validationErrors.extOutDesc}" placeholder="Describe el puerto de salida externo..."></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Use Unified RelationSelector for sendTo -->
         <RelationSelector 
           title="Modifica los siguientes elementos" 
-          subtitle="Componentes vinculados a los cuales envía información"
-          :options="[...options.generators.map(g => ({...g, name: `[GEN] ${g.name}`})), ...options.modificators.map(m => ({...m, name: `[MOD] ${m.name}`}))].filter(o => o.id !== localData.id)"
-          :selected="localData.sendTo?.map(s => ({ id: s.idRef, description: s.description })) || []"
+          subtitle="Componentes vinculados a los cuales envía información interna"
+          :options="options.elements.map(e => ({...e, name: `[EL] ${e.name}`})).filter(o => o.id !== localData.id)"
+          :selected="localData.sendTo?.map((s: any) => ({ id: s.idRef, description: s.description })) || []"
           color-class="text-geist-fg"
           bg-class="bg-geist-accents-2"
           :validation-error="(idRef) => validationErrors[`sendTo_${idRef}`]"
           @toggle="(idRef) => toggleSendTo(idRef)"
-          @update-description="(idRef, val) => { const s = localData.sendTo?.find(s => s.idRef === idRef); if(s) s.description = val }"
+          @update-description="(idRef, val) => { const s = localData.sendTo?.find((s: any) => s.idRef === idRef); if(s) s.description = val }"
         />
       </div>
     </div>

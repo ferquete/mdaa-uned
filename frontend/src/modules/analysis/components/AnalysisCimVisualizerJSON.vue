@@ -40,8 +40,15 @@ const validateInternal = (val: string) => {
   try {
     const parsed = JSON.parse(val)
     isSyntaxValid.value = true
-    const machineUuids = Object.values(store.machineUuids)
-    businessErrors.value = validateCimRelations(parsed, machineUuids)
+    const validMachines = store.machines.map(m => {
+      const doc = store.parsedDocs[m.id]
+      return {
+        id: doc?.id || '',
+        hasExternalOutput: doc?.elements?.some((e: any) => e.externalOutput?.hasExternalOutput) || false,
+        hasExternalInput: doc?.elements?.some((e: any) => e.externalInput?.hasExternalInput) || false
+      }
+    }).filter(m => m.id)
+    businessErrors.value = validateCimRelations(parsed, validMachines)
   } catch (e: any) {
     isSyntaxValid.value = false
     businessErrors.value = []

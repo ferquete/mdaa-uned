@@ -8,21 +8,17 @@ const props = defineProps<{
 }>()
 
 const legend = [
-  { color: 'var(--color-node-generator)', label: 'Generadores' },
-  { color: 'var(--color-node-modificator)', label: 'Modificadores' }
+  { color: '#f97316', label: 'Elementos' }
 ]
 
 const edgeLegend = [
-  { color: 'var(--color-node-generator)', label: 'Desde Generador', dashed: true },
-  { color: 'var(--color-node-modificator)', label: 'Desde Modificador', dashed: true }
+  { color: '#f97316', label: 'Conexión Interna', dashed: true }
 ]
 
 const graphData = computed(() => {
   try {
     const data: CimDocument = JSON.parse(props.machineJson || '{}')
-    const generators = data.generators || []
-    const modificators = data.modificators || []
-    const allNodes = [...generators, ...modificators]
+    const allNodes = data.elements || []
 
     const nodes: any[] = []
     const edges: any[] = []
@@ -36,8 +32,6 @@ const graphData = computed(() => {
       const x = centerX + Math.cos(angle) * radius
       const y = centerY + Math.sin(angle) * radius
 
-      const isGenerator = (node as any).$type === 'AudioGenerator' || (node as any).$type === 'CimGenerator'
-
       nodes.push({
         id: node.id,
         label: node.name || node.id,
@@ -45,10 +39,10 @@ const graphData = computed(() => {
         type: 'custom',
         data: { 
           name: node.name || node.id,
-          type: isGenerator ? 'generator' : 'modificator' 
+          type: 'element' 
         },
         style: {
-          background: isGenerator ? 'var(--color-node-generator)' : 'var(--color-node-modificator)',
+          background: '#f97316',
           color: '#fff',
           borderRadius: '100px',
           minWidth: '60px',
@@ -59,15 +53,14 @@ const graphData = computed(() => {
           justifyContent: 'center',
           fontSize: '11px',
           fontWeight: 'bold',
-          boxShadow: isGenerator ? 'var(--shadow-node-generator)' : 'var(--shadow-node-modificator)',
+          boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)',
         },
       })
     })
 
     // Mapeo de aristas sendTo (Unificado con colores dinámicos)
     allNodes.forEach(sourceNode => {
-      const isGenerator = (sourceNode as any).$type === 'AudioGenerator' || (sourceNode as any).$type === 'CimGenerator'
-      const edgeColor = isGenerator ? 'var(--color-node-generator)' : 'var(--color-node-modificator)'
+      const edgeColor = '#f97316'
       
       const sendToList = (sourceNode as any).sendTo || [];
       sendToList.forEach((s: any) => {

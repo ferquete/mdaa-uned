@@ -51,24 +51,27 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   function parseMachineData(machineStr: string): CimDocument {
     try {
       if (!machineStr || machineStr.trim() === '') {
-        return { $type: 'Document', id: '', name: '', description: '', generators: [], modificators: [] };
+        return { $type: 'Document', id: '', name: '', description: '', elements: [] };
       }
       const parsed = JSON.parse(machineStr);
       
       const fixComponent = (c: any) => ({
         ...c,
-        sendTo: c.sendTo || []
+        sendTo: c.sendTo || [],
+        externalOutput: c.externalOutput || { hasExternalOutput: false, description: '' },
+        externalInput: c.externalInput || { hasExternalInput: false, description: '' }
       });
 
       return {
-        ...parsed,
         $type: parsed.$type || 'Document',
-        generators: (parsed.generators || []).map(fixComponent),
-        modificators: (parsed.modificators || []).map(fixComponent)
+        id: parsed.id || '',
+        name: parsed.name || '',
+        description: parsed.description || '',
+        elements: (parsed.elements || []).map(fixComponent)
       } as CimDocument;
     } catch (err) {
       console.error('Error parseando datos de máquina:', err);
-      return { $type: 'Document', id: '', name: '', description: '', generators: [], modificators: [] };
+      return { $type: 'Document', id: '', name: '', description: '', elements: [] };
     }
   }
 
@@ -205,15 +208,14 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   /**
    * Prepara un nuevo sub-nodo (componente) con ID único.
    */
-  function selectNewSubNode(machineId: string | number, type: 'g' | 'mod') {
+  function selectNewSubNode(machineId: string | number, type: 'el') {
     const doc = parsedDocs.value[Number(machineId)];
     let newId = '';
     do {
       newId = crypto.randomUUID();
       let exists = false;
       if (doc) {
-        if (doc.generators?.some((g: any) => g.id === newId)) exists = true;
-        if (doc.modificators?.some((m: any) => m.id === newId)) exists = true;
+        if (doc.elements?.some((e: any) => e.id === newId)) exists = true;
       }
       if (!exists) break;
     } while (true);
@@ -251,11 +253,13 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
       const type = parts[3];
       const newId = parts.slice(4).join('-');
       return {
-        $type: type === 'g' ? 'AudioGenerator' : 'Modificator',
+        $type: 'Element',
         id: newId,
         name: '',
         description: '',
         params: '',
+        externalOutput: { hasExternalOutput: false, description: '' },
+        externalInput: { hasExternalInput: false, description: '' },
         sendTo: []
       };
     }
@@ -275,10 +279,8 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     const doc = parsedDocs.value[machineId];
     if (!doc) return null;
 
-    if (type === 'g') {
-      return doc.generators.find(g => g.id === subId) || null;
-    } else if (type === 'mod') {
-      return doc.modificators.find(m => m.id === subId) || null;
+    if (type === 'el') {
+      return doc.elements?.find(e => e.id === subId) || null;
     }
     return null;
   });
@@ -286,7 +288,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   /**
    * Actualiza datos de componente y persiste.
    */
-  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'g' | 'mod', data: any, isNew: boolean = false) {
+  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'el', data: any, isNew: boolean = false) {
     const machine = machines.value.find(m => m.id === machineId);
     if (!machine) return { success: false, message: 'Máquina no encontrada' };
 
@@ -299,17 +301,13 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
     delete sanitizedData.refs;
     delete sanitizedData.rels;
 
+    if (!doc.elements) doc.elements = [];
+
     if (isNew) {
-      if (type === 'g') doc.generators.push({ ...sanitizedData, $type: 'AudioGenerator' });
-      else doc.modificators.push({ ...sanitizedData, $type: 'Modificator' });
+      doc.elements.push({ ...sanitizedData, $type: 'Element' });
     } else {
-      if (type === 'g') {
-        const idx = doc.generators.findIndex(g => g.id === subNodeId);
-        if (idx !== -1) doc.generators[idx] = { ...doc.generators[idx], ...sanitizedData };
-      } else {
-        const idx = doc.modificators.findIndex(m => m.id === subNodeId);
-        if (idx !== -1) doc.modificators[idx] = { ...doc.modificators[idx], ...sanitizedData };
-      }
+      const idx = doc.elements.findIndex(e => e.id === subNodeId);
+      if (idx !== -1) doc.elements[idx] = { ...doc.elements[idx], ...sanitizedData };
     }
 
     try {
@@ -342,12 +340,8 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
       return node.sendTo?.some((s: any) => s.idRef === targetId);
     };
 
-    doc.generators.forEach(g => {
-      if (g.id !== subId && checkRef(g, subId)) references.push(g.name || g.id);
-    });
-
-    doc.modificators.forEach(m => {
-      if (m.id !== subId && checkRef(m, subId)) references.push(m.name || m.id);
+    doc.elements?.forEach(e => {
+      if (e.id !== subId && checkRef(e, subId)) references.push(e.name || e.id);
     });
 
     return references;
@@ -356,30 +350,23 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
   /**
    * Elimina un componente y limpia sus referencias en cascada.
    */
-  async function deleteSubNode(machineId: number, subId: string, type: 'g' | 'mod') {
+  async function deleteSubNode(machineId: number, subId: string, type: 'el') {
     const machine = machines.value.find(m => m.id === machineId);
     if (!machine) return { success: false, message: 'Máquina no encontrada' };
 
     const doc = parsedDocs.value[machineId];
     if (!doc) return { success: false, message: 'Documento no encontrado' };
 
-    if (type === 'g') {
-      const idx = doc.generators.findIndex(g => g.id === subId);
-      if (idx !== -1) doc.generators.splice(idx, 1);
-    } else {
-      const idx = doc.modificators.findIndex(m => m.id === subId);
-      if (idx !== -1) doc.modificators.splice(idx, 1);
+    if (type === 'el' && Array.isArray(doc.elements)) {
+      const idx = doc.elements.findIndex(e => e.id === subId);
+      if (idx !== -1) doc.elements.splice(idx, 1);
     }
 
     // Limpieza en cascada de referencias
     const filterSendTo = (arr: any[]) => arr?.filter((s: any) => s.idRef !== subId) || [];
     
-    doc.generators.forEach(g => {
-      if (g.sendTo) g.sendTo = filterSendTo(g.sendTo);
-    });
-    
-    doc.modificators.forEach(m => {
-      if (m.sendTo) m.sendTo = filterSendTo(m.sendTo);
+    doc.elements?.forEach(e => {
+      if (e.sendTo) e.sendTo = filterSendTo(e.sendTo);
     });
 
     try {

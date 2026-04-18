@@ -45,8 +45,8 @@ import type { MdaAudioPimRelationsMachinesServices } from './mda-audio-pim-relat
  
          if (relation.description !== undefined && relation.description !== null) {
              const cleanDesc = relation.description.replace(/^["']|["']$/g, '');
-             if (cleanDesc.length < 10 || cleanDesc.length > 300) {
-                 accept('error', 'El campo description en cada relation debe tener entre 10 y 300 caracteres.', { node: relation, property: 'description' });
+             if (cleanDesc.length < 10 || cleanDesc.length > 600) {
+                 accept('error', 'El campo description en cada relation debe tener entre 10 y 600 caracteres.', { node: relation, property: 'description' });
              }
          }
      }

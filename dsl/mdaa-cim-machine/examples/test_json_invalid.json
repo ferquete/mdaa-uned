@@ -1,8 +1,8 @@
 {
   "$type": "Document",
-  "generators": [
+  "elements": [
     {
-      "$type": "AudioGenerator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "duplicate-id",
       "name": "Generator 1",
       "description": "Validation from JSON works properly",
@@ -13,7 +13,7 @@
       "rels": []
     },
     {
-      "$type": "AudioGenerator",
+      "$type": "Element", "externalOutput": { "hasExternalOutput": false, "description": "" }, "externalInput": { "hasExternalInput": false, "description": "" },
       "id": "duplicate-id",
       "name": "ThisNameIsWayTooLongForTheLimitOfTwentyCharacters",
       "description": "Short description is too short",
@@ -23,6 +23,5 @@
       "refs": [],
       "rels": []
     }
-  ],
-  "modificators": []
+  ,]
 }

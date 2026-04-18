@@ -1,39 +1,35 @@
 id "550e8400-e29b-41d4-a716-446655440003"
 name "ComplexSystem"
 description "A complex system description with high fidelity and modulation"
-generators [
-    AudioGenerator {
+elements [
+    Element {
         id "d1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0c1"
         name "RackPrincipal"
         description "Generador de señal principal con modulación"
-        params "Frecuencia, Amplitud de señal"
-        sendTo [
+        params "Frecuencia, Amplitud de señal" externalOutput { hasExternalOutput false } externalInput { hasExternalInput false }         sendTo [
             { id "f1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1" idRef "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1" description "Referencia a filtro paso bajo" }
         ]
     }
 ]
 modificators [
-    Modificator {
+    Element {
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f1"
         name "FiltroPasoBajo"
         description "Filtro para suavizar armónicos de la señal"
-        params "Cutoff, Resonancia del filtro"
-        sendTo [
+        params "Cutoff, Resonancia del filtro" externalOutput { hasExternalOutput false } externalInput { hasExternalInput false }         sendTo [
              { id "f1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2" idRef "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2" description "Referencia a resonancia interna" }
         ]
     },
-    Modificator {
+    Element {
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0f2"
         name "Resonancia"
         description "Control de resonancia interno del filtro"
-        params "Q Factor de calidad resonante"
-        sendTo []
+        params "Q Factor de calidad resonante" externalOutput { hasExternalOutput false } externalInput { hasExternalInput false }         sendTo []
     },
-    Modificator {
+    Element {
         id "e1b0b0b0-b0b0-b0b0-b0b0-b0b0b0b0b0r1"
         name "ReverbGlobal"
         description "Reverberación de sala para todo el generador"
-        params "Size, Decay de la reverberacion"
-        sendTo []
+        params "Size, Decay de la reverberacion" externalOutput { hasExternalOutput false } externalInput { hasExternalInput false }         sendTo []
     }
 ]

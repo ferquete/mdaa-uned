@@ -82,26 +82,33 @@ export interface CimSendTo {
   description: string;
 }
 
-export interface CimBaseComponent {
+export interface CimExternalOutput {
+  hasExternalOutput: boolean;
+  description: string;
+}
+
+export interface CimExternalInput {
+  hasExternalInput: boolean;
+  description: string;
+}
+
+export interface CimElement {
   id: string;
   name: string;
   description: string;
   params?: string;
   $type?: string;
+  externalOutput: CimExternalOutput;
+  externalInput: CimExternalInput;
   sendTo: CimSendTo[];
 }
-
-export interface CimGenerator extends CimBaseComponent {}
-
-export interface CimModificator extends CimBaseComponent {}
 
 export interface CimDocument {
   $type: 'Document';
   id: string;
   name: string;
   description: string;
-  generators: CimGenerator[];
-  modificators: CimModificator[];
+  elements: CimElement[];
 }
 
 export interface CimRelation {

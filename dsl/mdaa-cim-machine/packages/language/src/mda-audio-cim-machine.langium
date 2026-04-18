@@ -4,8 +4,7 @@ entry Document:
     'id' id=STRING
     'name' name=STRING
     'description' description=STRING
-    'generators' '[' (generators+=AudioGenerator (',' generators+=AudioGenerator)*)? ']'
-    'modificators' '[' (modificators+=Modificator (',' modificators+=Modificator)*)? ']'
+    'elements' '[' (elements+=Element (',' elements+=Element)*)? ']'
 ;
 
 interface Base {
@@ -14,28 +13,33 @@ interface Base {
     description: string
     params: string
     sendTo: SendTo[]
+    externalOutput: ExternalOutput
+    externalInput: ExternalInput
 }
 
-interface AudioGenerator extends Base {}
+interface Element extends Base {}
 
-interface Modificator extends Base {}
-
-AudioGenerator returns AudioGenerator:
-    'AudioGenerator' '{'
+Element returns Element:
+    'Element' '{'
         'id' id=STRING
         'name' name=STRING
         'description' description=STRING
         'params' params=STRING
+        'externalOutput' externalOutput=ExternalOutput
+        'externalInput' externalInput=ExternalInput
         'sendTo' '[' (sendTo+=SendTo (',' sendTo+=SendTo)*)? ']'
     '}';
 
-Modificator returns Modificator:
-    'Modificator' '{'
-        'id' id=STRING
-        'name' name=STRING
-        'description' description=STRING
-        'params' params=STRING
-        'sendTo' '[' (sendTo+=SendTo (',' sendTo+=SendTo)*)? ']'
+ExternalOutput:
+    '{'
+        'hasExternalOutput' hasExternalOutput?='true' | 'hasExternalOutput' 'false'
+        ('description' description=STRING)?
+    '}';
+
+ExternalInput:
+    '{'
+        'hasExternalInput' hasExternalInput?='true' | 'hasExternalInput' 'false'
+        ('description' description=STRING)?
     '}';
 
 SendTo:

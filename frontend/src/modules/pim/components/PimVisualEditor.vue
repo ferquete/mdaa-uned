@@ -90,14 +90,10 @@ const availableCimComponents = computed(() => {
     
     if (machine) {
       const cimDoc = analysisStore.parsedDocs[machine.id]
-      if (cimDoc) {
-        cimDoc.generators.forEach((g: any) => {
-          components.push({ id: g.id, name: `[${cimDoc.name}] ${g.name}`, type: 'g' })
-          g.sendTo.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${g.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
-        })
-        cimDoc.modificators.forEach((m: any) => {
-          components.push({ id: m.id, name: `[${cimDoc.name}] ${m.name}`, type: 'mod' })
-          m.sendTo.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${m.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+      if (cimDoc && Array.isArray(cimDoc.elements)) {
+        cimDoc.elements.forEach((el: any) => {
+          components.push({ id: el.id, name: `[${cimDoc.name}] ${el.name}`, type: 'el' })
+          el.sendTo?.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${el.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
         })
       }
     }

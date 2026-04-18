@@ -31,7 +31,7 @@ const emit = defineEmits<{
   (e: 'export'): void
   (e: 'edit-basic'): void
   (e: 'delete'): void
-  (e: 'add-subnode', type: 'g' | 'mod'): void
+  (e: 'add-subnode', type: 'el'): void
   (e: 'add-machine'): void
 }>()
 
@@ -93,21 +93,12 @@ const handleEditBasic = () => {
             <!-- Botones de Añadir Sub-nodos -->
             <div v-if="bc.canAddSubnodes" class="flex items-center gap-1.5 ml-2">
               <button 
-                @click="emit('add-subnode', 'g')"
+                @click="emit('add-subnode', 'el')"
                 class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-node-generator/10 text-node-generator hover:bg-node-generator/20 transition-all border border-node-generator/20 cursor-pointer shadow-sm text-[9px] font-bold uppercase tracking-wider"
-                title="Añadir Generador"
+                title="Añadir Elemento"
               >
                 <i class="fa-solid fa-plus overflow-hidden"></i>
-                Generador
-              </button>
-              
-              <button 
-                @click="emit('add-subnode', 'mod')"
-                class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-geist-success/10 text-geist-success hover:bg-geist-success/20 transition-all border border-geist-success/20 cursor-pointer shadow-sm text-[9px] font-bold uppercase tracking-wider"
-                title="Añadir Modificador"
-              >
-                <i class="fa-solid fa-plus overflow-hidden"></i>
-                Modificador
+                Elemento
               </button>
             </div>
 

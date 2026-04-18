@@ -163,6 +163,9 @@ export const usePimStore = defineStore('pim', () => {
         ...parsedDocs.value, 
         [machineId]: updatedDoc 
       };
+
+      // Limpieza exhaustiva tras actualizar metadatos
+      await exhaustivePruneRelations();
       
       return { success: true, machine: updated };
     } catch (err: any) {
@@ -181,6 +184,10 @@ export const usePimStore = defineStore('pim', () => {
       if (selectedNodeId.value === `pim-m-${machineId}`) {
         selectedNodeId.value = 'diseno';
       }
+
+      // Limpieza exhaustiva tras eliminar una máquina
+      await exhaustivePruneRelations();
+
       return { success: true };
     } catch (err: any) {
       return { success: false, message: err.message };
@@ -208,10 +215,79 @@ export const usePimStore = defineStore('pim', () => {
   /**
    * Actualiza el JSON raw de una máquina PIM.
    */
+  /**
+   * Extrae todos los IDs de puertos marcados como externos (isExternalInput/Output) 
+   * de un documento de máquina PIM.
+   */
+  function extractExternalPortIds(doc: PimMachineDocument): Set<string> {
+    const portIds = new Set<string>();
+    
+    doc.nodes?.forEach((node: any) => {
+      if (!node) return;
+      
+      // Revisar propiedades de primer nivel
+      Object.entries(node).forEach(([key, val]: [string, any]) => {
+        if (['id', 'name', 'type', 'description', 'ids_references', 'others'].includes(key)) return;
+        if (val && typeof val === 'object') {
+          if (val.isExternalInput || val.isExternalOutput) {
+            if (val.id) portIds.add(val.id);
+          }
+        }
+      });
+
+      // Revisar la lista 'others'
+      if (Array.isArray(node.others)) {
+        node.others.forEach((o: any) => {
+          if (o.isExternalInput || o.isExternalOutput) {
+            if (o.id) portIds.add(o.id);
+          }
+        });
+      }
+    });
+
+    return portIds;
+  }
+
+  /**
+   * Realiza una limpieza exhaustiva de todas las relaciones PIM del proyecto.
+   * Elimina cualquier relación cuyo puerto de origen o destino ya no exista o no sea externo.
+   */
+  async function exhaustivePruneRelations() {
+    const currentRelationsDoc = parsedPimRelations.value;
+    if (!currentRelationsDoc.relations.length) return { success: true };
+
+    // 1. Recopilar TODOS los puertos externos válidos de TODAS las máquinas cargadas
+    const allExternalPorts = new Set<string>();
+    Object.values(parsedDocs.value).forEach(doc => {
+      const ports = extractExternalPortIds(doc);
+      ports.forEach(p => allExternalPorts.add(p));
+    });
+
+    // 2. Filtrar relaciones: ambos extremos deben existir en el conjunto global
+    const initialCount = currentRelationsDoc.relations.length;
+    const cleanedRelations = currentRelationsDoc.relations.filter(rel => {
+      const isSourceValid = allExternalPorts.has(rel.source);
+      const isTargetValid = allExternalPorts.has(rel.destination);
+      return isSourceValid && isTargetValid;
+    });
+
+    if (cleanedRelations.length < initialCount) {
+      console.log(`[PIM Global Sync] Podando ${initialCount - cleanedRelations.length} relaciones huérfanas o inválidas en todo el proyecto.`);
+      const updatedRelationsJson = JSON.stringify({
+        ...currentRelationsDoc,
+        relations: cleanedRelations
+      });
+      return await updatePimRelations(updatedRelationsJson);
+    }
+
+    return { success: true };
+  }
+
   async function updateMachineRawJson(machineId: number, rawJson: string) {
     try {
       const parsed = JSON.parse(rawJson);
-      // Extraer nombre y descripción del JSON para sincronizar metadatos
+
+      // Proceder con la actualización de la máquina primero
       const updated = await apiClient.put<PimMachine>(`/api/v1/pim-machines/${machineId}`, {
         name: parsed.name || '',
         description: parsed.description || '',
@@ -223,11 +299,15 @@ export const usePimStore = defineStore('pim', () => {
         machines.value[index] = updated;
       }
       
-      // Forzar actualización reactiva del documento parseado para que el árbol se entere
+      // Actualizar el documento parseado localmente
       parsedDocs.value = { 
         ...parsedDocs.value, 
         [machineId]: parsed 
       };
+
+      // --- SINCRONIZACIÓN EXHAUSTIVA ---
+      // Tras actualizar los documentos locales, validamos la integridad global
+      await exhaustivePruneRelations();
       
       return { success: true };
     } catch (err: any) {

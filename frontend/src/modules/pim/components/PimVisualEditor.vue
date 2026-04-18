@@ -550,11 +550,18 @@ const executeSave = async () => {
   isSaving.value = false
   if (result.success) {
     saveGuiPositions(store.selectedMachine.id)
-    snapshotJson.value = JSON.stringify(finalJson)
-    snapshotPositions.value = getCurrentPositionsJson()
-    clearUnsavedState()
-    saveMessage.value = 'Guardado con éxito'
-    setTimeout(() => saveMessage.value = '', 3000)
+    
+    // Usamos nextTick para asegurar que la reactividad se asiente antes de tomar el nuevo snapshot
+    nextTick(() => {
+      const savedJson = buildFinalJson()
+      if (savedJson) {
+        snapshotJson.value = JSON.stringify(savedJson)
+      }
+      snapshotPositions.value = getCurrentPositionsJson()
+      clearUnsavedState()
+      saveMessage.value = 'Guardado con éxito'
+      setTimeout(() => saveMessage.value = '', 3000)
+    })
   } else {
     saveMessage.value = 'Error: ' + result.message
   }

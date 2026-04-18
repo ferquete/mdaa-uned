@@ -10,6 +10,7 @@ import { usePimStore } from '../stores/pimStore'
 import PimEditor from '../components/PimEditor.vue'
 import PimVisualEditor from '../components/PimVisualEditor.vue'
 import PimMachineModal from '../components/PimMachineModal.vue'
+import PimRelationsVisualEditor from '../components/PimRelationsVisualEditor.vue'
 
 const analysisStore = useAnalysisMachinesStore()
 const store = usePimStore()
@@ -129,15 +130,7 @@ const confirmDelete = async () => {
         <div v-else-if="isMachineSelected" class="w-full h-full text-geist-fg">
           <PimVisualEditor />
         </div>
-        <div v-else class="w-full h-full flex items-center justify-center p-8 bg-geist-accents-1">
-          <div class="text-center opacity-30 select-none">
-            <div class="w-24 h-24 rounded-full bg-geist-accents-2 flex items-center justify-center mx-auto mb-6 border border-geist-border shadow-inner">
-               <i class="fa-solid fa-draw-polygon text-5xl"></i>
-            </div>
-            <h3 class="text-2xl font-bold uppercase tracking-[0.2em] text-geist-fg">Análisis PIM</h3>
-            <p class="text-[10px] font-mono mt-4 text-geist-accents-4">Vista general de relaciones (Próximamente)</p>
-          </div>
-        </div>
+        <PimRelationsVisualEditor v-else />
       </div>
     </template>
     

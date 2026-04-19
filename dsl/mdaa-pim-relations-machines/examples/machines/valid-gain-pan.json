@@ -1,0 +1,53 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441006",
+  "name": "Volume Control",
+  "description": "Control de ganancia y paneo vinculado al Oscillator Core CIM.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [
+    {
+      "type": "gain_pan",
+      "id": "550e8400-e29b-41d4-a716-446655443006",
+      "name": "Master Volume",
+      "description": "Control final de salida.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "gain": {
+        "id": "550e8400-e29b-41d4-a716-446655444050",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "550e8400-e29b-41d4-a716-446655444051",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655444052",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "550e8400-e29b-41d4-a716-446655444053",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "input_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445010",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445011",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "output_2": {
+        "id": "550e8400-e29b-41d4-a716-446655445012",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      }
+    }
+  ],
+  "edges": []
+}

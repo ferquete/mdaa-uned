@@ -1,0 +1,266 @@
+{
+  "id": "b10e1234-e29b-41d4-a716-446655440001",
+  "name": "FX Suite Pro Studio",
+  "description": "Suite de efectos de post-procesamiento de grado profesional diseñada para proporcionar una dimension espacial y un acabado tecnico impecable a la señal de audio. Este modulo implementa una cadena de efectos en serie y paralelo que incluye reverberacion por convolucion, retraso de cinta analogico virtual y distorsion armonica sutil. Su funcion primordial es situar el sonido en un entorno acustico creible mientras se mantiene la integridad de la señal original, permitiendo una transicion fluida entre texturas secas y paisajes sonoros inmersivos de alta resolucion espectral.",
+  "ids_cim_reference": [
+    "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90"
+  ],
+  "nodes": [
+    {
+      "type": "reverb",
+      "id": "b10e1234-e29b-41d4-a716-446655440002",
+      "name": "Cathedral Reverb XT",
+      "description": "Procesador de reverberacion algoritmica de alta densidad diseñado para simular espacios arquitectonicos de grandes dimensiones con una precision temporal asombrosa. Implementa un modelo de reflexion temprana detallado que permite definir el tamaño del espacio y la absorcion de los materiales virtuales, proporcionando una cola de reverb suave y carente de resonancias metalicas indeseadas. Su capacidad para fundir la señal original con el campo difuso asegura una sensacion de profundidad natural, ideal para pads atmosfericos y texturas cinematicas de larga duracion.",
+      "ids_references": [
+        "992e8400-e29b-41d4-a716-446655440333"
+      ],
+      "others": [],
+      "roomSize": {
+        "id": "b10e1234-e29b-41d4-a716-446655440003",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 0.85,
+        "isModifiable": true
+      },
+      "damping": {
+        "id": "b10e1234-e29b-41d4-a716-446655440004",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 0.3,
+        "isModifiable": true
+      },
+      "decayTime": {
+        "id": "b10e1234-e29b-41d4-a716-446655440005",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 4.5,
+        "isModifiable": true
+      },
+      "dryWet": {
+        "id": "b10e1234-e29b-41d4-a716-446655440006",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 0.4,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "b10e1234-e29b-41d4-a716-446655440007",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "b10e1234-e29b-41d4-a716-446655440008",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "input_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440009",
+        "isExternalInput": true
+      },
+      "output_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440010",
+        "isExternalOutput": false
+      }
+    },
+    {
+      "type": "delay",
+      "id": "b10e1234-e29b-41d4-a716-446655440011",
+      "name": "Analog Tape Echo V2",
+      "description": "Unidad de retraso que emula el comportamiento calido y ligeramente inestable de los ecos de cinta analogicos del siglo pasado. Este nodo incorpora sutiles variaciones de tono en las repeticiones, provocadas por la emulacion de las fluctuaciones de velocidad mecánicas, aportando una textura vintage inconfundible. Su arquitectura permite ruteos tipo 'ping-pong' para expandir la imagen estereo y filtros internos para oscurecer progresivamente las colas de las repeticiones, facilitando su integracion en mezclas densas donde se requiere profundidad sin ocupar un espacio excesivamente brillante.",
+      "ids_references": [
+        "882e8400-e29b-41d4-a716-446655440222"
+      ],
+      "others": [],
+      "delayTime": {
+        "id": "b10e1234-e29b-41d4-a716-446655440012",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 500.0,
+        "isModifiable": true,
+        "isExternalInput": true
+      },
+      "feedback": {
+        "id": "b10e1234-e29b-41d4-a716-446655440013",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.6,
+        "isModifiable": true
+      },
+      "lowPassCutoff": {
+        "id": "b10e1234-e29b-41d4-a716-446655440014",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 2500.0,
+        "isModifiable": true
+      },
+      "highPassCutoff": {
+        "id": "b10e1234-e29b-41d4-a716-446655440015",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 150.0,
+        "isModifiable": true
+      },
+      "dryWet": {
+        "id": "b10e1234-e29b-41d4-a716-446655440016",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.35,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "b10e1234-e29b-41d4-a716-446655440017",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "b10e1234-e29b-41d4-a716-446655440018",
+        "ids_references": [
+          "882e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "input_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440019",
+        "isExternalInput": false
+      },
+      "output_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440020",
+        "isExternalOutput": false
+      }
+    },
+    {
+      "type": "distortion",
+      "id": "b10e1234-e29b-41d4-a716-446655440021",
+      "name": "Harmonic Saturator ",
+      "description": "Procesador de distorsion armonica diseñado para añadir grosor y presencia a la señal mediante la generacion controlada de armonicos pares e impares. Implementa algoritmos de 'soft-clipping' de alta fidelidad que emulan la saturacion de las etapas de pre-amplificacion a valvulas, proporcionando una calidez analogica sin llegar a la destruccion total de la señal. Es una herramienta indispensable para que los sonidos mas limpios corten mejor en la mezcla final, aportando ese caracter agresivo o suavemente saturado que define las producciones de audio contemporaneas con una calidad superior.",
+      "ids_references": [
+        "772e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "drive": {
+        "id": "b10e1234-e29b-41d4-a716-446655440022",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.45,
+        "isModifiable": true
+      },
+      "tone": {
+        "id": "b10e1234-e29b-41d4-a716-446655440023",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.7,
+        "isModifiable": true
+      },
+      "distType": {
+        "id": "b10e1234-e29b-41d4-a716-446655440024",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": "soft-clipping",
+        "isModifiable": false
+      },
+      "outputLevel": {
+        "id": "b10e1234-e29b-41d4-a716-446655440025",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.9,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "b10e1234-e29b-41d4-a716-446655440026",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "b10e1234-e29b-41d4-a716-446655440027",
+        "ids_references": [
+          "772e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "input_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440028",
+        "isExternalInput": false
+      },
+      "output_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440029",
+        "isExternalOutput": false
+      }
+    },
+    {
+      "type": "gain_pan",
+      "id": "b10e1234-e29b-41d4-a716-446655440030",
+      "name": "Final Stage Gain   ",
+      "description": "Etapa de ganancia y posicionamiento estereo final responsable de preparar la señal para su entrega al bus de grabacion. Ofrece un control de amplitud extremadamente preciso con una resolucion sub-decibelica y un sistema de paneo que mantiene el balance de potencia constante en todo el espectro, evitando descompensaciones de nivel al mover la señal en el campo estereo. Este nodo asegura que el sintetizador entregue niveles optimos de salida, garantizando la maxima relacion señal-ruido posible y una compatibilidad total con los estandares de produccion de audio profesional vigentes.",
+      "ids_references": [
+        "992e8400-e29b-41d4-a716-446655440333"
+      ],
+      "others": [],
+      "gain": {
+        "id": "b10e1234-e29b-41d4-a716-446655440031",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 1.0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "b10e1234-e29b-41d4-a716-446655440032",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "b10e1234-e29b-41d4-a716-446655440033",
+        "ids_references": [
+          "992e8400-e29b-41d4-a716-446655440333"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "input_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440034",
+        "isExternalInput": false
+      },
+      "output_1": {
+        "id": "b10e1234-e29b-41d4-a716-446655440035",
+        "isExternalOutput": true,
+        "description": "Salidad principal canal izquierdo del sintetizador."
+      },
+      "output_2": {
+        "id": "b10e1234-e29b-41d4-a716-446655440036",
+        "isExternalOutput": true,
+        "description": "Salida principal canal derecho del sintetizador."
+      }
+    }
+  ],
+  "edges": []
+}

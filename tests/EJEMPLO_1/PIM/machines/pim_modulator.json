@@ -1,0 +1,146 @@
+{
+  "id": "f40e1234-e29b-41d4-a716-446655440001",
+  "name": "Modulation Engine V8",
+  "description": "Motor de modulacion avanzada diseñado para inyectar dinamismo y vida organica en los parametros de sintesis de todo el sistema. Este modulo refina la matriz de modulacion CIM original mediante la implementacion de generadores de baja frecuencia de alta estabilidad y envolventes multietapa con curvas de respuesta personalizables. Su arquitectura permite una precision de control de nivel de microvoltios, asegurando que los barridos de filtro y las variaciones de amplitud sean fluidas y carezcan de artefactos de cuantizacion digital, incluso en las configuraciones mas extremas de velocidad y profundidad.",
+  "ids_cim_reference": [
+    "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f"
+  ],
+  "nodes": [
+    {
+      "type": "lfo",
+      "id": "f40e1234-e29b-41d4-a716-446655440002",
+      "name": "Global LFO Pro Unit ",
+      "description": "Oscilador de baja frecuencia de grado profesional que actua como la fuente de modulacion ciclica principal para la infraestructura de audio. Implementa un sistema de sincronizacion de fase robusto que permite mantener la coherencia temporal con el reloj maestro del proyecto, facilitando efectos ritmicos precisos. Su amplio rango de frecuencia, que abarca desde ciclos extremadamente lentos de varios minutos hasta velocidades en el rango audible, lo convierte en una herramienta versatil tanto para sutiles variaciones timbricas como para efectos de modulacion de anillo agresivos.",
+      "ids_references": [
+        "442e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "f40e1234-e29b-41d4-a716-446655440003",
+        "ids_references": [
+          "442e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": "sine",
+        "isModifiable": true
+      },
+      "rate": {
+        "id": "f40e1234-e29b-41d4-a716-446655440004",
+        "ids_references": [
+          "442e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 1.25,
+        "isModifiable": true,
+        "isExternalInput": true
+      },
+      "amplitude": {
+        "id": "f40e1234-e29b-41d4-a716-446655440005",
+        "ids_references": [
+          "442e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 1.0,
+        "isModifiable": true
+      },
+      "phase": {
+        "id": "f40e1234-e29b-41d4-a716-446655440006",
+        "ids_references": [
+          "442e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "sync": {
+        "id": "f40e1234-e29b-41d4-a716-446655440007",
+        "ids_references": [
+          "442e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "output": {
+        "id": "f40e1234-e29b-41d4-a716-446655440008",
+        "isExternalOutput": true,
+        "description": "Salida de señal de control del LFO global para modulacion externa."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "f40e1234-e29b-41d4-a716-446655440009",
+      "name": "DAHDSR Hyper ENV  ",
+      "description": "Generador de envolvente ultra-articulado de siete etapas diseñado para esculpir la evolucion temporal de los sonidos con una precision quirurgica. Este nodo permite un control exhaustivo sobre cada fase del ciclo de vida de la señal, desde el retraso inicial hasta el desvanecimiento final, permitiendo recrear desde ataques percusivos instantaneos hasta evoluciones ambientales extremadamente lentas. La capacidad de ajustar la curvatura de cada segmento asegura que la respuesta dinamica sea siempre natural y musicalmente coherente con el estilo de interpretacion deseado.",
+      "ids_references": [
+        "552e8400-e29b-41d4-a716-446655440222"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "f40e1234-e29b-41d4-a716-446655440010",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": "DAHDSR",
+        "isModifiable": false
+      },
+      "attack": {
+        "id": "f40e1234-e29b-41d4-a716-446655440011",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.05,
+        "isModifiable": true
+      },
+      "decay": {
+        "id": "f40e1234-e29b-41d4-a716-446655440012",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "sustain": {
+        "id": "f40e1234-e29b-41d4-a716-446655440013",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.7,
+        "isModifiable": true
+      },
+      "release": {
+        "id": "f40e1234-e29b-41d4-a716-446655440014",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 1.5,
+        "isModifiable": true
+      },
+      "delay": {
+        "id": "f40e1234-e29b-41d4-a716-446655440015",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "hold": {
+        "id": "f40e1234-e29b-41d4-a716-446655440016",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "curve": {
+        "id": "f40e1234-e29b-41d4-a716-446655440017",
+        "ids_references": [
+          "552e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": "exponential",
+        "isModifiable": false
+      },
+      "output": {
+        "id": "f40e1234-e29b-41d4-a716-446655440018",
+        "isExternalOutput": true,
+        "description": "Salida de señal de control de la envolvente DAHDSR para control dinamico."
+      }
+    }
+  ],
+  "edges": []
+}

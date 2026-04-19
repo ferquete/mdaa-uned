@@ -1,0 +1,11 @@
+{
+  "description": "Error: Machine ID does not exist in machines directory.",
+  "relations": [
+    {
+      "id": "111e8400-e29b-41d4-a716-446655440111",
+      "source": "NON-EXISTENT-ID-0000000000000000000",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "This should fail cross-validation because source does not exist."
+    }
+  ]
+}

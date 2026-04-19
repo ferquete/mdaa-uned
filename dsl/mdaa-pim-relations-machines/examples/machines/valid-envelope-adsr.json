@@ -1,0 +1,26 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441002",
+  "name": "Envelope Config",
+  "description": "Configuracion de un envolvente ADSR estandar vinculado al Oscillator CIM.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [
+    {
+      "type": "envelope",
+      "id": "550e8400-e29b-41d4-a716-446655443002",
+      "name": "ADSR Envolvente",
+      "description": "Envolvente ADSR para amplitud.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "envelopeType": { "id": "550e8400-0000-0000-0000-000000000001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "ADSR", "isModifiable": false },
+      "attack": { "id": "550e8400-0000-0000-0000-000000000002", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.01, "isModifiable": true },
+      "decay": { "id": "550e8400-0000-0000-0000-000000000003", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.1, "isModifiable": true },
+      "sustain": { "id": "550e8400-0000-0000-0000-000000000004", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.7, "isModifiable": true },
+      "release": { "id": "550e8400-0000-0000-0000-000000000005", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.5, "isModifiable": true },
+      "delay": { "id": "550e8400-0000-0000-0000-000000000006", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.0, "isModifiable": true },
+      "hold": { "id": "550e8400-0000-0000-0000-000000000007", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.0, "isModifiable": true },
+      "curve": { "id": "550e8400-0000-0000-0000-000000000008", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "linear", "isModifiable": true },
+      "output": { "id": "550e8400-0000-0000-0000-000000000009", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
+    }
+  ],
+  "edges": []
+}

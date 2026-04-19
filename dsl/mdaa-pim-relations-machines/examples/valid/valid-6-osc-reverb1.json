@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Reverb Input 1.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661006",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "00000000-0000-0000-0000-000000001007",
+      "description": "Conexion de audio directa a la reverb global."
+    }
+  ]
+}

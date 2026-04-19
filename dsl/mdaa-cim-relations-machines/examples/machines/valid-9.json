@@ -1,0 +1,22 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440009",
+  "name": "Granular Synth",
+  "description": "Micro-sampling granular synthesizer for atmospheric textures.",
+  "elements": [
+    {
+      "id": "gran-8400-e29b-41d4-a716-44665544011",
+      "name": "Cloud Gen",
+      "description": "Generates a cloud of grains from specified sample buffer.",
+      "params": "size: 50ms, density: 100, position: 0.5",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Audio buffer input."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Granular cloud output."
+      },
+      "sendTo": []
+    }
+  ]
+}

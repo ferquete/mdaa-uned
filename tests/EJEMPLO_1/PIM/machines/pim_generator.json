@@ -1,0 +1,228 @@
+{
+  "id": "e30e1234-e29b-41d4-a716-446655440001",
+  "name": "Generator Core Elite",
+  "description": "Nucleo de generacion de señales de grado audiófilo que implementa una arquitectura triple de sintesis. Este modulo esta diseñado para servir como el cimiento espectral de cualquier cadena de señal compleja, proporcionando osciladores con aliasing nulo y generadores de ruido con perfiles de color extremadamente precisos. Su capacidad para manejar muestras externas con control de fase garantiza una integracion perfecta con librerias de sonidos reales, permitiendo texturas hibridas que combinan la calidez de la sintesis analogica virtual con la riqueza organica de grabaciones de alta resolucion.",
+  "ids_cim_reference": [
+    "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "e30e1234-e29b-41d4-a716-446655440002",
+      "name": "VCO High Precision ",
+      "description": "Oscilador controlado por tension de alta precision que refina el concepto del generador senoidal CIM original. Utiliza algoritmos de tabla de ondas dinamica para asegurar una pureza armonica total en todo el rango audible, eliminando cualquier rastro de distorsion no deseada. Su diseño permite una estabilidad de fase excepcional, lo cual es fundamental para procesos de modulacion de frecuencia y fase donde la coherencia temporal define la calidad final del timbre resultante en configuraciones de sintesis complejas.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [
+        {
+          "id": "e30e1234-e29b-41d4-a716-446655440003",
+          "name": "Drift Variance",
+          "ids_references": [
+            "771e8400-e29b-41d4-a716-446655440111"
+          ],
+          "initialValue": "0.15",
+          "isModifiable": true,
+          "isExternalInput": true,
+          "description": "Control de la inestabilidad microtonal del oscilador para emular el comportamiento organico de los circuitos analogicos vintage."
+        }
+      ],
+      "waveform": {
+        "id": "e30e1234-e29b-41d4-a716-446655440004",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": "sine",
+        "isModifiable": true
+      },
+      "frequency": {
+        "id": "e30e1234-e29b-41d4-a716-446655440005",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 440.0,
+        "isModifiable": true,
+        "isExternalInput": true
+      },
+      "pulseWidth": {
+        "id": "e30e1234-e29b-41d4-a716-446655440006",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "gain": {
+        "id": "e30e1234-e29b-41d4-a716-446655440007",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.8,
+        "isModifiable": true
+      },
+      "phase": {
+        "id": "e30e1234-e29b-41d4-a716-446655440008",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "e30e1234-e29b-41d4-a716-446655440009",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "e30e1234-e29b-41d4-a716-446655440010",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "e30e1234-e29b-41d4-a716-446655440011",
+        "isExternalOutput": true,
+        "description": "Salida de audio del canal izquierdo del oscilador de alta precision."
+      },
+      "output_2": {
+        "id": "e30e1234-e29b-41d4-a716-446655440012",
+        "isExternalOutput": true,
+        "description": "Salida de audio del canal derecho del oscilador de alta precision."
+      }
+    },
+    {
+      "type": "noise",
+      "id": "e30e1234-e29b-41d4-a716-446655440013",
+      "name": "Spectral Noise Gen ",
+      "description": "Generador de ruido estocastico diseñado para añadir texturas y contenido armonico inarmonico a la mezcla. Este nodo implementa algoritmos de generacion de ruido blanco, rosa y marron con un filtrado interno para asegurar que la densidad espectral sea la adecuada para procesos de sintesis sustractiva. Es ideal para crear percusiones, efectos de viento o simplemente añadir caracter y grosor a los osciladores digitales mediante tecnicas de modulacion cruzada o mezcla directa en el bus de salida.",
+      "ids_references": [
+        "881e8400-e29b-41d4-a716-446655440222"
+      ],
+      "others": [],
+      "noiseType": {
+        "id": "e30e1234-e29b-41d4-a716-446655440114",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": "white",
+        "isModifiable": false
+      },
+      "amplitude": {
+        "id": "e30e1234-e29b-41d4-a716-446655440115",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "gain": {
+        "id": "e30e1234-e29b-41d4-a716-446655440116",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "e30e1234-e29b-41d4-a716-446655440117",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "e30e1234-e29b-41d4-a716-446655440118",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "e30e1234-e29b-41d4-a716-446655440119",
+        "isExternalOutput": false,
+        "description": "Salida de audio del generador de ruido espectral."
+      }
+    },
+    {
+      "type": "sample",
+      "id": "e30e1234-e29b-41d4-a716-446655440020",
+      "name": "High Res Sampler XT",
+      "description": "Reproductor de muestras de alta resolucion que permite integrar grabaciones externas en el flujo de trabajo del sintetizador. Este nodo ofrece herramientas avanzadas de streaming de audio con control sobre el bucle y la panoramizacion, permitiendo que elementos del mundo real se conviertan en fuentes sonoras maleables dentro del sistema. Su arquitectura esta optimizada para minimizar la latencia de disparo asegurando que los transitorios de las muestras se mantengan intactos durante la ejecucion en vivo.",
+      "ids_references": [
+        "881e8400-e29b-41d4-a716-446655440222"
+      ],
+      "others": [],
+      "file": {
+        "id": "e30e1234-e29b-41d4-a716-446655440221",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": "/sounds/textures/ambient_pad_ref.wav",
+        "isModifiable": false
+      },
+      "loop": {
+        "id": "e30e1234-e29b-41d4-a716-446655440222",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "gain": {
+        "id": "e30e1234-e29b-41d4-a716-446655440223",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 1.0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "e30e1234-e29b-41d4-a716-446655440224",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": 0.0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "e30e1234-e29b-41d4-a716-446655440225",
+        "ids_references": [
+          "881e8400-e29b-41d4-a716-446655440222"
+        ],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "e30e1234-e29b-41d4-a716-446655440226",
+        "isExternalOutput": false,
+        "description": "Salida izquierda del reproductor de muestras de alta resolucion."
+      },
+      "output_2": {
+        "id": "e30e1234-e29b-41d4-a716-446655440227",
+        "isExternalOutput": false,
+        "description": "Salida derecha del reproductor de muestras de alta resolucion."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e30e1234-e29b-41d4-a716-446655441001",
+      "description": "Conexion de control de deriva analogica modulada por el propio sistema de deriva interno para auto-influencia.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "sourceNode": "e30e1234-e29b-41d4-a716-446655440002",
+      "sourceParam": "e30e1234-e29b-41d4-a716-446655440011",
+      "targetNode": "e30e1234-e29b-41d4-a716-446655440002",
+      "targetParam": "e30e1234-e29b-41d4-a716-446655440003",
+      "type": "modification"
+    }
+  ]
+}

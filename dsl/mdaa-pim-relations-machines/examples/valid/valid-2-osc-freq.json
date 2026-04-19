@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Osc Frequency.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661002",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-e29b-41d4-a716-446655444002",
+      "description": "Auto-modulacion de frecuencia (FM)."
+    }
+  ]
+}

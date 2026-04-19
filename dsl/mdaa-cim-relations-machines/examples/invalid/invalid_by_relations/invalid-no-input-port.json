@@ -1,0 +1,11 @@
+{
+  "description": "Cross-validation error: Destination machine exists but has no input port.",
+  "relations": [
+    {
+      "id": "333e8400-e29b-41d4-a716-446655440333",
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440000",
+      "description": "Fails because Oscillator ...0000 has no external input ports."
+    }
+  ]
+}

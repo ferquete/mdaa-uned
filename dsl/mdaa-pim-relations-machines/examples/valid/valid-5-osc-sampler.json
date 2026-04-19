@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Sampler Gain.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661005",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-0000-0000-0000-000000000203",
+      "description": "Modulacion de ganancia del sampler."
+    }
+  ]
+}

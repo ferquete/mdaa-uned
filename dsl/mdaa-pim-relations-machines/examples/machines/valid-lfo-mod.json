@@ -1,0 +1,23 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441005",
+  "name": "LFO System",
+  "description": "Modulador LFO vinculado al Oscillator Core CIM.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [
+    {
+      "type": "lfo",
+      "id": "550e8400-e29b-41d4-a716-446655443005",
+      "name": "LFO 1",
+      "description": "Modulacion de baja frecuencia.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "waveform": { "id": "550e8400-0000-0000-0000-000000000100", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "sine", "isModifiable": false },
+      "rate": { "id": "550e8400-0000-0000-0000-000000000101", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 5, "isModifiable": true },
+      "amplitude": { "id": "550e8400-0000-0000-0000-000000000102", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.5, "isModifiable": true },
+      "phase": { "id": "550e8400-0000-0000-0000-000000000103", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0, "isModifiable": true },
+      "sync": { "id": "550e8400-0000-0000-0000-000000000104", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "output": { "id": "550e8400-0000-0000-0000-000000000105", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
+    }
+  ],
+  "edges": []
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Error: Source machine has no external output enabled.",
+  "relations": [
+    {
+      "id": "222e8400-e29b-41d4-a716-446655440222",
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "This should fail because machine ...0003 (Bass Synth) only has inputs in our examples, no outputs."
+    }
+  ]
+}

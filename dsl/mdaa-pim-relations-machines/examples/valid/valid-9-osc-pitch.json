@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Sampler Frequency.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661009",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-0000-0000-0000-000000000201",
+      "description": "Modulacion de pitch del sampler."
+    }
+  ]
+}

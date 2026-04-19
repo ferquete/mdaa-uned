@@ -1,0 +1,11 @@
+{
+  "description": "Cross-validation error: Source machine exists but has no output port.",
+  "relations": [
+    {
+      "id": "222e8400-e29b-41d4-a716-446655440222",
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "This fails because machine ...0003 only has inputs enabled, no outputs."
+    }
+  ]
+}

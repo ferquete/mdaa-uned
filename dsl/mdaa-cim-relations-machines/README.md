@@ -1,30 +1,40 @@
-# MDA-Audio CIM Relations Machines
+# MDA Audio CIM Relations Machine DSL
 
-Este proyecto contiene la definición del lenguaje para las relaciones entre máquinas CIM en el ecosistema MDA-Audio.
+Este lenguaje define las conexiones conceptuales entre máquinas CIM, permitiendo modelar el flujo de señales de audio y modificaciones a nivel abstracto.
 
-## Comandos Útiles
+## Comandos Principales
 
-*   `npm run langium:generate`: Sincroniza los archivos generados con la gramática `.langium`. Úsalo después de modificar la gramática.
-*   `npm run build`: Compila el código TypeScript a JavaScript en la carpeta `out/`. Es necesario para que el validador refleje los cambios.
+*   `npm run langium:generate`: Genera el código del lenguaje.
+*   `npm run build`: Compila los servicios de validación.
 
-## Guía de Validación de JSON
+## Validación de Modelos JSON
 
-Para validar tus archivos JSON de relaciones contra el esquema y las reglas del lenguaje, utiliza el script unificado:
+Se utiliza el script `validate.ts` para validar las conexiones.
 
-```bash
-# Asegúrate de haber compilado primero
-npm run build
+### Ejecución de la validación
+Para validar un fichero o un directorio completo, utiliza el comando `node` pasando el script y la ruta:
 
-# Ejecuta la validación sobre un archivo
-PATH="/opt/homebrew/bin:$PATH" node packages/language/out/scripts/validate-all.js examples/valid/valid-1.json
-```
+1.  **Validación Interna** (Estructura y semántica):
+    ```bash
+    # Validar un fichero
+    node validate.ts examples/valid/valid-1.json
 
-El programa realizará dos validaciones:
-1.  **Estructura**: Verifica que el JSON cumpla con el esquema definido (tipos, longitudes, campos obligatorios).
-2.  **Lógica DSL**: Verifica reglas de negocio como la unicidad de IDs y consistencia de referencias.
+    # Validar todo un directorio
+    node validate.ts examples/valid
+    ```
 
-## Estructura de Carpetas
+2.  **Validación Cruzada** (Referenciando máquinas reales):
+    ```bash
+    node validate.ts examples/valid examples/machines
+    ```
 
-*   `packages/language`: Definición de la gramática y validadores.
-*   `examples/`: Colección de ejemplos válidos e inválidos para pruebas.
-*   `mdaa-cim-relations-machines.schema.json`: Esquema JSON oficial del lenguaje.
+### Estructura de Ejemplos
+*   **`examples/valid/`**: Relaciones que cumplen todas las reglas y referencian máquinas de la carpeta `machines`.
+*   **`examples/invalid/`**: Relaciones con fallos estructurales o semánticos internos.
+    *   **`invalid_by_relations/`**: Casos específicos de fallo en validación cruzada (IDs inexistentes o puertos mal configurados).
+*   **`examples/machines/`**: Copia de máquinas CIM reales para ser usadas como base de la validación cruzada.
+
+### Ficheros Involucrados
+*   **`examples/machines/`**: Directorio que contiene máquinas CIM reales. Se utiliza como referencia para la validación cruzada avanzada (verificación de existencia de IDs y configuración de puertos `hasExternalInput`/`hasExternalOutput`).
+*   `validate.ts`: Script principal que permite incluso validar contra el directorio de máquinas CIM.
+*   `mdaa-cim-relations-machines.schema.json`: Esquema JSON estructural.

@@ -1,10 +1,11 @@
 {
+  "description": "Sampler playback through delay unit.",
   "relations": [
     {
       "id": "444e8400-e29b-41d4-a716-446655440444",
-      "source": "Sampler00000000000000000000000000000",
-      "destination": "DelayEffect1111111111111111111111111",
-      "description": "Send sampler output to delay processor."
+      "source": "550e8400-e29b-41d4-a716-446655440009",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Feeds granular sampler output into the temporal delay processor."
     }
   ]
 }

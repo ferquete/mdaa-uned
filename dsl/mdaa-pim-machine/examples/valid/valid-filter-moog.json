@@ -1,0 +1,24 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441003",
+  "name": "Filter Setup",
+  "description": "Filtro Moog vinculado al Oscillator Core CIM.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [
+    {
+      "type": "frequency_filter",
+      "id": "550e8400-e29b-41d4-a716-446655443003",
+      "name": "Moog Filter",
+      "description": "Filtro de paso bajo.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "filterType": { "id": "550e8400-0000-0000-0001-000000000001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "LPF", "isModifiable": false },
+      "cutoff": { "id": "550e8400-0000-0000-0001-000000000002", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 1000, "isModifiable": true },
+      "resonance": { "id": "550e8400-0000-0000-0001-000000000003", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 2, "isModifiable": true },
+      "slope": { "id": "550e8400-0000-0000-0001-000000000004", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "24dB/oct", "isModifiable": false },
+      "stereo": { "id": "550e8400-0000-0000-0001-000000000005", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "input_1": { "id": "550e8400-0000-0000-0001-000000000006", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] },
+      "output_1": { "id": "550e8400-0000-0000-0001-000000000007", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
+    }
+  ],
+  "edges": []
+}

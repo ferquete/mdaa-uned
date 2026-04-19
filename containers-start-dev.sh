@@ -1,4 +1,5 @@
 cd docker
-docker compose down && docker compose up -d && docker logs -f base-keycloak
+docker compose down && docker compose up -d &&  docker compose logs -f
+# docker logs -f base-keycloak
 cd ..
 

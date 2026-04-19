@@ -1,0 +1,8 @@
+{
+  "id": "INVALID-UUID",
+  "name": "Machine with Invalid ID",
+  "description": "Esta maquina tiene un ID que no sigue el formato UUID v4 de 36 caracteres.",
+  "ids_cim_reference": ["12345"],
+  "nodes": [],
+  "edges": []
+}

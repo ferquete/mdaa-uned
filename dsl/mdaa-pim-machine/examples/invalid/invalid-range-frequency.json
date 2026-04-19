@@ -1,0 +1,63 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441011",
+  "name": "Invalid Frequency",
+  "description": "Este ejemplo tiene un oscilador con una frecuencia fuera del rango permitido (0-20000).",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655442011"],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655443011",
+      "name": "Osc Malo",
+      "description": "Frecuencia demasiado alta.",
+      "ids_references": ["ref"],
+      "others": [],
+      "waveform": {
+        "id": "550e8400-e29b-41d4-a716-446655444050",
+        "ids_references": ["ref"],
+        "initialValue": "sine",
+        "isModifiable": true
+      },
+      "frequency": {
+        "id": "550e8400-e29b-41d4-a716-446655444051",
+        "ids_references": ["ref"],
+        "initialValue": 50000,
+        "isModifiable": true
+      },
+      "pulseWidth": {
+        "id": "550e8400-e29b-41d4-a716-446655444052",
+        "ids_references": ["ref"],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "gain": {
+        "id": "550e8400-e29b-41d4-a716-446655444053",
+        "ids_references": ["ref"],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "phase": {
+        "id": "550e8400-e29b-41d4-a716-446655444054",
+        "ids_references": ["ref"],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "550e8400-e29b-41d4-a716-446655444055",
+        "ids_references": ["ref"],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655444056",
+        "ids_references": ["ref"],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445019",
+        "ids_references": ["ref"]
+      }
+    }
+  ],
+  "edges": []
+}

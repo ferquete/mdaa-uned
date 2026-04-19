@@ -2,6 +2,7 @@ import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
 import { MdaAudioCimMachineGeneratedModule, MdaAudioCimMachineGeneratedSharedModule } from './generated/module.js';
 import { MdaAudioCimMachineValidator, registerValidationChecks } from './mda-audio-cim-machines-validator.js';
+import { MdaAudioCimMachineNameProvider } from './mda-audio-cim-machines-scope.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -24,6 +25,9 @@ export type MdaAudioCimMachineServices = LangiumServices & MdaAudioCimMachineAdd
  * selected services, while the custom services must be fully specified.
  */
 export const MdaAudioCimMachineModule: Module<MdaAudioCimMachineServices, PartialLangiumServices & MdaAudioCimMachineAddedServices> = {
+    references: {
+        NameProvider: () => new MdaAudioCimMachineNameProvider()
+    },
     validation: {
         MdaAudioCimMachineValidator: () => new MdaAudioCimMachineValidator()
     }

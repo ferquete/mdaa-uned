@@ -1,0 +1,37 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441012",
+  "name": "Missing Input Mixer",
+  "description": "Este mezclador tiene inputs_number=2 pero solo define input_1, lo cual es un error sintactico y semantico.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655442012"],
+  "nodes": [
+    {
+      "type": "mixer",
+      "id": "550e8400-e29b-41d4-a716-446655443012",
+      "name": "Mixer Incompleto",
+      "description": "Falta una entrada obligatoria.",
+      "ids_references": ["ref"],
+      "others": [],
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655444057",
+        "ids_references": ["ref"],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "inputs_number": {
+        "id": "550e8400-e29b-41d4-a716-446655444058",
+        "ids_references": ["ref"],
+        "initialValue": 2,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445020",
+        "ids_references": ["ref"]
+      },
+      "input_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445021",
+        "ids_references": ["ref"]
+      }
+    }
+  ],
+  "edges": []
+}

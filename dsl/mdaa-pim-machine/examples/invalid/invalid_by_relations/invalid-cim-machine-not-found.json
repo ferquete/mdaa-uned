@@ -1,0 +1,24 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441999",
+  "name": "Machine Error",
+  "ids_cim_reference": ["00000000-0000-0000-0000-000000000000"],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655443001",
+      "name": "Osc",
+      "description": "Falla porque la maquina CIM 0000... no existe en disco.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "waveform": { "id": "00000000-0000-0000-0000-000000000001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "sine", "isModifiable": false },
+      "frequency": { "id": "00000000-0000-0000-0000-000000000002", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 440, "isModifiable": true },
+      "pulseWidth": { "id": "00000000-0000-0000-0000-000000000003", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.5, "isModifiable": true },
+      "gain": { "id": "00000000-0000-0000-0000-000000000004", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.8, "isModifiable": true },
+      "phase": { "id": "00000000-0000-0000-0000-000000000005", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0, "isModifiable": true },
+      "pan": { "id": "00000000-0000-0000-0000-000000000006", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0, "isModifiable": true },
+      "stereo": { "id": "00000000-0000-0000-0000-000000000007", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "output_1": { "id": "00000000-0000-0000-0000-000000000008", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
+    }
+  ],
+  "edges": []
+}

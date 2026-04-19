@@ -1,11 +1,11 @@
 {
-  "description": "Clock synchronization.",
+  "description": "Clock synchronization and rhythmic sequencing.",
   "relations": [
     {
-      "id": "b22e8400-e29b-41d4-a716-446655440222",
-      "source": "MasterClock0000000000000000000000000",
-      "destination": "Sequencer111111111111111111111111111",
-      "description": "Trigger pulses for step sequencing."
+      "id": "bbb28400-e29b-41d4-a716-446655440bbb",
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Syncs master clock signal to the main sequencer unit."
     }
   ]
 }

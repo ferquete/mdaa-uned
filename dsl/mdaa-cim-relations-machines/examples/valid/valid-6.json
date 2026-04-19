@@ -1,11 +1,11 @@
 {
-  "description": "FX Return Loop.",
+  "description": "Spatial reverb send/return configuration.",
   "relations": [
     {
       "id": "888e8400-e29b-41d4-a716-446655440888",
-      "source": "Reverb000000000000000000000000000000",
-      "destination": "ReturnMixer1111111111111111111111111",
-      "description": "Reverb tail return to mixer."
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Send wet reverb output to the auxiliary return mixer."
     }
   ]
 }

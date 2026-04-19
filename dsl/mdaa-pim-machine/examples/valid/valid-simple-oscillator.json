@@ -1,0 +1,83 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441001",
+  "name": "Oscillator System",
+  "description": "Sistema de oscilador simple vinculado a un nucleo CIM real.",
+  "ids_cim_reference": [
+    "550e8400-e29b-41d4-a716-446655440000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655443001",
+      "name": "Generador Principal",
+      "description": "Genera la señal base.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "550e8400-e29b-41d4-a716-446655444001",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": "sine",
+        "isModifiable": false
+      },
+      "frequency": {
+        "id": "550e8400-e29b-41d4-a716-446655444002",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 440,
+        "isModifiable": true
+      },
+      "pulseWidth": {
+        "id": "550e8400-e29b-41d4-a716-446655444003",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "gain": {
+        "id": "550e8400-e29b-41d4-a716-446655444004",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0.8,
+        "isModifiable": true
+      },
+      "phase": {
+        "id": "550e8400-e29b-41d4-a716-446655444005",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "550e8400-e29b-41d4-a716-446655444006",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655444007",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655445001",
+        "ids_references": [
+          "771e8400-e29b-41d4-a716-446655440111"
+        ]
+      }
+    }
+  ],
+  "edges": []
+}

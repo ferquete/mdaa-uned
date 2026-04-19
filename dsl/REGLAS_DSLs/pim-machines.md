@@ -16,8 +16,23 @@ El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación 
 | `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. Máximo 20 caracteres. |
 | `description` | STRING | Información general sobre la máquina. | Opcional. Máximo 600 caracteres. |
 | `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. Piensa que una máquina PIM puede querer implementar varias máquinas CIM, no siempre es una relación 1:1. Este array define el universo de elementos en los que se moverá el modelo PIM de esta máquina. | Obligatorio. Puede estar vacío. |
-| `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. Puede estar vacío (para cuando iniciamos el diseño). |
-| `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. Puede estar vacío (para cuando iniciamos el diseño). |
+| `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. Puede estar vacío. |
+| `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. Puede estar vacío. |
+
+### 1.2. Ejemplo de Estructura Raíz
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "name": "Full Technical Test",
+  "description": "Descripcion de hasta 600 caracteres...",
+  "ids_cim_reference": [
+    "550e8400-e29b-41d4-a716-446655440000"
+  ],
+  "nodes": [...],
+  "edges": [...]
+}
+```
 
 ### 1.2. Interfaces Base
 
@@ -106,6 +121,35 @@ Generan señales sonoras. Todos cuentan con el fragmento `AudioOutputFields`:
 | `phase` | NUMBER | 0 - 2π (6.283) | Fase inicial. |
 | `pan` | NUMBER | -1 a 1 | Posicionamiento estéreo. |
 
+#### Ejemplo: Oscillator
+```json
+{
+  "type": "oscillator",
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "name": "Master Osc",
+  "description": "Oscilador principal de prueba.",
+  "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+  "others": [],
+  "waveform": {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+    "initialValue": "sine",
+    "isModifiable": true
+  },
+  "frequency": { ... },
+  "stereo": {
+    "id": "550e8400-e29b-41d4-a716-446655440009",
+    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+    "initialValue": false,
+    "isModifiable": false
+  },
+  "output_1": {
+    "id": "550e8400-e29b-41d4-a716-446655440010",
+    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+  }
+}
+```
+
 #### Ruido (`noise`)
 | Parámetro | Tipo | Rango / Valores | Descripción |
 | :--- | :--- | :--- | :--- |
@@ -168,6 +212,34 @@ Procesan audio. Todos usan el fragmento `SoundModifierFields`:
 | `cutoff` | NUMBER | 20 - 20,000 | Frecuencia de corte. |
 | `resonance` | NUMBER | 0 - 10 | Resonancia (Q). |
 | `slope` | STRING | `12dB/oct`, `24dB/oct`, `48dB/oct` | Pendiente de atenuación. |
+
+#### Ejemplo: Filter (con Stereo y Ping-Pong)
+```json
+{
+  "type": "frequency_filter",
+  "id": "550e8400-e29b-41d4-a716-446655440043",
+  "name": "Main Filter",
+  "description": "Filtro con stereo y ping pong.",
+  "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+  "others": [],
+  "filterType": { ... },
+  "stereo": {
+    "id": "550e8400-e29b-41d4-a716-446655440048",
+    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+    "initialValue": true,
+    "isModifiable": false
+  },
+  "ping_pong": {
+    "id": "550e8400-e29b-41d4-a716-446655440049",
+    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+    "initialValue": false,
+    "isModifiable": true
+  },
+  "input_1": { ... },
+  "output_1": { ... },
+  "output_2": { ... }
+}
+```
 
 #### Reverb (`reverb`)
 | Parámetro | Tipo | Rango / Valores | Descripción |

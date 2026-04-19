@@ -7,7 +7,7 @@
     "description": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 600,
+      "maxLength": 1000,
       "description": "General purpose of the interconnections"
     },
     "relations": {
@@ -43,7 +43,7 @@
         "description": {
           "type": "string",
           "minLength": 10,
-          "maxLength": 600,
+          "maxLength": 1000,
           "description": "Technical justification of the link"
         }
       }

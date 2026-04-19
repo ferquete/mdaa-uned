@@ -1,17 +1,17 @@
 {
-  "description": "Parallel processing chain.",
+  "description": "Parallel processing: Dry and Wet signal summation.",
   "relations": [
     {
       "id": "999e8400-e29b-41d4-a716-446655440999",
-      "source": "DrySignal000000000000000000000000000",
-      "destination": "MasterSum111111111111111111111111111",
-      "description": "Dry path to final summation."
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Routes unprocessed dry signal to the master summing mixer."
     },
     {
-      "id": "a11e8400-e29b-41d4-a716-446655440111",
-      "source": "WetSignal000000000000000000000000000",
-      "destination": "MasterSum111111111111111111111111111",
-      "description": "Wet path to final summation."
+      "id": "aaa18400-e29b-41d4-a716-446655440aaa",
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Routes processed wet signal to the master summing mixer."
     }
   ]
 }

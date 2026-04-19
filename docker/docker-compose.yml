@@ -53,7 +53,7 @@ services:
       KC_DB_URL: jdbc:mariadb://mariadb:3306/basedb
       KC_DB_USERNAME: devuser
       KC_DB_PASSWORD: devpassword
-    command: ["start-dev --import-realm"]
+    command: [ "start-dev --import-realm" ]
     ports:
       - "8080:8080"
     volumes:
@@ -64,6 +64,48 @@ services:
     networks:
       - base-network
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: base-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - base-network
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull qwen2.5:7b
+        ollama pull gemma3:27b
+        wait
+    # NOTA PARA MAC: Comentar la sección 'deploy' inferior si usas macOS, ya que da error de driver.
+    # NOTA PARA PC: Descomentar para usar GPU NVIDIA (requiere NVIDIA Container Toolkit instalado).
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: base-webui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - webui-data:/app/backend/data
+    depends_on:
+      - ollama
+    networks:
+      - base-network
+
 networks:
   base-network:
     driver: bridge
@@ -71,3 +113,5 @@ networks:
 volumes:
   base-mariadb-data:
   base-redis-data:
+  ollama-data:
+  webui-data:

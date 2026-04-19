@@ -14,6 +14,22 @@ El lenguaje utiliza una estructura JSON para definir el grafo de relaciones.
 | `description` | STRING | Propósito de la red de relaciones. | Opcional. 1 a 600 caracteres. |
 | `relations` | ARRAY | Lista de objetos de relación detallada. | Obligatorio. Puede estar vacío. |
 
+### 1.2. Ejemplo de Estructura Raíz
+
+```json
+{
+  "description": "0123456789 (hasta 600 caracteres)",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661001",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-e29b-41d4-a716-446655444004",
+      "description": "Modulacion de amplitud (10 a 300 caracteres)"
+    }
+  ]
+}
+```
+
 ### 1.2. Objeto Relation (Relación PIM)
 
 Define un vínculo técnico entre un punto de salida y un punto de entrada o parámetro.
@@ -24,6 +40,16 @@ Define un vínculo técnico entre un punto de salida y un punto de entrada o par
 | `source` | STRING | ID del **output** de una máquina PIM, que tenga su propiedad `isExternalOutput` en true. | Obligatorio. UUID de 36 caracteres. |
 | `destination`| STRING | ID del **input** o **parámetro** de una máquina PIM, que tenga su propiedad `isExternalInput` en true. | Obligatorio. UUID de 36 caracteres. |
 | `description` | STRING | Descripción de la modulación o flujo. | Obligatorio. 10 a 300 caracteres. |
+
+#### Ejemplo de Relación Detallada
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655661001",
+  "source": "550e8400-e29b-41d4-a716-446655445001",
+  "destination": "550e8400-e29b-41d4-a716-446655444004",
+  "description": "Conexion de oscilador a ganancia del amplificador."
+}
+```
 
 ---
 

@@ -1,0 +1,21 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440007",
+  "name": "Modulator Unit",
+  "description": "Control voltage modulator for dynamic parameter changes.",
+  "elements": [
+    {
+      "id": "lfo1-8400-e29b-41d4-a716-44665544011",
+      "name": "LFO Modulator",
+      "description": "Low frequency oscillator for subsonic modulation pulses.",
+      "params": "rate: 0.5Hz, depth: 100, shape: triangle",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Modulation signal out."
+      },
+      "sendTo": []
+    }
+  ]
+}

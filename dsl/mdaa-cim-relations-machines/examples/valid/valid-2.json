@@ -1,17 +1,17 @@
 {
-  "description": "Drums section connectivity.",
+  "description": "Drum section routing: Kick and Snare to Drum Bus.",
   "relations": [
     {
       "id": "222e8400-e29b-41d4-a716-446655440222",
-      "source": "KickMachine0000000000000000000000000",
-      "destination": "DrumBus11111111111111111111111111111",
-      "description": "Routes kick drum to dedicated drum bus."
+      "source": "550e8400-e29b-41d4-a716-446655440005",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Routes Kick machine output to the Drum mixer stage."
     },
     {
       "id": "333e8400-e29b-41d4-a716-446655440333",
-      "source": "SnareMachine000000000000000000000000",
-      "destination": "DrumBus11111111111111111111111111111",
-      "description": "Routes snare drum to dedicated drum bus."
+      "source": "550e8400-e29b-41d4-a716-446655440004",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Routes Snare machine output to the Drum mixer stage."
     }
   ]
 }

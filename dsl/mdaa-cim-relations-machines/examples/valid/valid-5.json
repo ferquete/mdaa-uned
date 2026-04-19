@@ -1,17 +1,17 @@
 {
-  "description": "Multi-out synth routing.",
+  "description": "Dual oscillator filtering setup.",
   "relations": [
     {
       "id": "666e8400-e29b-41d4-a716-446655440666",
-      "source": "VCO-10000000000000000000000000000000",
-      "destination": "Filter-11111111111111111111111111111",
-      "description": "Oscillator 1 to primary filter."
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Feed VCO-1 output into primary filter stage."
     },
     {
       "id": "777e8400-e29b-41d4-a716-446655440777",
-      "source": "VCO-20000000000000000000000000000000",
-      "destination": "Filter-21111111111111111111111111111",
-      "description": "Oscillator 2 to secondary filter."
+      "source": "550e8400-e29b-41d4-a716-446655440006",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Feed VCO-2 output into secondary filter stage."
     }
   ]
 }

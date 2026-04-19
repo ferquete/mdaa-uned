@@ -1,0 +1,184 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "name": "Full Technical Test",
+  "description": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+  "ids_cim_reference": [
+    "550e8400-e29b-41d4-a716-446655440000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Master Osc",
+      "description": "Oscilador principal de prueba.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": "sine",
+        "isModifiable": true
+      },
+      "frequency": {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 440,
+        "isModifiable": true
+      },
+      "pulseWidth": {
+        "id": "550e8400-e29b-41d4-a716-446655440005",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "gain": {
+        "id": "550e8400-e29b-41d4-a716-446655440006",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0.8,
+        "isModifiable": true
+      },
+      "phase": {
+        "id": "550e8400-e29b-41d4-a716-446655440007",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "pan": {
+        "id": "550e8400-e29b-41d4-a716-446655440008",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0,
+        "isModifiable": true
+      },
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655440009",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": false,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655440010",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "550e8400-e29b-41d4-a716-446655440043",
+      "name": "Main Filter",
+      "description": "Filtro de frecuencia con stereo y ping pong habilitado.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "550e8400-e29b-41d4-a716-446655440044",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": "lowpass",
+        "isModifiable": false
+      },
+      "cutoff": {
+        "id": "550e8400-e29b-41d4-a716-446655440045",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 1000,
+        "isModifiable": true
+      },
+      "resonance": {
+        "id": "550e8400-e29b-41d4-a716-446655440046",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 0.5,
+        "isModifiable": true
+      },
+      "slope": {
+        "id": "550e8400-e29b-41d4-a716-446655440047",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 24,
+        "isModifiable": false
+      },
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655440048",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "550e8400-e29b-41d4-a716-446655440049",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": false,
+        "isModifiable": true
+      },
+      "input_1": {
+        "id": "550e8400-e29b-41d4-a716-446655440050",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "input_2": {
+        "id": "550e8400-e29b-41d4-a716-446655440051",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655440052",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "output_2": {
+        "id": "550e8400-e29b-41d4-a716-446655440053",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "550e8400-e29b-41d4-a716-446655440110",
+      "name": "Main Mixer",
+      "description": "Mezclador final con 2 canales.",
+      "ids_references": [
+        "771e8400-e29b-41d4-a716-446655440111"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "550e8400-e29b-41d4-a716-446655440111",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "ping_pong": {
+        "id": "550e8400-a29b-41d4-a716-446655440112",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": false,
+        "isModifiable": true
+      },
+      "inputs_number": {
+        "id": "550e8400-e29b-41d4-a716-446655440113",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+        "initialValue": 2,
+        "isModifiable": false
+      },
+      "output_1": {
+        "id": "550e8400-e29b-41d4-a716-446655440114",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "output_2": {
+        "id": "550e8400-e29b-41d4-a716-446655440115",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "input_1": {
+        "id": "550e8400-e29b-41d4-a716-446655440116",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      },
+      "input_2": {
+        "id": "550e8400-e29b-41d4-a716-446655440117",
+        "ids_references": ["771e8400-e29b-41d4-a716-446655440111"]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440125",
+      "description": "Conexion de audio principal.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "sourceNode": "550e8400-e29b-41d4-a716-446655440002",
+      "sourceParam": "550e8400-e29b-41d4-a716-446655440010",
+      "targetNode": "550e8400-e29b-41d4-a716-446655440043",
+      "targetParam": "550e8400-e29b-41d4-a716-446655440050",
+      "type": "audio"
+    }
+  ]
+}

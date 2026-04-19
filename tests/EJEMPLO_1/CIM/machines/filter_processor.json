@@ -1,0 +1,60 @@
+{
+  "id": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
+  "name": "Filter Processor VR",
+  "description": "Unidad de procesamiento de filtrado dinamico diseñada para esculpir el contenido armonico de las señales. Este procesador implementa tipologias de filtros Ladder, State Variable y modelado digital. Su arquitectura permite ruteos en serie o paralelo gestionando la resonancia y la saturacion de manera musical. Es capaz de recibir señales de audio externas y señales de modulacion para automatizar el corte de frecuencia en perfecta sincronia con el ritmo del tema musical en produccion.",
+  "elements": [
+    {
+      "id": "112e8400-e29b-41d4-a716-446655440111",
+      "name": "Main Audio Input",
+      "description": "Nodo de entrada principal responsable de recibir la señal de audio cruda desde los osciladores o fuentes externas. Este elemento incluye una etapa de pre-ganancia configurada para saturar suavemente la señal añadiendo armonicos pares antes de entrar en las etapas de filtrado, lo cual ayuda a que el filtro tenga mas material con el que trabajar y resulte en un sonido final mas presente.",
+      "params": "Input Gain: -12dB a +24dB, Drive Amount: 0-10, Saturation Type: Tube/Tape/Soft, Input Trim: +/- 6dB, Phase Flip: normal/inv, Low Cut Link: true/false, Input Meter: dBFS",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de audio de alta fidelidad para recibir la señal del nucleo de oscilacion o de cualquier otra fuente de audio externa."
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": [
+        {
+          "id": "c33e8400-e29b-41d4-a716-446655440333",
+          "idRef": "222e8400-e29b-41d4-a716-446655440222",
+          "description": "Envia la señal de entrada pre-procesada hacia el filtro principal para su esculpido armonico."
+        }
+      ]
+    },
+    {
+      "id": "222e8400-e29b-41d4-a716-446655440222",
+      "name": "Resonant MultiFilter",
+      "description": "Filtro resonante de alta calidad con respuesta paso bajo, paso alto, paso banda y muesca. Implementa un algoritmo de compensacion de ganancia que evita la perdida de graves al subir la resonancia permitiendo barridos de frecuencia extremadamente agresivos pero controlados que son esenciales para el diseño de bajos profundos y leads penetrantes en la produccion de musica electronica moderna.",
+      "params": "Cutoff: 10Hz-22kHz, Resonancia: 0-100%, Slope: 12/24/48dB, Drive Post: 0-20dB, FM Mod Depth: 0-1, Tracking: 0-200%, Type: LP/HP/BP/Notch, Latency: 0ms, Mode: Clean/Dirty/Acid",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": [
+        {
+          "id": "d44e8400-e29b-41d4-a716-446655440444",
+          "idRef": "333e8400-e29b-41d4-a716-446655440333",
+          "description": "Envia la señal filtrada hacia la etapa de salida final del modulo de filtrado."
+        }
+      ]
+    },
+    {
+      "id": "333e8400-e29b-41d4-a716-446655440333",
+      "name": "Filtered Output Node",
+      "description": "Punto de salida final de la unidad de filtrado que entrega la señal procesada al rack de efectos. Este elemento asegura que la integracion de la señal filtrada con el resto del sistema sea fluida y que no se introduzcan problemas de fase gracias a su compensacion de retardo interna automatizada que mantiene todos los procesos del sintetizador alineados temporalmente a la perfeccion.",
+      "params": "Output Level: 0-100%, Dry/Wet Mix: 0-100%, Phase Align: 0-360, Output Limit: On/Off, Stereo Width: 0-200%, DC Offset Fix: On/Off, Gain Comp: On/Off, bypass: true/false",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salidad de audio filtrada de alta calidad destinada a la etapa de efectos finales o mezcla global."
+      },
+      "sendTo": []
+    }
+  ]
+}

@@ -56,8 +56,7 @@ public class CimMachineService {
                         root.put("id", java.util.UUID.randomUUID().toString());
                         root.put("name", request.getName());
                         root.put("description", request.getDescription());
-                        root.putArray("generators");
-                        root.putArray("modificators");
+                        root.putArray("elements");
                         initialJson = objectMapper.writeValueAsString(root);
                     } catch (Exception e) {
                         log.error("Error creando JSON inicial", e);
@@ -115,8 +114,7 @@ public class CimMachineService {
                                                 .then(Mono.defer(() -> {
                                                     try {
                                                         // Asegurar que las colecciones obligatorias existen
-                                                        if (!root.has("generators")) root.putArray("generators");
-                                                        if (!root.has("modificators")) root.putArray("modificators");
+                                                        if (!root.has("elements")) root.putArray("elements");
                                                         
                                                         machine.setMachine(objectMapper.writeValueAsString(root));
                                                         return cimMachineRepository.save(machine)
@@ -128,8 +126,7 @@ public class CimMachineService {
                                         }
 
                                         // Asegurar que las colecciones obligatorias existen
-                                        if (!root.has("generators")) root.putArray("generators");
-                                        if (!root.has("modificators")) root.putArray("modificators");
+                                        if (!root.has("elements")) root.putArray("elements");
                                         
                                         machine.setMachine(objectMapper.writeValueAsString(root));
                                     } catch (Exception e) {

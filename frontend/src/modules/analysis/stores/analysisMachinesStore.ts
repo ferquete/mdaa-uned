@@ -55,6 +55,10 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
       }
       const parsed = JSON.parse(machineStr);
       
+      // Limpiar campos obsoletos que puedan venir de datos antiguos
+      delete parsed.generators;
+      delete parsed.modificators;
+      
       const fixComponent = (c: any) => ({
         ...c,
         sendTo: c.sendTo || [],

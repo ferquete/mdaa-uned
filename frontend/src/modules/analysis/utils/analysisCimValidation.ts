@@ -22,8 +22,8 @@ export function validateCimRelations(doc: any, validMachines: ValidMachine[] = [
   const desc = doc.description || ''
   if (!doc.description && doc.description !== '') {
     errors.push({ field: 'description', message: 'La descripción es obligatoria' })
-  } else if (desc.length > 600) {
-    errors.push({ field: 'description', message: 'Descripción: Máximo 600 caracteres' })
+  } else if (desc.length > 1000) {
+    errors.push({ field: 'description', message: 'Descripción: Máximo 1000 caracteres' })
   }
 
   // 2. Validar array de relaciones
@@ -86,8 +86,8 @@ export function validateCimRelations(doc: any, validMachines: ValidMachine[] = [
     const relDesc = rel.description || ''
     if (relDesc.length < 10) {
        errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Mínimo 10 caracteres' })
-    } else if (relDesc.length > 600) {
-       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Máximo 600 caracteres' })
+    } else if (relDesc.length > 1000) {
+       errors.push({ nodeId: relIdPrefix, field: 'description', message: 'Descripción: Máximo 1000 caracteres' })
     }
   })
 

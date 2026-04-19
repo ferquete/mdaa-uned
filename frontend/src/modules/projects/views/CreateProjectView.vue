@@ -37,7 +37,7 @@ const isNameValid = computed(() => {
 })
 
 const isDescriptionValid = computed(() => {
-  return description.value.length <= 200
+  return description.value.length <= 1000
 })
 
 const isFormValid = computed(() => {
@@ -90,7 +90,12 @@ const handleSubmit = async () => {
         <div class="space-y-6">
           <!-- Nombre -->
           <div class="space-y-2">
-            <label for="name" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Nombre del Proyecto</label>
+            <div class="flex justify-between items-center">
+              <label for="name" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Nombre del Proyecto</label>
+              <span class="text-[9px] uppercase font-bold tracking-wider" :class="name.length >= 40 ? 'text-geist-error animate-pulse' : 'text-geist-accents-3'">
+                {{ name.length }} / 40
+              </span>
+            </div>
             <input 
               v-model="name" 
               id="name" 
@@ -105,20 +110,20 @@ const handleSubmit = async () => {
 
           <!-- Descripción -->
           <div class="space-y-2">
-            <label for="description" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Descripción (Opcional)</label>
+            <div class="flex justify-between items-center">
+              <label for="description" class="text-xs uppercase tracking-widest font-bold text-geist-accents-4">Descripción (Opcional)</label>
+              <span class="text-[9px] uppercase font-bold tracking-wider" :class="description.length >= 1000 ? 'text-geist-error animate-pulse' : 'text-geist-accents-3'">
+                {{ description.length }} / 1000
+              </span>
+            </div>
             <textarea 
               v-model="description" 
               id="description" 
-              rows="3"
+              rows="6"
               class="geist-input py-3 resize-none" 
               placeholder="¿De qué trata este proyecto?"
-              maxlength="200"
+              maxlength="1000"
             ></textarea>
-            <div class="flex justify-end">
-              <span class="text-[9px] uppercase font-bold tracking-wider" :class="description.length > 190 ? 'text-geist-error' : 'text-geist-accents-3'">
-                {{ description.length }} / 200
-              </span>
-            </div>
           </div>
 
         </div>

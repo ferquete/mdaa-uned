@@ -1,0 +1,43 @@
+{
+  "id": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
+  "name": "Modulation Matrix XP",
+  "description": "Centro neuralgico de control diseñado para inyectar movimiento en los parametros de sintesis. Esta maquina genera señales LFO y envolventes complejas mapeables a cualquier destino. Su arquitectura permite modulaciones cruzadas y funciones matemáticas entre fuentes creando patrones evolutivos fundamentales para texturas cinematicas y paisajes sonoros ambientales que requieren una variacion constante y no repetitiva a lo largo del tiempo de ejecucion en el tema musical.",
+  "elements": [
+    {
+      "id": "442e8400-e29b-41d4-a716-446655440111",
+      "name": "LFO Global Gen",
+      "description": "Generador de señal de baja frecuencia con multiples formas de onda y sincronizacion al tempo del proyecto. Capaz de producir ondas suaves o agresivas para modular parametros de otras maquinas. Incluye una etapa de suavizado para evitar saltos bruscos asegurando que las transiciones sean fluidas incluso con configuraciones de velocidad extrema, lo cual es vital para modular el cutoff del filtro sin introducir artefactos de audio perceptibles.",
+      "params": "Rate: 0.01Hz-50Hz, Sync Rate: 1/128-32n, Waveform: Sine/Tri/Saw/Sq/Rand, Fade In: 0-2000ms, Smoothing: 0-100%, Phase Start: 0-360, Unipolar: true/false",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de señal de control LFO para modular parametros externos en otras maquinas del proyecto."
+      },
+      "sendTo": []
+    },
+    {
+      "id": "552e8400-e29b-41d4-a716-446655440222",
+      "name": "Complex ENV Gen",
+      "description": "Generador de envolventes de multiples etapas (Attack, Hold, Decay, Sustain, Release) diseñado para controlar la evolucion temporal de la intensidad. Permite curvas de respuesta personalizables entre exponenciales y logaritmicas para cada etapa proporcionando un control total sobre el punch inicial o la suavidad del desvanecimiento final, lo cual es critico para la percusion sintetica y los pads atmosfericos de larga duracion que definen el caracter emocional.",
+      "params": "Attack Time: 0-5s, Hold Time: 0-2s, Decay Time: 0-5s, Sustain Level: 0-100%, Release Time: 0-10s, Curve Shape: -100 to +100, Loop Mode: On/Off",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de disparo (trigger) para reiniciar el ciclo de la envolvente desde un secuenciador externo."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de valor de envolvente para control dinamico de ganancia o filtrado en otros modulos."
+      },
+      "sendTo": []
+    },
+    {
+      "id": "662e8400-e29b-41d4-a716-446655440333",
+      "name": "Mod Matrix Node",
+      "description": "Nodo de gestion de la matriz de modulacion que permite la suma y multiplicacion de fuentes de control antes de su distribucion final. Este punto escala las señales de modulacion segun la intensidad deseada garantizando que los rangos de control sean siempre seguros para los parametros de destino y evitando desbordamientos que podrian resultar en comportamientos erraticos o silencios no deseados en la generacion sonora de las maquinas dependientes.",
+      "params": "Amount Map: -100% to +100%, Source Select: LFO/ENV/MW, Destination: External/Internal, Invert: true/false, Lag: 0-500ms, Quantize: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": []
+    }
+  ]
+}

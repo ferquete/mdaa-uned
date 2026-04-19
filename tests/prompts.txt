@@ -20,3 +20,33 @@ Lo pintaremos así:
         "description": "Audio output of the sine wave." 
       },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------
+
+
+
+En la carpeta tests/EJEMPLO_1, estamos creando, un ejemplo completo para la aplicación, y ya con la parte CIM realizada, nos vamos a poner con la PIM. Este proyeco debe ser realista, o sea, de un sintetizador real que te inventes en base al CIM ya generado, y debe servir para comprobar que todo funciona bien en la aplicación de cara a la validación de los campos, de ahí que tenga que ser completo. Vamos a completar lso siguientes pasos para la creación de PIM:
+
+1) En la carpeta CIM tienes todos los json de máquinas y relaciones entre ellas de la parte CIM. Para generar las máuinas de la parte PIM, debes basarte en ellas, referenciándolas cuando haga falta, de la forma en que el fichero @pim-machines.md indica.
+
+2) En la carpeta PIM crearemos 5 ficheros json:
+
+* En la carpeta PIM/machines , crearemos 4 machines de PIM, siguiendo el lenguaje especificado en el dsl dsl/mdaa-pim-machine, y los preceptos establecidos en @pim-machines.md. En estos ejemplos deben aparecer todos los campos que la gramática proporciona, y un buen número de nodos creados en sus arrays "nodes", basándonos en lo creado para CIM. DEBEN APARECER TODOS LOS TIPOS DE NODOS QUE LA GRAMATICA DEFINE, Y DEBEN ESTAR BIEN REFERENCIADOS A PARTES DE CIM. Rellena todos los campos al limite de su validación en número de caracteres. Para la comunicación de estas máquinas entre ellas, cuando sea necesario, se deberá definir bien sus valores de isExternalInput e isExternalOutput.
+
+* En la carpeta PIM, crearemos un json que definirá relaciones entre las máquinas, lenguaje definido en dsl/mdaa-pim-relations-machines, siguiendo los preceptos de @pim-relations-machines.md. Crea todas las relaciones posibles que validen, teniendo en cuenta lo dicho por @pim-relations-machines.md, ya que las referencias entre ellas deben seguir una validación.
+

@@ -147,13 +147,13 @@ const handleSave = async () => {
         <label class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] px-1">Descripción General del Análisis</label>
         <textarea 
           v-model="formData.description"
-          maxlength="600"
+          maxlength="1000"
           placeholder="Escribe el propósito de este análisis de relaciones..."
           class="w-full bg-geist-accents-1 border border-geist-border rounded-xl p-4 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[100px] outline-none"
         ></textarea>
         <div class="flex justify-end px-1">
-          <span class="text-[9px] font-mono text-geist-accents-4 uppercase">
-            {{ formData.description.length }} / 600
+          <span class="text-[9px] font-mono text-geist-accents-4 uppercase" :class="{ 'text-geist-error': formData.description.length >= 1000 }">
+            {{ formData.description.length }} / 1000
           </span>
         </div>
       </div>
@@ -227,13 +227,13 @@ const handleSave = async () => {
                   <div class="relative">
                     <textarea 
                       v-model="rel.description"
-                      maxlength="600"
+                      maxlength="1000"
                       placeholder="Describe por qué están conectadas..."
                       class="w-full bg-geist-accents-1 border border-geist-border rounded-xl px-4 py-3 text-sm text-geist-fg focus:border-geist-fg transition-colors min-h-[80px] outline-none"
                     ></textarea>
                     <div class="flex justify-end mt-1 px-1">
-                      <span class="text-[9px] font-mono text-geist-accents-4 uppercase" :class="{ 'text-geist-error': rel.description.length < 10 || rel.description.length > 600 }">
-                        {{ rel.description.length }} / 600
+                      <span class="text-[9px] font-mono text-geist-accents-4 uppercase" :class="{ 'text-geist-error': rel.description.length < 10 || rel.description.length >= 1000 }">
+                        {{ rel.description.length }} / 1000
                       </span>
                     </div>
                   </div>

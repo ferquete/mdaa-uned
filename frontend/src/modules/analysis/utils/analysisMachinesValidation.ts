@@ -24,10 +24,8 @@ export function validateCimDocument(doc: any, existingMachineIds: Record<number,
     return [{ field: 'document', message: 'Formato de JSON inválido' }]
   }
 
-  // Comprobar campos permitidos en raíz para evitar ruido (generators/modificators)
-  const rootAllowed = ['$type', 'id', 'name', 'description', 'elements'];
   Object.keys(doc).forEach(key => {
-    if (!rootAllowed.includes(key)) {
+    if (!['$type', 'id', 'name', 'description', 'elements'].includes(key)) {
       errors.push({ field: key, message: `Campo '${key}' no permitido en la raíz del documento CIM.` })
     }
   });

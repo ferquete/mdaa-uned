@@ -17,8 +17,8 @@ export class MdaAudioCimRelationsMachinesValidator {
     checkRelationDocument(doc: RelationDocument, accept: ValidationAcceptor): void {
         if (doc.description !== undefined && doc.description !== null) {
             const cleanDesc = doc.description.replace(/^["']|["']$/g, '');
-            if (cleanDesc.length < 1 || cleanDesc.length > 600) {
-                accept('error', 'El campo description del documento principal debe tener entre 1 y 600 caracteres.', { node: doc, property: 'description' });
+            if (cleanDesc.length < 1 || cleanDesc.length > 1000) {
+                accept('error', 'El campo description del documento principal debe tener entre 1 y 1000 caracteres.', { node: doc, property: 'description' });
             }
         }
 
@@ -70,8 +70,8 @@ export class MdaAudioCimRelationsMachinesValidator {
 
         if (relation.description !== undefined && relation.description !== null) {
             const cleanDesc = relation.description.replace(/^["']|["']$/g, '');
-            if (cleanDesc.length < 10 || cleanDesc.length > 600) {
-                accept('error', 'El campo description en cada relation debe tener entre 10 y 600 caracteres.', { node: relation, property: 'description' });
+            if (cleanDesc.length < 10 || cleanDesc.length > 1000) {
+                accept('error', 'El campo description en cada relation debe tener entre 10 y 1000 caracteres.', { node: relation, property: 'description' });
             }
         }
     }

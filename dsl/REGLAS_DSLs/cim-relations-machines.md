@@ -17,7 +17,7 @@ El objeto raíz contiene la descripción global del sistema de interconexiones.
 
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
-| `description` | STRING | Propósito general de las interconexiones. | Opcional. 1 a 600 caracteres. |
+| `description` | STRING | Propósito general de las interconexiones. | Opcional. 1 a 1000 caracteres. |
 | `relations` | ARRAY[`Relation`] | Lista de objetos de relación entre máquinas. | Obligatorio. |
 
 **Ejemplo de Documento:**
@@ -37,7 +37,7 @@ Define un vínculo direccional entre dos máquinas CIM independientes.
 | `id` | STRING | Identificador único de la relación. | Obligatorio. Exactamente 36 caracteres. |
 | `source` | STRING | ID de la máquina de origen. | Obligatorio. Exactamente 36 caracteres. |
 | `destination` | STRING | ID de la máquina de destino. | Obligatorio. Exactamente 36 caracteres. |
-| `description` | STRING | Justificación técnica del vínculo. | Obligatorio. 10 a 600 caracteres. |
+| `description` | STRING | Justificación técnica del vínculo. | Obligatorio. 10 a 1000 caracteres. |
 
 **Ejemplo de Relación:**
 ```json
@@ -60,8 +60,8 @@ Para garantizar la integridad del flujo entre máquinas, se aplican las siguient
 - **Formato UUID**: El campo `id` debe cumplir con el estándar de 36 caracteres.
 
 ### 2.2. Restricciones de Texto
-- **Descripción Global**: Máximo 600 caracteres.
-- **Descripción de Relación**: Entre 10 y 600 caracteres.
+- **Descripción Global**: Máximo 1000 caracteres.
+- **Descripción de Relación**: Entre 10 y 1000 caracteres.
 
 ### 2.3. Interfaces Expuestas y Existencia
 - **Existencia**: Los IDs especificados en `source` y `destination` deben corresponder a máquinas CIM que existan realmente en el proyecto.

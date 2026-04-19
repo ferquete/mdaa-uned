@@ -22,6 +22,6 @@ public class CreateProjectRequest {
     private String name;
 
     /** Descripción opcional (max 200 caracteres) */
-    @Size(max = 200, message = "La descripción no puede superar los 200 caracteres")
+    @Size(max = 1000, message = "La descripción no puede superar los 1000 caracteres")
     private String description;
 }

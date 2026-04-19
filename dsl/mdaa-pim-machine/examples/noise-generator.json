@@ -1,8 +1,8 @@
 {
-    "id": "770e8400-e29b-41d4-a716-446655440009",
-    "name": "Noise Generator",
-    "description": "Generador de ruido aleatorio",
-    "ids_cim_reference": [],
-    "nodes": [],
-    "edges": []
+  "id": "770e8400-e29b-41d4-a716-446655440009",
+  "name": "Noise Generator",
+  "description": "Generador de ruido aleatorio",
+  "ids_cim_reference": [],
+  "nodes": [],
+  "edges": []
 }

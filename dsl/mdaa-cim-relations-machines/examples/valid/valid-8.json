@@ -1,0 +1,11 @@
+{
+  "description": "Clock synchronization.",
+  "relations": [
+    {
+      "id": "b22e8400-e29b-41d4-a716-446655440222",
+      "source": "MasterClock0000000000000000000000000",
+      "destination": "Sequencer111111111111111111111111111",
+      "description": "Trigger pulses for step sequencing."
+    }
+  ]
+}

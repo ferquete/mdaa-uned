@@ -1,0 +1,17 @@
+{
+  "description": "Drums section connectivity.",
+  "relations": [
+    {
+      "id": "222e8400-e29b-41d4-a716-446655440222",
+      "source": "KickMachine0000000000000000000000000",
+      "destination": "DrumBus11111111111111111111111111111",
+      "description": "Routes kick drum to dedicated drum bus."
+    },
+    {
+      "id": "333e8400-e29b-41d4-a716-446655440333",
+      "source": "SnareMachine000000000000000000000000",
+      "destination": "DrumBus11111111111111111111111111111",
+      "description": "Routes snare drum to dedicated drum bus."
+    }
+  ]
+}

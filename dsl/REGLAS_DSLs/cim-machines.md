@@ -19,7 +19,17 @@ El objeto raíz de un archivo MDA-Audio-CIM identifica a la máquina y contiene 
 | `id` | STRING | Identificador único de la máquina CIM. | Obligatorio. Exactamente 36 caracteres (UUID). |
 | `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. 1 a 20 caracteres. |
 | `description` | STRING | Propósito y contexto de la máquina. | Obligatorio. 10 a 600 caracteres. |
-| `elements` | ARRAY[Element] | Componentes que representan generadores de sonido, modificadores de parámetros (ejemp: lfo, envolventes... etc) o procesadores de sonidos (efectos que procesan sonido modificándolo) visualizados como uno solo). | Obligatorio. Puede estar vacío. |
+| `elements` | ARRAY[Element] | Componentes que representan generadores de sonido, modificadores de parámetros o procesadores de sonidos. | Obligatorio. Puede estar vacío. |
+
+**Ejemplo de Documento:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Oscillator Core",
+  "description": "A fundamental oscillator machine for basic wave generation and shaping.",
+  "elements": [ ... ]
+}
+```
 
 ### 1.2. Interfaz del Elemento (`Element`)
 
@@ -33,7 +43,23 @@ Todos los bloques funcionales se definen como `Element`. Todos los campos base s
 | `params` | STRING | Lista textual de parámetros modificables relevantes. | Obligatorio. 10 a 600 caracteres. |
 | `externalOutput` | ExternalOutput | Configuración de la salida externa hacia otras máquinas. | Obligatorio. |
 | `externalInput` | ExternalInput | Configuración de la entrada externa desde otras máquinas. | Obligatorio. |
-| `sendTo` | ARRAY[SendTo] | Conexiones de salida interna hacia otros elementos. Estos envios pueden ser de audio o de control (modificación de parámetros). | Obligatorio. Puede estar vacío. |
+| `sendTo` | ARRAY[SendTo] | Conexiones de salida interna hacia otros elementos. | Obligatorio. Puede estar vacío. |
+
+**Ejemplo de Elemento:**
+```json
+{
+  "id": "771e8400-e29b-41d4-a716-446655440111",
+  "name": "Sine Generator",
+  "description": "Generates a pure sine wave at a fixed base frequency.",
+  "params": "frequency: 440Hz, gain: 0.8, phase: 0.0",
+  "externalInput": { "hasExternalInput": false },
+  "externalOutput": {
+    "hasExternalOutput": true,
+    "description": "Audio output of the sine wave."
+  },
+  "sendTo": []
+}
+```
 
 #### Configuración Externa
 
@@ -45,13 +71,22 @@ Los subobjetos `externalOutput` y `externalInput` definen si el elemento sirve c
 
 ### 1.3. Objeto de Conexión Interna (`SendTo`)
 
-Define un vínculo direccional desde un elemento hacia otro dentro de la misma máquina.
+Define un vínculo direccional desde un elemento hacia otro dentro de la misma máquina. El elemento referenciado en el campo `idRef` debe existir dentro del documento. 
 
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único de esta conexión. | Obligatorio. Exactamente 36 caracteres (UUID). |
 | `idRef` | REF[Element] | Referencia al elemento de destino. | Obligatorio. Debe existir en el documento. |
-| `description` | STRING | Justificación técnica del vínculo. | Obligatorio. 10 a 300 caracteres. |
+| `description` | STRING | Justificación técnica del vínculo. | Obligatorio. 10 a 600 caracteres. |
+
+**Ejemplo de Conexión:**
+```json
+{
+  "id": "b22e8400-e29b-41d4-a716-446655440333",
+  "idRef": "c33e8400-e29b-41d4-a716-446655440444",
+  "description": "Route filtered signal to the high pass filter element."
+}
+```
 
 > [!IMPORTANT]
 > Un elemento **no puede referenciarse a sí mismo** en su lista `sendTo`. El compilador rechaza cualquier auto-referencia como error fatal.

@@ -1,17 +1,30 @@
-# Workspace overview
+# MDA-Audio CIM Relations Machines
 
-Depending on the selection during the project generation you will have one or more packages contained in the packages directory.
-Please check the specific projects here:
+Este proyecto contiene la definición del lenguaje para las relaciones entre máquinas CIM en el ecosistema MDA-Audio.
 
-- [packages/language](./packages/language/README.md) This package is always available and contains the language definition.
-- [packages/cli](./packages/cli/README.md) *Optional* Is only available if you chose to use the command-line interface.
-- [packages/extension](./packages/extension/langium-quickstart.md) *Optional* Contains the VSCode extension if you chose to create it.
+## Comandos Útiles
 
-## What's in the folder?
+*   `npm run langium:generate`: Sincroniza los archivos generados con la gramática `.langium`. Úsalo después de modificar la gramática.
+*   `npm run build`: Compila el código TypeScript a JavaScript en la carpeta `out/`. Es necesario para que el validador refleje los cambios.
 
-Some file are contained in the root directory as well.
+## Guía de Validación de JSON
 
-- [package.json](./package.json) - The manifest file the main workspace package
-- [tsconfig.json](./tsconfig.json) - The base TypeScript compiler configuration
-- [tsconfig.build.json](./package.json) - Configuration used to build the complete source code.
-- [.gitignore](.gitignore) - Files ignored by git
+Para validar tus archivos JSON de relaciones contra el esquema y las reglas del lenguaje, utiliza el script unificado:
+
+```bash
+# Asegúrate de haber compilado primero
+npm run build
+
+# Ejecuta la validación sobre un archivo
+PATH="/opt/homebrew/bin:$PATH" node packages/language/out/scripts/validate-all.js examples/valid/valid-1.json
+```
+
+El programa realizará dos validaciones:
+1.  **Estructura**: Verifica que el JSON cumpla con el esquema definido (tipos, longitudes, campos obligatorios).
+2.  **Lógica DSL**: Verifica reglas de negocio como la unicidad de IDs y consistencia de referencias.
+
+## Estructura de Carpetas
+
+*   `packages/language`: Definición de la gramática y validadores.
+*   `examples/`: Colección de ejemplos válidos e inválidos para pruebas.
+*   `mdaa-cim-relations-machines.schema.json`: Esquema JSON oficial del lenguaje.

@@ -1,4 +1,0 @@
-{
-    "description": "Este JSON fallará porque el array de relations existe pero está vacío.",
-    "relations": []
-}

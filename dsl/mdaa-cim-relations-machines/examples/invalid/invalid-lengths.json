@@ -1,0 +1,11 @@
+{
+  "description": "Invalid IDs and short descriptions.",
+  "relations": [
+    {
+      "id": "short-id",
+      "source": "S",
+      "destination": "D",
+      "description": "Short"
+    }
+  ]
+}

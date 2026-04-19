@@ -48,15 +48,23 @@ export class MdaAudioCimRelationsMachinesValidator {
 
         if (relation.source !== undefined && relation.source !== null) {
             const cleanSource = relation.source.replace(/^["']|["']$/g, '');
-            if (cleanSource.length < 1 || cleanSource.length > 36) {
-                accept('error', 'El campo source debe tener entre 1 y 36 caracteres.', { node: relation, property: 'source' });
+            if (cleanSource.length !== 36) {
+                accept('error', 'El campo source debe tener exactamente 36 caracteres.', { node: relation, property: 'source' });
             }
         }
         
         if (relation.destination !== undefined && relation.destination !== null) {
             const cleanDest = relation.destination.replace(/^["']|["']$/g, '');
-            if (cleanDest.length < 1 || cleanDest.length > 36) {
-                accept('error', 'El campo destination debe tener entre 1 y 36 caracteres.', { node: relation, property: 'destination' });
+            if (cleanDest.length !== 36) {
+                accept('error', 'El campo destination debe tener exactamente 36 caracteres.', { node: relation, property: 'destination' });
+            }
+        }
+
+        if (relation.source && relation.destination) {
+            const cleanSource = relation.source.replace(/^["']|["']$/g, '');
+            const cleanDest = relation.destination.replace(/^["']|["']$/g, '');
+            if (cleanSource === cleanDest) {
+                accept('error', 'Una máquina no puede tener una relación consigo misma (el origen y el destino deben ser diferentes).', { node: relation, property: 'source' });
             }
         }
 

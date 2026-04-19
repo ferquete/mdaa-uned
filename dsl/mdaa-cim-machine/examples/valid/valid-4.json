@@ -1,0 +1,40 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440004",
+  "name": "Dual Output Gen",
+  "description": "Generator with dual output routing to external and internal sinks.",
+  "elements": [
+    {
+      "id": "e55e8400-e29b-41d4-a716-446655440666",
+      "name": "Noise Gen",
+      "description": "Generates white noise for texture and sound design.",
+      "params": "color: white, density: 1.0, seed: 12345",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Direct noise output to system."
+      },
+      "sendTo": [
+        {
+          "id": "f66e8400-e29b-41d4-a716-446655440777",
+          "idRef": "a11e8400-e29b-41d4-a716-446655440222",
+          "description": "Send noise to filter for shaping before output."
+        }
+      ]
+    },
+    {
+      "id": "a11e8400-e29b-41d4-a716-446655440222",
+      "name": "Shaping Element",
+      "description": "Internal shaping element for noise processing chain.",
+      "params": "shape: soft, curve: linear, ratio: 0.5",
+      "externalInput": {
+        "hasExternalInput": true
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": []
+    }
+  ]
+}

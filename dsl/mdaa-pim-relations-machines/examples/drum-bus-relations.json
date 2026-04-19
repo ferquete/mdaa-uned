@@ -1,17 +1,17 @@
 {
-    "description": "Configuración de efectos en paralelo para procesamiento de batería.",
-    "relations": [
-        {
-            "id": "33333333-3333-3333-3333-333333333333",
-            "source": "cccc0000-0000-0000-0000-000000000007",
-            "destination": "dddd0000-0000-0000-0000-000000001001",
-            "description": "Enviando el bus de batería al procesador de distorsión paralela."
-        },
-        {
-            "id": "44444444-4444-4444-4444-444444444444",
-            "source": "eeee0000-0000-0000-0000-000000000006",
-            "destination": "cccc0000-0000-0000-0000-000000000004",
-            "description": "Control de la ganancia del bus mediante una envolvente de seguidor de picos."
-        }
-    ]
+  "description": "Configuración de efectos en paralelo para procesamiento de batería.",
+  "relations": [
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "source": "cccc0000-0000-0000-0000-000000000007",
+      "destination": "dddd0000-0000-0000-0000-000000001001",
+      "description": "Enviando el bus de batería al procesador de distorsión paralela."
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444444",
+      "source": "eeee0000-0000-0000-0000-000000000006",
+      "destination": "cccc0000-0000-0000-0000-000000000004",
+      "description": "Control de la ganancia del bus mediante una envolvente de seguidor de picos."
+    }
+  ]
 }

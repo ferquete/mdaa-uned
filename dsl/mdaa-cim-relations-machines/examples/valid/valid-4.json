@@ -1,0 +1,11 @@
+{
+  "description": "Sidechain modulation chain.",
+  "relations": [
+    {
+      "id": "555e8400-e29b-41d4-a716-446655440555",
+      "source": "KickMachine0000000000000000000000000",
+      "destination": "BassCompressor1111111111111111111111",
+      "description": "Sidechain source for bass ducking."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Simple Lead to Mixer routing.",
+  "relations": [
+    {
+      "id": "111e8400-e29b-41d4-a716-446655440111",
+      "source": "LeadSynth000000000000000000000000000",
+      "destination": "MainMixer111111111111111111111111111",
+      "description": "Routes audio from lead to master mixer."
+    }
+  ]
+}

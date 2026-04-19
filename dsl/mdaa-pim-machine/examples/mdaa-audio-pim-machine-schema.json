@@ -20,37 +20,75 @@
     "ids_cim_reference": {
       "type": "array",
       "description": "Lista de IDs de máquinas en CIM relacionadas",
-      "items": { "$ref": "#/definitions/UUID" }
+      "items": {
+        "$ref": "#/definitions/UUID"
+      }
     },
     "nodes": {
       "type": "array",
       "description": "List of audio nodes (generators, modifiers, mixers, etc.)",
       "items": {
         "oneOf": [
-          { "$ref": "#/definitions/OscillatorNode" },
-          { "$ref": "#/definitions/NoiseNode" },
-          { "$ref": "#/definitions/SampleNode" },
-          { "$ref": "#/definitions/FilterNode" },
-          { "$ref": "#/definitions/LFONode" },
-          { "$ref": "#/definitions/EnvelopeNode" },
-          { "$ref": "#/definitions/MixerNode" },
-          { "$ref": "#/definitions/GainAndPanNode" },
-          { "$ref": "#/definitions/ReverbNode" },
-          { "$ref": "#/definitions/DelayNode" },
-          { "$ref": "#/definitions/DistortionNode" },
-          { "$ref": "#/definitions/ChorusFlangerNode" },
-          { "$ref": "#/definitions/CompressorNode" },
-          { "$ref": "#/definitions/EqualizerNode" }
+          {
+            "$ref": "#/definitions/OscillatorNode"
+          },
+          {
+            "$ref": "#/definitions/NoiseNode"
+          },
+          {
+            "$ref": "#/definitions/SampleNode"
+          },
+          {
+            "$ref": "#/definitions/FilterNode"
+          },
+          {
+            "$ref": "#/definitions/LFONode"
+          },
+          {
+            "$ref": "#/definitions/EnvelopeNode"
+          },
+          {
+            "$ref": "#/definitions/MixerNode"
+          },
+          {
+            "$ref": "#/definitions/GainAndPanNode"
+          },
+          {
+            "$ref": "#/definitions/ReverbNode"
+          },
+          {
+            "$ref": "#/definitions/DelayNode"
+          },
+          {
+            "$ref": "#/definitions/DistortionNode"
+          },
+          {
+            "$ref": "#/definitions/ChorusFlangerNode"
+          },
+          {
+            "$ref": "#/definitions/CompressorNode"
+          },
+          {
+            "$ref": "#/definitions/EqualizerNode"
+          }
         ]
       }
     },
     "edges": {
       "type": "array",
       "description": "List of connections between nodes",
-      "items": { "$ref": "#/definitions/Edge" }
+      "items": {
+        "$ref": "#/definitions/Edge"
+      }
     }
   },
-  "required": ["id", "name", "ids_cim_reference", "nodes", "edges"],
+  "required": [
+    "id",
+    "name",
+    "ids_cim_reference",
+    "nodes",
+    "edges"
+  ],
   "definitions": {
     "UUID": {
       "type": "string",
@@ -65,38 +103,76 @@
     "IdsReferences": {
       "type": "array",
       "description": "List of reference strings (non-empty)",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "minItems": 1
     },
     "Parameter": {
       "type": "object",
       "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "id": {
+          "$ref": "#/definitions/UUID"
+        },
+        "ids_references": {
+          "$ref": "#/definitions/IdsReferences"
+        },
         "initialValue": {
           "anyOf": [
-            { "type": "number" },
-            { "type": "string" },
-            { "type": "boolean" },
-            { "$ref": "#/definitions/Matrix" }
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/Matrix"
+            }
           ]
         },
-        "isModifiable": { "type": "boolean" },
-        "isExternalInput": { "type": "boolean" },
-        "description": { "$ref": "#/definitions/Description" }
+        "isModifiable": {
+          "type": "boolean"
+        },
+        "isExternalInput": {
+          "type": "boolean"
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        }
       },
-      "required": ["id", "ids_references", "initialValue", "isModifiable"]
+      "required": [
+        "id",
+        "ids_references",
+        "initialValue",
+        "isModifiable"
+      ]
     },
     "ConnectionPoint": {
       "type": "object",
       "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "isExternalInput": { "type": "boolean" },
-        "isExternalOutput": { "type": "boolean" },
-        "description": { "$ref": "#/definitions/Description" }
+        "id": {
+          "$ref": "#/definitions/UUID"
+        },
+        "ids_references": {
+          "$ref": "#/definitions/IdsReferences"
+        },
+        "isExternalInput": {
+          "type": "boolean"
+        },
+        "isExternalOutput": {
+          "type": "boolean"
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        }
       },
-      "required": ["id", "ids_references"],
+      "required": [
+        "id",
+        "ids_references"
+      ],
       "additionalProperties": false
     },
     "Matrix": {
@@ -104,122 +180,251 @@
       "description": "Square matrix of binary values (0 or 1)",
       "items": {
         "type": "array",
-        "items": { "type": "number", "enum": [0, 1] }
+        "items": {
+          "type": "number",
+          "enum": [
+            0,
+            1
+          ]
+        }
       }
     },
     "OthersParameter": {
       "type": "object",
       "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
+        "id": {
+          "$ref": "#/definitions/UUID"
+        },
         "name": {
           "type": "string",
           "minLength": 1,
           "maxLength": 20,
           "description": "Nombre del control dinámico"
         },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "ids_references": {
+          "$ref": "#/definitions/IdsReferences"
+        },
         "initialValue": {
           "type": "string",
           "minLength": 1,
           "maxLength": 100,
           "description": "Valor inicial obligatorio del control dinámico"
         },
-        "isModifiable": { "type": "boolean" },
-        "isExternalInput": { "type": "boolean" },
-        "description": { "$ref": "#/definitions/Description" }
+        "isModifiable": {
+          "type": "boolean"
+        },
+        "isExternalInput": {
+          "type": "boolean"
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        }
       },
-      "required": ["id", "name", "ids_references", "initialValue", "isModifiable"]
+      "required": [
+        "id",
+        "name",
+        "ids_references",
+        "initialValue",
+        "isModifiable"
+      ]
     },
     "CommonNodeFields": {
       "type": "object",
       "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
+        "id": {
+          "$ref": "#/definitions/UUID"
+        },
         "name": {
           "type": "string",
           "minLength": 1,
           "maxLength": 20,
           "description": "Nombre representativo del nodo"
         },
-        "description": { "$ref": "#/definitions/Description" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "description": {
+          "$ref": "#/definitions/Description"
+        },
+        "ids_references": {
+          "$ref": "#/definitions/IdsReferences"
+        },
         "others": {
           "type": "array",
           "description": "Lista de otros parámetros de control dinámicos",
-          "items": { "$ref": "#/definitions/OthersParameter" }
+          "items": {
+            "$ref": "#/definitions/OthersParameter"
+          }
         }
       },
-      "required": ["id", "name", "description", "ids_references", "others"]
+      "required": [
+        "id",
+        "name",
+        "description",
+        "ids_references",
+        "others"
+      ]
     },
     "AudioOutputProperties": {
       "properties": {
-        "stereo": { "$ref": "#/definitions/Parameter" },
-        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
+        "stereo": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "output_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["stereo", "output_1"]
+      "required": [
+        "stereo",
+        "output_1"
+      ]
     },
     "SoundModifierProperties": {
       "properties": {
-        "stereo": { "$ref": "#/definitions/Parameter" },
-        "ping_pong": { "$ref": "#/definitions/Parameter" },
-        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
+        "stereo": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "ping_pong": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "input_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["stereo", "input_1", "output_1"]
+      "required": [
+        "stereo",
+        "input_1",
+        "output_1"
+      ]
     },
     "OscillatorNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/AudioOutputProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/AudioOutputProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "oscillator" },
-        "waveform": { "$ref": "#/definitions/Parameter" },
-        "frequency": { "$ref": "#/definitions/Parameter" },
-        "pulseWidth": { "$ref": "#/definitions/Parameter" },
-        "gain": { "$ref": "#/definitions/Parameter" },
-        "phase": { "$ref": "#/definitions/Parameter" },
-        "pan": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "oscillator"
+        },
+        "waveform": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "frequency": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "pulseWidth": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "gain": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "phase": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "pan": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "waveform", "frequency", "pulseWidth", "gain", "phase", "pan"]
+      "required": [
+        "type",
+        "waveform",
+        "frequency",
+        "pulseWidth",
+        "gain",
+        "phase",
+        "pan"
+      ]
     },
     "NoiseNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/AudioOutputProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/AudioOutputProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "noise" },
-        "noiseType": { "$ref": "#/definitions/Parameter" },
-        "amplitude": { "$ref": "#/definitions/Parameter" },
-        "gain": { "$ref": "#/definitions/Parameter" },
-        "pan": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "noise"
+        },
+        "noiseType": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "amplitude": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "gain": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "pan": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "noiseType", "amplitude", "gain", "pan"]
+      "required": [
+        "type",
+        "noiseType",
+        "amplitude",
+        "gain",
+        "pan"
+      ]
     },
     "SampleNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/AudioOutputProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/AudioOutputProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "sample" },
-        "file": { "$ref": "#/definitions/Parameter" },
-        "loop": { "$ref": "#/definitions/Parameter" },
-        "gain": { "$ref": "#/definitions/Parameter" },
-        "pan": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "sample"
+        },
+        "file": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "loop": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "gain": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "pan": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "file", "loop", "gain", "pan"],
+      "required": [
+        "type",
+        "file",
+        "loop",
+        "gain",
+        "pan"
+      ],
       "if": {
         "properties": {
           "stereo": {
             "properties": {
-              "initialValue": { "const": false }
+              "initialValue": {
+                "const": false
+              }
             }
           }
         }
@@ -228,7 +433,9 @@
         "properties": {
           "pan": {
             "properties": {
-              "initialValue": { "const": 0 }
+              "initialValue": {
+                "const": 0
+              }
             }
           }
         }
@@ -237,195 +444,491 @@
     "FrequencyFilterNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "frequency_filter" },
-        "filterType": { "$ref": "#/definitions/Parameter" },
-        "cutoff": { "$ref": "#/definitions/Parameter" },
-        "resonance": { "$ref": "#/definitions/Parameter" },
-        "slope": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "frequency_filter"
+        },
+        "filterType": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "cutoff": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "resonance": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "slope": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "filterType", "cutoff", "resonance", "slope"]
+      "required": [
+        "type",
+        "filterType",
+        "cutoff",
+        "resonance",
+        "slope"
+      ]
     },
     "LFONode": {
       "type": "object",
-      "allOf": [{ "$ref": "#/definitions/CommonNodeFields" }],
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        }
+      ],
       "properties": {
-        "type": { "const": "lfo" },
-        "waveform": { "$ref": "#/definitions/Parameter" },
-        "rate": { "$ref": "#/definitions/Parameter" },
-        "amplitude": { "$ref": "#/definitions/Parameter" },
-        "phase": { "$ref": "#/definitions/Parameter" },
-        "sync": { "$ref": "#/definitions/Parameter" },
-        "output": { "$ref": "#/definitions/ConnectionPoint" }
+        "type": {
+          "const": "lfo"
+        },
+        "waveform": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "rate": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "amplitude": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "phase": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "sync": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "output": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["type", "waveform", "rate", "amplitude", "phase", "sync", "output"]
+      "required": [
+        "type",
+        "waveform",
+        "rate",
+        "amplitude",
+        "phase",
+        "sync",
+        "output"
+      ]
     },
     "EnvelopeNode": {
       "type": "object",
-      "allOf": [{ "$ref": "#/definitions/CommonNodeFields" }],
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        }
+      ],
       "properties": {
-        "type": { "const": "envelope" },
-        "envelopeType": { "$ref": "#/definitions/Parameter" },
-        "attack": { "$ref": "#/definitions/Parameter" },
-        "decay": { "$ref": "#/definitions/Parameter" },
-        "sustain": { "$ref": "#/definitions/Parameter" },
-        "release": { "$ref": "#/definitions/Parameter" },
-        "delay": { "$ref": "#/definitions/Parameter" },
-        "hold": { "$ref": "#/definitions/Parameter" },
-        "curve": { "$ref": "#/definitions/Parameter" },
-        "output": { "$ref": "#/definitions/ConnectionPoint" }
+        "type": {
+          "const": "envelope"
+        },
+        "envelopeType": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "attack": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "decay": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "sustain": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "release": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "delay": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "hold": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "curve": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "output": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["type", "envelopeType", "attack", "decay", "sustain", "release", "delay", "hold", "curve", "output"]
+      "required": [
+        "type",
+        "envelopeType",
+        "attack",
+        "decay",
+        "sustain",
+        "release",
+        "delay",
+        "hold",
+        "curve",
+        "output"
+      ]
     },
     "MixerNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        }
       ],
       "properties": {
-        "type": { "const": "mixer" },
-        "stereo": { "$ref": "#/definitions/Parameter" },
-        "ping_pong": { "$ref": "#/definitions/Parameter" },
-        "inputs_number": { "$ref": "#/definitions/Parameter" },
-        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_3": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_4": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_5": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_6": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_7": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_8": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_9": { "$ref": "#/definitions/ConnectionPoint" },
-        "input_10": { "$ref": "#/definitions/ConnectionPoint" }
+        "type": {
+          "const": "mixer"
+        },
+        "stereo": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "ping_pong": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "inputs_number": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "output_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_3": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_4": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_5": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_6": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_7": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_8": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_9": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "input_10": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["type", "stereo", "inputs_number", "output_1"]
+      "required": [
+        "type",
+        "stereo",
+        "inputs_number",
+        "output_1"
+      ]
     },
     "GainAndPanNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        }
       ],
       "properties": {
-        "type": { "const": "gain_pan" },
-        "gain": { "$ref": "#/definitions/Parameter" },
-        "pan": { "$ref": "#/definitions/Parameter" },
-        "stereo": { "$ref": "#/definitions/Parameter" },
-        "ping_pong": { "$ref": "#/definitions/Parameter" },
-        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2": { "$ref": "#/definitions/ConnectionPoint" }
+        "type": {
+          "const": "gain_pan"
+        },
+        "gain": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "pan": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "stereo": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "ping_pong": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "input_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_1": {
+          "$ref": "#/definitions/ConnectionPoint"
+        },
+        "output_2": {
+          "$ref": "#/definitions/ConnectionPoint"
+        }
       },
-      "required": ["type", "gain", "pan", "stereo", "input_1", "output_1"]
+      "required": [
+        "type",
+        "gain",
+        "pan",
+        "stereo",
+        "input_1",
+        "output_1"
+      ]
     },
     "ReverbNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "reverb" },
-        "roomSize": { "$ref": "#/definitions/Parameter" },
-        "damping": { "$ref": "#/definitions/Parameter" },
-        "decayTime": { "$ref": "#/definitions/Parameter" },
-        "dryWet": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "reverb"
+        },
+        "roomSize": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "damping": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "decayTime": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "dryWet": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "roomSize", "damping", "decayTime", "dryWet"]
+      "required": [
+        "type",
+        "roomSize",
+        "damping",
+        "decayTime",
+        "dryWet"
+      ]
     },
     "DelayNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "delay" },
-        "delayTime": { "$ref": "#/definitions/Parameter" },
-        "feedback": { "$ref": "#/definitions/Parameter" },
-        "lowPassCutoff": { "$ref": "#/definitions/Parameter" },
-        "highPassCutoff": { "$ref": "#/definitions/Parameter" },
-        "dryWet": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "delay"
+        },
+        "delayTime": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "feedback": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "lowPassCutoff": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "highPassCutoff": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "dryWet": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "delayTime", "feedback", "lowPassCutoff", "highPassCutoff", "dryWet"]
+      "required": [
+        "type",
+        "delayTime",
+        "feedback",
+        "lowPassCutoff",
+        "highPassCutoff",
+        "dryWet"
+      ]
     },
     "DistortionNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "distortion" },
-        "drive": { "$ref": "#/definitions/Parameter" },
-        "tone": { "$ref": "#/definitions/Parameter" },
-        "distType": { "$ref": "#/definitions/Parameter" },
-        "outputLevel": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "distortion"
+        },
+        "drive": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "tone": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "distType": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "outputLevel": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "drive", "tone", "distType", "outputLevel"]
+      "required": [
+        "type",
+        "drive",
+        "tone",
+        "distType",
+        "outputLevel"
+      ]
     },
     "ChorusFlangerNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "chorus_flanger" },
-        "rate": { "$ref": "#/definitions/Parameter" },
-        "depth": { "$ref": "#/definitions/Parameter" },
-        "feedback": { "$ref": "#/definitions/Parameter" },
-        "mix": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "chorus_flanger"
+        },
+        "rate": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "depth": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "feedback": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "mix": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "rate", "depth", "feedback", "mix"]
+      "required": [
+        "type",
+        "rate",
+        "depth",
+        "feedback",
+        "mix"
+      ]
     },
     "CompressorNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "compressor" },
-        "threshold": { "$ref": "#/definitions/Parameter" },
-        "ratio": { "$ref": "#/definitions/Parameter" },
-        "attack": { "$ref": "#/definitions/Parameter" },
-        "release": { "$ref": "#/definitions/Parameter" },
-        "makeupGain": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "compressor"
+        },
+        "threshold": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "ratio": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "attack": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "release": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "makeupGain": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "threshold", "ratio", "attack", "release", "makeupGain"]
+      "required": [
+        "type",
+        "threshold",
+        "ratio",
+        "attack",
+        "release",
+        "makeupGain"
+      ]
     },
     "EqualizerNode": {
       "type": "object",
       "allOf": [
-        { "$ref": "#/definitions/CommonNodeFields" },
-        { "$ref": "#/definitions/SoundModifierProperties" }
+        {
+          "$ref": "#/definitions/CommonNodeFields"
+        },
+        {
+          "$ref": "#/definitions/SoundModifierProperties"
+        }
       ],
       "properties": {
-        "type": { "const": "equalizer" },
-        "bandFrequency": { "$ref": "#/definitions/Parameter" },
-        "bandwidth": { "$ref": "#/definitions/Parameter" },
-        "gain": { "$ref": "#/definitions/Parameter" }
+        "type": {
+          "const": "equalizer"
+        },
+        "bandFrequency": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "bandwidth": {
+          "$ref": "#/definitions/Parameter"
+        },
+        "gain": {
+          "$ref": "#/definitions/Parameter"
+        }
       },
-      "required": ["type", "bandFrequency", "bandwidth", "gain"]
+      "required": [
+        "type",
+        "bandFrequency",
+        "bandwidth",
+        "gain"
+      ]
     },
     "Edge": {
       "type": "object",
       "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
-        "description": { "$ref": "#/definitions/Description" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "sourceNode": { "type": "string" },
-        "sourceParam": { "type": "string" },
-        "targetNode": { "type": "string" },
-        "targetParam": { "type": "string" },
-        "type": { "enum": ["audio", "modification"] }
+        "id": {
+          "$ref": "#/definitions/UUID"
+        },
+        "description": {
+          "$ref": "#/definitions/Description"
+        },
+        "ids_references": {
+          "$ref": "#/definitions/IdsReferences"
+        },
+        "sourceNode": {
+          "type": "string"
+        },
+        "sourceParam": {
+          "type": "string"
+        },
+        "targetNode": {
+          "type": "string"
+        },
+        "targetParam": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "audio",
+            "modification"
+          ]
+        }
       },
-      "required": ["id", "description", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"]
+      "required": [
+        "id",
+        "description",
+        "ids_references",
+        "sourceNode",
+        "sourceParam",
+        "targetNode",
+        "targetParam",
+        "type"
+      ]
     }
   }
 }

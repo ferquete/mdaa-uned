@@ -1,0 +1,33 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440055",
+  "name": "Duplicate ID",
+  "description": "Two elements with the same ID in the same document.",
+  "elements": [
+    {
+      "id": "deadbeef-e29b-41d4-a716-446655440111",
+      "name": "Node A",
+      "description": "First occurrence of the duplicate ID.",
+      "params": "dummy params for validation test",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": []
+    },
+    {
+      "id": "deadbeef-e29b-41d4-a716-446655440111",
+      "name": "Node B",
+      "description": "Second occurrence of the duplicate ID.",
+      "params": "dummy params for validation test",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": []
+    }
+  ]
+}

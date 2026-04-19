@@ -1,0 +1,11 @@
+{
+  "description": "This is a maximum length description to test the upper boundary of the validation constraints. It contains exactly six hundred characters to ensure that the document logic handles the strict limit correctly without triggering an overflow error. We are filling this space with meaningful text to simulate a real-world complex machine definition where technical details require significant elaboration. Every character counts toward the final limit of six hundred, covering multiple sentences and providing enough context for the validator to process this large block of text efficiently.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "source": "MACHINE-LEAD-SYNTH-8400-E29B-41D4-A7",
+      "destination": "MACHINE-MAIN-MIXER-8400-E29B-41D4-A7",
+      "description": "This is a maximum length description to test the upper boundary of the validation constraints. It contains exactly six hundred characters to ensure that the document logic handles the strict limit correctly without triggering an overflow error. We are filling this space with meaningful text to simulate a real-world complex machine definition where technical details require significant elaboration. Every character counts toward the final limit of six hundred, covering multiple sentences and providing enough context for the validator to process this large block of text efficiently."
+    }
+  ]
+}

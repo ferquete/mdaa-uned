@@ -1,0 +1,33 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440006",
+  "name": "Multi-Osc Bank",
+  "description": "A bank of oscillators for thick, detuned synthesizer pads.",
+  "elements": [
+    {
+      "id": "osc1-8400-e29b-41d4-a716-44665544011",
+      "name": "Oscillator 1",
+      "description": "Primary oscillator driving the main sound profile.",
+      "params": "freq: 220Hz, detune: -5c, wave: saw",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true
+      },
+      "sendTo": []
+    },
+    {
+      "id": "osc2-8400-e29b-41d4-a716-44665544022",
+      "name": "Oscillator 2",
+      "description": "Secondary oscillator for detuned harmonics synthesis.",
+      "params": "freq: 220Hz, detune: +5c, wave: saw",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true
+      },
+      "sendTo": []
+    }
+  ]
+}

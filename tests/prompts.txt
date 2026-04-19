@@ -1,0 +1,22 @@
+Repasa la gramática @directory:dsl/mdaa-cim-machines, 
+mda-audio-cim-machine.langium, tras lo cual mira si su validador es correcto, y genera al menos 10 ejemplos json que cumplan la gramática, y 5 erróneos, en su carpeta examples, cubriendo la máxima casuistica posible. Crea también un schema para validar el json, y a aprte un validador. 
+
+Crea al menos un ejemplo de la lista de ejemplos que tenga todos los campos que tenga la gramática con límite superior de caracteres, y rellenalos con ese máximo número de caracteres. Este ejemplo será lo mas completo posible, todos los campos de la gramática deberán estar presentes y con su valor al máximo permitido.
+
+Para poder validar los json de ejemplo, crea un pequeño programa que pueda ejecutar yo para validarlos, pasándole como parámetro el fichero json a validar. Este programa pasará tanto la validación del lenguaje como la validación del schema creado
+
+En el readme del lenguaje, debe haber una pequeña guia en español de como ejecutar esta validación
+
+Inluye en este README.md los comandos npm run langium:generate  y    npm run build, comentando para que sirven
+
+Por legibilidad, los campos de los json aparecerán cada uno en una linea, o sea, por ejemplo esta estructura en vez de así:
+
+"externalOutput": { "hasExternalOutput": true, "description": "Audio output of the sine wave." },
+      
+Lo pintaremos así:
+
+"externalOutput": { 
+        "hasExternalOutput": true, 
+        "description": "Audio output of the sine wave." 
+      },
+

@@ -1,0 +1,11 @@
+{
+  "description": "FX Return Loop.",
+  "relations": [
+    {
+      "id": "888e8400-e29b-41d4-a716-446655440888",
+      "source": "Reverb000000000000000000000000000000",
+      "destination": "ReturnMixer1111111111111111111111111",
+      "description": "Reverb tail return to mixer."
+    }
+  ]
+}

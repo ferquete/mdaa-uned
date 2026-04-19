@@ -1,0 +1,26 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440044",
+  "name": "Self Ref",
+  "description": "Element referring to itself in sendTo array.",
+  "elements": [
+    {
+      "id": "771e8400-e29b-41d4-a716-446655440111",
+      "name": "Self Node",
+      "description": "This node points to itself which is forbidden.",
+      "params": "dummy params for validation test",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": false
+      },
+      "sendTo": [
+        {
+          "id": "991e8400-e29b-41d4-a716-446655440999",
+          "idRef": "771e8400-e29b-41d4-a716-446655440111",
+          "description": "Illegal self reference."
+        }
+      ]
+    }
+  ]
+}

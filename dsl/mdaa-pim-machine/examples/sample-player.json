@@ -1,8 +1,8 @@
 {
-    "id": "770e8400-e29b-41d4-a716-446655440010",
-    "name": "Sample Player",
-    "description": "Reproductor de muestras de audio",
-    "ids_cim_reference": [],
-    "nodes": [],
-    "edges": []
+  "id": "770e8400-e29b-41d4-a716-446655440010",
+  "name": "Sample Player",
+  "description": "Reproductor de muestras de audio",
+  "ids_cim_reference": [],
+  "nodes": [],
+  "edges": []
 }

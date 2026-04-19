@@ -1,0 +1,17 @@
+{
+  "description": "Parallel processing chain.",
+  "relations": [
+    {
+      "id": "999e8400-e29b-41d4-a716-446655440999",
+      "source": "DrySignal000000000000000000000000000",
+      "destination": "MasterSum111111111111111111111111111",
+      "description": "Dry path to final summation."
+    },
+    {
+      "id": "a11e8400-e29b-41d4-a716-446655440111",
+      "source": "WetSignal000000000000000000000000000",
+      "destination": "MasterSum111111111111111111111111111",
+      "description": "Wet path to final summation."
+    }
+  ]
+}

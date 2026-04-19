@@ -1,257 +1,257 @@
 {
-   "nodes" : [
-      {
-         "pan" : {
-            "id" : "c3d4e5f6-g7h8-9i0j-k1l2-m3n4o5p6q7r8",
-            "initialValue" : 0,
-            "isModifiable" : true,
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "frequency" : {
-            "initialValue" : 110,
-            "isModifiable" : true,
-            "id" : "01234567-89ab-cdef-0123-456789abcdef",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "stereo" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "a0000000-0000-0000-0000-000000000001",
-            "isModifiable" : false,
-            "initialValue" : true
-         },
-         "others" : [],
-         "gain" : {
-            "id" : "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
-            "initialValue" : 0.5,
-            "isModifiable" : true,
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "type" : "oscillator",
-         "description" : "Portadora de la cadena",
-         "id" : "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-         "output_1" : {
-            "id" : "d4e5f6a7-b8c9-d0e1-2f3a-4b5c6d7e8f9a",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "output_2" : {
-            "id" : "e5f6a7b8-c9d0-e1f2-3a4b-5c6d7e8f9a0b",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "name" : "Carrier Osc",
-         "phase" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "isModifiable" : false,
-            "initialValue" : 0,
-            "id" : "b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7"
-         },
-         "ids_references" : [
-            "ref_project_description"
-         ],
-         "waveform" : {
-            "initialValue" : "sawtooth",
-            "isModifiable" : false,
-            "id" : "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "pulseWidth" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "initialValue" : 0.5,
-            "isModifiable" : false,
-            "id" : "fedcba98-7654-3210-fedc-ba9876543210"
-         }
+  "nodes": [
+    {
+      "pan": {
+        "id": "c3d4e5f6-g7h8-9i0j-k1l2-m3n4o5p6q7r8",
+        "initialValue": 0,
+        "isModifiable": true,
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
       },
-      {
-         "ids_references" : [
-            "ref_project_description"
-         ],
-         "name" : "Dynamic Filter",
-         "input_1" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "f0000000-0000-0000-0000-000000000001"
-         },
-         "id" : "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-         "output_1" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "j0k1l2m3-n4o5-p6q7-r8s9-t0u1v2w3x4y5"
-         },
-         "filterType" : {
-            "isModifiable" : false,
-            "initialValue" : "LPF",
-            "id" : "f6g7h8i9-j0k1-l2m3-n4o5-p6q7r8s9t0u1",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "resonance" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "h8i9j0k1-l2m3-n4o5-p6q7-r8s9t0u1v2w3",
-            "initialValue" : 2,
-            "isModifiable" : true
-         },
-         "slope" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "initialValue" : "24dB/oct",
-            "isModifiable" : false,
-            "id" : "i9j0k1l2-m3n4-o5p6-q7r8-s9t0u1v2w3x4"
-         },
-         "stereo" : {
-            "isModifiable" : false,
-            "initialValue" : false,
-            "id" : "a0000000-0000-0000-0000-000000000002",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "others" : [],
-         "type" : "frequency_filter",
-         "cutoff" : {
-            "isModifiable" : true,
-            "initialValue" : 1200,
-            "id" : "g7h8i9j0-k1l2-m3n4-o5p6-q7r8s9t0u1v2",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "description" : "Filtro pasa-bajos dinámico"
+      "frequency": {
+        "initialValue": 110,
+        "isModifiable": true,
+        "id": "01234567-89ab-cdef-0123-456789abcdef",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
       },
-      {
-         "roomSize" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "isModifiable" : true,
-            "initialValue" : 0.8,
-            "id" : "k1l2m3n4-o5p6-q7r8-s9t0-u1v2w3x4y5z6"
-         },
-         "output_2" : {
-            "id" : "q7r8s9t0-u1v2-w3x4-y5z6-a7b8c9d0e1f2",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "output_1" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "p6q7r8s9-t0u1-v2w3-x4y5-z6a7b8c9d0e1"
-         },
-         "id" : "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
-         "input_1" : {
-            "id" : "r0000000-0000-0000-0000-000000000001",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "input_2" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "r0000000-0000-0000-0000-000000000002"
-         },
-         "ids_references" : [
-            "ref_project_description"
-         ],
-         "decayTime" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "isModifiable" : false,
-            "initialValue" : 3,
-            "id" : "m3n4o5p6-q7r8-s9t0-u1v2-w3x4y5z6a7b8"
-         },
-         "name" : "Plate Reverb",
-         "description" : "Espacialización",
-         "type" : "reverb",
-         "dryWet" : {
-            "id" : "n4o5p6q7-r8s9-t0u1-v2w3-x4y5z6a7b8c9",
-            "initialValue" : 0.4,
-            "isModifiable" : true,
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "ping_pong" : {
-            "initialValue" : false,
-            "isModifiable" : true,
-            "id" : "r0000000-0000-0000-0000-000000000003",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         },
-         "others" : [],
-         "stereo" : {
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ],
-            "id" : "o5p6q7r8-s9t0-u1v2-w3x4-y5z6a7b8c9d0",
-            "initialValue" : true,
-            "isModifiable" : false
-         },
-         "damping" : {
-            "isModifiable" : false,
-            "initialValue" : 0.5,
-            "id" : "l2m3n4o5-p6q7-r8s9-t0u1-v2w3x4y5z6a7",
-            "ids_references" : [
-               "ref_cim_machine_description"
-            ]
-         }
+      "stereo": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "a0000000-0000-0000-0000-000000000001",
+        "isModifiable": false,
+        "initialValue": true
+      },
+      "others": [],
+      "gain": {
+        "id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "type": "oscillator",
+      "description": "Portadora de la cadena",
+      "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "output_1": {
+        "id": "d4e5f6a7-b8c9-d0e1-2f3a-4b5c6d7e8f9a",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "output_2": {
+        "id": "e5f6a7b8-c9d0-e1f2-3a4b-5c6d7e8f9a0b",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "name": "Carrier Osc",
+      "phase": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "isModifiable": false,
+        "initialValue": 0,
+        "id": "b2c3d4e5-f6g7-8h9i-0j1k-l2m3n4o5p6q7"
+      },
+      "ids_references": [
+        "ref_project_description"
+      ],
+      "waveform": {
+        "initialValue": "sawtooth",
+        "isModifiable": false,
+        "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "pulseWidth": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "id": "fedcba98-7654-3210-fedc-ba9876543210"
       }
-   ],
-   "name" : "Complex Chain",
-   "edges" : [
-      {
-         "type" : "audio",
-         "description" : "Osc L -> Filter",
-         "targetParam" : "f0000000-0000-0000-0000-000000000001",
-         "targetNode" : "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-         "sourceNode" : "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-         "id" : "00000000-0000-0000-0000-000000000001",
-         "sourceParam" : "d4e5f6a7-b8c9-d0e1-2f3a-4b5c6d7e8f9a",
-         "ids_references" : [
-            "ref_project_description"
-         ]
+    },
+    {
+      "ids_references": [
+        "ref_project_description"
+      ],
+      "name": "Dynamic Filter",
+      "input_1": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "f0000000-0000-0000-0000-000000000001"
       },
-      {
-         "description" : "Filter -> Reverb",
-         "type" : "audio",
-         "sourceNode" : "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-         "id" : "00000000-0000-0000-0000-000000000002",
-         "sourceParam" : "j0k1l2m3-n4o5-p6q7-r8s9-t0u1v2w3x4y5",
-         "targetNode" : "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
-         "targetParam" : "r0000000-0000-0000-0000-000000000001",
-         "ids_references" : [
-            "ref_project_description"
-         ]
+      "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "output_1": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "j0k1l2m3-n4o5-p6q7-r8s9-t0u1v2w3x4y5"
+      },
+      "filterType": {
+        "isModifiable": false,
+        "initialValue": "LPF",
+        "id": "f6g7h8i9-j0k1-l2m3-n4o5-p6q7r8s9t0u1",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "resonance": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "h8i9j0k1-l2m3-n4o5-p6q7-r8s9t0u1v2w3",
+        "initialValue": 2,
+        "isModifiable": true
+      },
+      "slope": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "initialValue": "24dB/oct",
+        "isModifiable": false,
+        "id": "i9j0k1l2-m3n4-o5p6-q7r8-s9t0u1v2w3x4"
+      },
+      "stereo": {
+        "isModifiable": false,
+        "initialValue": false,
+        "id": "a0000000-0000-0000-0000-000000000002",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "others": [],
+      "type": "frequency_filter",
+      "cutoff": {
+        "isModifiable": true,
+        "initialValue": 1200,
+        "id": "g7h8i9j0-k1l2-m3n4-o5p6-q7r8s9t0u1v2",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "description": "Filtro pasa-bajos dinámico"
+    },
+    {
+      "roomSize": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "isModifiable": true,
+        "initialValue": 0.8,
+        "id": "k1l2m3n4-o5p6-q7r8-s9t0-u1v2w3x4y5z6"
+      },
+      "output_2": {
+        "id": "q7r8s9t0-u1v2-w3x4-y5z6-a7b8c9d0e1f2",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "output_1": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "p6q7r8s9-t0u1-v2w3-x4y5-z6a7b8c9d0e1"
+      },
+      "id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+      "input_1": {
+        "id": "r0000000-0000-0000-0000-000000000001",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "input_2": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "r0000000-0000-0000-0000-000000000002"
+      },
+      "ids_references": [
+        "ref_project_description"
+      ],
+      "decayTime": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "isModifiable": false,
+        "initialValue": 3,
+        "id": "m3n4o5p6-q7r8-s9t0-u1v2-w3x4y5z6a7b8"
+      },
+      "name": "Plate Reverb",
+      "description": "Espacialización",
+      "type": "reverb",
+      "dryWet": {
+        "id": "n4o5p6q7-r8s9-t0u1-v2w3-x4y5z6a7b8c9",
+        "initialValue": 0.4,
+        "isModifiable": true,
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "ping_pong": {
+        "initialValue": false,
+        "isModifiable": true,
+        "id": "r0000000-0000-0000-0000-000000000003",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
+      },
+      "others": [],
+      "stereo": {
+        "ids_references": [
+          "ref_cim_machine_description"
+        ],
+        "id": "o5p6q7r8-s9t0-u1v2-w3x4-y5z6a7b8c9d0",
+        "initialValue": true,
+        "isModifiable": false
+      },
+      "damping": {
+        "isModifiable": false,
+        "initialValue": 0.5,
+        "id": "l2m3n4o5-p6q7-r8s9-t0u1-v2w3x4y5z6a7",
+        "ids_references": [
+          "ref_cim_machine_description"
+        ]
       }
-   ],
-   "id" : "770e8400-e29b-41d4-a716-446655440001",
-   "ids_cim_reference" : [
-      "ref_cim_machine_001"
-   ]
+    }
+  ],
+  "name": "Complex Chain",
+  "edges": [
+    {
+      "type": "audio",
+      "description": "Osc L -> Filter",
+      "targetParam": "f0000000-0000-0000-0000-000000000001",
+      "targetNode": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "sourceNode": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "id": "00000000-0000-0000-0000-000000000001",
+      "sourceParam": "d4e5f6a7-b8c9-d0e1-2f3a-4b5c6d7e8f9a",
+      "ids_references": [
+        "ref_project_description"
+      ]
+    },
+    {
+      "description": "Filter -> Reverb",
+      "type": "audio",
+      "sourceNode": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+      "id": "00000000-0000-0000-0000-000000000002",
+      "sourceParam": "j0k1l2m3-n4o5-p6q7-r8s9-t0u1v2w3x4y5",
+      "targetNode": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+      "targetParam": "r0000000-0000-0000-0000-000000000001",
+      "ids_references": [
+        "ref_project_description"
+      ]
+    }
+  ],
+  "id": "770e8400-e29b-41d4-a716-446655440001",
+  "ids_cim_reference": [
+    "ref_cim_machine_001"
+  ]
 }

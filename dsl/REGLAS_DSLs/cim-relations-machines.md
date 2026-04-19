@@ -13,12 +13,20 @@ El documento de relaciones define cómo fluye la información entre máquinas me
 
 ### 1.1. Modelo Raíz (`Document`)
 
-El objeto raíz contiene la descripción global del sistema de interconexiones. 
+El objeto raíz contiene la descripción global del sistema de interconexiones.
 
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
-| `description` | STRING | Propósito general de las interconexiones. Si un proyecto tiene interconexiones entre sus máquinas, o simplementete consta de varias máuinas, esta descripción puede ser clave para entender el propósito de todo el proyecto. | Opcional. 1 a 600 caracteres. |
+| `description` | STRING | Propósito general de las interconexiones. | Opcional. 1 a 600 caracteres. |
 | `relations` | ARRAY[`Relation`] | Lista de objetos de relación entre máquinas. | Obligatorio. |
+
+**Ejemplo de Documento:**
+```json
+{
+  "description": "Simple Lead to Mixer routing.",
+  "relations": [ ... ]
+}
+```
 
 ### 1.2. Objeto de Relación (`Relation`)
 
@@ -26,10 +34,20 @@ Define un vínculo direccional entre dos máquinas CIM independientes.
 
 | Atributo | Tipo | Descripción | Restricciones |
 | :--- | :--- | :--- | :--- |
-| `id` | STRING | Identificador único de la relación. | Obligatorio. Exactamente 36 caracteres (UUID). |
-| `source` | STRING | ID de la máquina de origen. | Obligatorio. 1 a 36 caracteres. |
-| `destination` | STRING | ID de la máquina de destino. | Obligatorio. 1 a 36 caracteres. |
+| `id` | STRING | Identificador único de la relación. | Obligatorio. Exactamente 36 caracteres. |
+| `source` | STRING | ID de la máquina de origen. | Obligatorio. Exactamente 36 caracteres. |
+| `destination` | STRING | ID de la máquina de destino. | Obligatorio. Exactamente 36 caracteres. |
 | `description` | STRING | Justificación técnica del vínculo. | Obligatorio. 10 a 600 caracteres. |
+
+**Ejemplo de Relación:**
+```json
+{
+  "id": "111e8400-e29b-41d4-a716-446655440111",
+  "source": "LeadSynth",
+  "destination": "MainMixer",
+  "description": "Routes audio from lead to master mixer."
+}
+```
 
 ---
 
@@ -45,11 +63,13 @@ Para garantizar la integridad del flujo entre máquinas, se aplican las siguient
 - **Descripción Global**: Máximo 600 caracteres.
 - **Descripción de Relación**: Entre 10 y 600 caracteres.
 
-### 2.3. Interfaces Expuestas (Validación Cruzada)
-- **Origen (`source`)**: La máquina referenciada DEBE tener al menos un elemento configurado con `hasExternalOutput: true`.
-- **Destino (`destination`)**: La máquina referenciada DEBE tener al menos un elemento configurado con `hasExternalInput: true`.
+### 2.3. Interfaces Expuestas y Existencia
+- **Existencia**: Los IDs especificados en `source` y `destination` deben corresponder a máquinas CIM que existan realmente en el proyecto.
+- **Sin Auto-Relación**: Una máquina no puede conectarse consigo misma. Los campos `source` y `destination` deben ser diferentes.
+- **Configuración de Origen (`source`)**: La máquina referenciada como **origen** DEBE contener al menos un elemento interno configurado con `hasExternalOutput: true`. Esto permite que la máquina "emita" señal hacia el exterior.
+- **Configuración de Destino (`destination`)**: La máquina referenciada como **destino** DEBE contener al menos un elemento interno configurado con `hasExternalInput: true`. Esto permite que la máquina "reciba" señal desde el exterior.
 
-En resumen, las relaciones CIM solo pueden existir si las interfaces individuales de las máquinas permiten dicha comunicación externa.
+En resumen, las relaciones CIM solo pueden existir si las interfaces individuales de las máquinas están habilitadas para la comunicación externa (puertos de entrada/salida) y si ambas entidades son máquinas distintas y existentes.
 
 ---
 

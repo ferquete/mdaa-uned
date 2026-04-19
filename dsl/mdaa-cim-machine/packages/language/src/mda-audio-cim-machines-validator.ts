@@ -9,7 +9,7 @@ export function registerValidationChecks(services: MdaAudioCimMachineServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.MdaAudioCimMachineValidator;
     const checks: ValidationChecks<MdaAudioCimMachineAstType> = {
-        Document: [validator.checkUniqueIds, validator.checkDocumentProperties],
+        Document: [validator.checkUniqueIds, validator.checkUniqueElementIds, validator.checkDocumentProperties],
         Element: [validator.checkBaseProperties, validator.checkSendToProperties, validator.checkExternalConnections],
         SendTo: [validator.checkSendToPropertiesSingle]
     };
@@ -21,9 +21,6 @@ export function registerValidationChecks(services: MdaAudioCimMachineServices) {
  */
 export class MdaAudioCimMachineValidator {
 
-    /**
-     * Verifica que todos los IDs sean únicos en todo el documento.
-     */
     checkUniqueIds(doc: Document, accept: ValidationAcceptor): void {
         const reportedIds = new Set<string>();
         const allBaseNodes = AstUtils.streamAllContents(doc).filter(isBase);
@@ -34,6 +31,19 @@ export class MdaAudioCimMachineValidator {
             } else {
                 reportedIds.add(node.id);
             }
+        }
+    }
+
+    /**
+     * Verifica que los IDs de los elementos sean únicos (redundante pero útil para JSON).
+     */
+    checkUniqueElementIds(doc: Document, accept: ValidationAcceptor): void {
+        const ids = new Set<string>();
+        for (const element of doc.elements) {
+            if (ids.has(element.id)) {
+                accept('error', `ID de elemento duplicado detectado: ${element.id}`, { node: element, property: 'id' });
+            }
+            ids.add(element.id);
         }
     }
     
@@ -95,9 +105,26 @@ export class MdaAudioCimMachineValidator {
                 }
                 
                 // No auto-referencia
-                const targetRefId = (item.idRef as any)?.$refText ?? (typeof item.idRef === 'string' ? item.idRef : undefined);
+                let targetRefId: string | undefined;
+                if (typeof item.idRef === 'string') {
+                    targetRefId = item.idRef;
+                } else if (item.idRef && (item.idRef as any).$refText) {
+                    targetRefId = (item.idRef as any).$refText;
+                } else if (item.idRef && (item.idRef as any).ref) {
+                    targetRefId = (item.idRef as any).ref.id;
+                } else if (item.idRef && (item.idRef as any).$ref) {
+                    // Caso para JSON deserializado crudo si Langium lo deja así
+                    targetRefId = (item.idRef as any).$ref;
+                }
+
                 if (targetRefId === node.id) {
                     accept('error', 'Un elemento no puede referenciarse a sí mismo en la lista sendTo.', { node: item, property: 'idRef' });
+                }
+
+                // Verificar existencia de la referencia
+                const allElementIds = node.$container.elements.map(e => e.id);
+                if (targetRefId && !allElementIds.includes(targetRefId)) {
+                    accept('error', `El ID de referencia '${targetRefId}' no existe en el documento.`, { node: item, property: 'idRef' });
                 }
             });
         }

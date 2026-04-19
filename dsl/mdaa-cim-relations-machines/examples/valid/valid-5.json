@@ -1,0 +1,17 @@
+{
+  "description": "Multi-out synth routing.",
+  "relations": [
+    {
+      "id": "666e8400-e29b-41d4-a716-446655440666",
+      "source": "VCO-10000000000000000000000000000000",
+      "destination": "Filter-11111111111111111111111111111",
+      "description": "Oscillator 1 to primary filter."
+    },
+    {
+      "id": "777e8400-e29b-41d4-a716-446655440777",
+      "source": "VCO-20000000000000000000000000000000",
+      "destination": "Filter-21111111111111111111111111111",
+      "description": "Oscillator 2 to secondary filter."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Modulation matrix source.",
+  "relations": [
+    {
+      "id": "c33e8400-e29b-41d4-a716-446655440333",
+      "source": "LFO-A0000000000000000000000000000000",
+      "destination": "Machine-B-VCF11111111111111111111111",
+      "description": "External LFO modulating machine B filter."
+    }
+  ]
+}

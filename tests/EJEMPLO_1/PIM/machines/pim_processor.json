@@ -1,7 +1,7 @@
 {
   "id": "a20e1234-e29b-41d4-a716-446655440001",
   "name": "Signal Processor X1",
-  "description": "Estacion de procesamiento de señal integral que combina herramientas de filtrado, dinamica y ecualizacion en un unico entorno de baja latencia. Basado en el procesador de filtros CIM, este modulo expande sus capacidades para incluir una etapa de compresion de precision y un ecualizador parametrico de alta fidelidad. Su mezclador interno de diez canales permite la suma de multiples fuentes con un control granular sobre la fase y la amplitud, asegurando que la señal final sea coherente y este perfectamente balanceada antes de ser enviada a la etapa de efectos espaciales o al bus de salida principal del sistema.",
+  "description": "Estación de procesamiento integral que combina filtrado, dinámica y ecualización en un entorno de baja latencia. Basado en el procesador CIM, expande sus capacidades con compresión de precisión y ecualización paramétrica de alta fidelidad. Su mezclador de diez canales permite sumar múltiples fuentes con control granular de fase y amplitud, asegurando una señal final coherente y balanceada antes de la etapa de efectos o del bus de salida principal.",
   "ids_cim_reference": [
     "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e"
   ],
@@ -11,9 +11,7 @@
       "id": "a20e1234-e29b-41d4-a716-446655440002",
       "name": "Ladder Filter Elite ",
       "description": "Filtro de frecuencia de tipo escalera (Ladder) diseñado para emular la respuesta calida y resonante de los circuitos analogicos clasicos. Este nodo ofrece una atenuacion de hasta 48dB por octava, permitiendo cortes de frecuencia extremadamente limpios y barridos potentes que definen el caracter del sonido. La implementacion de compensacion de ganancia interna asegura que el cuerpo de la señal se mantenga incluso con niveles de resonancia elevados, evitando la perdida de graves habitual en diseños de filtrado mas simples y proporcionando una base solida para leads y bajos penetrantes.",
-      "ids_references": [
-        "222e8400-e29b-41d4-a716-446655440222"
-      ],
+      "ids_references": [],
       "others": [],
       "filterType": {
         "id": "a20e1234-e29b-41d4-a716-446655440003",
@@ -28,7 +26,7 @@
         "ids_references": [
           "222e8400-e29b-41d4-a716-446655440222"
         ],
-        "initialValue": 1000.0,
+        "initialValue": 1000,
         "isModifiable": true,
         "isExternalInput": true
       },
@@ -66,21 +64,25 @@
       },
       "input_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440009",
+        "ids_references": [],
         "isExternalInput": true,
         "description": "Entrada principal de audio canal izquierdo para el filtro Ladder."
       },
       "input_2": {
         "id": "a20e1234-e29b-41d4-a716-446655440010",
+        "ids_references": [],
         "isExternalInput": true,
         "description": "Entrada principal de audio canal derecho para el filtro Ladder."
       },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440011",
+        "ids_references": [],
         "isExternalOutput": false,
         "description": "Salida de audio filtrada canal izquierdo."
       },
       "output_2": {
         "id": "a20e1234-e29b-41d4-a716-446655440012",
+        "ids_references": [],
         "isExternalOutput": false,
         "description": "Salida de audio filtrada canal derecho."
       }
@@ -90,16 +92,14 @@
       "id": "a20e1234-e29b-41d4-a716-446655440013",
       "name": "Precision Dynamics  ",
       "description": "Procesador de dinamica de alta precision diseñado para controlar el rango dinamico y aportar consistencia a la señal procesada. Utiliza algoritmos de deteccion de picos ultra-rapidos que permiten domesticar transitorios agresivos sin sacrificar la claridad ni la transparencia tonal. Es ideal para asentar el sonido en la mezcla, proporcionando esa sensacion de pegada y cohesion profesional necesaria en producciones modernas, mientras que su control de ganancia de compensacion asegura que la energia de la señal se mantenga constante a pesar de la reduccion de ganancia aplicada por el compresor.",
-      "ids_references": [
-        "333e8400-e29b-41d4-a716-446655440333"
-      ],
+      "ids_references": [],
       "others": [],
       "threshold": {
         "id": "a20e1234-e29b-41d4-a716-446655440014",
         "ids_references": [
           "333e8400-e29b-41d4-a716-446655440333"
         ],
-        "initialValue": -18.0,
+        "initialValue": -18,
         "isModifiable": true
       },
       "ratio": {
@@ -107,7 +107,7 @@
         "ids_references": [
           "333e8400-e29b-41d4-a716-446655440333"
         ],
-        "initialValue": 4.0,
+        "initialValue": 4,
         "isModifiable": true
       },
       "attack": {
@@ -131,15 +131,23 @@
         "ids_references": [
           "333e8400-e29b-41d4-a716-446655440333"
         ],
-        "initialValue": 3.0,
+        "initialValue": 3,
         "isModifiable": true
+      },
+      "stereo": {
+        "id": "a20e1234-e29b-41d4-a716-446655440400",
+        "ids_references": [],
+        "initialValue": false,
+        "isModifiable": false
       },
       "input_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440019",
+        "ids_references": [],
         "isExternalInput": false
       },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440020",
+        "ids_references": [],
         "isExternalOutput": false
       }
     },
@@ -148,9 +156,7 @@
       "id": "a20e1234-e29b-41d4-a716-446655440021",
       "name": "Master Summing Bus  ",
       "description": "Nodo de mezcla final responsable de consolidar todas las señales procesadas antes de su distribucion. Soporta hasta diez entradas habilitadas, permitiendo arquitecturas de ruteado paralelas extremadamente complejas. Cada canal de entrada dispone de una gestion de fase y nivel independiente para asegurar una suma perfecta sin cancelaciones indeseadas. Su bus de salida estereo opcional ofrece la flexibilidad necesaria para trabajar tanto en formatos monofonicos como en espacios sonoros tridimensionales, convirtiendolo en el centro de control definitivo para el balance espectral del sintetizador.",
-      "ids_references": [
-        "112e8400-e29b-41d4-a716-446655440111"
-      ],
+      "ids_references": [],
       "others": [],
       "stereo": {
         "id": "a20e1234-e29b-41d4-a716-446655440022",
@@ -176,30 +182,35 @@
         "initialValue": 3,
         "isModifiable": false
       },
-      "input_1": {
-        "id": "a20e1234-e29b-41d4-a716-446655440025",
-        "isExternalInput": true,
-        "description": "Entrada 1 del mezclador para señal externa."
-      },
-      "input_2": {
-        "id": "a20e1234-e29b-41d4-a716-446655440026",
-        "isExternalInput": true,
-        "description": "Entrada 2 del mezclador para señal externa."
-      },
-      "input_3": {
-        "id": "a20e1234-e29b-41d4-a716-446655440027",
-        "isExternalInput": true,
-        "description": "Entrada 3 del mezclador para señal externa."
-      },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440028",
+        "ids_references": [],
         "isExternalOutput": true,
         "description": "Salida maestra canal izquierdo del mezclador."
       },
       "output_2": {
         "id": "a20e1234-e29b-41d4-a716-446655440029",
+        "ids_references": [],
         "isExternalOutput": true,
         "description": "Salida maestra canal derecho del mezclador."
+      },
+      "input_1": {
+        "id": "a20e1234-e29b-41d4-a716-446655440025",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada 1 del mezclador para señal externa."
+      },
+      "input_2": {
+        "id": "a20e1234-e29b-41d4-a716-446655440026",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada 2 del mezclador para señal externa."
+      },
+      "input_3": {
+        "id": "a20e1234-e29b-41d4-a716-446655440027",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada 3 del mezclador para señal externa."
       }
     }
   ],

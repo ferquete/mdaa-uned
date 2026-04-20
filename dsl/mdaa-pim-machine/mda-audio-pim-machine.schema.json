@@ -44,7 +44,7 @@
       "required": ["id", "ids_references", "initialValue", "isModifiable"],
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
-        "ids_references": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "ids_references": { "type": "array", "items": { "type": "string" } },
         "initialValue": { "anyOf": [{ "type": "number" }, { "type": "string" }, { "type": "boolean" }, { "$ref": "#/definitions/Matrix" }] },
         "isModifiable": { "type": "boolean" },
         "isExternalInput": { "type": "boolean" },
@@ -56,7 +56,7 @@
       "required": ["id", "ids_references"],
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
-        "ids_references": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "ids_references": { "type": "array", "items": { "type": "string" } },
         "isExternalInput": { "type": "boolean" },
         "isExternalOutput": { "type": "boolean" },
         "description": { "type": "string", "maxLength": 600 }
@@ -87,7 +87,7 @@
             "properties": {
               "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
               "name": { "type": "string", "minLength": 1, "maxLength": 20 },
-              "ids_references": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "ids_references": { "type": "array", "items": { "type": "string" } },
               "initialValue": { "type": "string", "minLength": 1, "maxLength": 100 },
               "isModifiable": { "type": "boolean" },
               "isExternalInput": { "type": "boolean" },
@@ -127,7 +127,7 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
         "description": { "type": "string", "maxLength": 600 },
-        "ids_references": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "ids_references": { "type": "array", "items": { "type": "string" } },
         "sourceNode": { "type": "string" },
         "sourceParam": { "type": "string" },
         "targetNode": { "type": "string" },

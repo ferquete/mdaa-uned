@@ -15,7 +15,7 @@ El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación 
 | `id` | STRING | Identificador único de la máquina PIM. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. Máximo 20 caracteres. |
 | `description` | STRING | Información general sobre la máquina. | Opcional. Máximo 600 caracteres. |
-| `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. Piensa que una máquina PIM puede querer implementar varias máquinas CIM, no siempre es una relación 1:1. Este array define el universo de elementos en los que se moverá el modelo PIM de esta máquina. | Obligatorio. Puede estar vacío. |
+| `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. Piensa que una máquina PIM puede querer implementar varias máquinas CIM, no siempre es una relación 1:1. Este array define el universo de elementos en los que se moverá el modelo PIM de esta máquina. | Obligatorio. Puede estar vacío (`[]`). |
 | `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. Puede estar vacío. |
 | `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. Puede estar vacío. |
 
@@ -42,7 +42,7 @@ El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación 
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único universal. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `description` | STRING | Información textual sobre el propósito del elemento. | Opcional. Máximo 600 caracteres. |
-| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`.  | Obligatorio. Puede estar vacío. |
+| `ids_references`| ARRAY[STRING]| Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`.  | Obligatorio. Puede estar vacío (`[]`). |
 
 #### Estructura de Parámetro de Configuración (`Parameter`)
 Cualquier propiedad de configuración de un nodo (excepto el listado `others`) es un objeto de tipo `Parameter`.
@@ -74,6 +74,7 @@ Los puntos de conexión son los puertos de entrada o salida de audio y control d
 | Campo | Tipo | Descripción |
 | :--- | :--- | :--- |
 | `id` | UUID | Identificador único del punto de conexión. |
+| `ids_references` | string[] | **Obligatorio.** Puede estar vacío (`[]`) si no hay vinculación conceptual. |
 | `isExternalInput` | boolean | Solo para entradas de audio o control. Si es `true`, la entrada puede recibir señal desde fuera de la máquina. Por defecto es `true`. |
 | `isExternalOutput` | boolean | Solo para salidas de audio o control. Si es `true`, la salida puede enviar señal hacia fuera de la máquina. Por defecto es `true`. |
 | `description` | string | (Opcional) Descripción del propósito del punto. |
@@ -96,8 +97,8 @@ Las aristas establecen la conexión entre nodos.
 | `type` | Tipo de señal: `"audio"` o `"modification"`. |
 
 ### 2.1. Reglas de Conectividad
-- **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`).
-- **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`.
+- **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` solo pueden apuntar a conexiones conceptuales (sendTo) en los modelos CIM.
+- **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` solo pueden apuntar a elementos/nodos de control en los modelos CIM.
 - **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`, `ping_pong`, `inputs_number`).
 
 ---
@@ -305,7 +306,7 @@ Este nodo permite la suma de hasta 10 señales.
 | `output_1..2` | - | `ConnectionPoint` | Salida principal (L) y (R). |
 
 #### Ganancia y Paneo (`gain_pan`)
-Nodo destinado al control de volumen y posicionamiento antes de la salida final.
+Nodo **Gain & Pan**: Control de amplitud y posición. Posee una única entrada fija (`input_1`) y salidas según el modo estéreo.
 | Parámetro | Tipo | Rango / Valores | Descripción |
 | :--- | :--- | :--- | :--- |
 | `gain` | NUMBER | 0 - 1 | Nivel de ganancia. |

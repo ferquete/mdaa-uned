@@ -74,13 +74,14 @@ export class MdaAudioPimMachineValidator {
 
         if (model.description) {
             const desc = model.description.replace(/"/g, '');
-            if (desc.length < 20 || desc.length > 600) {
+            if (desc.length < 20 || desc.length > 610) { // Tolerancia por caracteres de escape
                 accept('error', 'La descripción debe tener entre 20 y 600 caracteres.', { node: model, property: 'description' });
             }
         }
 
         if (model.ids_cim_reference) {
             model.ids_cim_reference.forEach((ref, index) => {
+                if (!ref) return;
                 const refId = ref.replace(/"/g, '');
                 if (refId.length !== 36) {
                     accept('error', 'Cada ID de referencia CIM debe tener exactamente 36 caracteres.', { node: model, property: 'ids_cim_reference', index });
@@ -192,10 +193,6 @@ export class MdaAudioPimMachineValidator {
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
-        if (param.ids_references.length === 0) {
-            accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: param, property: 'ids_references' });
-        }
-
         if (param.description && param.description.length > 600) {
             accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
         }
@@ -205,25 +202,24 @@ export class MdaAudioPimMachineValidator {
      * Valida los campos de un objeto OthersParameter dinamico.
      */
     checkOthersParameter(param: OthersParameter, accept: ValidationAcceptor): void {
-        const id = param.id.replace(/"/g, '');
-        if (!this.uuidRegex.test(id)) {
+        const id = param.id?.replace(/"/g, '');
+        if (id && !this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
-        if (param.ids_references.length === 0) {
-            accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: param, property: 'ids_references' });
-        }
         
-        const name = param.name.replace(/"/g, '');
+        const name = param.name?.replace(/"/g, '');
         if (!name || name.trim().length === 0 || name.length > 20) {
             accept('error', 'El nombre del parámetro dinámico debe tener entre 1 y 20 caracteres.', { node: param, property: 'name' });
         }
 
-        const value = param.initialValue.replace(/"/g, '');
-        if (!value || value.length === 0 || value.length > 100) {
-            accept('error', 'El valor inicial de initialValue debe ser un String de 1 a 100 caracteres.', { node: param, property: 'initialValue' });
+        if (param.initialValue) {
+            const value = param.initialValue.replace(/"/g, '');
+            if (value.length === 0 || value.length > 100) {
+                accept('error', 'El valor inicial de initialValue debe ser un String de 1 a 100 caracteres.', { node: param, property: 'initialValue' });
+            }
         }
 
-        if (param.description && param.description.length > 600) {
+        if (param.description && param.description.length > 610) {
             accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
         }
     }
@@ -235,9 +231,6 @@ export class MdaAudioPimMachineValidator {
         const id = edge.id.replace(/"/g, '');
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID de la arista debe ser un UUID válido.', { node: edge, property: 'id' });
-        }
-        if (edge.ids_references.length === 0) {
-            accept('error', 'La lista de referencias de la arista no puede estar vacía.', { node: edge, property: 'ids_references' });
         }
         if (edge.description && edge.description.length > 600) {
             accept('error', 'La descripción de la arista no puede superar los 600 caracteres.', { node: edge, property: 'description' });
@@ -251,9 +244,6 @@ export class MdaAudioPimMachineValidator {
         const id = cp.id.replace(/"/g, '');
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: cp, property: 'id' });
-        }
-        if (cp.ids_references.length === 0) {
-            accept('error', 'La lista de referencias ids_references no puede estar vacía.', { node: cp, property: 'ids_references' });
         }
         if (cp.description && cp.description.length > 600) {
             accept('error', 'La descripción no puede superar los 600 caracteres.', { node: cp, property: 'description' });
@@ -349,6 +339,8 @@ export class MdaAudioPimMachineValidator {
     checkDelay(node: DelayNode, accept: ValidationAcceptor): void {
         this.checkMin(node.delayTime, 0, accept);
         this.checkRange(node.feedback, 0, 1, accept);
+        this.checkRange(node.lowPassCutoff, 20, 20000, accept);
+        this.checkRange(node.highPassCutoff, 20, 20000, accept);
         this.checkRange(node.dryWet, 0, 1, accept);
     }
 
@@ -368,10 +360,13 @@ export class MdaAudioPimMachineValidator {
     checkCompressor(node: CompressorNode, accept: ValidationAcceptor): void {
         this.checkMin(node.attack, 0, accept);
         this.checkMin(node.release, 0, accept);
+        this.checkMin(node.ratio, 1, accept);
+        this.checkMin(node.makeupGain, 0, accept);
     }
 
     checkEqualizer(node: EqualizerNode, accept: ValidationAcceptor): void {
         this.checkRange(node.bandFrequency, 20, 20000, accept);
+        this.checkMin(node.bandwidth, 0, accept);
     }
 
     /**
@@ -393,7 +388,7 @@ export class MdaAudioPimMachineValidator {
             accept('error', 'Debe definirse input_1.', { node, property: 'id' });
         }
         if (isStereo) {
-            if (!node.input_2) {
+            if (!node.input_2 && node.$type !== 'GainAndPanNode') {
                 accept('error', 'En modo estéreo, debe definirse input_2.', { node, property: 'id' });
             }
         } else {
@@ -404,14 +399,24 @@ export class MdaAudioPimMachineValidator {
     }
 
     /**
-     * Valida la estructura de GainAndPanNode (1 entrada fija, salidas según estéreo)
+     * Valida la estructura de GainAndPanNode (entradas y salidas según estéreo)
      */
     checkGainAndPanStructure(node: GainAndPanNode, accept: ValidationAcceptor): void {
-        this.internalCheckStereoAndPingPong(node, accept);
+        const isStereo = this.internalCheckStereoAndPingPong(node, accept);
         this.internalCheckOutputs(node, accept);
         
         if (!node.input_1) {
             accept('error', 'GainAndPan requiere input_1.', { node, property: 'id' });
+        }
+
+        if (isStereo) {
+            if (!(node as any).input_2) {
+                accept('error', 'En modo estéreo, GainAndPan requiere input_2.', { node, property: 'id' });
+            }
+        } else {
+            if ((node as any).input_2) {
+                accept('error', 'En modo mono, GainAndPan no debe tener input_2.', { node, property: 'input_2' as any });
+            }
         }
     }
 

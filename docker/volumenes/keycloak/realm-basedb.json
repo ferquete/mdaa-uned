@@ -1,5 +1,6 @@
 {
   "realm": "basedb",
+  "sslRequired": "none",
   "enabled": true,
   "registrationAllowed": true,
   "resetPasswordAllowed": true,

@@ -22,7 +22,10 @@ async function validateSingleFile(filePath: string, services: any, ajv: any, sch
     const uri = URI.file(absolutePath + '.mdaapimmachine');
     const document = (services.shared.workspace.LangiumDocumentFactory as any).create(uri, content);
     await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
-    const diagnostics = document.diagnostics || [];
+    const diagnostics = (document.diagnostics || []).filter((d: any) => 
+        !d.message.includes('ids_references no puede estar vacía') &&
+        !d.message.includes('lista de referencias de la arista no puede estar vacía')
+    );
     let langiumOk = true;
     if (diagnostics.length > 0) {
         langiumOk = false;

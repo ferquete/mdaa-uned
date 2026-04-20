@@ -1,5 +1,5 @@
 {
-  "description": "Red de interconexiones técnicas de nivel PIM que orquestra la comunicacion entre modulos de generacion, procesamiento, modulacion y efectos finales. Este documento define los vinculos precisos entre los puntos de salida externos y las entradas de control o audio de las diferentes maquinas, asegurando que el flujo de señal sea coherente con la arquitectura de sintesis diseñada en el nivel CIM. La configuracion aqui descrita permite una modulacion dinamica de parametros criticos como el corte de frecuencia del filtro y la frecuencia fundamental del oscilador, permitiendo un comportamiento sonoro vivo y evolutivo a lo largo de toda la cadena de ejecucion del sintetizador profesional.",
+  "description": "Red de interconexiones nivel PIM que orquestra la comunicación entre módulos de generación, procesamiento, modulación y efectos. Define los vínculos precisos entre puntos de salida y entradas de control o audio, asegurando un flujo coherente con la arquitectura CIM. Permite la modulación dinámica de parámetros críticos como corte de filtro y frecuencia fundamental, logrando un comportamiento sonoro vivo y evolutivo en todo el sintetizador.",
   "relations": [
     {
       "id": "c50e1234-e29b-41d4-a716-446655441001",

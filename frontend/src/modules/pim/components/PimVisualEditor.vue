@@ -100,8 +100,15 @@ const availableCimComponents = computed(() => {
       const cimDoc = analysisStore.parsedDocs[machine.id]
       if (cimDoc && Array.isArray(cimDoc.elements)) {
         cimDoc.elements.forEach((el: any) => {
+          // Elementos (Nodos) - Válidos para MODIFICACIÓN
           components.push({ id: el.id, name: `[${cimDoc.name}] ${el.name}`, type: 'el' })
-          el.sendTo?.forEach((s: any) => components.push({ id: s.id, name: `[${cimDoc.name}] ${el.name} ➔ ${s.idRef.substring(0,8)}`, type: 'edge' }))
+          
+          // SendTo (Aristas/Conexiones) - Válidos para AUDIO
+          el.sendTo?.forEach((s: any) => components.push({ 
+            id: s.id, 
+            name: `[${cimDoc.name}] ${el.name} ➔ ${s.idRef.substring(0,8)}`, 
+            type: 'edge' 
+          }))
         })
       }
     }
@@ -243,6 +250,8 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
     defaultParams.waveform = { initialValue: 'sine', id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
     defaultParams.rate = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
     defaultParams.amplitude = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.phase = { initialValue: 0, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+    defaultParams.sync = { initialValue: false, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
   }
 
   const newNode = {
@@ -403,32 +412,46 @@ const buildFinalJson = () => {
     const rawData = n.data.parameters
     const metadata = PIM_NODE_METADATA[n.data.type]
     
-    // Add raw others if existing, else empty array
-    const othersArr = rawData?.others || []
-    
+    // El orden de campos en el nodo debe ser coherente con el DSL
     const node: any = {
+      type: n.data.type,
       id: n.id,
       name: n.data.name,
       description: n.data.description || '',
-      type: n.data.type,
       ids_references: rawData?.ids_references || [],
-      others: othersArr
+      others: Array.isArray(rawData?.others) ? rawData.others.map((o: any) => ({
+        id: o.id,
+        name: o.name,
+        ids_references: o.ids_references || [],
+        initialValue: typeof o.initialValue === 'object' ? (o.initialValue.initialValue ?? '') : o.initialValue,
+        isModifiable: o.isModifiable ?? true,
+        isExternalInput: o.isExternalInput ?? false,
+        description: o.description || ''
+      })) : []
     }
 
     const wrapParam = (key: string, value: any) => {
       const existing = rawData?.[key]
       const modFlags = rawData?._isModifiable || {}
       
-      const paramId = (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID()
-
-      return {
-        id: paramId,
-        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
-        initialValue: value,
-        isModifiable: modFlags[key] ?? (existing && typeof existing === 'object' && 'isModifiable' in existing ? existing.isModifiable : true),
-        isExternalInput: (existing && typeof existing === 'object') ? (existing.isExternalInput ?? false) : false,
-        description: (existing && typeof existing === 'object') ? (existing.description || '') : ''
+      // Limpiar valor si viene anidado por error
+      let cleanValue = value
+      if (value !== null && typeof value === 'object' && 'initialValue' in value) {
+        cleanValue = value.initialValue
       }
+
+      const param: any = {
+        id: (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID(),
+        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
+        initialValue: cleanValue,
+        isModifiable: modFlags[key] ?? (existing && typeof existing === 'object' && 'isModifiable' in existing ? existing.isModifiable : true),
+        isExternalInput: (existing && typeof existing === 'object' && existing.isExternalInput !== undefined) 
+          ? existing.isExternalInput 
+          : false
+      }
+      
+      if (existing?.description) param.description = existing.description
+      return param
     }
 
     const wrapCP = (key: string) => {
@@ -436,23 +459,27 @@ const buildFinalJson = () => {
       const isInput = metadata?.inputs.some(i => i.id === key)
       const isOutput = metadata?.outputs.some(o => o.id === key)
 
-      const cpId = (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID()
-      
-      const res: any = {
-        id: cpId,
-        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
-        description: (existing && typeof existing === 'object') ? (existing.description || '') : ''
+      const cp: any = {
+        id: (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID(),
+        ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : []
       }
 
       if (isInput) {
-        res.isExternalInput = (existing && typeof existing === 'object') ? (existing.isExternalInput ?? true) : true
+        cp.isExternalInput = (existing && typeof existing === 'object' && existing.isExternalInput !== undefined)
+          ? existing.isExternalInput
+          : true
       }
       if (isOutput) {
-        res.isExternalOutput = (existing && typeof existing === 'object') ? (existing.isExternalOutput ?? true) : true
+        cp.isExternalOutput = (existing && typeof existing === 'object' && existing.isExternalOutput !== undefined)
+          ? existing.isExternalOutput
+          : true
       }
-      return res
+      if (existing?.description) cp.description = existing.description
+      
+      return cp
     }
 
+    // Añadir parámetros técnicos según el orden del DSL
     const paramsList = PIM_MODIFIABLE_PARAMS[n.data.type] || []
     paramsList.forEach((p: string) => {
       if (rawData?.[p] !== undefined) {
@@ -460,21 +487,33 @@ const buildFinalJson = () => {
       }
     })
 
+    // Añadir campos de audio comunes si existen
     if (metadata) {
       if ('stereo' in (rawData || {}) || metadata.inputs.length > 0 || metadata.outputs.length > 0) {
         node.stereo = wrapParam('stereo', rawData?.stereo ?? false)
+        if (node.stereo.initialValue === true) {
+          node.ping_pong = wrapParam('ping_pong', rawData?.ping_pong ?? false)
+        }
       }
-      metadata.inputs.forEach((i: any) => node[i.id] = wrapCP(i.id))
-      metadata.outputs.forEach((o: any) => node[o.id] = wrapCP(o.id))
+      metadata.inputs.forEach((i: any) => {
+        // Solo incluir input_2 si es estéreo
+        if (i.id === 'input_2' && node.stereo?.initialValue !== true) return
+        node[i.id] = wrapCP(i.id)
+      })
+      metadata.outputs.forEach((o: any) => {
+        // Solo incluir output_2 si es estéreo
+        if (o.id === 'output_2' && node.stereo?.initialValue !== true) return
+        node[o.id] = wrapCP(o.id)
+      })
     }
 
-    if (rawData) {
-      if ('waveform' in rawData) node.waveform = wrapParam('waveform', rawData.waveform)
-      if ('noiseType' in rawData) node.noiseType = wrapParam('noiseType', rawData.noiseType)
-      if ('filterType' in rawData) node.filterType = wrapParam('filterType', rawData.filterType)
-      if ('envelopeType' in rawData) node.envelopeType = wrapParam('envelopeType', rawData.envelopeType)
-      if ('inputs_number' in rawData) node.inputs_number = wrapParam('inputs_number', rawData.inputs_number)
-    }
+    // Campos especiales como waveform, etc. (ya cubiertos por paramsList normalmente, pero asegurar)
+    const specialKeys = ['waveform', 'noiseType', 'filterType', 'envelopeType', 'inputs_number']
+    specialKeys.forEach(k => {
+      if (rawData?.[k] !== undefined && !node[k]) {
+        node[k] = wrapParam(k, rawData[k])
+      }
+    })
 
     return node
   })
@@ -659,6 +698,7 @@ const executeSave = async () => {
       :title="edgeModalTitle"
       :confirm-text="edgeModalConfirmText"
       :available-cim-components="availableCimComponents"
+      :edge-type="pendingEdgeData?.type || localEdges.find(e => e.id === editingEdgeId)?.data?.type"
       :initial-data="edgeModalInitialData"
       @close="showEdgeModal = false; editingEdgeId = null; pendingEdgeData = null"
       @confirm="handleConfirmEdge"

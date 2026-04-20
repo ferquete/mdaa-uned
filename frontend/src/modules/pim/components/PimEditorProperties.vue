@@ -38,7 +38,129 @@ const localParamRefs = ref<Record<string, string[]>>({})
 // Confirmación de borrado de nodo
 const showDeleteConfirm = ref(false)
 
-// --- Validaciones (Definidas antes de syncNodeData por el watch immediate) ---
+/**
+ * Configuración de parámetros por tipo para renderizado dinámico.
+ * Define rangos, opciones y comportamiento de cada propiedad técnica.
+ */
+const NODE_PARAMS_BY_TYPE: Record<string, any> = {
+  // Comunes
+  stereo: { label: 'Estéreo', type: 'boolean', description: 'Habilita procesado de 2 canales' },
+  ping_pong: { label: 'Ping Pong', type: 'boolean', description: 'Alternancia de canales' },
+  
+  // Generadores
+  waveform: { 
+    label: 'Forma de Onda', 
+    type: 'select', 
+    options: [
+      { label: 'Sinusoidal', value: 'sine' },
+      { label: 'Cuadrada', value: 'square' },
+      { label: 'Diente de Sierra', value: 'sawtooth' },
+      { label: 'Triangular', value: 'triangle' },
+      { label: 'Pulso', value: 'pulse' },
+      { label: 'Matriz', value: 'matrix' }
+    ]
+  },
+  frequency: { label: 'Frecuencia', type: 'number', min: 0, max: 20000, step: 1, unit: 'Hz' },
+  pulseWidth: { label: 'Ancho de Pulso', type: 'number', min: 0, max: 1, step: 0.01 },
+  gain: { label: 'Ganancia', type: 'number', min: 0, max: 1, step: 0.01 },
+  phase: { label: 'Fase', type: 'number', min: 0, max: 6.283, step: 0.001, unit: 'rad' },
+  pan: { label: 'Paneo', type: 'number', min: -1, max: 1, step: 0.01 },
+  noiseType: { 
+    label: 'Tipo de Ruido', 
+    type: 'select', 
+    options: [
+      { label: 'Blanco', value: 'white' },
+      { label: 'Rosa', value: 'pink' },
+      { label: 'Browniano', value: 'brownian' }
+    ]
+  },
+  amplitude: { label: 'Amplitud', type: 'number', min: 0, max: 1, step: 0.01 },
+  file: { label: 'Archivo de Audio', type: 'string', showRefs: false, canBeExternal: false },
+  loop: { label: 'Bucle', type: 'boolean', description: 'Repetición infinita' },
+  
+  // Modificadores de Control
+  rate: { label: 'Velocidad (Rate)', type: 'number', min: 0.01, max: 50, step: 0.01, unit: 'Hz' },
+  sync: { label: 'Sincronizar Tempo', type: 'boolean', description: 'Ajuste al reloj global' },
+  envelopeType: { 
+    label: 'Tipo de Envolvente', 
+    type: 'select', 
+    options: [
+      { label: 'ADSR', value: 'ADSR' },
+      { label: 'ADR', value: 'ADR' },
+      { label: 'AR', value: 'AR' },
+      { label: 'DAHDSR', value: 'DAHDSR' }
+    ]
+  },
+  attack: { label: 'Ataque', type: 'number', min: 0, max: 10, step: 0.001, unit: 's' },
+  decay: { label: 'Caída (Decay)', type: 'number', min: 0, max: 10, step: 0.001, unit: 's' },
+  sustain: { label: 'Sostenido', type: 'number', min: 0, max: 1, step: 0.01 },
+  release: { label: 'Relajación', type: 'number', min: 0, max: 10, step: 0.001, unit: 's' },
+  delay: { label: 'Retraso (Pre-Delay)', type: 'number', min: 0, max: 5, step: 0.001, unit: 's' },
+  hold: { label: 'Mantenimiento (Hold)', type: 'number', min: 0, max: 5, step: 0.001, unit: 's' },
+  curve: { 
+    label: 'Curva de Respuesta', 
+    type: 'select', 
+    options: [
+      { label: 'Lineal', value: 'linear' },
+      { label: 'Exponencial', value: 'exponential' },
+      { label: 'Logarítmica', value: 'logarithmic' }
+    ]
+  },
+
+  // Efectos
+  filterType: { 
+    label: 'Tipo de Filtro', 
+    type: 'select', 
+    options: [
+      { label: 'Pasa-Bajos (LPF)', value: 'LPF' },
+      { label: 'Pasa-Altos (HPF)', value: 'HPF' },
+      { label: 'Pasa-Banda (BPF)', value: 'BPF' },
+      { label: 'Notch (Rechaza-Banda)', value: 'Notch' }
+    ]
+  },
+  cutoff: { label: 'Corte (Cutoff)', type: 'number', min: 20, max: 20000, step: 1, unit: 'Hz' },
+  resonance: { label: 'Resonancia (Q)', type: 'number', min: 0, max: 10, step: 0.1 },
+  slope: { 
+    label: 'Pendiente', 
+    type: 'select', 
+    options: [
+      { label: '12 dB/oct', value: '12dB/oct' },
+      { label: '24 dB/oct', value: '24dB/oct' },
+      { label: '48 dB/oct', value: '48dB/oct' }
+    ]
+  },
+  roomSize: { label: 'Tamaño de Sala', type: 'number', min: 0, max: 1, step: 0.01 },
+  damping: { label: 'Amortiguación', type: 'number', min: 0, max: 1, step: 0.01 },
+  decayTime: { label: 'Tiempo de Decaimiento', type: 'number', min: 0, max: 20, step: 0.1, unit: 's' },
+  dryWet: { label: 'Mezcla Dry/Wet', type: 'number', min: 0, max: 1, step: 0.01 },
+  delayTime: { label: 'Tiempo de Retraso', type: 'number', min: 0, max: 5, step: 0.001, unit: 's' },
+  feedback: { label: 'Retroalimentación', type: 'number', min: 0, max: 1, step: 0.01 },
+  lowPassCutoff: { label: 'LPF Interno', type: 'number', min: 20, max: 20000, step: 1, unit: 'Hz' },
+  highPassCutoff: { label: 'HPF Interno', type: 'number', min: 20, max: 20000, step: 1, unit: 'Hz' },
+  drive: { label: 'Saturación (Drive)', type: 'number', min: 0, max: 1, step: 0.01 },
+  tone: { label: 'Tono (Brillo)', type: 'number', min: 0, max: 1, step: 0.01 },
+  distType: { 
+    label: 'Tipo de Distorsión', 
+    type: 'select', 
+    options: [
+      { label: 'Soft Clipping', value: 'soft-clipping' },
+      { label: 'Hard Clipping', value: 'hard-clipping' },
+      { label: 'Bitcrush', value: 'bitcrush' }
+    ]
+  },
+  outputLevel: { label: 'Nivel de Salida', type: 'number', min: 0, max: 1, step: 0.01 },
+  depth: { label: 'Profundidad (Depth)', type: 'number', min: 0, max: 1, step: 0.01 },
+  mix: { label: 'Mezcla Final', type: 'number', min: 0, max: 1, step: 0.01 },
+  threshold: { label: 'Umbral (Threshold)', type: 'number', min: -60, max: 0, step: 0.1, unit: 'dB' },
+  ratio: { label: 'Relación (Ratio)', type: 'number', min: 1, max: 20, step: 0.1 },
+  makeupGain: { label: 'Ganancia de Compensación', type: 'number', min: 0, max: 24, step: 0.1, unit: 'dB' },
+  bandFrequency: { label: 'Frecuencia de Banda', type: 'number', min: 20, max: 20000, step: 1, unit: 'Hz' },
+  bandwidth: { label: 'Ancho de Banda (Q)', type: 'number', min: 0.1, max: 10, step: 0.1 },
+  
+  // Mezcla
+  inputs_number: { label: 'Número de Entradas', type: 'number', min: 1, max: 10, step: 1 }
+};
+
 function validateAll() {
   errors.value = {}
   validateField('name', localName.value)
@@ -56,6 +178,18 @@ function validateField(field: string, value: any) {
     if (!value || value.length < 1) errors.value.name = 'El nombre es obligatorio'
     if (value.length > 20) errors.value.name = 'Máximo 20 caracteres'
   }
+  
+  // Validación dinámica según configuración
+  const config = NODE_PARAMS_BY_TYPE[field]
+  if (config && config.type === 'number') {
+    if (config.min !== undefined && value < config.min) {
+      errors.value[field] = `Mínimo: ${config.min}${config.unit || ''}`
+    }
+    if (config.max !== undefined && value > config.max) {
+      errors.value[field] = `Máximo: ${config.max}${config.unit || ''}`
+    }
+  }
+
   if (field.startsWith('other_name_')) {
     if (!value || value.length < 1) errors.value[field] = 'Mínimo 1 carácter'
     if (value && value.length > 20) errors.value[field] = 'Máximo 20 caracteres'
@@ -64,20 +198,37 @@ function validateField(field: string, value: any) {
     if (!value || value.length < 1) errors.value[field] = 'Mínimo 1 carácter'
     if (value && value.length > 100) errors.value[field] = 'Máximo 100 caracteres'
   }
-  
-  if (field === 'frequency' && (value < 0 || value > 20000)) {
-    errors.value.frequency = 'Rango: 0 - 20,000 Hz'
-  }
-  if (field === 'pan' && (value < -1 || value > 1)) {
-    errors.value.pan = 'Rango: -1 a 1'
-  }
-  if ((field === 'gain' || field === 'amplitude' || field === 'roomSize' || field === 'damping' || field === 'dryWet') && (value < 0 || value > 1)) {
-    errors.value[field] = 'Rango: 0 a 1'
-  }
-  if (field === 'resonance' && (value < 0 || value > 10)) {
-    errors.value.resonance = 'Rango: 0 a 10'
-  }
 
+  updateNode()
+}
+
+/**
+ * Gestiona la visibilidad de puertos estéreo y limpia aristas huérfanas.
+ */
+function handleStereoChange() {
+  const isStereo = localParams.value.stereo === true
+  
+  if (!isStereo) {
+    // Si pasamos a mono, eliminar puertos secundarios de la estructura de datos
+    delete localParams.value.output_2
+    delete localParams.value.input_2
+    delete localParams.value.ping_pong
+    
+    // Notificar al padre que limpie las aristas que pudieran estar conectadas a estos puertos
+    if (props.nodeId) {
+      emit('remove-edges-for-param', props.nodeId, 'output_2')
+      emit('remove-edges-for-param', props.nodeId, 'input_2')
+      emit('remove-edges-for-param', props.nodeId, 'ping_pong')
+    }
+  } else {
+    // Si pasamos a estéreo, asegurar que existan los objetos ConnectionPoint
+    if (!localParams.value.output_2) localParams.value.output_2 = { id: crypto.randomUUID(), ids_references: [] }
+    if (!localParams.value.input_2 && nodeType.value !== 'oscillator' && nodeType.value !== 'noise') {
+        localParams.value.input_2 = { id: crypto.randomUUID(), ids_references: [] }
+    }
+    if (!localParams.value.ping_pong) localParams.value.ping_pong = { initialValue: false, isModifiable: true }
+  }
+  
   updateNode()
 }
 
@@ -390,127 +541,87 @@ const confirmDeleteNode = () => {
         <div class="space-y-5">
           <h4 class="text-[10px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] mb-4">Parámetros de {{ metadata?.label }}</h4>
           
-          <!-- Frecuencia -->
-          <div v-if="'frequency' in localParams" class="space-y-2">
-            <div class="flex justify-between items-center">
-              <label class="text-[10px] font-medium text-geist-fg">Frecuencia</label>
-              <span class="text-[10px] font-mono font-bold">{{ localParams.frequency }} Hz</span>
-            </div>
-            <input 
-              v-model.number="localParams.frequency"
-              @input="validateField('frequency', localParams.frequency)"
-              type="range" min="0" max="20000" step="1"
-              class="w-full accent-geist-fg h-1 rounded-full cursor-pointer"
-            >
-            <span v-if="errors.frequency" class="text-[9px] text-geist-error font-medium">{{ errors.frequency }}</span>
-            
-            <!-- Selector de Referencias e Input Externo para Frecuencia -->
-            <div class="mt-2 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">CIM Refs</span>
-                <div class="flex items-center gap-1.5 cursor-pointer" @click="localExternalInputs.frequency = !localExternalInputs.frequency; updateNode()">
-                  <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
-                  <div 
-                    class="w-6 h-3 rounded-full border transition-colors relative"
-                    :class="localExternalInputs.frequency ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
-                  >
-                    <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs.frequency ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <button 
-                  v-for="comp in props.availableCimComponents" :key="comp.id"
-                  @click="toggleParamRef('frequency', comp.id)"
-                  class="text-[7px] px-1 py-0.5 rounded border transition-all truncate max-w-[60px]"
-                  :class="localParamRefs['frequency']?.includes(comp.id) 
-                    ? 'bg-geist-fg text-geist-bg border-geist-fg' 
-                    : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border hover:border-geist-accents-3'"
-                  :title="comp.name"
-                >
-                  {{ comp.name.split('] ')[1] || comp.name }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Rate (frecuencia LFO) -->
-          <div v-if="'rate' in localParams" class="space-y-2">
-            <div class="flex justify-between items-center">
-              <label class="text-[10px] font-medium text-geist-fg">Rate (Velocidad)</label>
-              <span class="text-[10px] font-mono font-bold">{{ localParams.rate }} Hz</span>
-            </div>
-            <input 
-              v-model.number="localParams.rate"
-              @input="validateField('rate', localParams.rate)"
-              type="range" min="0" max="20" step="0.1"
-              class="w-full accent-geist-fg h-1 rounded-full cursor-pointer"
-            >
-
-            <!-- Selector de Referencias e Input Externo para Rate -->
-            <div class="mt-2 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">CIM Refs</span>
-                <div class="flex items-center gap-1.5 cursor-pointer" @click="localExternalInputs.rate = !localExternalInputs.rate; updateNode()">
-                  <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
-                  <div 
-                    class="w-6 h-3 rounded-full border transition-colors relative"
-                    :class="localExternalInputs.rate ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
-                  >
-                    <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs.rate ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <button 
-                  v-for="comp in props.availableCimComponents" :key="comp.id"
-                  @click="toggleParamRef('rate', comp.id)"
-                  class="text-[7px] px-1 py-0.5 rounded border transition-all truncate max-w-[60px]"
-                  :class="localParamRefs['rate']?.includes(comp.id) 
-                    ? 'bg-geist-fg text-geist-bg border-geist-fg' 
-                    : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border hover:border-geist-accents-3'"
-                  :title="comp.name"
-                >
-                  {{ comp.name.split('] ')[1] || comp.name }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Ganancia / Amplitud / Dry-Wet / Pan (0 a 1 / -1 a 1) -->
-          <div v-for="param in ['gain', 'amplitude', 'dryWet', 'pan']" :key="param">
-            <div v-if="param in localParams" class="space-y-2">
+          <!-- Renderizado Dinámico de Parámetros -->
+          <div v-for="(pConfig, pName) in NODE_PARAMS_BY_TYPE" :key="pName">
+            <div v-if="pName in localParams" class="space-y-3 pb-2 border-b border-geist-accents-1 last:border-0">
+              
+              <!-- Header del Parámetro -->
               <div class="flex justify-between items-center">
-                <label class="text-[10px] font-medium text-geist-fg capitalize">{{ param }}</label>
-                <span class="text-[10px] font-mono font-bold">{{ localParams[param] }}</span>
-              </div>
-              <input 
-                v-model.number="localParams[param]"
-                @input="validateField(param, localParams[param])"
-                type="range" :min="param === 'pan' ? -1 : 0" max="1" step="0.01"
-                class="w-full accent-geist-fg h-1 rounded-full cursor-pointer"
-              >
-
-              <!-- Selector de Referencias e Input Externo para Params genéricos -->
-              <div class="mt-2 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">CIM Refs</span>
-                  <div class="flex items-center gap-1.5 cursor-pointer" @click="localExternalInputs[param] = !localExternalInputs[param]; updateNode()">
-                    <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
-                    <div 
+                <label class="text-[10px] font-medium text-geist-fg">
+                  {{ pConfig.label }}
+                  <span v-if="pConfig.unit" class="text-geist-accents-4 lowercase">({{ pConfig.unit }})</span>
+                </label>
+                <div class="flex items-center gap-3">
+                  <span class="text-[10px] font-mono font-bold">
+                    {{ typeof localParams[pName] === 'boolean' ? (localParams[pName] ? 'Activado' : 'Desactivado') : localParams[pName] }}
+                  </span>
+                  
+                  <div v-if="pConfig.canBeExternal !== false" class="flex items-center gap-1.5" title="Hacer este parámetro visible desde fuera de la máquina">
+                    <span class="text-[8px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
+                    <button 
+                      @click="localExternalInputs[pName] = !localExternalInputs[pName]; updateNode()"
                       class="w-6 h-3 rounded-full border transition-colors relative"
-                      :class="localExternalInputs[param] ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
+                      :class="localExternalInputs[pName] ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
                     >
-                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs[param] ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
-                    </div>
+                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs[pName] ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
+                    </button>
                   </div>
                 </div>
+              </div>
+
+              <!-- Control según tipo -->
+              
+              <!-- 1. Deslizadores (Number) -->
+              <div v-if="pConfig.type === 'number'" class="space-y-1">
+                <input 
+                  v-model.number="localParams[pName]"
+                  @input="validateField(pName, localParams[pName])"
+                  type="range" :min="pConfig.min" :max="pConfig.max" :step="pConfig.step || 1"
+                  class="w-full accent-geist-fg h-1 rounded-full cursor-pointer"
+                >
+                <div class="flex justify-between text-[7px] text-geist-accents-3 uppercase font-bold">
+                  <span>{{ pConfig.min }}{{ pConfig.unit || '' }}</span>
+                  <span>{{ pConfig.max }}{{ pConfig.unit || '' }}</span>
+                </div>
+              </div>
+
+              <!-- 2. Selectores (Enum) -->
+              <div v-else-if="pConfig.type === 'select'" class="space-y-1">
+                <select v-model="localParams[pName]" @change="updateNode" class="geist-input w-full text-[10px] py-1 cursor-pointer">
+                  <option v-for="opt in pConfig.options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                </select>
+              </div>
+
+              <!-- 3. Toggles (Boolean) -->
+              <div v-else-if="pConfig.type === 'boolean'" class="flex items-center justify-between">
+                <span class="text-[9px] text-geist-accents-4">{{ pConfig.description }}</span>
+                <button 
+                  @click="localParams[pName] = !localParams[pName]; updateNode(); if(pName === 'stereo') handleStereoChange()"
+                  class="relative w-8 h-[18px] rounded-full transition-colors duration-200 border"
+                  :class="localParams[pName] ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
+                >
+                  <div class="absolute top-[2px] w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200" :class="localParams[pName] ? 'translate-x-[16px]' : 'translate-x-[2px]'"></div>
+                </button>
+              </div>
+
+              <!-- 4. Texto (String) -->
+              <div v-else class="space-y-1">
+                <input 
+                  v-model="localParams[pName]"
+                  @input="updateNode"
+                  type="text"
+                  class="geist-input w-full text-[10px] py-1"
+                >
+              </div>
+
+              <!-- Selector de Referencias CIM para el parámetro -->
+              <div v-if="pConfig.showRefs !== false" class="pt-1">
                 <div class="flex flex-wrap gap-1">
                   <button 
                     v-for="comp in props.availableCimComponents" :key="comp.id"
-                    @click="toggleParamRef(param, comp.id)"
+                    @click="toggleParamRef(pName, comp.id)"
                     class="text-[7px] px-1 py-0.5 rounded border transition-all truncate max-w-[60px]"
-                    :class="localParamRefs[param]?.includes(comp.id) 
+                    :class="localParamRefs[pName]?.includes(comp.id) 
                       ? 'bg-geist-fg text-geist-bg border-geist-fg' 
                       : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border hover:border-geist-accents-3'"
                     :title="comp.name"
@@ -519,88 +630,15 @@ const confirmDeleteNode = () => {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Selects -->
-          <div v-if="'waveform' in localParams" class="space-y-1.5">
-            <label class="text-[10px] font-medium text-geist-fg">Forma de Onda</label>
-            <select v-model="localParams.waveform" @change="updateNode" class="geist-input w-full text-xs cursor-pointer">
-              <option value="sine">Sinusoidal</option>
-              <option value="square">Cuadrada</option>
-              <option value="sawtooth">Diente de Sierra</option>
-              <option value="triangle">Triangular</option>
-              <option value="noise">Ruido</option>
-            </select>
-
-            <!-- Selector de Referencias e Input Externo para Waveform -->
-            <div class="mt-2 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">CIM Refs</span>
-                <div class="flex items-center gap-1.5 cursor-pointer" @click="localExternalInputs.waveform = !localExternalInputs.waveform; updateNode()">
-                  <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
-                  <div 
-                    class="w-6 h-3 rounded-full border transition-colors relative"
-                    :class="localExternalInputs.waveform ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
-                  >
-                    <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs.waveform ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <button 
-                  v-for="comp in props.availableCimComponents" :key="comp.id"
-                  @click="toggleParamRef('waveform', comp.id)"
-                  class="text-[7px] px-1 py-0.5 rounded border transition-all truncate max-w-[60px]"
-                  :class="localParamRefs['waveform']?.includes(comp.id) 
-                    ? 'bg-geist-fg text-geist-bg border-geist-fg' 
-                    : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border hover:border-geist-accents-3'"
-                  :title="comp.name"
-                >
-                  {{ comp.name.split('] ')[1] || comp.name }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="'filterType' in localParams" class="space-y-1.5">
-            <label class="text-[10px] font-medium text-geist-fg">Tipo de Filtro</label>
-            <select v-model="localParams.filterType" @change="updateNode" class="geist-input w-full text-xs cursor-pointer">
-              <option value="LPF">Low Pass (Pasa-Bajos)</option>
-              <option value="HPF">High Pass (Pasa-Altos)</option>
-              <option value="BPF">Band Pass (Pasa-Banda)</option>
-            </select>
-
-            <!-- Selector de Referencias e Input Externo para FilterType -->
-            <div class="mt-2 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">CIM Refs</span>
-                <div class="flex items-center gap-1.5 cursor-pointer" @click="localExternalInputs.filterType = !localExternalInputs.filterType; updateNode()">
-                  <span class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-tighter">Entrada Externa</span>
-                  <div 
-                    class="w-6 h-3 rounded-full border transition-colors relative"
-                    :class="localExternalInputs.filterType ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'"
-                  >
-                    <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white transition-transform" :class="localExternalInputs.filterType ? 'translate-x-[12px]' : 'translate-x-[1px]'"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <button 
-                  v-for="comp in props.availableCimComponents" :key="comp.id"
-                  @click="toggleParamRef('filterType', comp.id)"
-                  class="text-[7px] px-1 py-0.5 rounded border transition-all truncate max-w-[60px]"
-                  :class="localParamRefs['filterType']?.includes(comp.id) 
-                    ? 'bg-geist-fg text-geist-bg border-geist-fg' 
-                    : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border hover:border-geist-accents-3'"
-                  :title="comp.name"
-                >
-                  {{ comp.name.split('] ')[1] || comp.name }}
-                </button>
-              </div>
+              <span v-if="errors[pName]" class="text-[8px] text-geist-error font-medium block mt-1">{{ errors[pName] }}</span>
             </div>
           </div>
         </div>
+
+        <div class="h-px bg-geist-border"></div>
+
+        <!-- Otros Parámetros Dinámicos -->
 
         <div class="h-px bg-geist-border"></div>
 

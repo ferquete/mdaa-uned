@@ -33,12 +33,24 @@ const modifiableParams = computed(() => PIM_MODIFIABLE_PARAMS[props.data.type] |
  * Los parámetros modulables solo generan handle si isModifiable !== false.
  */
 const allInputs = computed(() => {
-  const audioInputs = metadata.value.inputs.map(p => ({ ...p, isMod: false }))
+  const isStereoNode = props.data.parameters?.stereo?.initialValue === true
+
+  const audioInputs = metadata.value.inputs
+    .filter(p => {
+      // Filtrar input_2 si no es estéreo
+      if (p.id === 'input_2') return isStereoNode
+      return true
+    })
+    .map(p => ({ ...p, isMod: false }))
   
   // Filtrar handles de modulación por isModifiable
   const modInputs = modifiableParams.value
     .filter(pName => {
       const param = props.data.parameters?.[pName]
+      
+      // Filtrar ping_pong si no es estéreo
+      if (pName === 'ping_pong') return isStereoNode
+
       // Si el parámetro es un objeto con isModifiable, respetar su valor
       if (param && typeof param === 'object' && 'isModifiable' in param) {
         return param.isModifiable === true
@@ -75,10 +87,17 @@ const allInputs = computed(() => {
 })
 
 /**
- * Salidas del nodo (siempre visibles si el nodo tiene outputs definidos).
+ * Salidas del nodo (filtradas por stereo).
  */
 const allOutputs = computed(() => {
-  return metadata.value.outputs.map(p => ({ ...p, isMod: false }))
+  const isStereoNode = props.data.parameters?.stereo?.initialValue === true
+  return metadata.value.outputs
+    .filter(p => {
+      // Filtrar output_2 si no es estéreo
+      if (p.id === 'output_2') return isStereoNode
+      return true
+    })
+    .map(p => ({ ...p, isMod: false }))
 })
 
 /**

@@ -29,11 +29,15 @@ const nameError = computed(() => {
 })
 
 const descriptionError = computed(() => {
+  if (description.value.length === 0) return 'La descripción es obligatoria'
+  if (description.value.length < 20) return 'Mínimo 20 caracteres'
   if (description.value.length > 600) return 'Máximo 600 caracteres'
   return ''
 })
 
-const isValid = computed(() => !nameError.value && !descriptionError.value)
+const isValid = computed(() => {
+  return !nameError.value && !descriptionError.value && selectedCimIds.value.length > 0
+})
 
 watch(() => props.show, (isShowing) => {
   if (isShowing) {

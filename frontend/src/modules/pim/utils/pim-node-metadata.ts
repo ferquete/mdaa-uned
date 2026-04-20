@@ -232,16 +232,17 @@ export const PIM_NODE_METADATA: Record<string, PimNodeTypeMetadata> = {
  */
 export const PIM_MODIFIABLE_PARAMS: Record<string, string[]> = {
   oscillator: ['waveform', 'frequency', 'pulseWidth', 'gain', 'phase', 'pan'],
-  noise: ['amplitude', 'gain', 'pan'],
-  sample: ['gain', 'pan'],
-  lfo: ['rate', 'amplitude'],
-  envelope: ['attack', 'decay', 'sustain', 'release'],
-  frequency_filter: ['cutoff', 'resonance'],
-  reverb: ['roomSize', 'dryWet'],
-  delay: ['delayTime', 'feedback', 'dryWet'],
-  distortion: ['drive', 'outputLevel'],
-  chorus_flanger: ['rate', 'depth', 'mix'],
-  compressor: ['threshold', 'makeupGain'],
-  equalizer: ['gain'],
+  noise: ['noiseType', 'amplitude', 'gain', 'pan'],
+  sample: ['gain', 'pan', 'loop'],
+  lfo: ['waveform', 'rate', 'amplitude', 'phase'],
+  envelope: ['attack', 'decay', 'sustain', 'release', 'delay', 'hold'],
+  frequency_filter: ['cutoff', 'resonance', 'filterType'],
+  reverb: ['roomSize', 'damping', 'decayTime', 'dryWet'],
+  delay: ['delayTime', 'feedback', 'lowPassCutoff', 'highPassCutoff', 'dryWet'],
+  distortion: ['drive', 'tone', 'outputLevel'],
+  chorus_flanger: ['rate', 'depth', 'feedback', 'mix'],
+  compressor: ['threshold', 'ratio', 'attack', 'release', 'makeupGain'],
+  equalizer: ['bandFrequency', 'bandwidth', 'gain'],
+  mixer: ['inputs_number'],
   gain_pan: ['gain', 'pan']
 };

@@ -1,36 +1,39 @@
 export const PIM_MACHINE_SCHEMA = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "MdaAudioPimMachine Model Schema",
-  "description": "Schema for validating PIM Audio Machine models according to pim.md specifications",
+  "title": "MDA Audio PIM Machine Model Schema",
+  "description": "Schema for validating PIM Audio Machine models according to pim-machines.md technical specifications",
   "type": "object",
   "properties": {
     "id": {
       "$ref": "#/definitions/UUID",
-      "description": "Identificador único de la máquina PIM"
+      "description": "Identificador único de la máquina PIM (UUIDv4)"
     },
     "name": {
       "type": "string",
       "minLength": 1,
       "maxLength": 20,
-      "description": "Nombre de la máquina (máx. 20 caracteres)"
+      "description": "Nombre de la máquina (1-20 caracteres)"
     },
     "description": {
       "$ref": "#/definitions/Description",
-      "description": "Descripción opcional de la máquina"
+      "description": "Descripción conceptual general (20-600 caracteres)"
     },
     "ids_cim_reference": {
       "type": "array",
-      "description": "Lista de IDs de máquinas CIM relacionadas",
-      "items": { "type": "string" }
+      "description": "Lista de máquinas CIM vinculadas a este diseño PIM",
+      "items": { 
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      }
     },
     "nodes": {
       "type": "array",
-      "description": "Lista de nodos de audio (generadores, modificadores, mezcladores, etc.)",
+      "description": "Nodos de audio y control que componen la máquina",
       "items": { "$ref": "#/definitions/AnyNode" }
     },
     "edges": {
       "type": "array",
-      "description": "Lista de conexiones entre nodos",
+      "description": "Conexiones internas entre puertos de los nodos",
       "items": { "$ref": "#/definitions/Edge" }
     }
   },
@@ -39,120 +42,69 @@ export const PIM_MACHINE_SCHEMA = {
   "definitions": {
     "UUID": {
       "type": "string",
-      "description": "UUID de 36 caracteres",
-      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+      "description": "Formato estándar UUIDv4 de 36 caracteres"
     },
     "Description": {
       "type": "string",
-      "description": "Descripción opcional, máximo 600 caracteres",
-      "maxLength": 600
+      "minLength": 20,
+      "maxLength": 600,
+      "description": "Texto descriptivo con límites de longitud técnicos"
     },
     "IdsReferences": {
       "type": "array",
-      "description": "Array de referencias a elementos CIM. Puede estar vacío.",
+      "description": "Referencias a elementos CIM (obligatorio, puede estar vacío [])",
       "items": { "type": "string" }
     },
     "Parameter": {
       "type": "object",
-      "description": "Parámetro de configuración de un nodo",
+      "required": ["id", "ids_references", "initialValue", "isModifiable"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "initialValue": {
-          "description": "Valor inicial del parámetro (número, string, booleano o matriz)"
-        },
-        "isModifiable": {
-          "type": "boolean",
-          "description": "Si el parámetro acepta modulación de otros nodos"
-        },
-        "isExternalInput": {
-          "type": "boolean",
-          "description": "Si el parámetro puede ser controlado externamente a la máquina"
-        },
-        "description": { "$ref": "#/definitions/Description" }
+        "initialValue": { "description": "Valor inicial técnico" },
+        "isModifiable": { "type": "boolean" },
+        "isExternalInput": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 600 }
       },
-      "required": ["id", "ids_references", "initialValue", "isModifiable"],
       "additionalProperties": false
     },
     "OthersParameter": {
       "type": "object",
+      "required": ["id", "name", "ids_references", "initialValue", "isModifiable"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 20,
-          "description": "Nombre del control dinámico"
-        },
+        "name": { "type": "string", "maxLength": 20 },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "initialValue": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 100,
-          "description": "Valor inicial obligatorio del control dinámico"
-        },
+        "initialValue": { "type": "string", "maxLength": 100 },
         "isModifiable": { "type": "boolean" },
         "isExternalInput": { "type": "boolean" },
-        "description": { "$ref": "#/definitions/Description" }
+        "description": { "type": "string", "maxLength": 600 }
       },
-      "required": ["id", "name", "ids_references", "initialValue", "isModifiable"],
       "additionalProperties": false
     },
     "ConnectionPoint": {
       "type": "object",
-      "description": "Puerto de entrada o salida de audio/control",
+      "required": ["id", "ids_references"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
         "isExternalInput": { "type": "boolean" },
         "isExternalOutput": { "type": "boolean" },
-        "description": { "$ref": "#/definitions/Description" }
+        "description": { "type": "string", "maxLength": 600 }
       },
-      "required": ["id", "ids_references"],
       "additionalProperties": false
-    },
-    "CommonNodeFields": {
-      "type": "object",
-      "properties": {
-        "id": { "$ref": "#/definitions/UUID" },
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 20
-        },
-        "description": { "$ref": "#/definitions/Description" },
-        "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "type": { "type": "string" },
-        "others": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/OthersParameter" }
-        }
-      },
-      "required": ["id", "name", "ids_references", "type", "others"],
-      "additionalProperties": true
     },
     "AnyNode": {
       "type": "object",
-      "description": "Cualquier nodo del grafo PIM",
+      "required": ["id", "name", "description", "ids_references", "type", "others"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
-        "name": { "type": "string", "minLength": 1, "maxLength": 20 },
-        "description": { "$ref": "#/definitions/Description" },
+        "name": { "type": "string", "maxLength": 20 },
+        "description": { "type": "string", "maxLength": 600 },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
-        "type": {
-          "type": "string",
-          "enum": [
-            "oscillator", "noise", "sample",
-            "lfo", "envelope",
-            "frequency_filter", "reverb", "delay", "distortion", "chorus_flanger", "compressor", "equalizer",
-            "mixer", "gain_pan"
-          ]
-        },
-        "others": {
-          "type": "array",
-          "description": "Lista de otros parámetros de control dinámicos",
-          "items": { "$ref": "#/definitions/OthersParameter" }
-        },
+        "type": { "type": "string" },
+        "others": { "type": "array", "items": { "$ref": "#/definitions/OthersParameter" } },
         "stereo":        { "$ref": "#/definitions/Parameter" },
         "ping_pong":     { "$ref": "#/definitions/Parameter" },
         "waveform":      { "$ref": "#/definitions/Parameter" },
@@ -199,29 +151,28 @@ export const PIM_MACHINE_SCHEMA = {
         "bandFrequency": { "$ref": "#/definitions/Parameter" },
         "bandwidth":     { "$ref": "#/definitions/Parameter" },
         "inputs_number": { "$ref": "#/definitions/Parameter" },
-        "input_1":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_2":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_3":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_4":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_5":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_6":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_7":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_8":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_9":   { "$ref": "#/definitions/ConnectionPoint" },
-        "input_10":  { "$ref": "#/definitions/ConnectionPoint" },
-        "output_1":  { "$ref": "#/definitions/ConnectionPoint" },
-        "output_2":  { "$ref": "#/definitions/ConnectionPoint" },
-        "output":    { "$ref": "#/definitions/ConnectionPoint" }
+        "input_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_2": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_3": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_4": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_5": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_6": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_7": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_8": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_9": { "$ref": "#/definitions/ConnectionPoint" },
+        "input_10": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_1": { "$ref": "#/definitions/ConnectionPoint" },
+        "output_2": { "$ref": "#/definitions/ConnectionPoint" },
+        "output": { "$ref": "#/definitions/ConnectionPoint" }
       },
-      "required": ["id", "name", "ids_references", "type", "others"],
       "additionalProperties": false
     },
     "Edge": {
       "type": "object",
-      "description": "Conexión entre dos nodos del grafo PIM",
+      "required": ["id", "description", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
-        "description": { "$ref": "#/definitions/Description" },
+        "description": { "type": "string", "maxLength": 600 },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
         "sourceNode": { "type": "string" },
         "sourceParam": { "type": "string" },
@@ -229,7 +180,6 @@ export const PIM_MACHINE_SCHEMA = {
         "targetParam": { "type": "string" },
         "type": { "enum": ["audio", "modification"] }
       },
-      "required": ["id", "ids_references", "sourceNode", "sourceParam", "targetNode", "targetParam", "type"],
       "additionalProperties": false
     }
   }

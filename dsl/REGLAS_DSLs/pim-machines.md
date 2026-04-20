@@ -14,7 +14,7 @@ El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación 
 | :--- | :--- | :--- | :--- |
 | `id` | STRING | Identificador único de la máquina PIM. | Obligatorio. Formato UUIDv4 (36 caracteres). |
 | `name` | STRING | Nombre descriptivo de la máquina. | Obligatorio. Máximo 20 caracteres. |
-| `description` | STRING | Información general sobre la máquina. | Opcional. Máximo 600 caracteres. |
+| `description` | STRING | Información general sobre la máquina. | Obligatorio. Máximo 600 caracteres. |
 | `ids_cim_reference`| ARRAY[STRING]| Lista de IDs de máquinas CIM vinculadas. Piensa que una máquina PIM puede querer implementar varias máquinas CIM, no siempre es una relación 1:1. Este array define el universo de elementos en los que se moverá el modelo PIM de esta máquina. | Obligatorio. Puede estar vacío (`[]`). |
 | `nodes` | ARRAY[Node] | Contenedor de todos los nodos de audio y control. | Obligatorio. Puede estar vacío. |
 | `edges` | ARRAY[Edge] | Contenedor de todas las conexiones (aristas). | Obligatorio. Puede estar vacío. |
@@ -52,8 +52,11 @@ Cualquier propiedad de configuración de un nodo (excepto el listado `others`) e
 | `ids_references` | string[] | Referencias a elementos del modelo CIM, sean cuales sean estos, pero siempre dentro de las máquinas referenciadas en `ids_cim_reference`. Podemos ver a `ids_cim_reference` como la lista que define el universo de elementos CIM que pueden ser referenciados en `ids_references`. Solo elementos dentros de esas máquinas CIM, no se podrá elegir la máquina CIM en si, ya que eso se selecciona en `ids_cim_reference`. |
 | `initialValue` | any | Valor inicial del parámetro. |
 | `isModifiable` | boolean | Indica si el parámetro acepta modulaciones de otros nodos de la máquina. De inicio, siempre será true. Cuando está a true, podemos conectar una arista de tipo modification a este parámetro.  |
-| `isExternalInput` | boolean | Flag de externalización. Si es `true`, indica que este parámetro puede recibir modificaciones desde fuera de esta máquina PIM. Por defecto es `false` para parámetros. |
+| `isExternalInput` | boolean | Flag de externalización. Si es `true`, indica que este parámetro puede recibir modificaciones desde fuera de esta máquina PIM. Por defecto es `false` para parámetros. **Nota: Solo puede ser true si `isModifiable` es true.** |
 | `description` | string | (Opcional) Descripción del propósito del parámetro. |
+
+> [!IMPORTANT]
+> **Regla de Integridad Semántica**: Un parámetro que no sea modulable internamente (`isModifiable: false`) **no puede** ser una entrada externa (`isExternalInput: true`). El sistema forzará ambos a `false` si se desactiva la modulación.
 
 #### Estructura de Parámetro Dinámico (`OthersParameter`)
 Todos los nodos disponen obligatoriamente de un array interno `others` (aunque esté vacío), que permite anidar parámetros de control customizados.
@@ -99,6 +102,7 @@ Las aristas establecen la conexión entre nodos.
 ### 2.1. Reglas de Conectividad
 - **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` solo pueden apuntar a conexiones conceptuales (sendTo) en los modelos CIM.
 - **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` solo pueden apuntar a elementos/nodos de control en los modelos CIM.
+- **Cascada de Integridad**: Al desactivar `isModifiable` en un parámetro, el sistema de diseño visual **borrará automáticamente** todas las aristas que tengan ese parámetro como destino para mantener la coherencia del modelo.
 - **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`, `ping_pong`, `inputs_number`).
 
 ---
@@ -108,7 +112,7 @@ Las aristas establecen la conexión entre nodos.
 ### 3.1. Generadores de Audio (`AudioGeneratorNode`)
 
 Generan señales sonoras. Todos cuentan con el fragmento `AudioOutputFields`:
-- `stereo`: Booleano que habilita `output_1` y `output_2`.
+- `stereo`: Parámetro booleano obligatorio. Define si el nodo opera en un canal (mono) o dos (estéreo). **Nota**: Es un parámetro estructural; no admite modulación (`isModifiable: false`) ni externalización (`isExternalInput: false`).
 - `output_1`: Salida principal (Audio).
 - `output_2`: Salida secundaria (solo si `stereo` es `true`).
 
@@ -141,8 +145,7 @@ Generan señales sonoras. Todos cuentan con el fragmento `AudioOutputFields`:
   "stereo": {
     "id": "550e8400-e29b-41d4-a716-446655440009",
     "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
-    "initialValue": false,
-    "isModifiable": false
+    "initialValue": false
   },
   "output_1": {
     "id": "550e8400-e29b-41d4-a716-446655440010",
@@ -227,8 +230,7 @@ Procesan audio. Todos usan el fragmento `SoundModifierFields`:
   "stereo": {
     "id": "550e8400-e29b-41d4-a716-446655440048",
     "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
-    "initialValue": true,
-    "isModifiable": false
+    "initialValue": true
   },
   "ping_pong": {
     "id": "550e8400-e29b-41d4-a716-446655440049",

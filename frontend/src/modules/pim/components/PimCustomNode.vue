@@ -48,8 +48,7 @@ const allInputs = computed(() => {
     .filter(pName => {
       const param = props.data.parameters?.[pName]
       
-      // Filtrar ping_pong si no es estéreo
-      if (pName === 'ping_pong') return isStereoNode
+      // Los parámetros modulables generan handle si existen y están configurados como tales
 
       // Si el parámetro es un objeto con isModifiable, respetar su valor
       if (param && typeof param === 'object' && 'isModifiable' in param) {

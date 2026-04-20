@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "MDA Audio PIM Machine Schema",
   "type": "object",
-  "required": ["id", "name", "ids_cim_reference", "nodes", "edges"],
+  "required": ["id", "name", "description", "ids_cim_reference", "nodes", "edges"],
   "properties": {
     "id": {
       "type": "string",
@@ -22,7 +22,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^.{36}$"
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
       }
     },
     "nodes": {
@@ -41,7 +41,7 @@
   "definitions": {
     "Parameter": {
       "type": "object",
-      "required": ["id", "ids_references", "initialValue", "isModifiable"],
+      "required": ["id", "ids_references", "initialValue"],
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
         "ids_references": { "type": "array", "items": { "type": "string" } },
@@ -50,6 +50,17 @@
         "isExternalInput": { "type": "boolean" },
         "description": { "type": "string", "maxLength": 600 }
       }
+    },
+    "StereoParameter": {
+      "type": "object",
+      "required": ["id", "ids_references", "initialValue"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+        "ids_references": { "type": "array", "items": { "type": "string" } },
+        "initialValue": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 600 }
+      },
+      "additionalProperties": false
     },
     "ConnectionPoint": {
       "type": "object",
@@ -73,7 +84,7 @@
     },
     "CommonNodeFields": {
       "type": "object",
-      "required": ["id", "name", "description", "ids_references", "others"],
+      "required": ["id", "name", "description", "ids_references"],
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
         "name": { "type": "string", "minLength": 1, "maxLength": 20 },
@@ -103,20 +114,97 @@
         { "$ref": "#/definitions/CommonNodeFields" },
         {
           "oneOf": [
-            { "required": ["type", "waveform", "frequency", "pulseWidth", "gain", "phase", "pan", "stereo", "output_1"], "properties": { "type": { "const": "oscillator" } } },
-            { "required": ["type", "noiseType", "amplitude", "gain", "pan", "stereo", "output_1"], "properties": { "type": { "const": "noise" } } },
-            { "required": ["type", "file", "loop", "gain", "pan", "stereo", "output_1"], "properties": { "type": { "const": "sample" } } },
-            { "required": ["type", "filterType", "cutoff", "resonance", "slope", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "frequency_filter" } } },
+            { 
+              "required": ["type", "waveform", "frequency", "pulseWidth", "gain", "phase", "pan", "stereo", "output_1"], 
+              "properties": { 
+                "type": { "const": "oscillator" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "waveform": { "$ref": "#/definitions/Parameter" }
+              } 
+            },
+            { 
+              "required": ["type", "noiseType", "amplitude", "gain", "pan", "stereo", "output_1"], 
+              "properties": { 
+                "type": { "const": "noise" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "noiseType": { "$ref": "#/definitions/Parameter" }
+              } 
+            },
+            { 
+              "required": ["type", "file", "loop", "gain", "pan", "stereo", "output_1"], 
+              "properties": { 
+                "type": { "const": "sample" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "loop": { "$ref": "#/definitions/Parameter" }
+              } 
+            },
+            { 
+              "required": ["type", "filterType", "cutoff", "resonance", "slope", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "frequency_filter" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "filterType": { "$ref": "#/definitions/Parameter" }
+              } 
+            },
             { "required": ["type", "waveform", "rate", "amplitude", "phase", "sync", "output"], "properties": { "type": { "const": "lfo" } } },
             { "required": ["type", "envelopeType", "attack", "decay", "sustain", "release", "curve", "output"], "properties": { "type": { "const": "envelope" } } },
-            { "required": ["type", "stereo", "inputs_number", "output_1"], "properties": { "type": { "const": "mixer" } } },
-            { "required": ["type", "gain", "pan", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "gain_pan" } } },
-            { "required": ["type", "roomSize", "damping", "decayTime", "dryWet", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "reverb" } } },
-            { "required": ["type", "delayTime", "feedback", "lowPassCutoff", "highPassCutoff", "dryWet", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "delay" } } },
-            { "required": ["type", "drive", "tone", "distType", "outputLevel", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "distortion" } } },
-            { "required": ["type", "rate", "depth", "feedback", "mix", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "chorus_flanger" } } },
-            { "required": ["type", "threshold", "ratio", "attack", "release", "makeupGain", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "compressor" } } },
-            { "required": ["type", "bandFrequency", "bandwidth", "gain", "stereo", "input_1", "output_1"], "properties": { "type": { "const": "equalizer" } } }
+            { 
+              "required": ["type", "stereo", "inputs_number", "output_1"], 
+              "properties": { 
+                "type": { "const": "mixer" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "gain", "pan", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "gain_pan" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "roomSize", "damping", "decayTime", "dryWet", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "reverb" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "delayTime", "feedback", "lowPassCutoff", "highPassCutoff", "dryWet", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "delay" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "drive", "tone", "distType", "outputLevel", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "distortion" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "distType": { "$ref": "#/definitions/Parameter" }
+              } 
+            },
+            { 
+              "required": ["type", "rate", "depth", "feedback", "mix", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "chorus_flanger" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "threshold", "ratio", "attack", "release", "makeupGain", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "compressor" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            },
+            { 
+              "required": ["type", "bandFrequency", "bandwidth", "gain", "stereo", "input_1", "output_1"], 
+              "properties": { 
+                "type": { "const": "equalizer" },
+                "stereo": { "$ref": "#/definitions/StereoParameter" }
+              } 
+            }
           ]
         }
       ]

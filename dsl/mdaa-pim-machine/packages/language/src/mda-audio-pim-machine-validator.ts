@@ -15,6 +15,7 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
     const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
         Model: [validator.checkModelHeader, validator.checkModelIntegrity],
         Parameter: [validator.checkParameter],
+        // StereoParameter: [validator.checkStereoParameter],
         OthersParameter: [validator.checkOthersParameter],
         ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
@@ -187,10 +188,30 @@ export class MdaAudioPimMachineValidator {
 
     /**
      * Valida los campos comunes de un parámetro de configuración.
+     * Incluye consistencia entre modulación y entrada externa.
      */
     checkParameter(param: Parameter, accept: ValidationAcceptor): void {
         const id = param.id.replace(/"/g, '');
         if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
+        }
+        if (param.description && param.description.length > 600) {
+            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        }
+        
+        // Regla semántica de integridad
+        if (param.isModifiable === false && param.isExternalInput === true) {
+            accept('error', 'Integridad: Un parámetro no modulable (isModifiable: false) no puede ser una entrada externa.', { node: param, property: 'isExternalInput' });
+        }
+    }
+
+    /**
+     * Valida los campos de un parámetro stereo (estructural).
+     */
+    checkStereoParameter(param: any, accept: ValidationAcceptor): void {
+        if (!param) return;
+        const id = param.id?.replace(/"/g, '');
+        if (id && !this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
         if (param.description && param.description.length > 600) {
@@ -221,6 +242,11 @@ export class MdaAudioPimMachineValidator {
 
         if (param.description && param.description.length > 610) {
             accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        }
+
+        // Regla semántica de integridad
+        if (param.isModifiable === false && param.isExternalInput === true) {
+            accept('error', 'Integridad: Un parámetro dinámico no modulable no puede ser una entrada externa.', { node: param, property: 'isExternalInput' });
         }
     }
 
@@ -485,8 +511,10 @@ export class MdaAudioPimMachineValidator {
         }
     }
 
-    private getRawValue(param: Parameter): any {
+    private getRawValue(param: any): any {
+        if (!param) return undefined;
         const val = param.initialValue;
+        if (typeof val === 'boolean') return val; // Para StereoParameter
         if (isNumberValue(val)) return val.value;
         if (isStringValue(val)) return val.value;
         if (isBooleanValue(val)) return val.value;
@@ -494,7 +522,7 @@ export class MdaAudioPimMachineValidator {
         return undefined;
     }
 
-    private checkRange(param: Parameter, min: number, max: number, accept: ValidationAcceptor): void {
+    private checkRange(param: any, min: number, max: number, accept: ValidationAcceptor): void {
         const val = this.getRawValue(param);
         if (typeof val === 'number') {
             if (val < min || val > max) {
@@ -503,7 +531,7 @@ export class MdaAudioPimMachineValidator {
         }
     }
 
-    private checkMin(param: Parameter, min: number, accept: ValidationAcceptor): void {
+    private checkMin(param: any, min: number, accept: ValidationAcceptor): void {
         const val = this.getRawValue(param);
         if (typeof val === 'number') {
             if (val < min) {

@@ -11,7 +11,7 @@
       "description": "Envolvente ADSR para amplitud.",
       "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
       "others": [],
-      "envelopeType": { "id": "550e8400-0000-0000-0000-000000000001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "ADSR", "isModifiable": false },
+      "envelopeType": { "id": "550e8400-0000-0000-0000-000000000001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "ADSR" },
       "attack": { "id": "550e8400-0000-0000-0000-000000000002", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.01, "isModifiable": true },
       "decay": { "id": "550e8400-0000-0000-0000-000000000003", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.1, "isModifiable": true },
       "sustain": { "id": "550e8400-0000-0000-0000-000000000004", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.7, "isModifiable": true },

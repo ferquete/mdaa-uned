@@ -112,7 +112,7 @@ MixerNode:
     '{'
         '"type"' ':' '"mixer"' ','
         CommonNodeFields
-        '"stereo"' ':' stereo=Parameter ','
+        '"stereo"' ':' stereo=StereoParameter ','
         ( '"ping_pong"' ':' ping_pong=Parameter ',')?
         '"inputs_number"' ':' inputs_number=Parameter ','
         '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?
@@ -134,7 +134,7 @@ GainAndPanNode:
         CommonNodeFields
         '"gain"' ':' gain=Parameter ','
         '"pan"' ':' pan=Parameter ','
-        '"stereo"' ':' stereo=Parameter ','
+        '"stereo"' ':' stereo=StereoParameter ','
         ( '"ping_pong"' ':' ping_pong=Parameter ',')?
         '"input_1"' ':' input_1=ConnectionPoint ','
         ( '"input_2"' ':' input_2=ConnectionPoint ',')?
@@ -144,14 +144,14 @@ GainAndPanNode:
 // --- NODOS DE EFECTOS (MODIFICADORES DE SONIDO) ---
 
 fragment SoundModifierFields:
-    '"stereo"' ':' stereo=Parameter ','
+    '"stereo"' ':' stereo=StereoParameter ','
     ( '"ping_pong"' ':' ping_pong=Parameter ',')?
     '"input_1"' ':' input_1=ConnectionPoint ','
     ( '"input_2"' ':' input_2=ConnectionPoint ',')?
     '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?;
 
 fragment AudioOutputFields:
-    '"stereo"' ':' stereo=Parameter ','
+    '"stereo"' ':' stereo=StereoParameter ','
     '"output_1"' ':' output_1=ConnectionPoint
     (',' '"output_2"' ':' output_2=ConnectionPoint)?;
 
@@ -238,6 +238,14 @@ Parameter:
         '"initialValue"' ':' initialValue=Value ','
         '"isModifiable"' ':' isModifiable=BOOLEAN
         (',' '"isExternalInput"' ':' isExternalInput=BOOLEAN)?
+        (',' '"description"' ':' description=STRING)?
+    '}';
+
+StereoParameter:
+    '{'
+        '"id"' ':' id=STRING ','
+        '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']' ','
+        '"initialValue"' ':' initialValue=BOOLEAN
         (',' '"description"' ':' description=STRING)?
     '}';
 

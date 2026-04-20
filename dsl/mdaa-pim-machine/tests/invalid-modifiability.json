@@ -1,0 +1,71 @@
+{
+  "id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+  "name": "Invalid Integrity Test",
+  "description": "Este archivo es una prueba tecnica para validar la integridad semantica del DSL. Contiene un error deliberado: un parametro frecuencia que no es modulable pero esta marcado como entrada externa.",
+  "ids_cim_reference": [
+    "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "840cbd81-1f59-4b21-8db9-965db1bb5dc5",
+      "name": "osc_1",
+      "description": "Oscilador con error de integridad",
+      "ids_references": [],
+      "others": [],
+      "waveform": {
+        "id": "b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e",
+        "ids_references": [],
+        "initialValue": "sine",
+        "isModifiable": true,
+        "isExternalInput": false
+      },
+      "frequency": {
+        "id": "c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f",
+        "ids_references": [],
+        "initialValue": 440,
+        "isModifiable": false,
+        "isExternalInput": true
+      },
+      "pulseWidth": {
+        "id": "d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false
+      },
+      "gain": {
+        "id": "e1f2a3b4-c5d6-7a8b-9c0d-1e2f3a4b5c6d",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false
+      },
+      "phase": {
+        "id": "f1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": true,
+        "isExternalInput": false
+      },
+      "pan": {
+        "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": true,
+        "isExternalInput": false
+      },
+      "stereo": {
+        "id": "b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e",
+        "ids_references": [],
+        "initialValue": false
+      },
+      "output_1": {
+        "id": "c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f",
+        "ids_references": [],
+        "isExternalOutput": true
+      }
+    }
+  ],
+  "edges": []
+}

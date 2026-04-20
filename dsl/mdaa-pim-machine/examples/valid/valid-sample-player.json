@@ -11,11 +11,11 @@
       "description": "Muestra de bombo.",
       "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
       "others": [],
-      "file": { "id": "550e8400-0000-0000-0000-000000000201", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "kick.wav", "isModifiable": false },
-      "loop": { "id": "550e8400-0000-0000-0000-000000000202", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "file": { "id": "550e8400-0000-0000-0000-000000000201", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": "kick.wav" },
+      "loop": { "id": "550e8400-0000-0000-0000-000000000202", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false },
       "gain": { "id": "550e8400-0000-0000-0000-000000000203", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 1.0, "isModifiable": true },
       "pan": { "id": "550e8400-0000-0000-0000-000000000204", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0, "isModifiable": true },
-      "stereo": { "id": "550e8400-0000-0000-0000-000000000205", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "stereo": { "id": "550e8400-0000-0000-0000-000000000205", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false },
       "output_1": { "id": "550e8400-0000-0000-0000-000000000206", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
     }
   ],

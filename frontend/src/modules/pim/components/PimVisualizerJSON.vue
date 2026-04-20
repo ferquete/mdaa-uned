@@ -69,6 +69,8 @@ const validateInternal = (val: string) => {
     const parsed = JSON.parse(val)
     isSyntaxValid.value = true
     const manualErrors: any[] = []
+    const activeCimElements = new Set<string>()
+    const activeCimConnections = new Set<string>()
     
     // 1. Verificación de Referencias CIM (Integridad Referencial)
     const availableCimDocIds = new Set<string>()
@@ -147,6 +149,35 @@ const validateInternal = (val: string) => {
             if (node.input_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "input_2"` })
           }
         }
+
+        // Restricción especial para 'stereo'
+        if (node.stereo) {
+            if (node.stereo.isModifiable === true) {
+                manualErrors.push({ message: `Negocio: El parámetro 'stereo' del nodo '${node.name}' no puede ser modulable.` })
+            }
+            if (node.stereo.isExternalInput === true) {
+                manualErrors.push({ message: `Negocio: El parámetro 'stereo' del nodo '${node.name}' no puede ser una entrada externa.` })
+            }
+        }
+        
+        // Validar isModifiable en todos los objetos que parecen parámetros
+        // EXCEPTO stereo (estructural), puertos de audio y campos de sistema
+        Object.keys(node).forEach(key => {
+          const val = node[key]
+          
+          // Saltamos metadatos y campos de sistema
+          if (['id', 'name', 'description', 'type', 'ids_references', 'others', 'stereo'].includes(key)) return
+          
+          // Saltamos puertos de audio (input_X, output_X)
+          if (key.startsWith('input_') || key.startsWith('output_') || key === 'output' || key === 'ping_pong' || key === 'inputs_number') return
+
+          // Si es un objeto (parámetro de audio real), debe tener isModifiable
+          if (val && typeof val === 'object' && !Array.isArray(val)) {
+            if (val.isModifiable === undefined) {
+              manualErrors.push({ message: `Restricción PIM: Al parámetro "${key}" le falta la propiedad "isModifiable". (Nodo: ${node.name || idx})` })
+            }
+          }
+        })
         
         // --- Validación de Rangos Numéricos ---
         const checkRange = (paramName: string, min: number, max?: number) => {
@@ -240,7 +271,6 @@ const validateInternal = (val: string) => {
       })
 
       // Validar ids_cim_reference: deben ser IDs de máquinas CIM reales
-      const activeCimElements = new Set<string>()
       const referencedCimIds = parsed.ids_cim_reference || []
       
       referencedCimIds.forEach((cimId: string) => {
@@ -315,7 +345,7 @@ const validateInternal = (val: string) => {
     businessErrors.value = manualErrors
   } catch (e: any) {
     isSyntaxValid.value = false
-    businessErrors.value = []
+    businessErrors.value = [{ message: `Error de sintaxis: ${e.message}` }]
   }
 }
 

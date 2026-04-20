@@ -37,7 +37,7 @@ export const PIM_MACHINE_SCHEMA = {
       "items": { "$ref": "#/definitions/Edge" }
     }
   },
-  "required": ["id", "name", "ids_cim_reference", "nodes", "edges"],
+  "required": ["id", "name", "description", "ids_cim_reference", "nodes", "edges"],
   "additionalProperties": false,
   "definitions": {
     "UUID": {
@@ -47,24 +47,38 @@ export const PIM_MACHINE_SCHEMA = {
     },
     "Description": {
       "type": "string",
-      "minLength": 20,
+      "minLength": 1,
       "maxLength": 600,
       "description": "Texto descriptivo con límites de longitud técnicos"
     },
     "IdsReferences": {
       "type": "array",
       "description": "Referencias a elementos CIM (obligatorio, puede estar vacío [])",
-      "items": { "type": "string" }
+      "items": { 
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      }
     },
     "Parameter": {
       "type": "object",
-      "required": ["id", "ids_references", "initialValue", "isModifiable"],
+      "required": ["id", "ids_references", "initialValue"],
       "properties": {
         "id": { "$ref": "#/definitions/UUID" },
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
         "initialValue": { "description": "Valor inicial técnico" },
         "isModifiable": { "type": "boolean" },
         "isExternalInput": { "type": "boolean" },
+        "description": { "type": "string", "maxLength": 600 }
+      },
+      "additionalProperties": false
+    },
+    "StereoParameter": {
+      "type": "object",
+      "required": ["id", "ids_references", "initialValue"],
+      "properties": {
+        "id": { "$ref": "#/definitions/UUID" },
+        "ids_references": { "$ref": "#/definitions/IdsReferences" },
+        "initialValue": { "type": "boolean" },
         "description": { "type": "string", "maxLength": 600 }
       },
       "additionalProperties": false
@@ -105,7 +119,7 @@ export const PIM_MACHINE_SCHEMA = {
         "ids_references": { "$ref": "#/definitions/IdsReferences" },
         "type": { "type": "string" },
         "others": { "type": "array", "items": { "$ref": "#/definitions/OthersParameter" } },
-        "stereo":        { "$ref": "#/definitions/Parameter" },
+        "stereo":        { "$ref": "#/definitions/StereoParameter" },
         "ping_pong":     { "$ref": "#/definitions/Parameter" },
         "waveform":      { "$ref": "#/definitions/Parameter" },
         "frequency":     { "$ref": "#/definitions/Parameter" },

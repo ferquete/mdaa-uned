@@ -79,7 +79,7 @@ const getIcon = (type: string) => {
 </script>
 
 <template>
-  <BaseModal :show="show" :title="title" @close="handleClose">
+  <BaseModal :show="show" :title="title" maxWidth="max-w-3xl" @close="handleClose">
     <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
       <!-- Nombre -->
       <div class="space-y-2">
@@ -115,7 +115,7 @@ const getIcon = (type: string) => {
       <!-- Referencias CIM -->
       <div class="space-y-3">
         <div class="flex items-center gap-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-geist-accents-5">Referencias CIM</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-geist-accents-5">Referencias a elementos de Análisis de las máquinas de análisis seleccionadas</label>
           <div class="h-px flex-1 bg-geist-border opacity-30"></div>
         </div>
         

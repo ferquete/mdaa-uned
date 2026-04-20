@@ -315,6 +315,44 @@ export const usePimStore = defineStore('pim', () => {
     }
   }
 
+  /**
+   * Maneja el cambio de modulaibilidad de un parámetro con integridad referencial.
+   * Si se desactiva, limpia flags externos y borra aristas conectadas.
+   */
+  function handleParamModifiabilityChange(machineId: number, nodeId: string, paramName: string, isModifiable: boolean) {
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return;
+
+    // 1. Localizar el nodo y el parámetro
+    const node = doc.nodes?.find((n: any) => n.id === nodeId);
+    if (!node) return;
+
+    const param = node[paramName];
+    if (param && typeof param === 'object') {
+      param.isModifiable = isModifiable;
+      
+      // Si desactivamos modulación, forzar isExternalInput a false
+      if (!isModifiable) {
+        param.isExternalInput = false;
+        
+        // 2. Podar aristas que terminan en este parámetro (targetParam)
+        if (doc.edges) {
+          const initialCount = doc.edges.length;
+          doc.edges = doc.edges.filter((e: any) => 
+            !(e.targetNode === nodeId && e.targetParam === paramName)
+          );
+          
+          if (doc.edges.length < initialCount) {
+            console.log(`[PIM Store] Podadas ${initialCount - doc.edges.length} aristas por desactivación de modulación en '${paramName}'.`);
+          }
+        }
+      }
+    }
+
+    // Actualizar el documento en el estado reactivo local
+    parsedDocs.value = { ...parsedDocs.value, [machineId]: doc };
+  }
+
   return {
     loading,
     error,
@@ -332,6 +370,7 @@ export const usePimStore = defineStore('pim', () => {
     updateMachine,
     deleteMachine,
     selectNode,
-    updateMachineRawJson
+    updateMachineRawJson,
+    handleParamModifiabilityChange
   };
-});
+})

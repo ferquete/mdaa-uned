@@ -100,15 +100,12 @@ const availableCimComponents = computed(() => {
       const cimDoc = analysisStore.parsedDocs[machine.id]
       if (cimDoc && Array.isArray(cimDoc.elements)) {
         cimDoc.elements.forEach((el: any) => {
-          // Elementos (Nodos) - Válidos para MODIFICACIÓN
-          components.push({ id: el.id, name: `[${cimDoc.name}] ${el.name}`, type: 'el' })
-          
-          // SendTo (Aristas/Conexiones) - Válidos para AUDIO
-          el.sendTo?.forEach((s: any) => components.push({ 
-            id: s.id, 
-            name: `[${cimDoc.name}] ${el.name} ➔ ${s.idRef.substring(0,8)}`, 
-            type: 'edge' 
-          }))
+          // Solo elementos (Nodos) - Representan la identidad del componente en Análisis
+          components.push({ 
+            id: el.id, 
+            name: `[${cimDoc.name}] ${el.name}`, 
+            type: el.type === 'oscillator' || el.type === 'noise' || el.type === 'sample' ? 'g' : 'mod' 
+          })
         })
       }
     }
@@ -239,19 +236,126 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
     })
   }
   
-  if (type === 'oscillator') {
-    defaultParams.waveform = { initialValue: 'sine', id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.frequency = { initialValue: 440, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.gain = { initialValue: 0.5, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.pan = { initialValue: 0, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-  } else if (type === 'mixer') {
-    defaultParams.inputs_number = 2; defaultParams.stereo = false
-  } else if (type === 'lfo') {
-    defaultParams.waveform = { initialValue: 'sine', id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.rate = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.amplitude = { initialValue: 1, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.phase = { initialValue: 0, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
-    defaultParams.sync = { initialValue: false, id: crypto.randomUUID(), ids_references: [], isExternalInput: false }
+  const wrapParam = (val: any, pName?: string) => {
+    const base: any = { 
+      id: crypto.randomUUID(), 
+      initialValue: val, 
+      ids_references: []
+    }
+    
+    // stereo es estructural, no tiene modulación ni externalización
+    if (pName !== 'stereo') {
+      base.isModifiable = true
+      base.isExternalInput = false
+    }
+    
+    return base
+  }
+
+  // Inyección de parámetros específicos por tipo según el manual técnico
+  const typeDecorators: Record<string, (p: any) => void> = {
+    oscillator: (p) => {
+      p.waveform = wrapParam('sine')
+      p.frequency = wrapParam(440)
+      p.pulseWidth = wrapParam(0.5)
+      p.gain = wrapParam(0.5)
+      p.phase = wrapParam(0)
+      p.pan = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    noise: (p) => {
+      p.noiseType = wrapParam('white')
+      p.amplitude = wrapParam(1)
+      p.gain = wrapParam(0.5)
+      p.pan = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    sample: (p) => {
+      p.file = wrapParam('')
+      p.loop = wrapParam(false)
+      p.gain = wrapParam(0.8)
+      p.pan = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    lfo: (p) => {
+      p.waveform = wrapParam('sine')
+      p.rate = wrapParam(1)
+      p.amplitude = wrapParam(1)
+      p.phase = wrapParam(0)
+      p.sync = wrapParam(false)
+    },
+    envelope: (p) => {
+      p.envelopeType = wrapParam('ADSR')
+      p.attack = wrapParam(0.1)
+      p.decay = wrapParam(0.2)
+      p.sustain = wrapParam(0.8)
+      p.release = wrapParam(0.5)
+      p.curve = wrapParam('linear')
+    },
+    frequency_filter: (p) => {
+      p.filterType = wrapParam('LPF')
+      p.cutoff = wrapParam(2000)
+      p.resonance = wrapParam(1)
+      p.slope = wrapParam('12dB/oct')
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    reverb: (p) => {
+      p.roomSize = wrapParam(0.5)
+      p.damping = wrapParam(0.5)
+      p.decayTime = wrapParam(1.5)
+      p.dryWet = wrapParam(0.3)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    delay: (p) => {
+      p.delayTime = wrapParam(0.5)
+      p.feedback = wrapParam(0.4)
+      p.lowPassCutoff = wrapParam(20000)
+      p.highPassCutoff = wrapParam(20)
+      p.dryWet = wrapParam(0.3)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    distortion: (p) => {
+      p.drive = wrapParam(0.5)
+      p.tone = wrapParam(0.5)
+      p.distType = wrapParam('soft-clipping')
+      p.outputLevel = wrapParam(0.8)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    chorus_flanger: (p) => {
+      p.rate = wrapParam(1.5)
+      p.depth = wrapParam(0.5)
+      p.feedback = wrapParam(0.3)
+      p.mix = wrapParam(0.5)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    compressor: (p) => {
+      p.threshold = wrapParam(-20)
+      p.ratio = wrapParam(4)
+      p.attack = wrapParam(0.01)
+      p.release = wrapParam(0.1)
+      p.makeupGain = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    equalizer: (p) => {
+      p.bandFrequency = wrapParam(1000)
+      p.bandwidth = wrapParam(1)
+      p.gain = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    mixer: (p) => {
+      p.inputs_number = wrapParam(2)
+      p.stereo = wrapParam(false, 'stereo')
+    },
+    gain_pan: (p) => {
+      p.gain = wrapParam(1)
+      p.pan = wrapParam(0)
+      p.stereo = wrapParam(false, 'stereo')
+    }
+  }
+
+  // Aplicar decoración si existe el tipo
+  if (typeDecorators[type]) {
+    typeDecorators[type](defaultParams)
   }
 
   const newNode = {
@@ -432,7 +536,6 @@ const buildFinalJson = () => {
 
     const wrapParam = (key: string, value: any) => {
       const existing = rawData?.[key]
-      const modFlags = rawData?._isModifiable || {}
       
       // Limpiar valor si viene anidado por error
       let cleanValue = value
@@ -443,9 +546,14 @@ const buildFinalJson = () => {
       const param: any = {
         id: (existing && typeof existing === 'object' && existing.id) ? existing.id : crypto.randomUUID(),
         ids_references: (existing && typeof existing === 'object') ? (existing.ids_references || []) : [],
-        initialValue: cleanValue,
-        isModifiable: modFlags[key] ?? (existing && typeof existing === 'object' && 'isModifiable' in existing ? existing.isModifiable : true),
-        isExternalInput: (existing && typeof existing === 'object' && existing.isExternalInput !== undefined) 
+        initialValue: cleanValue
+      }
+      
+      // stereo es estructural, omitimos flags de modulación/externalización
+      if (key !== 'stereo') {
+        const modFlags = rawData?._isModifiable || {}
+        param.isModifiable = modFlags[key] ?? (existing && typeof existing === 'object' && 'isModifiable' in existing ? existing.isModifiable : true)
+        param.isExternalInput = (existing && typeof existing === 'object' && existing.isExternalInput !== undefined) 
           ? existing.isExternalInput 
           : false
       }
@@ -486,6 +594,11 @@ const buildFinalJson = () => {
         node[p] = wrapParam(p, rawData[p])
       }
     })
+
+    // Asegurar que ping_pong se incluya si existe (aunque no esté en paramsList por herencia)
+    if (rawData?.ping_pong !== undefined && !node.ping_pong) {
+      node.ping_pong = wrapParam('ping_pong', rawData.ping_pong)
+    }
 
     // Añadir campos de audio comunes si existen
     if (metadata) {

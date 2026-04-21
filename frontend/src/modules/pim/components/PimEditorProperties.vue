@@ -14,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'delete-node', nodeId: string): void
+  (e: 'replicate-node', nodeId: string): void
   (e: 'remove-edges-for-param', nodeId: string, paramName: string): void
 }>()
 
@@ -44,7 +45,6 @@ const showDeleteConfirm = ref(false)
  */
 const NODE_PARAMS_BY_TYPE: Record<string, any> = {
   stereo: { label: 'Estéreo', type: 'boolean', description: 'Habilita procesado de 2 canales' },
-  ping_pong: { label: 'Ping Pong', type: 'boolean', description: 'Alternancia de canales' },
   waveform: { 
     label: 'Forma de Onda', 
     type: 'select', 
@@ -144,15 +144,64 @@ const NODE_PARAMS_BY_TYPE: Record<string, any> = {
   inputs_number: { label: 'Número de Entradas', type: 'number', min: 1, max: 10, step: 1 }
 };
 
-function validateAll() {
+function validateAll(): boolean {
   errors.value = {}
-  validateField('name', localName.value)
-  Object.entries(localParams.value).forEach(([k, v]) => validateField(k, v))
+  
+  // 1. Validar Nodo Raíz
+  if (!localName.value || localName.value.length > 20) {
+    errors.value.name = 'El nombre es obligatorio (máx. 20 caracteres).'
+  }
+  if (localDescription.value && localDescription.value.length > 600) {
+    errors.value.description = 'La descripción excede los 600 caracteres.'
+  }
+
+  // 2. Validar Parámetros Otros (Dinámicos)
+  localOthers.value.forEach((o, index) => {
+    if (!o.name || o.name.length > 20) {
+      errors.value[`other_${index}_name`] = 'Nombre obligatorio (máx. 20).'
+    }
+    if (!o.initialValue || o.initialValue.length > 100) {
+      errors.value[`other_${index}_val`] = 'Valor obligatorio (máx. 100).'
+    }
+    if (o.description && o.description.length > 600) {
+      errors.value[`other_${index}_desc`] = 'Descripción máx. 600.'
+    }
+  })
+
+  return Object.keys(errors.value).length === 0
 }
 
-function validateField(field: string, value: any) {
-  // Simplificado para el saneamiento
-  updateNode()
+function updateNode() {
+  const node = props.nodeId ? findNode(props.nodeId) : null
+  if (!node) return
+
+  const isVal = validateAll()
+
+  const finalParams: Record<string, any> = {
+    name: localName.value,
+    description: localDescription.value,
+    ids_references: [...localRefs.value],
+    others: JSON.parse(JSON.stringify(localOthers.value)),
+    _isModifiable: {} as Record<string, boolean>
+  }
+
+  Object.entries(localParams.value).forEach(([k, v]) => {
+    finalParams[k] = {
+      ...v,
+      ids_references: [...(localParamRefs.value[k] || [])]
+    }
+    // Alimentar el mapa _isModifiable que rige la visibilidad de los puertos
+    if (v.isModifiable !== undefined) {
+      finalParams._isModifiable[k] = v.isModifiable
+    }
+  })
+
+  // Volcar referencias de localParamRefs a los objetos de localOthers
+  finalParams.others.forEach((o: any) => {
+    o.ids_references = [...(localParamRefs.value[o.id] || [])]
+  })
+
+  node.data = { ...node.data, name: localName.value, parameters: finalParams, isValid: isVal }
 }
 
 /**
@@ -219,38 +268,21 @@ async function syncNodeData(nodeId: string | undefined) {
 
   localParams.value = processedParams
   localParamRefs.value = refs
+
+  // Sincronizar referencias de los parámetros dinámicos (others)
+  localOthers.value.forEach(o => {
+    if (o.id) {
+        localParamRefs.value[o.id] = [...(o.ids_references || [])]
+    }
+  })
+
+  validateAll()
 }
 
 watch(() => props.nodeId, syncNodeData, { immediate: true })
 
-function updateNode() {
-  const node = props.nodeId ? findNode(props.nodeId) : null
-  if (!node) return
-
-  const finalParams: Record<string, any> = {
-    name: localName.value,
-    description: localDescription.value,
-    ids_references: [...localRefs.value],
-    others: JSON.parse(JSON.stringify(localOthers.value)),
-    _isModifiable: {} as Record<string, boolean>
-  }
-
-  Object.entries(localParams.value).forEach(([k, v]) => {
-    finalParams[k] = {
-      ...v,
-      ids_references: [...(localParamRefs.value[k] || [])]
-    }
-    // Alimentar el mapa _isModifiable que rige la visibilidad de los puertos
-    if (v.isModifiable !== undefined) {
-      finalParams._isModifiable[k] = v.isModifiable
-    }
-  })
-
-  node.data = { ...node.data, name: localName.value, parameters: finalParams }
-}
-
 const addOther = () => {
-  localOthers.value.push({ id: crypto.randomUUID(), name: 'Param', initialValue: 'Val', isModifiable: true, isExternalInput: false, ids_references: [] })
+  localOthers.value.push({ id: crypto.randomUUID(), name: 'Param', initialValue: 'Val', description: '', isModifiable: true, isExternalInput: false, ids_references: [] })
   updateNode()
 }
 
@@ -262,6 +294,12 @@ const toggleParamRef = (pName: string, id: string) => {
     updateNode()
 }
 
+const removeOther = (index: number) => {
+  localOthers.value.splice(index, 1)
+  updateNode()
+}
+
+const replicateNode = () => { if (props.nodeId) emit('replicate-node', props.nodeId) }
 const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.nodeId) }
 </script>
 
@@ -276,11 +314,43 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
       <div v-if="!nodeId" class="text-center opacity-40 py-20">Selecciona un nodo</div>
       
       <div v-else class="space-y-6">
+        <!-- Acciones Rápidas (ARRIBA) -->
+        <div class="space-y-2">
+            <div class="grid grid-cols-2 gap-2">
+                <button @click="replicateNode" class="flex items-center justify-center gap-2 py-2 rounded-lg border border-blue-500/30 bg-blue-500/5 text-blue-600 hover:bg-blue-500 hover:text-white transition-all text-[9px] font-bold uppercase">
+                    <i class="fa-solid fa-copy text-[10px]"></i>
+                    Replicar
+                </button>
+                <button @click="showDeleteConfirm = !showDeleteConfirm" class="flex items-center justify-center gap-2 py-2 rounded-lg border border-geist-error/30 text-geist-error hover:bg-geist-error hover:text-white transition-all text-[9px] font-bold uppercase" :class="{ 'bg-geist-error text-white': showDeleteConfirm }">
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                    Eliminar
+                </button>
+            </div>
+            
+            <transition name="slide-down">
+                <div v-if="showDeleteConfirm" class="p-3 bg-geist-error/5 rounded-lg border border-geist-error/20 flex flex-col gap-2">
+                    <span class="text-[8px] text-geist-error text-center font-bold">¿CONFIRMAR ELIMINACIÓN DEFINITIVA?</span>
+                    <div class="flex gap-2">
+                        <button @click="showDeleteConfirm = false" class="flex-1 py-1.5 bg-geist-accents-2 text-[9px] font-bold rounded hover:bg-geist-accents-3">CANCELAR</button>
+                        <button @click="confirmDeleteNode" class="flex-1 py-1.5 bg-geist-error text-white text-[9px] font-bold rounded hover:bg-geist-error-600 shadow-sm">SÍ, BORRAR</button>
+                    </div>
+                </div>
+            </transition>
+        </div>
+
+        <div class="h-px bg-geist-border opacity-50"></div>
+
         <!-- Identificación -->
         <div class="space-y-4">
           <div class="space-y-1.5">
             <label class="text-[9px] font-bold text-geist-accents-5 uppercase tracking-widest pl-1">Nombre</label>
-            <input v-model="localName" @input="updateNode" type="text" class="geist-input w-full text-xs">
+            <input v-model="localName" @input="updateNode" type="text" class="geist-input w-full text-xs" :class="{ 'border-geist-error/50 bg-geist-error/5 text-geist-error': errors.name }">
+            <span v-if="errors.name" class="text-[8px] text-geist-error font-medium px-1">{{ errors.name }}</span>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-bold text-geist-accents-5 uppercase tracking-widest pl-1">Descripción</label>
+            <textarea v-model="localDescription" @input="updateNode" class="geist-input w-full text-xs min-h-[60px] resize-none" :class="{ 'border-geist-error/50 bg-geist-error/5 text-geist-error': errors.description }" placeholder="Propósito conceptual del nodo..."></textarea>
+            <span v-if="errors.description" class="text-[8px] text-geist-error font-medium px-1">{{ errors.description }}</span>
           </div>
           <div class="space-y-1.5">
             <label class="text-[9px] font-bold text-geist-accents-5 uppercase tracking-widest pl-1">Refs CIM</label>
@@ -354,16 +424,76 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
 
         <div class="h-px bg-geist-border opacity-50"></div>
 
-        <!-- Borrado -->
-        <button @click="showDeleteConfirm = !showDeleteConfirm" class="w-full py-2 rounded-lg border border-geist-error/30 text-geist-error hover:bg-geist-error hover:text-white transition-all text-[9px] font-bold uppercase">
-          Eliminar Nodo
-        </button>
-        <div v-if="showDeleteConfirm" class="p-3 bg-geist-error/5 rounded-lg border border-geist-error/20 flex flex-col gap-2">
-            <span class="text-[8px] text-geist-error text-center font-bold">¿CONFIRMAR ELIMINACIÓN?</span>
-            <div class="flex gap-2">
-                <button @click="showDeleteConfirm = false" class="flex-1 py-1 bg-geist-accents-2 text-[9px] rounded">NO</button>
-                <button @click="confirmDeleteNode" class="flex-1 py-1 bg-geist-error text-white text-[9px] rounded">SÍ, BORRAR</button>
+        <!-- Parámetros Otros (Dinámicos) -->
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Dinámicos (Others)</h4>
+            <button @click="addOther" class="w-5 h-5 flex items-center justify-center rounded-md bg-geist-accents-1 border border-geist-border hover:bg-geist-accents-2 transition-colors text-geist-accents-5">
+              <i class="fa-solid fa-plus text-[8px]"></i>
+            </button>
+          </div>
+
+          <div v-if="localOthers.length === 0" class="text-center py-4 border border-dashed border-geist-border rounded-xl opacity-40">
+            <span class="text-[8px] uppercase tracking-widest font-medium">No hay parámetros extra</span>
+          </div>
+
+          <div v-for="(other, index) in localOthers" :key="other.id" class="p-3 border border-geist-border rounded-xl bg-geist-accents-1/20 space-y-4 relative group">
+            <!-- Botón Borrar -->
+            <button @click="removeOther(index)" class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-geist-bg border border-geist-border text-geist-accents-3 hover:text-geist-error hover:border-geist-error/30 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-sm z-10 scale-90 hover:scale-100">
+              <i class="fa-solid fa-xmark text-[8px]"></i>
+            </button>
+
+            <!-- Fila 1: Nombre, Flags y Descripción -->
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex-1 space-y-1">
+                    <input v-model="other.name" @input="updateNode" type="text" placeholder="Nombre" 
+                        class="bg-transparent border-none p-0 text-[10px] font-bold text-geist-fg focus:ring-0 w-full placeholder:text-geist-accents-3"
+                        :class="{ 'text-geist-error placeholder:text-geist-error/40': errors[`other_${index}_name`] }">
+                    <textarea v-model="other.description" @input="updateNode" placeholder="Descripción del parámetro..." 
+                        class="bg-transparent border-none p-0 text-[9px] text-geist-accents-4 focus:ring-0 w-full resize-none min-h-[40px] placeholder:text-geist-accents-2"
+                        :class="{ 'text-geist-error placeholder:text-geist-error/40': errors[`other_${index}_desc`] }"></textarea>
+                </div>
+                
+                <div class="flex items-center gap-3 pt-0.5">
+                  <!-- Modifable -->
+                  <div class="flex flex-col items-center gap-0.5" title="Habilitar Puerto de Modulación">
+                    <span class="text-[6px] font-bold text-geist-accents-4 uppercase">Modulable</span>
+                    <button @click="other.isModifiable = !other.isModifiable; if(!other.isModifiable) other.isExternalInput = false; updateNode()" class="w-6 h-3 rounded-full border transition-all relative" :class="other.isModifiable ? 'bg-emerald-500 border-emerald-600' : 'bg-geist-accents-2 border-geist-border'">
+                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white shadow-sm transition-transform" :class="other.isModifiable ? 'translate-x-3' : 'translate-x-0.5'"></div>
+                    </button>
+                  </div>
+                  <!-- External -->
+                  <div class="flex flex-col items-center gap-0.5" :class="{ 'opacity-30 pointer-events-none': !other.isModifiable }" title="Externalizar a la Máquina Superior">
+                    <span class="text-[6px] font-bold text-geist-accents-4 uppercase">Externo</span>
+                    <button @click="other.isExternalInput = !other.isExternalInput; updateNode()" :disabled="!other.isModifiable" class="w-6 h-3 rounded-full border transition-all relative" :class="other.isExternalInput ? 'bg-blue-500 border-blue-600' : 'bg-geist-accents-2 border-geist-border'">
+                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white shadow-sm transition-transform" :class="other.isExternalInput ? 'translate-x-3' : 'translate-x-0.5'"></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="errors[`other_${index}_name`] || errors[`other_${index}_desc`]" class="flex flex-col gap-0.5">
+                <span v-if="errors[`other_${index}_name`]" class="text-[7px] text-geist-error font-bold tracking-tighter uppercase">{{ errors[`other_${index}_name`] }}</span>
+                <span v-if="errors[`other_${index}_desc`]" class="text-[7px] text-geist-error font-bold tracking-tighter uppercase">{{ errors[`other_${index}_desc`] }}</span>
+              </div>
             </div>
+
+            <!-- Fila 2: Valor -->
+            <div class="space-y-1 border-t border-geist-border/40 pt-3">
+              <label class="text-[7px] font-bold text-geist-accents-4 uppercase tracking-widest pl-0.5">Valor Inicial</label>
+              <input v-model="other.initialValue" @input="updateNode" type="text" maxlength="100" class="geist-input w-full text-[10px] py-1" :class="{ 'border-geist-error/50 bg-geist-error/5 text-geist-error': errors[`other_${index}_val`] }">
+              <span v-if="errors[`other_${index}_val`]" class="text-[7px] text-geist-error font-bold tracking-tighter uppercase px-0.5">{{ errors[`other_${index}_val`] }}</span>
+            </div>
+
+            <!-- Fila 3: Refs Parámetro -->
+            <div class="flex flex-wrap gap-1">
+              <button v-for="comp in props.availableCimComponents" :key="comp.id" @click="toggleParamRef(other.id, comp.id)" class="text-[6px] px-1 py-0.5 rounded border transition-all" 
+                :class="localParamRefs[other.id]?.includes(comp.id) ? 'bg-geist-fg text-geist-bg border-geist-fg' : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border'">
+                {{ comp.name.split('] ')[1] || comp.name }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

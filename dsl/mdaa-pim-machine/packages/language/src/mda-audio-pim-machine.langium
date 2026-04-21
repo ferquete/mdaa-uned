@@ -113,7 +113,6 @@ MixerNode:
         '"type"' ':' '"mixer"' ','
         CommonNodeFields
         '"stereo"' ':' stereo=StereoParameter ','
-        ( '"ping_pong"' ':' ping_pong=Parameter ',')?
         '"inputs_number"' ':' inputs_number=Parameter ','
         '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?
         (',' '"input_1"' ':' input_1=ConnectionPoint)?
@@ -135,7 +134,6 @@ GainAndPanNode:
         '"gain"' ':' gain=Parameter ','
         '"pan"' ':' pan=Parameter ','
         '"stereo"' ':' stereo=StereoParameter ','
-        ( '"ping_pong"' ':' ping_pong=Parameter ',')?
         '"input_1"' ':' input_1=ConnectionPoint ','
         ( '"input_2"' ':' input_2=ConnectionPoint ',')?
         '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?
@@ -145,7 +143,6 @@ GainAndPanNode:
 
 fragment SoundModifierFields:
     '"stereo"' ':' stereo=StereoParameter ','
-    ( '"ping_pong"' ':' ping_pong=Parameter ',')?
     '"input_1"' ':' input_1=ConnectionPoint ','
     ( '"input_2"' ':' input_2=ConnectionPoint ',')?
     '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?;

@@ -3,7 +3,7 @@
   "name": "Signal Processor X1",
   "description": "Estación de procesamiento integral que combina filtrado, dinámica y ecualización en un entorno de baja latencia. Basado en el procesador CIM, expande sus capacidades con compresión de precisión y ecualización paramétrica de alta fidelidad. Su mezclador de diez canales permite sumar múltiples fuentes con control granular de fase y amplitud, asegurando una señal final coherente y balanceada antes de la etapa de efectos o del bus de salida principal.",
   "ids_cim_reference": [
-    "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e"
+    "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
   ],
   "nodes": [
     {
@@ -53,14 +53,6 @@
         ],
         "initialValue": true,
         "isModifiable": false
-      },
-      "ping_pong": {
-        "id": "a20e1234-e29b-41d4-a716-446655440008",
-        "ids_references": [
-          "222e8400-e29b-41d4-a716-446655440222"
-        ],
-        "initialValue": false,
-        "isModifiable": true
       },
       "input_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440009",
@@ -164,14 +156,6 @@
           "112e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": true,
-        "isModifiable": false
-      },
-      "ping_pong": {
-        "id": "a20e1234-e29b-41d4-a716-446655440023",
-        "ids_references": [
-          "112e8400-e29b-41d4-a716-446655440111"
-        ],
-        "initialValue": false,
         "isModifiable": false
       },
       "inputs_number": {

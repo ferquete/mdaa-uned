@@ -136,16 +136,14 @@ const validateInternal = (val: string) => {
           const isStereo = node.stereo.initialValue === true || node.stereo.initialValue === 'true'
           
           if (isStereo) {
-            // Requiere output_2 y ping_pong (si no es generador)
+            // Requiere output_2
             if (!node.output_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo stereo falta "output_2"` })
             if (['frequency_filter', 'reverb', 'delay', 'distortion', 'chorus_flanger', 'compressor', 'equalizer', 'mixer', 'gain_pan'].includes(node.type)) {
-              if (!node.ping_pong) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo stereo falta "ping_pong"` })
               if (!node.input_2 && !['mixer', 'gain_pan'].includes(node.type)) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo stereo falta "input_2"` })
             }
           } else {
-            // Mono: No debe tener output_2 ni ping_pong
+            // Mono: No debe tener output_2
             if (node.output_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "output_2"` })
-            if (node.ping_pong) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "ping_pong"` })
             if (node.input_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "input_2"` })
           }
         }
@@ -169,7 +167,7 @@ const validateInternal = (val: string) => {
           if (['id', 'name', 'description', 'type', 'ids_references', 'others', 'stereo'].includes(key)) return
           
           // Saltamos puertos de audio (input_X, output_X)
-          if (key.startsWith('input_') || key.startsWith('output_') || key === 'output' || key === 'ping_pong' || key === 'inputs_number') return
+          if (key.startsWith('input_') || key.startsWith('output_') || key === 'output' || key === 'inputs_number') return
 
           // Si es un objeto (parámetro de audio real), debe tener isModifiable
           if (val && typeof val === 'object' && !Array.isArray(val)) {

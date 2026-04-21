@@ -192,6 +192,26 @@ const loadMachineData = () => {
 onMounted(loadMachineData)
 watch(() => store.selectedMachine?.id, loadMachineData)
 
+// Observar cambios profundos en el documento de la máquina seleccionada
+// para reaccionar a cambios realizados desde el editor JSON
+watch(
+  () => store.selectedMachine ? store.parsedDocs[store.selectedMachine.id] : null,
+  (newDoc, oldDoc) => {
+    if (newDoc && newDoc !== oldDoc) {
+      // Solo recargar si el contenido técnico ha cambiado realmente
+      // (evitar bucles infinitos si updateNode() provoca cambios reactivos menores)
+      const currentTechnicalJson = JSON.stringify(buildFinalJson())
+      const newTechnicalJson = JSON.stringify(newDoc)
+      
+      if (currentTechnicalJson !== newTechnicalJson) {
+        console.log('[PIM Visual Editor] Detectado cambio externo en JSON, recargando grafo...')
+        loadMachineData()
+      }
+    }
+  }, 
+  { deep: true }
+)
+
 onBeforeUnmount(() => {
   clearUnsavedState()
 })
@@ -290,6 +310,8 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
       p.decay = wrapParam(0.2)
       p.sustain = wrapParam(0.8)
       p.release = wrapParam(0.5)
+      p.delay = wrapParam(0)
+      p.hold = wrapParam(0)
       p.curve = wrapParam('linear')
     },
     frequency_filter: (p) => {
@@ -396,6 +418,51 @@ const handleDeleteNode = (nodeId: string) => {
   
   showProperties.value = false
   selectedNodeId.value = undefined
+}
+
+// --- Replicación de Nodo ---
+/**
+ * Crea una copia exacta del nodo (datos técnicos y parámetros)
+ * generando un nuevo ID y desplazándolo ligeramente en el lienzo.
+ */
+const handleReplicateNode = (nodeId: string) => {
+  const original = findNode(nodeId)
+  if (!original) return
+
+  const newId = crypto.randomUUID()
+  const sourceParams = JSON.parse(JSON.stringify(original.data.parameters || {}))
+  
+  // Limpieza de IDs en parámetros anidados para evitar duplicidades de ID de componente
+  // aunque el ID de nodo sea distinto. El DSL pide IDs únicos por elemento.
+  const regenerateIds = (obj: any) => {
+    if (obj && typeof obj === 'object') {
+       if (obj.id) obj.id = crypto.randomUUID()
+       Object.values(obj).forEach(val => regenerateIds(val))
+    }
+  }
+  regenerateIds(sourceParams)
+
+  const newNode = {
+    id: newId,
+    type: 'custom',
+    position: { x: original.position.x + 40, y: original.position.y + 40 },
+    data: {
+      ...JSON.parse(JSON.stringify(original.data)),
+      isValid: true,
+      parameters: {
+        ...sourceParams,
+        id: newId,
+        name: `${original.data.name} (Copy)`
+      },
+      name: `${original.data.name} (Copy)`
+    }
+  }
+
+  addNodes([newNode])
+  
+  // Seleccionar la réplica automáticamente
+  selectedNodeId.value = newId
+  showProperties.value = true
 }
 
 // --- Lógica de Conexión ---
@@ -595,18 +662,10 @@ const buildFinalJson = () => {
       }
     })
 
-    // Asegurar que ping_pong se incluya si existe (aunque no esté en paramsList por herencia)
-    if (rawData?.ping_pong !== undefined && !node.ping_pong) {
-      node.ping_pong = wrapParam('ping_pong', rawData.ping_pong)
-    }
-
     // Añadir campos de audio comunes si existen
     if (metadata) {
       if ('stereo' in (rawData || {}) || metadata.inputs.length > 0 || metadata.outputs.length > 0) {
         node.stereo = wrapParam('stereo', rawData?.stereo ?? false)
-        if (node.stereo.initialValue === true) {
-          node.ping_pong = wrapParam('ping_pong', rawData?.ping_pong ?? false)
-        }
       }
       metadata.inputs.forEach((i: any) => {
         // Solo incluir input_2 si es estéreo
@@ -792,6 +851,7 @@ const executeSave = async () => {
           :available-cim-components="availableCimComponents"
           @close="showProperties = false"
           @delete-node="handleDeleteNode"
+          @replicate-node="handleReplicateNode"
           @remove-edges-for-param="handleRemoveEdgesForParam"
         />
       </transition>

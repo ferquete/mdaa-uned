@@ -139,7 +139,7 @@ export class MdaAudioPimMachineValidator {
     private checkEdgeTypeConsistency(edge: Edge, tNode: any, tParamId: string, accept: ValidationAcceptor): void {
         const audioInputNames = ['input_1', 'input_2', 'input_3', 'input_4', 'input_5', 'input_6', 'input_7', 'input_8', 'input_9', 'input_10'];
         const outputNames = ['output_1', 'output_2', 'output'];
-        const configNames = ['stereo', 'ping_pong', 'inputs_number'];
+        const configNames = ['stereo', 'inputs_number'];
 
         let tParamName = '';
         for (const key in tNode) {
@@ -166,7 +166,7 @@ export class MdaAudioPimMachineValidator {
                 accept('error', `No se puede aplicar una modificación a un parámetro de salida.`, { node: edge, property: 'type' });
             }
             if (isConfig) {
-                accept('error', `No se puede aplicar una modificación a parámetros de configuración base (stereo, ping_pong, inputs_number).`, { node: edge, property: 'type' });
+                accept('error', `No se puede aplicar una modificación a parámetros de configuración base (stereo, inputs_number).`, { node: edge, property: 'type' });
             }
         }
     }
@@ -406,7 +406,7 @@ export class MdaAudioPimMachineValidator {
      * Valida la estructura de SoundModifierNode (Filtros y Efectos)
      */
     checkSoundModifier(node: any, accept: ValidationAcceptor): void {
-        const isStereo = this.internalCheckStereoAndPingPong(node, accept);
+        const isStereo = this.getRawValue(node.stereo);
         this.internalCheckOutputs(node, accept);
         
         // Entradas: 1 en mono, 2 en estéreo
@@ -428,7 +428,7 @@ export class MdaAudioPimMachineValidator {
      * Valida la estructura de GainAndPanNode (entradas y salidas según estéreo)
      */
     checkGainAndPanStructure(node: GainAndPanNode, accept: ValidationAcceptor): void {
-        const isStereo = this.internalCheckStereoAndPingPong(node, accept);
+        const isStereo = this.getRawValue(node.stereo);
         this.internalCheckOutputs(node, accept);
         
         if (!node.input_1) {
@@ -450,7 +450,6 @@ export class MdaAudioPimMachineValidator {
      * Valida el Mezclador (entradas variables vñia inputs_number)
      */
     checkMixer(node: MixerNode, accept: ValidationAcceptor): void {
-        this.internalCheckStereoAndPingPong(node, accept);
         this.internalCheckOutputs(node, accept);
 
         const numInputs = this.getRawValue(node.inputs_number);
@@ -474,29 +473,6 @@ export class MdaAudioPimMachineValidator {
         }
     }
 
-    private internalCheckStereoAndPingPong(node: any, accept: ValidationAcceptor): boolean {
-        const isStereo = this.getRawValue(node.stereo);
-        if (typeof isStereo !== 'boolean') {
-            accept('error', 'El parámetro stereo debe tener un valor inicial booleano.', { node: node.stereo, property: 'initialValue' });
-            return false;
-        }
-
-        if (isStereo) {
-            if (!node.ping_pong) {
-                accept('error', 'Si stereo es true, debe definirse el parámetro ping_pong.', { node, property: 'stereo' });
-            } else {
-                const isPP = this.getRawValue(node.ping_pong);
-                if (typeof isPP !== 'boolean') {
-                    accept('error', 'El parámetro ping_pong debe ser booleano.', { node: node.ping_pong, property: 'initialValue' });
-                }
-            }
-        } else {
-            if (node.ping_pong) {
-                accept('error', 'Si stereo es false, no debe definirse ping_pong.', { node, property: 'ping_pong' });
-            }
-        }
-        return isStereo;
-    }
 
     private internalCheckOutputs(node: any, accept: ValidationAcceptor): void {
         const isStereo = this.getRawValue(node.stereo);

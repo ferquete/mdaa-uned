@@ -103,7 +103,7 @@ Las aristas establecen la conexión entre nodos.
 - **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` solo pueden apuntar a conexiones conceptuales (sendTo) en los modelos CIM.
 - **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` solo pueden apuntar a elementos/nodos de control en los modelos CIM.
 - **Cascada de Integridad**: Al desactivar `isModifiable` en un parámetro, el sistema de diseño visual **borrará automáticamente** todas las aristas que tengan ese parámetro como destino para mantener la coherencia del modelo.
-- **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`, `ping_pong`, `inputs_number`).
+- **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`, `inputs_number`).
 
 ---
 
@@ -205,7 +205,6 @@ Generan señales de control (`modification`).
 
 Procesan audio. Todos usan el fragmento `SoundModifierFields`:
 - `stereo`: Define si el nodo procesa en estéreo.
-- `ping_pong`: Booleano (requiere `stereo: true`).
 - `input_1`, `input_2` (si stereo): Entradas de audio.
 - `output_1`, `output_2` (si stereo): Salidas de audio.
 
@@ -217,13 +216,11 @@ Procesan audio. Todos usan el fragmento `SoundModifierFields`:
 | `resonance` | NUMBER | 0 - 10 | Resonancia (Q). |
 | `slope` | STRING | `12dB/oct`, `24dB/oct`, `48dB/oct` | Pendiente de atenuación. |
 
-#### Ejemplo: Filter (con Stereo y Ping-Pong)
-```json
 {
   "type": "frequency_filter",
   "id": "550e8400-e29b-41d4-a716-446655440043",
   "name": "Main Filter",
-  "description": "Filtro con stereo y ping pong.",
+  "description": "Filtro con stereo.",
   "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
   "others": [],
   "filterType": { ... },
@@ -232,17 +229,10 @@ Procesan audio. Todos usan el fragmento `SoundModifierFields`:
     "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
     "initialValue": true
   },
-  "ping_pong": {
-    "id": "550e8400-e29b-41d4-a716-446655440049",
-    "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
-    "initialValue": false,
-    "isModifiable": true
-  },
   "input_1": { ... },
   "output_1": { ... },
   "output_2": { ... }
 }
-```
 
 #### Reverb (`reverb`)
 | Parámetro | Tipo | Rango / Valores | Descripción |
@@ -302,7 +292,6 @@ Este nodo permite la suma de hasta 10 señales.
 | Parámetro | Tipo | Rango / Valores | Descripción |
 | :--- | :--- | :--- | :--- |
 | `stereo` | BOOLEAN | `true`, `false` | Modo de salida. |
-| `ping_pong` | BOOLEAN | `true`, `false` | Solo válido si `stereo` es `true`. |
 | `inputs_number`| NUMBER | 1 - 10 | Número de entradas `input_x` habilitadas. |
 | `input_1..10` | - | `ConnectionPoint` | Conexiones de audio. |
 | `output_1..2` | - | `ConnectionPoint` | Salida principal (L) y (R). |

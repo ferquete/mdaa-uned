@@ -166,14 +166,23 @@
               "required": ["type", "roomSize", "damping", "decayTime", "dryWet", "stereo", "input_1", "output_1"], 
               "properties": { 
                 "type": { "const": "reverb" },
-                "stereo": { "$ref": "#/definitions/StereoParameter" }
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "roomSize": { "$ref": "#/definitions/Parameter" },
+                "damping": { "$ref": "#/definitions/Parameter" },
+                "decayTime": { "$ref": "#/definitions/Parameter" },
+                "dryWet": { "$ref": "#/definitions/Parameter" }
               } 
             },
             { 
               "required": ["type", "delayTime", "feedback", "lowPassCutoff", "highPassCutoff", "dryWet", "stereo", "input_1", "output_1"], 
               "properties": { 
                 "type": { "const": "delay" },
-                "stereo": { "$ref": "#/definitions/StereoParameter" }
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "delayTime": { "$ref": "#/definitions/Parameter" },
+                "feedback": { "$ref": "#/definitions/Parameter" },
+                "lowPassCutoff": { "$ref": "#/definitions/Parameter" },
+                "highPassCutoff": { "$ref": "#/definitions/Parameter" },
+                "dryWet": { "$ref": "#/definitions/Parameter" }
               } 
             },
             { 
@@ -181,28 +190,43 @@
               "properties": { 
                 "type": { "const": "distortion" },
                 "stereo": { "$ref": "#/definitions/StereoParameter" },
-                "distType": { "$ref": "#/definitions/Parameter" }
+                "drive": { "$ref": "#/definitions/Parameter" },
+                "tone": { "$ref": "#/definitions/Parameter" },
+                "distType": { "$ref": "#/definitions/Parameter" },
+                "outputLevel": { "$ref": "#/definitions/Parameter" }
               } 
             },
             { 
               "required": ["type", "rate", "depth", "feedback", "mix", "stereo", "input_1", "output_1"], 
               "properties": { 
                 "type": { "const": "chorus_flanger" },
-                "stereo": { "$ref": "#/definitions/StereoParameter" }
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "rate": { "$ref": "#/definitions/Parameter" },
+                "depth": { "$ref": "#/definitions/Parameter" },
+                "feedback": { "$ref": "#/definitions/Parameter" },
+                "mix": { "$ref": "#/definitions/Parameter" }
               } 
             },
             { 
               "required": ["type", "threshold", "ratio", "attack", "release", "makeupGain", "stereo", "input_1", "output_1"], 
               "properties": { 
                 "type": { "const": "compressor" },
-                "stereo": { "$ref": "#/definitions/StereoParameter" }
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "threshold": { "$ref": "#/definitions/Parameter" },
+                "ratio": { "$ref": "#/definitions/Parameter" },
+                "attack": { "$ref": "#/definitions/Parameter" },
+                "release": { "$ref": "#/definitions/Parameter" },
+                "makeupGain": { "$ref": "#/definitions/Parameter" }
               } 
             },
             { 
               "required": ["type", "bandFrequency", "bandwidth", "gain", "stereo", "input_1", "output_1"], 
               "properties": { 
                 "type": { "const": "equalizer" },
-                "stereo": { "$ref": "#/definitions/StereoParameter" }
+                "stereo": { "$ref": "#/definitions/StereoParameter" },
+                "bandFrequency": { "$ref": "#/definitions/Parameter" },
+                "bandwidth": { "$ref": "#/definitions/Parameter" },
+                "gain": { "$ref": "#/definitions/Parameter" }
               } 
             }
           ]

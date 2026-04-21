@@ -120,7 +120,6 @@ export const PIM_MACHINE_SCHEMA = {
         "type": { "type": "string" },
         "others": { "type": "array", "items": { "$ref": "#/definitions/OthersParameter" } },
         "stereo":        { "$ref": "#/definitions/StereoParameter" },
-        "ping_pong":     { "$ref": "#/definitions/Parameter" },
         "waveform":      { "$ref": "#/definitions/Parameter" },
         "frequency":     { "$ref": "#/definitions/Parameter" },
         "pulseWidth":    { "$ref": "#/definitions/Parameter" },

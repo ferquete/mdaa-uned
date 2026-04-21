@@ -53,14 +53,6 @@
         "initialValue": true,
         "isModifiable": false
       },
-      "ping_pong": {
-        "id": "222e1234-e29b-41d4-a716-446655440008",
-        "ids_references": [
-          "992e8400-e29b-41d4-a716-446655440333"
-        ],
-        "initialValue": false,
-        "isModifiable": false
-      },
       "input_1": {
         "id": "222e1234-e29b-41d4-a716-446655440009",
         "ids_references": [],
@@ -137,14 +129,6 @@
         "initialValue": true,
         "isModifiable": false
       },
-      "ping_pong": {
-        "id": "222e1234-e29b-41d4-a716-446655440020",
-        "ids_references": [
-          "992e8400-e29b-41d4-a716-446655440333"
-        ],
-        "initialValue": true,
-        "isModifiable": true
-      },
       "input_1": {
         "id": "222e1234-e29b-41d4-a716-446655440021",
         "ids_references": [],
@@ -195,14 +179,6 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": true,
-        "isModifiable": false
-      },
-      "ping_pong": {
-        "id": "222e1234-e29b-41d4-a716-446655440029",
-        "ids_references": [
-          "992e8400-e29b-41d4-a716-446655440333"
-        ],
-        "initialValue": false,
         "isModifiable": false
       },
       "input_1": {

@@ -201,7 +201,7 @@ function updateNode() {
     o.ids_references = [...(localParamRefs.value[o.id] || [])]
   })
 
-  node.data = { ...node.data, name: localName.value, parameters: finalParams, isValid: isVal }
+  node.data = { ...node.data, name: localName.value, description: localDescription.value, parameters: finalParams, isValid: isVal }
 }
 
 /**
@@ -399,7 +399,14 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
                 </div>
               </div>
 
-              <!-- Fila 2: Control de Edición -->
+              <!-- Fila 2: Descripción -->
+              <div class="space-y-1">
+                <textarea v-model="localParams[pName].description" @input="updateNode" 
+                  class="bg-transparent border-none p-0 text-[8px] text-geist-accents-4 focus:ring-0 w-full resize-none min-h-[30px] placeholder:text-geist-accents-2" 
+                  placeholder="Descripción del parámetro..."></textarea>
+              </div>
+
+              <!-- Fila 3: Control de Edición -->
               <div class="pt-1">
                 <input v-if="pConfig.type === 'number'" v-model.number="localParams[pName].initialValue" @input="updateNode" type="range" :min="pConfig.min" :max="pConfig.max" :step="pConfig.step" class="w-full accent-emerald-500 h-1 rounded-full cursor-pointer">
                 <select v-else-if="pConfig.type === 'select'" v-model="localParams[pName].initialValue" @change="updateNode" class="geist-input w-full text-[10px] py-1 bg-geist-bg">
@@ -412,7 +419,7 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
                 </div>
               </div>
 
-              <!-- Fila 3: Refs Parámetro -->
+              <!-- Fila 4: Refs Parámetro -->
               <div v-if="pConfig.showRefs !== false" class="flex flex-wrap gap-1">
                 <button v-for="comp in props.availableCimComponents" :key="comp.id" @click="toggleParamRef(pName, comp.id)" class="text-[6px] px-1 py-0.5 rounded border transition-all" :class="localParamRefs[pName]?.includes(comp.id) ? 'bg-geist-fg text-geist-bg border-geist-fg' : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border'">
                   {{ comp.name.split('] ')[1] || comp.name }}

@@ -19,7 +19,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.8,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "damping": {
         "id": "222e1234-e29b-41d4-a716-446655440004",
@@ -27,7 +28,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.3,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "decayTime": {
         "id": "222e1234-e29b-41d4-a716-446655440005",
@@ -35,7 +37,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 2.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "dryWet": {
         "id": "222e1234-e29b-41d4-a716-446655440006",
@@ -43,7 +46,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.4,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "stereo": {
         "id": "222e1234-e29b-41d4-a716-446655440007",
@@ -51,27 +55,31 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "input_1": {
         "id": "222e1234-e29b-41d4-a716-446655440009",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
       },
       "input_2": {
         "id": "222e1234-e29b-41d4-a716-446655440010",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
       },
       "output_1": {
         "id": "222e1234-e29b-41d4-a716-446655440011",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       },
       "output_2": {
         "id": "222e1234-e29b-41d4-a716-446655440012",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       }
     },
     {
@@ -87,7 +95,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.35,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "feedback": {
         "id": "222e1234-e29b-41d4-a716-446655440015",
@@ -95,7 +104,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.6,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "lowPassCutoff": {
         "id": "222e1234-e29b-41d4-a716-446655440016",
@@ -103,7 +113,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 5000,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "highPassCutoff": {
         "id": "222e1234-e29b-41d4-a716-446655440017",
@@ -111,7 +122,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 100,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "dryWet": {
         "id": "222e1234-e29b-41d4-a716-446655440018",
@@ -119,7 +131,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.3,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "stereo": {
         "id": "222e1234-e29b-41d4-a716-446655440019",
@@ -127,27 +140,31 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "input_1": {
         "id": "222e1234-e29b-41d4-a716-446655440021",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
       },
       "input_2": {
         "id": "222e1234-e29b-41d4-a716-446655440022",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
       },
       "output_1": {
         "id": "222e1234-e29b-41d4-a716-446655440023",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       },
       "output_2": {
         "id": "222e1234-e29b-41d4-a716-446655440024",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       }
     },
     {
@@ -163,7 +180,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.9,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "pan": {
         "id": "222e1234-e29b-41d4-a716-446655440027",
@@ -171,7 +189,8 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "stereo": {
         "id": "222e1234-e29b-41d4-a716-446655440028",
@@ -179,12 +198,19 @@
           "992e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "input_1": {
         "id": "222e1234-e29b-41d4-a716-446655440030",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
+      },
+      "input_2": {
+        "id": "02804ee0-7b17-4895-b013-df82bfb5fee5",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": ""
       },
       "output_1": {
         "id": "222e1234-e29b-41d4-a716-446655440031",

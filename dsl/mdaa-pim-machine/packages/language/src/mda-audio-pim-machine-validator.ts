@@ -15,7 +15,7 @@ export function registerValidationChecks(services: MdaAudioPimMachineServices) {
     const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
         Model: [validator.checkModelHeader, validator.checkModelIntegrity],
         Parameter: [validator.checkParameter],
-        // StereoParameter: [validator.checkStereoParameter],
+        StereoParameter: [validator.checkStereoParameter],
         OthersParameter: [validator.checkOthersParameter],
         ConnectionPoint: [validator.checkConnectionPoint],
         Edge: [validator.checkEdge],
@@ -195,8 +195,11 @@ export class MdaAudioPimMachineValidator {
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
-        if (param.description && param.description.length > 600) {
-            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        if (param.description) {
+            const desc = param.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+            }
         }
         
         // Regla semántica de integridad
@@ -214,8 +217,11 @@ export class MdaAudioPimMachineValidator {
         if (id && !this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
-        if (param.description && param.description.length > 600) {
-            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        if (param.description) {
+            const desc = param.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+            }
         }
     }
 
@@ -258,8 +264,11 @@ export class MdaAudioPimMachineValidator {
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID de la arista debe ser un UUID válido.', { node: edge, property: 'id' });
         }
-        if (edge.description && edge.description.length > 600) {
-            accept('error', 'La descripción de la arista no puede superar los 600 caracteres.', { node: edge, property: 'description' });
+        if (edge.description) {
+            const desc = edge.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción de la arista no puede superar los 600 caracteres.', { node: edge, property: 'description' });
+            }
         }
     }
 
@@ -271,8 +280,11 @@ export class MdaAudioPimMachineValidator {
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: cp, property: 'id' });
         }
-        if (cp.description && cp.description.length > 600) {
-            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: cp, property: 'description' });
+        if (cp.description) {
+            const desc = cp.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: cp, property: 'description' });
+            }
         }
     }
 

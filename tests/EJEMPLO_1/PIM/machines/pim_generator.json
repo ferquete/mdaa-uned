@@ -19,7 +19,8 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": "sawtooth",
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "frequency": {
         "id": "e30e1234-e29b-41d4-a716-446655440004",
@@ -28,7 +29,8 @@
         ],
         "initialValue": 440,
         "isModifiable": true,
-        "isExternalInput": true
+        "isExternalInput": true,
+        "description": ""
       },
       "pulseWidth": {
         "id": "e30e1234-e29b-41d4-a716-446655440005",
@@ -36,7 +38,8 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 0.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "gain": {
         "id": "e30e1234-e29b-41d4-a716-446655440006",
@@ -44,7 +47,8 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 1,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "phase": {
         "id": "e30e1234-e29b-41d4-a716-446655440007",
@@ -52,7 +56,8 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "pan": {
         "id": "e30e1234-e29b-41d4-a716-446655440008",
@@ -60,7 +65,8 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "stereo": {
         "id": "e30e1234-e29b-41d4-a716-446655440009",
@@ -68,17 +74,19 @@
           "771e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "output_1": {
         "id": "e30e1234-e29b-41d4-a716-446655440011",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       },
       "output_2": {
         "id": "e30e1234-e29b-41d4-a716-446655440012",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       }
     }
   ],

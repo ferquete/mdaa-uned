@@ -19,7 +19,8 @@
           "222e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": "LPF",
-        "isModifiable": false
+        "isModifiable": false,
+        "description": ""
       },
       "cutoff": {
         "id": "a20e1234-e29b-41d4-a716-446655440004",
@@ -28,7 +29,8 @@
         ],
         "initialValue": 1000,
         "isModifiable": true,
-        "isExternalInput": true
+        "isExternalInput": true,
+        "description": ""
       },
       "resonance": {
         "id": "a20e1234-e29b-41d4-a716-446655440005",
@@ -36,7 +38,8 @@
           "222e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "slope": {
         "id": "a20e1234-e29b-41d4-a716-446655440006",
@@ -44,7 +47,8 @@
           "222e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": "24dB/oct",
-        "isModifiable": false
+        "isModifiable": false,
+        "description": ""
       },
       "stereo": {
         "id": "a20e1234-e29b-41d4-a716-446655440007",
@@ -52,7 +56,7 @@
           "222e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "input_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440009",
@@ -92,7 +96,8 @@
           "333e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": -18,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "ratio": {
         "id": "a20e1234-e29b-41d4-a716-446655440015",
@@ -100,7 +105,8 @@
           "333e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 4,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "attack": {
         "id": "a20e1234-e29b-41d4-a716-446655440016",
@@ -108,7 +114,8 @@
           "333e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.01,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "release": {
         "id": "a20e1234-e29b-41d4-a716-446655440017",
@@ -116,7 +123,8 @@
           "333e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 0.1,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "makeupGain": {
         "id": "a20e1234-e29b-41d4-a716-446655440018",
@@ -124,23 +132,26 @@
           "333e8400-e29b-41d4-a716-446655440333"
         ],
         "initialValue": 3,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "stereo": {
         "id": "a20e1234-e29b-41d4-a716-446655440400",
         "ids_references": [],
         "initialValue": false,
-        "isModifiable": false
+        "description": ""
       },
       "input_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440019",
         "ids_references": [],
-        "isExternalInput": false
+        "isExternalInput": false,
+        "description": ""
       },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440020",
         "ids_references": [],
-        "isExternalOutput": false
+        "isExternalOutput": false,
+        "description": ""
       }
     },
     {
@@ -156,7 +167,7 @@
           "112e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": true,
-        "isModifiable": false
+        "description": ""
       },
       "inputs_number": {
         "id": "a20e1234-e29b-41d4-a716-446655440024",
@@ -164,7 +175,8 @@
           "112e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 3,
-        "isModifiable": false
+        "isModifiable": true,
+        "description": ""
       },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440028",

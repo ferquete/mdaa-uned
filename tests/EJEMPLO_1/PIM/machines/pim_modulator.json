@@ -19,7 +19,8 @@
           "442e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": "sine",
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "rate": {
         "id": "f40e1234-e29b-41d4-a716-446655440004",
@@ -27,7 +28,8 @@
           "442e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 0.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "amplitude": {
         "id": "f40e1234-e29b-41d4-a716-446655440005",
@@ -35,7 +37,8 @@
           "442e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 1,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "phase": {
         "id": "f40e1234-e29b-41d4-a716-446655440006",
@@ -43,7 +46,8 @@
           "442e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "sync": {
         "id": "f40e1234-e29b-41d4-a716-446655440007",
@@ -51,7 +55,8 @@
           "442e8400-e29b-41d4-a716-446655440111"
         ],
         "initialValue": false,
-        "isModifiable": false
+        "isModifiable": false,
+        "description": ""
       },
       "output": {
         "id": "f40e1234-e29b-41d4-a716-446655440008",
@@ -73,7 +78,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": "DAHDSR",
-        "isModifiable": false
+        "isModifiable": false,
+        "description": ""
       },
       "attack": {
         "id": "f40e1234-e29b-41d4-a716-446655440011",
@@ -81,7 +87,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0.05,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "decay": {
         "id": "f40e1234-e29b-41d4-a716-446655440012",
@@ -89,7 +96,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "sustain": {
         "id": "f40e1234-e29b-41d4-a716-446655440013",
@@ -97,7 +105,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0.7,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "release": {
         "id": "f40e1234-e29b-41d4-a716-446655440014",
@@ -105,7 +114,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 1.5,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "delay": {
         "id": "f40e1234-e29b-41d4-a716-446655440015",
@@ -113,7 +123,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "hold": {
         "id": "f40e1234-e29b-41d4-a716-446655440016",
@@ -121,7 +132,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": 0,
-        "isModifiable": true
+        "isModifiable": true,
+        "description": ""
       },
       "curve": {
         "id": "f40e1234-e29b-41d4-a716-446655440017",
@@ -129,7 +141,8 @@
           "552e8400-e29b-41d4-a716-446655440222"
         ],
         "initialValue": "exponential",
-        "isModifiable": false
+        "isModifiable": false,
+        "description": ""
       },
       "output": {
         "id": "f40e1234-e29b-41d4-a716-446655440018",

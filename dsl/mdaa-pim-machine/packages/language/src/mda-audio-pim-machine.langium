@@ -263,7 +263,7 @@ ConnectionPoint:
         '"ids_references"' ':' '[' (ids_references+=STRING (',' ids_references+=STRING)*)? ']'
         (',' '"isExternalInput"' ':' isExternalInput=BOOLEAN)?
         (',' '"isExternalOutput"' ':' isExternalOutput=BOOLEAN)?
-        (',' '"description"' ':' description=STRING )?
+        (',' '"description"' ':' description=STRING)?
     '}';
 
 Value:

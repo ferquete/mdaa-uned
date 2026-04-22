@@ -35,31 +35,49 @@ const modifiableParams = computed(() => PIM_MODIFIABLE_PARAMS[props.data.type] |
 const allInputs = computed(() => {
   const isStereoNode = props.data.parameters?.stereo?.initialValue === true
 
-  const audioInputs = metadata.value.inputs
+  // Entradas de audio: 
+  // 1. Del metadato estático (comportamiento normal)
+  // 2. Del estado dinámico de parámetros (especial para Mixer)
+  const audioInputs = [...metadata.value.inputs]
     .filter(p => {
-      // Filtrar input_2 si no es estéreo
-      if (p.id === 'input_2') return isStereoNode
+      if (p.id === 'input_2' && props.data.type !== 'mixer') return isStereoNode
       return true
     })
-    .map(p => ({ ...p, isMod: false }))
+
+  // Inyección dinámica para Mixer
+  if (props.data.type === 'mixer' && props.data.parameters) {
+    const dynamicInputs = Object.keys(props.data.parameters)
+      .filter(k => k.startsWith('input_') && !audioInputs.some(ai => ai.id === k))
+      .map(k => ({
+        id: k,
+        name: k.replace('input_', 'Input '),
+        type: 'audio' as const,
+        position: 'left' as const,
+        isInput: true
+      }))
+    // Ordenar numéricamente para que los handles no bailen
+    dynamicInputs.sort((a,b) => {
+        const na = parseInt(a.id.replace('input_', ''))
+        const nb = parseInt(b.id.replace('input_', ''))
+        return na - nb
+    })
+    audioInputs.push(...dynamicInputs)
+  }
+
+  const finalAudioInputs = audioInputs.map(p => ({ ...p, isMod: false }))
   
   // Filtrar handles de modulación por isModifiable
   const modInputs = modifiableParams.value
     .filter(pName => {
       const param = props.data.parameters?.[pName]
-      
-      // Los parámetros modulables generan handle si existen y están configurados como tales
-
-      // Si el parámetro es un objeto con isModifiable, respetar su valor
       if (param && typeof param === 'object' && 'isModifiable' in param) {
         return param.isModifiable === true
       }
-      // Si es un valor primitivo (editor simplificado), usar el flag global
       const isModFlag = props.data.parameters?._isModifiable
       if (isModFlag && typeof isModFlag === 'object') {
         return isModFlag[pName] !== false
       }
-      return true // Por defecto, es modulable
+      return true
     })
     .map(pName => ({
       id: pName,
@@ -82,7 +100,7 @@ const allInputs = computed(() => {
       isMod: true
     }))
 
-  return [...audioInputs, ...modInputs, ...otherInputs]
+  return [...finalAudioInputs, ...modInputs, ...otherInputs]
 })
 
 /**

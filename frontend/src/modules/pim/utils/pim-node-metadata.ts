@@ -198,13 +198,7 @@ export const PIM_NODE_METADATA: Record<string, PimNodeTypeMetadata> = {
     icon: 'fa-blender',
     colorClass: 'text-node-rel',
     category: 'Mezcla',
-    inputs: Array.from({ length: 10 }, (_, i) => ({
-      id: `input_${i + 1}`,
-      name: `Input ${i + 1}`,
-      type: 'audio',
-      position: 'left',
-      isInput: true
-    })),
+    inputs: [], // Dinámicos
     outputs: [
       { id: 'output_1', name: 'Out L', type: 'audio', position: 'right', isInput: false },
       { id: 'output_2', name: 'Out R', type: 'audio', position: 'right', isInput: false }
@@ -243,6 +237,6 @@ export const PIM_MODIFIABLE_PARAMS: Record<string, string[]> = {
   chorus_flanger: ['rate', 'depth', 'feedback', 'mix'],
   compressor: ['threshold', 'ratio', 'attack', 'release', 'makeupGain'],
   equalizer: ['bandFrequency', 'bandwidth', 'gain'],
-  mixer: ['inputs_number'],
+  mixer: [],
   gain_pan: ['gain', 'pan']
 };

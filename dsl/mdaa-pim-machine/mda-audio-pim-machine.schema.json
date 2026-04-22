@@ -149,7 +149,7 @@
             { "required": ["type", "waveform", "rate", "amplitude", "phase", "sync", "output"], "properties": { "type": { "const": "lfo" } } },
             { "required": ["type", "envelopeType", "attack", "decay", "sustain", "release", "curve", "output"], "properties": { "type": { "const": "envelope" } } },
             { 
-              "required": ["type", "stereo", "inputs_number", "output_1"], 
+              "required": ["type", "stereo", "output_1"], 
               "properties": { 
                 "type": { "const": "mixer" },
                 "stereo": { "$ref": "#/definitions/StereoParameter" }

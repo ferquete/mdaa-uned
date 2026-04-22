@@ -169,15 +169,6 @@
         "initialValue": true,
         "description": ""
       },
-      "inputs_number": {
-        "id": "a20e1234-e29b-41d4-a716-446655440024",
-        "ids_references": [
-          "112e8400-e29b-41d4-a716-446655440111"
-        ],
-        "initialValue": 3,
-        "isModifiable": true,
-        "description": ""
-      },
       "output_1": {
         "id": "a20e1234-e29b-41d4-a716-446655440028",
         "ids_references": [],

@@ -36,6 +36,7 @@ const localParams = ref<Record<string, any>>({})
 const errors = ref<Record<string, string>>({})
 const localOthers = ref<any[]>([])
 const localParamRefs = ref<Record<string, string[]>>({})
+const localPorts = ref<Record<string, any>>({})
 
 // Confirmación de borrado de nodo
 const showDeleteConfirm = ref(false)
@@ -140,8 +141,7 @@ const NODE_PARAMS_BY_TYPE: Record<string, any> = {
   ratio: { label: 'Relación (Ratio)', type: 'number', min: 1, max: 20, step: 0.1 },
   makeupGain: { label: 'Ganancia de Compensación', type: 'number', min: 0, max: 24, step: 0.1, unit: 'dB' },
   bandFrequency: { label: 'Frecuencia de Banda', type: 'number', min: 20, max: 20000, step: 1, unit: 'Hz' },
-  bandwidth: { label: 'Ancho de Banda (Q)', type: 'number', min: 0.1, max: 10, step: 0.1 },
-  inputs_number: { label: 'Número de Entradas', type: 'number', min: 1, max: 10, step: 1 }
+  bandwidth: { label: 'Ancho de Banda (Q)', type: 'number', min: 0.1, max: 10, step: 0.1 }
 };
 
 function validateAll(): boolean {
@@ -196,9 +196,12 @@ function updateNode() {
     }
   })
 
-  // Volcar referencias de localParamRefs a los objetos de localOthers
-  finalParams.others.forEach((o: any) => {
-    o.ids_references = [...(localParamRefs.value[o.id] || [])]
+  // Volcar puertos
+  Object.entries(localPorts.value).forEach(([k, v]) => {
+    finalParams[k] = {
+      ...v,
+      ids_references: [...(localParamRefs.value[k] || [])]
+    }
   })
 
   node.data = { ...node.data, name: localName.value, description: localDescription.value, parameters: finalParams, isValid: isVal }
@@ -269,6 +272,33 @@ async function syncNodeData(nodeId: string | undefined) {
   localParams.value = processedParams
   localParamRefs.value = refs
 
+  // Sincronizar puertos
+  const processedPorts: Record<string, any> = {}
+  Object.entries(rawParams).forEach(([k, v]) => {
+    if (k.startsWith('input_') || k.startsWith('output')) {
+      if (v && typeof v === 'object' && !Array.isArray(v)) {
+        processedPorts[k] = { ...v }
+        localParamRefs.value[k] = [...(v as any).ids_references || []]
+      }
+    }
+  })
+
+  // Especial para Mixer: Si no hay inputs, inicializar 2
+  if (nodeType.value === 'mixer') {
+    const inputsNum = Object.keys(processedPorts).filter(k => k.startsWith('input_')).length
+    if (inputsNum < 2) {
+      for (let i = 1; i <= 2; i++) {
+        const k = `input_${i}`
+        if (!processedPorts[k]) {
+          processedPorts[k] = { id: crypto.randomUUID(), ids_references: [], isExternalInput: false, description: '' }
+          localParamRefs.value[k] = []
+        }
+      }
+    }
+  }
+
+  localPorts.value = processedPorts
+
   // Sincronizar referencias de los parámetros dinámicos (others)
   localOthers.value.forEach(o => {
     if (o.id) {
@@ -301,6 +331,53 @@ const removeOther = (index: number) => {
 
 const replicateNode = () => { if (props.nodeId) emit('replicate-node', props.nodeId) }
 const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.nodeId) }
+
+/**
+ * Gestión dinámica de inputs para el Mixer
+ */
+const mixerInputsCount = computed({
+  get: () => Object.keys(localPorts.value).filter(k => k.startsWith('input_')).length,
+  set: (newVal) => {
+    const current = Object.keys(localPorts.value).filter(k => k.startsWith('input_')).length
+    if (newVal > current) {
+      for (let i = current + 1; i <= newVal; i++) {
+        const k = `input_${i}`
+        localPorts.value[k] = { id: crypto.randomUUID(), ids_references: [], isExternalInput: false, description: '' }
+        localParamRefs.value[k] = []
+      }
+    } else if (newVal < current) {
+      for (let i = current; i > newVal; i--) {
+        const k = `input_${i}`
+        delete localPorts.value[k]
+        delete localParamRefs.value[k]
+        if (props.nodeId) emit('remove-edges-for-param', props.nodeId, k)
+      }
+    }
+    updateNode()
+  }
+})
+
+/**
+ * Lógica de visibilidad de puertos en el panel de propiedades.
+ */
+const showPort = (pName: string) => {
+  if (!props.nodeId) return false
+  const node = findNode(props.nodeId)
+  if (!node) return false
+
+  const isStereo = localParams.value.stereo?.initialValue === true || localParams.value.stereo === true
+  
+  // Mixer es especial: entradas dependen de visibilidad directa en localPorts
+  if (nodeType.value === 'mixer') {
+    if (pName.startsWith('input_')) {
+      return !!localPorts.value[pName]
+    }
+  }
+
+  // Comportamiento estándar para el resto
+  if (pName === 'input_2' || pName === 'output_2') return isStereo
+  return true
+}
 </script>
 
 <template>
@@ -353,11 +430,11 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
             <span v-if="errors.description" class="text-[8px] text-geist-error font-medium px-1">{{ errors.description }}</span>
           </div>
           <div class="space-y-1.5">
-            <label class="text-[9px] font-bold text-geist-accents-5 uppercase tracking-widest pl-1">Refs CIM</label>
+            <label class="text-[9px] font-bold text-geist-accents-5 uppercase tracking-widest pl-1">Referencias Análisis</label>
             <div class="flex flex-wrap gap-1 p-2 border border-geist-border rounded-lg bg-geist-accents-1/30">
               <label v-for="comp in props.availableCimComponents" :key="comp.id" class="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md hover:bg-geist-accents-2 cursor-pointer transition-colors">
                 <input type="checkbox" :value="comp.id" v-model="localRefs" @change="updateNode" class="accent-emerald-500 w-3 h-3">
-                <span class="text-[8px] text-geist-fg truncate max-w-[100px]">{{ comp.name }}</span>
+                <span class="text-[8px] text-geist-fg">{{ comp.name }}</span>
               </label>
             </div>
           </div>
@@ -369,6 +446,17 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
         <div class="space-y-6">
           <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Parámetros</h4>
           
+          <!-- Slider especial para Mixer Inputs -->
+          <div v-if="nodeType === 'mixer'" class="p-3 border border-geist-border rounded-xl bg-geist-accents-1/20 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-geist-fg flex flex-col">
+                NÚMERO DE ENTRADAS
+                <span class="text-[8px] text-geist-accents-4 font-mono font-medium">{{ mixerInputsCount }} Canales</span>
+              </span>
+            </div>
+            <input v-model.number="mixerInputsCount" type="range" min="2" max="10" step="1" class="w-full accent-blue-500 h-1 rounded-full cursor-pointer">
+          </div>
+
           <div v-for="(pConfig, pName) in NODE_PARAMS_BY_TYPE" :key="pName">
             <div v-if="pName in localParams" class="p-3 border border-geist-border rounded-xl bg-geist-accents-1/20 space-y-4">
               
@@ -431,10 +519,10 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
 
         <div class="h-px bg-geist-border opacity-50"></div>
 
-        <!-- Parámetros Otros (Dinámicos) -->
+        <!-- Parámetros Creados -->
         <div class="space-y-6">
           <div class="flex items-center justify-between">
-            <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Dinámicos (Others)</h4>
+            <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Parámetros Creados</h4>
             <button @click="addOther" class="w-5 h-5 flex items-center justify-center rounded-md bg-geist-accents-1 border border-geist-border hover:bg-geist-accents-2 transition-colors text-geist-accents-5">
               <i class="fa-solid fa-plus text-[8px]"></i>
             </button>
@@ -502,6 +590,63 @@ const confirmDeleteNode = () => { if (props.nodeId) emit('delete-node', props.no
             </div>
           </div>
         </div>
+
+        <div class="h-px bg-geist-border opacity-50"></div>
+
+        <!-- Puertos de Señal -->
+        <div class="space-y-6">
+          <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Puertos de Señal</h4>
+          
+          <div v-for="(pData, pName) in localPorts" :key="pName">
+            <div v-if="showPort(String(pName))" class="p-3 border border-geist-border rounded-xl bg-geist-accents-1/20 space-y-4">
+              
+              <!-- Fila 1: Label y Flag External -->
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold text-geist-fg flex flex-col">
+                  {{ String(pName).replace('_', ' ').toUpperCase() }}
+                  <span class="text-[8px] text-geist-accents-4 font-medium italic">
+                    {{ String(pName).startsWith('input') ? 'Entrada de Señal' : 'Salida de Señal' }}
+                  </span>
+                </span>
+                
+                <div class="flex items-center gap-3">
+                  <div class="flex flex-col items-center gap-0.5" title="Externalizar puerto al contenedor superior">
+                    <span class="text-[6px] font-bold text-geist-accents-4 uppercase">Externo</span>
+                    <button v-if="String(pName).startsWith('input')" 
+                      @click="localPorts[pName].isExternalInput = !localPorts[pName].isExternalInput; updateNode()" 
+                      class="w-6 h-3 rounded-full border transition-all relative" 
+                      :class="localPorts[pName].isExternalInput ? 'bg-blue-500 border-blue-600' : 'bg-geist-accents-2 border-geist-border'">
+                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white shadow-sm transition-transform" :class="localPorts[pName].isExternalInput ? 'translate-x-3' : 'translate-x-0.5'"></div>
+                    </button>
+                    <button v-else 
+                      @click="localPorts[pName].isExternalOutput = !localPorts[pName].isExternalOutput; updateNode()" 
+                      class="w-6 h-3 rounded-full border transition-all relative" 
+                      :class="localPorts[pName].isExternalOutput ? 'bg-blue-500 border-blue-600' : 'bg-geist-accents-2 border-geist-border'">
+                      <div class="absolute top-[1px] w-2 h-2 rounded-full bg-white shadow-sm transition-transform" :class="localPorts[pName].isExternalOutput ? 'translate-x-3' : 'translate-x-0.5'"></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fila 2: Descripción -->
+              <div class="space-y-1">
+                <textarea v-model="localPorts[pName].description" @input="updateNode" 
+                  class="bg-transparent border-none p-0 text-[8px] text-geist-accents-4 focus:ring-0 w-full resize-none min-h-[30px] placeholder:text-geist-accents-2" 
+                  placeholder="Descripción del puerto..."></textarea>
+              </div>
+
+              <!-- Fila 3: Refs Parámetro -->
+              <div class="flex flex-wrap gap-1">
+                <button v-for="comp in props.availableCimComponents" :key="comp.id" @click="toggleParamRef(String(pName), comp.id)" class="text-[6px] px-1 py-0.5 rounded border transition-all" :class="localParamRefs[String(pName)]?.includes(comp.id) ? 'bg-geist-fg text-geist-bg border-geist-fg' : 'bg-geist-accents-1 text-geist-accents-4 border-geist-border'">
+                  {{ comp.name.split('] ')[1] || comp.name }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="h-px bg-geist-border opacity-50"></div>
+
       </div>
     </div>
   </aside>

@@ -113,7 +113,6 @@ MixerNode:
         '"type"' ':' '"mixer"' ','
         CommonNodeFields
         '"stereo"' ':' stereo=StereoParameter ','
-        '"inputs_number"' ':' inputs_number=Parameter ','
         '"output_1"' ':' output_1=ConnectionPoint (',' '"output_2"' ':' output_2=ConnectionPoint)?
         (',' '"input_1"' ':' input_1=ConnectionPoint)?
         (',' '"input_2"' ':' input_2=ConnectionPoint)?

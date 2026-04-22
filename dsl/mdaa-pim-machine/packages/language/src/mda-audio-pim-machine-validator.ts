@@ -139,7 +139,7 @@ export class MdaAudioPimMachineValidator {
     private checkEdgeTypeConsistency(edge: Edge, tNode: any, tParamId: string, accept: ValidationAcceptor): void {
         const audioInputNames = ['input_1', 'input_2', 'input_3', 'input_4', 'input_5', 'input_6', 'input_7', 'input_8', 'input_9', 'input_10'];
         const outputNames = ['output_1', 'output_2', 'output'];
-        const configNames = ['stereo', 'inputs_number'];
+        const configNames = ['stereo'];
 
         let tParamName = '';
         for (const key in tNode) {
@@ -150,7 +150,7 @@ export class MdaAudioPimMachineValidator {
             }
         }
 
-        const isAudioInput = audioInputNames.includes(tParamName);
+        const isAudioInput = tParamName.startsWith('input_');
         const isOutput = outputNames.includes(tParamName);
         const isConfig = configNames.includes(tParamName);
 
@@ -166,7 +166,7 @@ export class MdaAudioPimMachineValidator {
                 accept('error', `No se puede aplicar una modificación a un parámetro de salida.`, { node: edge, property: 'type' });
             }
             if (isConfig) {
-                accept('error', `No se puede aplicar una modificación a parámetros de configuración base (stereo, inputs_number).`, { node: edge, property: 'type' });
+                accept('error', `No se puede aplicar una modificación a parámetros de configuración base (stereo).`, { node: edge, property: 'type' });
             }
         }
     }
@@ -418,10 +418,15 @@ export class MdaAudioPimMachineValidator {
      * Valida la estructura de SoundModifierNode (Filtros y Efectos)
      */
     checkSoundModifier(node: any, accept: ValidationAcceptor): void {
+        // El mezclador es dinámico y se valida en checkMixer, saltamos esta validación genérica
+        if (node.$type === 'MixerNode') {
+            return;
+        }
+
         const isStereo = this.getRawValue(node.stereo);
         this.internalCheckOutputs(node, accept);
         
-        // Entradas: 1 en mono, 2 en estéreo
+        // Entradas estándar (1 en mono, 2 en estéreo)
         if (!node.input_1) {
             accept('error', 'Debe definirse input_1.', { node, property: 'id' });
         }
@@ -449,38 +454,48 @@ export class MdaAudioPimMachineValidator {
 
         if (isStereo) {
             if (!(node as any).input_2) {
-                accept('error', 'En modo estéreo, GainAndPan requiere input_2.', { node, property: 'id' });
+                accept('error', `En modo estéreo, ${node.$type} requiere input_2.`, { node, property: 'id' });
             }
         } else {
-            if ((node as any).input_2) {
-                accept('error', 'En modo mono, GainAndPan no debe tener input_2.', { node, property: 'input_2' as any });
+            // Exceptuamos el Mezclador de esta regla ya que sus entradas son dinámicas e independientes de stereo
+            if (node.$type as string !== 'MixerNode' && (node as any).input_2) {
+                accept('error', `En modo mono, ${node.$type} no debe tener input_2.`, { node, property: 'input_2' as any });
             }
         }
     }
 
     /**
-     * Valida el Mezclador (entradas variables vñia inputs_number)
+     * Valida el Mezclador (entradas variables de forma dinámica)
      */
     checkMixer(node: MixerNode, accept: ValidationAcceptor): void {
         this.internalCheckOutputs(node, accept);
 
-        const numInputs = this.getRawValue(node.inputs_number);
-        if (typeof numInputs !== 'number' || numInputs < 1 || numInputs > 10) {
-            accept('error', 'inputs_number debe estar entre 1 y 10.', { node: node.inputs_number, property: 'initialValue' });
-            return;
-        }
+        // Contar y validar consecutividad de inputs
+        let maxInputFound = 0;
+        const foundInputs: number[] = [];
 
         for (let i = 1; i <= 10; i++) {
             const inputKey = `input_${i}`;
-            const inputVal = (node as any)[inputKey];
-            if (i <= numInputs) {
-                if (!inputVal) {
-                    accept('error', `El mezclador tiene inputs_number=${numInputs}, pero falta ${inputKey}.`, { node, property: 'inputs_number' });
-                }
-            } else {
-                if (inputVal) {
-                    accept('error', `${inputKey} no debe estar definido ya que inputs_number es ${numInputs}.`, { node, property: inputKey as any });
-                }
+            if ((node as any)[inputKey]) {
+                maxInputFound = i;
+                foundInputs.push(i);
+            }
+        }
+
+        if (foundInputs.length < 2) {
+            accept('error', 'El Mezclador debe tener al menos 2 entradas de audio (input_1, input_2).', { node, property: 'name' });
+            return;
+        }
+
+        if (foundInputs.length > 10) {
+            accept('error', 'El Mezclador no puede superar las 10 entradas de audio.', { node, property: 'name' });
+            return;
+        }
+
+        // Verificar que no hay huecos (ej: input_1 y input_3 sin input_2)
+        for (let i = 1; i <= maxInputFound; i++) {
+            if (!foundInputs.includes(i)) {
+                accept('error', `Estructura inválida: falta input_${i} para completar la secuencia hasta input_${maxInputFound}.`, { node, property: 'name' });
             }
         }
     }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import BaseDiffEditor from '@/shared/components/editors/BaseDiffEditor.vue'
 import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import { computed, ref, watch } from 'vue'
 import { usePimStore } from '../stores/pimStore'
-import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { PIM_MACHINE_SCHEMA } from '../utils/pim-machine-schema'
 import { PIM_RELATIONS_SCHEMA } from '../utils/pim-relations-schema'
 
@@ -110,9 +110,9 @@ const validateInternal = (val: string) => {
         chorus_flanger: ['rate', 'depth', 'feedback', 'mix', 'stereo', 'input_1', 'output_1'],
         compressor: ['threshold', 'ratio', 'attack', 'release', 'makeupGain', 'stereo', 'input_1', 'output_1'],
         equalizer: ['bandFrequency', 'bandwidth', 'gain', 'stereo', 'input_1', 'output_1'],
-        mixer: ['stereo', 'inputs_number', 'output_1'],
+        mixer: ['stereo', 'output_1'],
         gain_pan: ['gain', 'pan', 'stereo', 'input_1', 'output_1']
-      }
+      } 
 
       parsed.nodes?.forEach((node: any, idx: number) => {
         if (!node.type) {
@@ -144,7 +144,8 @@ const validateInternal = (val: string) => {
           } else {
             // Mono: No debe tener output_2
             if (node.output_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "output_2"` })
-            if (node.input_2) manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "input_2"` })
+            // Excepción Mixer: input_2 es dinámico e independiente del flag stereo
+            if (node.input_2 && node.type !== 'mixer') manualErrors.push({ message: `Nodo ${idx} (${node.type}): En modo mono no debe existir "input_2"` })
           }
         }
 
@@ -167,7 +168,7 @@ const validateInternal = (val: string) => {
           if (['id', 'name', 'description', 'type', 'ids_references', 'others', 'stereo'].includes(key)) return
           
           // Saltamos puertos de audio (input_X, output_X)
-          if (key.startsWith('input_') || key.startsWith('output_') || key === 'output' || key === 'inputs_number') return
+          if (key.startsWith('input_') || key.startsWith('output_') || key === 'output') return
 
           // Si es un objeto (parámetro de audio real), debe tener isModifiable
           if (val && typeof val === 'object' && !Array.isArray(val)) {
@@ -247,22 +248,26 @@ const validateInternal = (val: string) => {
         } else if (node.type === 'equalizer') {
           checkRange('bandFrequency', 20, 20000)
           checkRange('bandwidth', 0)
-        } else if (node.type === 'mixer') {
-          checkRange('inputs_number', 1, 10)
         } else if (node.type === 'gain_pan') {
           checkRange('gain', 0, 1)
           checkRange('pan', -1, 1)
         }
 
         // Validación dinámica de Mixer Inputs
-        if (node.type === 'mixer' && node.inputs_number) {
-          const num = Number(node.inputs_number.initialValue)
-          if (!isNaN(num)) {
-            for (let i = 1; i <= num; i++) {
-              if (!node[`input_${i}`]) manualErrors.push({ message: `Mixer ${idx}: Falta "input_${i}" (requerido por inputs_number=${num})` })
-            }
-            for (let i = num + 1; i <= 10; i++) {
-              if (node[`input_${i}`]) manualErrors.push({ message: `Mixer ${idx}: No debe existir "input_${i}" (inputs_number=${num})` })
+        if (node.type === 'mixer') {
+          // El mezclador soporta hasta 10 entradas dinámicas consecutivas.
+          const keys = Object.keys(node)
+          const inputs = keys.filter(k => k.startsWith('input_')).map(k => parseInt(k.replace('input_', ''))).sort((a, b) => a - b)
+          
+          if (inputs.length < 2 || inputs.length > 10) {
+            manualErrors.push({ message: `Mixer ${idx}: Debe tener entre 2 y 10 entradas (actual: ${inputs.length})` })
+          } else {
+            // Validar que sean consecutivas
+            for (let i = 1; i <= inputs.length; i++) {
+              if (!node[`input_${i}`]) {
+                manualErrors.push({ message: `Mixer ${idx}: Faltan entradas consecutivas (esperado input_1 a input_${inputs.length})` })
+                break
+              }
             }
           }
         }

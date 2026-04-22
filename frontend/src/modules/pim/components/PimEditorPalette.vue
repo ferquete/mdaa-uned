@@ -67,9 +67,16 @@ const categories = ref<Category[]>([
 ])
 
 const toggleCategory = (id: string) => {
+  const currentCat = categories.value.find(cat => cat.id === id)
+  if (!currentCat) return
+  
+  const newState = !currentCat.isOpen
+  
   categories.value = categories.value.map(cat => ({
     ...cat,
-    isOpen: cat.id === id ? !cat.isOpen : cat.isOpen
+    // Si estamos abriendo (newState === true), cerramos el resto.
+    // Si estamos cerrando, simplemente cerramos la actual.
+    isOpen: cat.id === id ? newState : (newState ? false : cat.isOpen)
   }))
 }
 

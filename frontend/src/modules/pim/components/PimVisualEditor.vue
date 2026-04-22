@@ -365,8 +365,11 @@ const handleConfirmNode = (name: string, description: string, ids_references: st
       p.stereo = wrapParam(false, 'stereo')
     },
     mixer: (p) => {
-      p.inputs_number = wrapParam(2)
       p.stereo = wrapParam(false, 'stereo')
+      // Inicializar exactamente 2 entradas por defecto
+      for (let i = 1; i <= 2; i++) {
+        p[`input_${i}`] = { id: crypto.randomUUID(), ids_references: [], isExternalInput: true }
+      }
     },
     gain_pan: (p) => {
       p.gain = wrapParam(1)
@@ -668,8 +671,8 @@ const buildFinalJson = () => {
         node.stereo = wrapParam('stereo', rawData?.stereo ?? false)
       }
       metadata.inputs.forEach((i: any) => {
-        // Solo incluir input_2 si es estéreo
-        if (i.id === 'input_2' && node.stereo?.initialValue !== true) return
+        // Solo incluir input_2 si es estéreo y NO es un mixer (donde las entradas son dinámicas)
+        if (i.id === 'input_2' && node.stereo?.initialValue !== true && n.data.type !== 'mixer') return
         node[i.id] = wrapCP(i.id)
       })
       metadata.outputs.forEach((o: any) => {
@@ -678,14 +681,29 @@ const buildFinalJson = () => {
         node[o.id] = wrapCP(o.id)
       })
     }
-
+ 
     // Campos especiales como waveform, etc. (ya cubiertos por paramsList normalmente, pero asegurar)
-    const specialKeys = ['waveform', 'noiseType', 'filterType', 'envelopeType', 'inputs_number']
+    const specialKeys = ['waveform', 'noiseType', 'filterType', 'envelopeType']
     specialKeys.forEach(k => {
       if (rawData?.[k] !== undefined && !node[k]) {
         node[k] = wrapParam(k, rawData[k])
       }
     })
+
+    // Caso Mixer: Pruning de inputs sobrantes en el JSON final y asegurar orden
+    if (n.data.type === 'mixer') {
+      // Limpiar cualquier input_X previo que se haya colado por los loops genéricos
+      Object.keys(node).forEach(k => {
+          if (k.startsWith('input_')) delete node[k]
+      })
+
+      const inputs = Object.keys(rawData || {}).filter(k => k.startsWith('input_'))
+      const inputIndices = inputs.map(k => parseInt(k.replace('input_', ''))).sort((a,b) => a-b)
+      inputIndices.forEach(idx => {
+        const k = `input_${idx}`
+        node[k] = wrapCP(k)
+      })
+    }
 
     return node
   })

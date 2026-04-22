@@ -103,7 +103,7 @@ Las aristas establecen la conexión entre nodos.
 - **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` solo pueden apuntar a conexiones conceptuales (sendTo) en los modelos CIM.
 - **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` solo pueden apuntar a elementos/nodos de control en los modelos CIM.
 - **Cascada de Integridad**: Al desactivar `isModifiable` en un parámetro, el sistema de diseño visual **borrará automáticamente** todas las aristas que tengan ese parámetro como destino para mantener la coherencia del modelo.
-- **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`, `inputs_number`).
+- **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`).
 
 ---
 
@@ -288,13 +288,13 @@ Procesan audio. Todos usan el fragmento `SoundModifierFields`:
 ### 3.4. Nodos de Mezcla y Nivel
 
 #### Mezclador (`mixer`)
-Este nodo permite la suma de hasta 10 señales.
+Este nodo permite la suma dinámica de entre 2 y 10 señales de audio. La existencia de entradas `input_x` determina el número de canales activos.
+
 | Parámetro | Tipo | Rango / Valores | Descripción |
 | :--- | :--- | :--- | :--- |
-| `stereo` | BOOLEAN | `true`, `false` | Modo de salida. |
-| `inputs_number`| NUMBER | 1 - 10 | Número de entradas `input_x` habilitadas. |
-| `input_1..10` | - | `ConnectionPoint` | Conexiones de audio. |
-| `output_1..2` | - | `ConnectionPoint` | Salida principal (L) y (R). |
+| `stereo` | BOOLEAN | `true`, `false` | Modo de salida (afecta a `output_2`). |
+| `input_1..10` | - | `ConnectionPoint` | Conexiones de audio (mínimo 2, máximo 10). |
+| `output_1..2` | - | `ConnectionPoint` | Salida principal (L) y (R) (según `stereo`). |
 
 #### Ganancia y Paneo (`gain_pan`)
 Nodo **Gain & Pan**: Control de amplitud y posición. Posee una única entrada fija (`input_1`) y salidas según el modo estéreo.

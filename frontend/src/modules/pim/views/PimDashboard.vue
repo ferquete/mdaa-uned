@@ -11,6 +11,7 @@ import PimEditor from '../components/PimEditor.vue'
 import PimVisualEditor from '../components/PimVisualEditor.vue'
 import PimMachineModal from '../components/PimMachineModal.vue'
 import PimRelationsVisualEditor from '../components/PimRelationsVisualEditor.vue'
+import AiExportLanguageModal from '@/shared/components/modals/AiExportLanguageModal.vue'
 import apiClient from '@/shared/api/apiClient'
 
 const analysisStore = useAnalysisMachinesStore()
@@ -23,6 +24,7 @@ const projectId = computed(() => Number(route.params.id))
 
 // Modales
 const showPimModal = ref(false)
+const showAiLanguageModal = ref(false)
 const showDeleteConfirm = ref(false)
 
 const isMachineSelected = computed(() => store.selectedMachine !== null)
@@ -60,13 +62,20 @@ const handleExport = () => {
   }
 }
 
-const handleExportAi = async () => {
+const handleRequestAiExport = () => {
+  showAiLanguageModal.value = true
+}
+
+const handleExportAi = async (language: string) => {
+  showAiLanguageModal.value = false
   try {
-    const blob = await apiClient.getBlob(`/api/v1/projects/${projectId.value}/export-ai`);
+    const params = new URLSearchParams({ targetLanguage: language })
+    const blob = await apiClient.getBlob(`/api/v1/projects/${projectId.value}/export-ai?${params.toString()}`);
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `project-ai-export-${projectId.value}.zip`);
+    const sanitizedLang = language.split(' ')[0].toLowerCase()
+    link.setAttribute('download', `project-ai-export-${projectId.value}-${sanitizedLang}.zip`);
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -134,7 +143,7 @@ const confirmDelete = async () => {
         :show-ai-export="analysisStore.selectedNodeId === 'diseno'"
         @set-mode="setMode"
         @export="handleExport"
-        @export-ai="handleExportAi"
+        @export-ai="handleRequestAiExport"
         @add-machine="handleAddMachine"
         @edit-basic="showPimModal = true"
         @delete="handleDeleteRequest"
@@ -181,6 +190,13 @@ const confirmDelete = async () => {
       :item-name="isMachineSelected ? store.parsedDocs[store.selectedMachine!.id]?.name : ''"
       @close="showDeleteConfirm = false"
       @confirm="confirmDelete"
+    />
+
+    <!-- Selección de Lenguaje para IA -->
+    <AiExportLanguageModal
+      :show="showAiLanguageModal"
+      @close="showAiLanguageModal = false"
+      @confirm="handleExportAi"
     />
   </div>
 </template>

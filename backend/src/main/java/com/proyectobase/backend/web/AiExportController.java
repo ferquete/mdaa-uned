@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
 /**
@@ -27,8 +28,10 @@ public class AiExportController {
      * @return Respuesta con el archivo ZIP
      */
     @GetMapping("/{projectId}/export-ai")
-    public Mono<ResponseEntity<byte[]>> exportProjectForAi(@PathVariable Long projectId) {
-        return aiExportService.generateProjectAiZip(projectId)
+    public Mono<ResponseEntity<byte[]>> exportProjectForAi(
+            @PathVariable Long projectId,
+            @RequestParam(required = false) String targetLanguage) {
+        return aiExportService.generateProjectAiZip(projectId, targetLanguage)
                 .map(bytes -> ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=project-ai-export-" + projectId + ".zip")
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)

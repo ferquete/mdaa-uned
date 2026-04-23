@@ -1,0 +1,77 @@
+{
+  "description": "Red de interconexiones PIM del sintetizador electronico ambiental. Define los vinculos tecnicos precisos entre los puertos de salida de las maquinas generadoras y los puertos de entrada de las maquinas procesadoras y de efectos. Orquesta el flujo de audio desde los osciladores del dron y el generador de texturas hacia el banco de filtros, y desde este hacia el rack de efectos maestro. Igualmente define las conexiones de control desde el modulador espacial hacia los parametros modulables del dron, las texturas y el filtro espectral.",
+  "relations": [
+    {
+      "id": "bb001001-aaaa-bbbb-cccc-dd0011223344",
+      "source": "a1000036-0000-0000-0000-000000000001",
+      "destination": "c3000008-0000-0000-0000-000000000003",
+      "description": "Conexion de audio de la salida izquierda del mezclador de capas del dron hacia la entrada izquierda del filtro LPF Ladder espectral."
+    },
+    {
+      "id": "bb001002-aaaa-bbbb-cccc-dd0011223344",
+      "source": "a1000037-0000-0000-0000-000000000001",
+      "destination": "c3000009-0000-0000-0000-000000000003",
+      "description": "Conexion de audio de la salida derecha del mezclador del dron hacia la entrada derecha del filtro LPF Ladder del banco espectral."
+    },
+    {
+      "id": "bb001003-aaaa-bbbb-cccc-dd0011223344",
+      "source": "b2000022-0000-0000-0000-000000000002",
+      "destination": "c3000008-0000-0000-0000-000000000003",
+      "description": "Suma de la textura de ruido izquierda con el dron en la entrada del banco de filtros espectrales para conformado espectral conjunto."
+    },
+    {
+      "id": "bb001004-aaaa-bbbb-cccc-dd0011223344",
+      "source": "b2000023-0000-0000-0000-000000000002",
+      "destination": "c3000009-0000-0000-0000-000000000003",
+      "description": "Suma de la textura de ruido derecha con el dron en la entrada del banco de filtros espectrales para conformado espectral conjunto."
+    },
+    {
+      "id": "bb001005-aaaa-bbbb-cccc-dd0011223344",
+      "source": "c3000020-0000-0000-0000-000000000003",
+      "destination": "e5000008-0000-0000-0000-000000000005",
+      "description": "Conexion de la salida izquierda del banco de filtros espectrales hacia la entrada de la reverberacion shimmer del rack de efectos maestro."
+    },
+    {
+      "id": "bb001006-aaaa-bbbb-cccc-dd0011223344",
+      "source": "c3000021-0000-0000-0000-000000000003",
+      "destination": "e5000009-0000-0000-0000-000000000005",
+      "description": "Conexion de la salida derecha del banco de filtros espectrales hacia la entrada de la reverberacion shimmer del rack de efectos maestro."
+    },
+    {
+      "id": "bb001007-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000008-0000-0000-0000-000000000004",
+      "destination": "c3000004-0000-0000-0000-000000000003",
+      "description": "Modulacion del cutoff del filtro LPF Ladder por el LFO ultra-lento del modulador espacial para barridos espectrales lentos y organicos."
+    },
+    {
+      "id": "bb001008-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000018-0000-0000-0000-000000000004",
+      "destination": "a1000006-0000-0000-0000-000000000001",
+      "description": "Control de la ganancia del oscilador sub-harmonico del dron por la envolvente DAHDSR para fundidos de inicio y fin del ambiente."
+    },
+    {
+      "id": "bb001009-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000018-0000-0000-0000-000000000004",
+      "destination": "e5000033-0000-0000-0000-000000000005",
+      "description": "Control de la ganancia maestra de salida del rack de efectos por la envolvente ambiental para fundidos globales del sintetizador."
+    },
+    {
+      "id": "bb001010-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000025-0000-0000-0000-000000000004",
+      "destination": "a1000004-0000-0000-0000-000000000001",
+      "description": "Introduccion de microderiva organica en la frecuencia del oscilador sub-harmonico del dron para emular la inestabilidad analogica."
+    },
+    {
+      "id": "bb001011-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000025-0000-0000-0000-000000000004",
+      "destination": "a1000013-0000-0000-0000-000000000001",
+      "description": "Introduccion de microderiva organica en la frecuencia del oscilador medio del dron para crear batidas de amplitud variables en el tiempo."
+    },
+    {
+      "id": "bb001012-aaaa-bbbb-cccc-dd0011223344",
+      "source": "d4000008-0000-0000-0000-000000000004",
+      "destination": "b2000004-0000-0000-0000-000000000002",
+      "description": "Modulacion de la amplitud del ruido rosa por el LFO ultra-lento para crear respiracion en la densidad textural del generador de ambiente."
+    }
+  ]
+}

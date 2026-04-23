@@ -8,6 +8,7 @@ import com.proyectobase.backend.repository.*;
 import com.proyectobase.backend.service.aiexport.FreemarkerRenderService;
 import com.proyectobase.backend.service.aiexport.GraphResolverService;
 import com.proyectobase.backend.service.aiexport.dto.ResolvedGraphDto;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -49,9 +50,10 @@ public class AiExportService {
      * genere código de síntesis de audio a partir del modelo MDA del proyecto.
      *
      * @param projectId ID del proyecto
+     * @param targetLanguage Lenguaje objetivo (opcional)
      * @return Mono con los bytes del ZIP
      */
-    public Mono<byte[]> generateProjectAiZip(Long projectId) {
+    public Mono<byte[]> generateProjectAiZip(Long projectId, @Nullable String targetLanguage) {
         return projectRepository.findById(projectId)
             .flatMap(project -> Mono.zip(
                 cimRepository.findByIdProject(projectId),
@@ -70,10 +72,10 @@ public class AiExportService {
                     String generatedAt = LocalDateTime.now().format(DATE_FMT);
 
                     // ── 0. README.md (User Prompt) ────────────────────────────────
-                    addReadmeToZip(zos, project, generatedAt);
+                    addReadmeToZip(zos, project, generatedAt, targetLanguage);
 
                     // ── 1. INSTRUCTIONS.md (Opción A) ──────────────────────────────
-                    addInstructionsToZip(zos, project, generatedAt);
+                    addInstructionsToZip(zos, project, generatedAt, targetLanguage);
 
                     // ── 2. Manuales DSL ────────────────────────────────────────────
                     addDslRulesToZip(zos);
@@ -84,10 +86,10 @@ public class AiExportService {
 
                     // ── 4. RESOLVED_GRAPH.json (Opción B) ──────────────────────────
                     addResolvedGraphToZip(zos, project, cimMachines, pimMachines,
-                        pimRelationsJson, generatedAt);
+                        pimRelationsJson, generatedAt, targetLanguage);
 
                     // ── 5. MAPPING_EXAMPLES.md (Opción C) ──────────────────────────
-                    addMappingExamplesToZip(zos);
+                    addMappingExamplesToZip(zos, targetLanguage);
 
                     zos.finish();
                     return Mono.just(baos.toByteArray());
@@ -102,11 +104,13 @@ public class AiExportService {
     // Sección 0: README.md
     // ──────────────────────────────────────────────────────────────────────────────
 
-    private void addReadmeToZip(ZipOutputStream zos, Project project, String generatedAt)
+    private void addReadmeToZip(ZipOutputStream zos, Project project, String generatedAt,
+                                String targetLanguage)
             throws IOException {
         Map<String, Object> model = Map.of(
                 "projectName", project.getName(),
-                "generatedAt", generatedAt
+                "generatedAt", generatedAt,
+                "targetLanguage", targetLanguage != null ? targetLanguage : ""
         );
         String content = freemarkerRenderService.render("readme.md.ftl", model);
         addEntry(zos, "README.md", content.getBytes());
@@ -116,12 +120,14 @@ public class AiExportService {
     // Sección 1: INSTRUCTIONS.md
     // ──────────────────────────────────────────────────────────────────────────────
 
-    private void addInstructionsToZip(ZipOutputStream zos, Project project, String generatedAt)
+    private void addInstructionsToZip(ZipOutputStream zos, Project project, String generatedAt,
+                                      String targetLanguage)
             throws IOException {
         Map<String, Object> model = Map.of(
             "projectName", project.getName(),
             "projectDescription", project.getDescription() != null ? project.getDescription() : "",
-            "generatedAt", generatedAt
+            "generatedAt", generatedAt,
+            "targetLanguage", targetLanguage != null ? targetLanguage : ""
         );
         String content = freemarkerRenderService.render("instructions.md.ftl", model);
         addEntry(zos, "INSTRUCTIONS.md", content.getBytes());
@@ -168,7 +174,7 @@ public class AiExportService {
 
     private void addResolvedGraphToZip(ZipOutputStream zos, Project project,
             List<CimMachine> cimMachines, List<PimMachine> pimMachines,
-            String pimRelationsJson, String generatedAt) throws IOException {
+            String pimRelationsJson, String generatedAt, String targetLanguage) throws IOException {
 
         ResolvedGraphDto graph = graphResolverService.resolve(
             project, cimMachines, pimMachines, pimRelationsJson);
@@ -176,7 +182,8 @@ public class AiExportService {
         // Renderizar con FreeMarker (template genera JSON estructurado legible)
         Map<String, Object> model = Map.of(
             "graph", graph,
-            "generatedAt", generatedAt
+            "generatedAt", generatedAt,
+            "targetLanguage", targetLanguage != null ? targetLanguage : ""
         );
         String content = freemarkerRenderService.render("resolved-graph.json.ftl", model);
         addEntry(zos, "resolved/RESOLVED_GRAPH.json", content.getBytes());
@@ -186,9 +193,11 @@ public class AiExportService {
     // Sección 5: MAPPING_EXAMPLES.md
     // ──────────────────────────────────────────────────────────────────────────────
 
-    private void addMappingExamplesToZip(ZipOutputStream zos) throws IOException {
-        // La plantilla no necesita modelo dinámico (es contenido estático)
-        String content = freemarkerRenderService.render("mapping-examples.md.ftl", Map.of());
+    private void addMappingExamplesToZip(ZipOutputStream zos, String targetLanguage) throws IOException {
+        Map<String, Object> model = Map.of(
+                "targetLanguage", targetLanguage != null ? targetLanguage : ""
+        );
+        String content = freemarkerRenderService.render("mapping-examples.md.ftl", model);
         addEntry(zos, "resolved/MAPPING_EXAMPLES.md", content.getBytes());
     }
 

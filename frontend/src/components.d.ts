@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddNodeModal: typeof import('./modules/projects/components/AddNodeModal.vue')['default']
+    AiExportLanguageModal: typeof import('./shared/components/modals/AiExportLanguageModal.vue')['default']
     AnalysisCimEditor: typeof import('./modules/analysis/components/AnalysisCimEditor.vue')['default']
     AnalysisCimVisualizer2D: typeof import('./modules/analysis/components/AnalysisCimVisualizer2D.vue')['default']
     AnalysisCimVisualizerJSON: typeof import('./modules/analysis/components/AnalysisCimVisualizerJSON.vue')['default']

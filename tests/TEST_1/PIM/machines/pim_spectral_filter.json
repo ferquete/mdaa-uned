@@ -1,0 +1,297 @@
+{
+  "id": "c3000001-0000-0000-0000-000000000003",
+  "name": "PIM Spectral Filter",
+  "description": "Implementacion PIM del banco de filtros espectrales para el sintetizador ambiental. Concretiza un filtro pasa-bajos tipo Ladder para el cuerpo grave del sonido, un filtro pasa-alto para el brillo y presencia, y un ecualizador parametrico para el refinamiento tonico final. Los filtros se encadenan en serie procesando la señal combinada procedente del dron y el generador de texturas. El cutoff del filtro principal es modulable externamente por el LFO ultra-lento del modulador espacial.",
+  "ids_cim_reference": [
+    "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+  ],
+  "nodes": [
+    {
+      "type": "frequency_filter",
+      "id": "c3000002-0000-0000-0000-000000000003",
+      "name": "Ambient LPF Ladder",
+      "description": "Filtro pasa-bajos tipo Ladder que moldea el cuerpo grave del sonido ambiental con la calidez caracteristica de los circuitos analogicos clasicos. Su resonancia ligeramente elevada en el punto de corte añade un acento tonico sutil que refuerza la sensacion de espacio. El cutoff se mueve lentamente bajo la influencia del LFO ultra-lento creando la ilusion de un sonido que respira y evoluciona por si mismo durante la escucha.",
+      "ids_references": [
+        "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "others": [
+        {
+          "id": "c3000002-0000-0000-0000-000000000060",
+          "name": "Filter Warmth",
+          "ids_references": [
+            "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+          ],
+          "initialValue": "warm",
+          "isModifiable": false,
+          "isExternalInput": false,
+          "description": "Caracter de coloracion del filtro Ladder, fijado en modo warm para maxima calidez analogica en el sonido ambiental."
+        }
+      ],
+      "filterType": {
+        "id": "c3000003-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": "LPF",
+        "isModifiable": false,
+        "description": "Tipo de filtro LPF para el conformado del cuerpo grave del sonido ambiental del sintetizador."
+      },
+      "cutoff": {
+        "id": "c3000004-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 800,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia de corte del LPF Ladder en 800 Hz. Modulable externamente por el LFO ultra-lento para barridos espectrales lentos y organicos."
+      },
+      "resonance": {
+        "id": "c3000005-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 2.5,
+        "isModifiable": true,
+        "description": "Resonancia del filtro LPF ligeramente elevada para añadir coloracion tonica en la frecuencia de corte sin llegar a la auto-oscilacion."
+      },
+      "slope": {
+        "id": "c3000006-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": "24dB/oct",
+        "isModifiable": false,
+        "description": "Pendiente de 24 dB por octava para un corte de frecuencia musical pero con suficiente precision para el conformado ambiental."
+      },
+      "stereo": {
+        "id": "c3000007-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo activo para el filtro LPF para procesar ambos canales de la señal ambiental manteniendo la imagen espacial."
+      },
+      "input_1": {
+        "id": "c3000008-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada izquierda de audio del filtro LPF para recibir la señal combinada del dron y las texturas de ruido desde el exterior."
+      },
+      "input_2": {
+        "id": "c3000009-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada derecha de audio del filtro LPF para recibir la señal combinada del dron y las texturas de ruido desde el exterior."
+      },
+      "output_1": {
+        "id": "c3000010-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del filtro LPF hacia el filtro HPF en la cadena de procesamiento espectral."
+      },
+      "output_2": {
+        "id": "c3000011-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del filtro LPF hacia el filtro HPF en la cadena de procesamiento espectral."
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "c3000012-0000-0000-0000-000000000003",
+      "name": "Spectral HPF Air",
+      "description": "Filtro pasa-alto de baja frecuencia de corte que elimina el contenido de continua y las frecuencias de infrasonido del sonido ambiental, limpiando la señal sin afectar al cuerpo audible del dron. Su modo de paso banda sutil permite enfatizar la region media del espectro cuando se necesita mayor definicion tonal en el ambiente. Es el ultimo filtro de la cadena antes de la salida al rack de efectos.",
+      "ids_references": [
+        "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "c3000013-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": "HPF",
+        "isModifiable": false,
+        "description": "Tipo de filtro HPF para eliminar contenido de muy baja frecuencia y limpiar el sonido ambiental antes de los efectos."
+      },
+      "cutoff": {
+        "id": "c3000014-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 30,
+        "isModifiable": true,
+        "description": "Frecuencia de corte del HPF en 30 Hz para eliminar infrasonido y continua sin afectar al sub-grave del dron ambiental."
+      },
+      "resonance": {
+        "id": "c3000015-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 0.7,
+        "isModifiable": false,
+        "description": "Resonancia baja del HPF para un corte transparente que no introduce coloracion no deseada en el sonido ambiental."
+      },
+      "slope": {
+        "id": "c3000016-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": "12dB/oct",
+        "isModifiable": false,
+        "description": "Pendiente suave de 12 dB por octava para el filtro HPF para una transicion natural sin fase excesiva."
+      },
+      "stereo": {
+        "id": "c3000017-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo del filtro HPF para procesar ambos canales de forma identica manteniendo la imagen estereo."
+      },
+      "input_1": {
+        "id": "c3000018-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del HPF desde la salida del filtro LPF Ladder de la cadena espectral."
+      },
+      "input_2": {
+        "id": "c3000019-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del HPF desde la salida del filtro LPF Ladder de la cadena espectral."
+      },
+      "output_1": {
+        "id": "c3000020-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida izquierda de la cadena de filtros espectrales hacia el rack de efectos maestro del sintetizador ambiental."
+      },
+      "output_2": {
+        "id": "c3000021-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida derecha de la cadena de filtros espectrales hacia el rack de efectos maestro del sintetizador ambiental."
+      }
+    },
+    {
+      "type": "equalizer",
+      "id": "c3000022-0000-0000-0000-000000000003",
+      "name": "Tonal EQ Enhancer",
+      "description": "Ecualizador parametrico de una banda para realzar la frecuencia de resonancia del ambiente y añadir presencia en la region de 1 a 3 kHz. Este realce tonico sutil hace que el paisaje sonoro ambiental sea percibido como mas presente y definido sin perder su caracter difuso y aireado. Esta ubicado en paralelo a la cadena de filtros principal actuando como complemento de conformado tonal.",
+      "ids_references": [
+        "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "others": [],
+      "bandFrequency": {
+        "id": "c3000023-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 2000,
+        "isModifiable": true,
+        "description": "Frecuencia central de la banda del ecualizador en 2 kHz para la presencia y definicion del sonido ambiental."
+      },
+      "bandwidth": {
+        "id": "c3000024-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 1.4,
+        "isModifiable": false,
+        "description": "Ancho de banda Q de 1.4 para una campana de realce moderada que afecta a una region espectral amplia y musical."
+      },
+      "gain": {
+        "id": "c3000025-0000-0000-0000-000000000003",
+        "ids_references": [
+          "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+        ],
+        "initialValue": 2.5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Realce de 2.5 dB en la banda de presencia del ecualizador para añadir definicion sin agresividad al sonido ambiental."
+      },
+      "stereo": {
+        "id": "c3000026-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Modo estereo del ecualizador para procesamiento identico de ambos canales del ambiente."
+      },
+      "input_1": {
+        "id": "c3000027-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del ecualizador desde la salida del filtro HPF de la cadena espectral."
+      },
+      "input_2": {
+        "id": "c3000028-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del ecualizador desde la salida del filtro HPF de la cadena espectral."
+      },
+      "output_1": {
+        "id": "c3000029-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del ecualizador de presencia hacia el nodo de salida del banco de filtros."
+      },
+      "output_2": {
+        "id": "c3000030-0000-0000-0000-000000000003",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del ecualizador de presencia hacia el nodo de salida del banco de filtros."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "c3000090-0000-0000-0000-000000000003",
+      "description": "Cadena en serie del filtro LPF hacia el HPF para el conformado espectral completo del sonido ambiental.",
+      "ids_references": [
+        "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "sourceNode": "c3000002-0000-0000-0000-000000000003",
+      "sourceParam": "c3000010-0000-0000-0000-000000000003",
+      "targetNode": "c3000012-0000-0000-0000-000000000003",
+      "targetParam": "c3000018-0000-0000-0000-000000000003",
+      "type": "audio"
+    },
+    {
+      "id": "c3000091-0000-0000-0000-000000000003",
+      "description": "Canal derecho de la cadena en serie del filtro LPF hacia el HPF del banco de filtros espectrales.",
+      "ids_references": [
+        "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "sourceNode": "c3000002-0000-0000-0000-000000000003",
+      "sourceParam": "c3000011-0000-0000-0000-000000000003",
+      "targetNode": "c3000012-0000-0000-0000-000000000003",
+      "targetParam": "c3000019-0000-0000-0000-000000000003",
+      "type": "audio"
+    },
+    {
+      "id": "c3000092-0000-0000-0000-000000000003",
+      "description": "Conexion del HPF hacia el ecualizador de presencia para el refinamiento tonico final antes de la salida al rack de efectos.",
+      "ids_references": [
+        "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "sourceNode": "c3000012-0000-0000-0000-000000000003",
+      "sourceParam": "c3000020-0000-0000-0000-000000000003",
+      "targetNode": "c3000022-0000-0000-0000-000000000003",
+      "targetParam": "c3000027-0000-0000-0000-000000000003",
+      "type": "audio"
+    },
+    {
+      "id": "c3000093-0000-0000-0000-000000000003",
+      "description": "Canal derecho del HPF hacia el ecualizador de presencia del banco de filtros espectrales del sintetizador ambiental.",
+      "ids_references": [
+        "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+      ],
+      "sourceNode": "c3000012-0000-0000-0000-000000000003",
+      "sourceParam": "c3000021-0000-0000-0000-000000000003",
+      "targetNode": "c3000022-0000-0000-0000-000000000003",
+      "targetParam": "c3000028-0000-0000-0000-000000000003",
+      "type": "audio"
+    }
+  ]
+}

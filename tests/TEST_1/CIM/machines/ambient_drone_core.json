@@ -1,0 +1,67 @@
+{
+  "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+  "name": "Ambient Drone Core",
+  "description": "Nucleo generador de texturas de dron ambiental basado en multiples capas de oscilacion sinusoidal y sub-armonica. Este modulo produce las frecuencias fundamentales y sus armonicos superiores de forma continua, creando una base tonal densa y evolutiva caracteristica de los paisajes sonoros de musica electronica ambiental. Su arquitectura de capas permite la superposicion de hasta cuatro fuentes oscilatorias en relaciones de frecuencia detenidamente calculadas para maximizar la riqueza espectral. Es el nucleo de sustentacion timbrica de todo el sistema.",
+  "elements": [
+    {
+      "id": "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Sub Drone Layer",
+      "description": "Capa sub-armonica que genera la frecuencia fundamental en el rango de 20 a 120 Hz. Este elemento proporciona el cuerpo y el peso grave del dron ambiental. Su oscilacion pura de baja frecuencia actua como ancla tonal para todas las capas superiores, garantizando que el sonido tenga presencia fisica y cohesion en el espectro de graves, siendo percibido tanto de forma auditiva como sensorial en instalaciones de escucha inmersiva de alta fidelidad.",
+      "params": "Frecuencia: 20-120Hz, Amplitud: 0-100%, Forma de onda: Sine/Triangle, Detune Fino: -50ct/+50ct, Glide: 0-10s, Drift Organico: 0-10, Fase Inicial: 0-360",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "1a2b0010-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "idRef": "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "description": "Envia la capa sub-harmonica hacia el mezclador interno de drones para ser sumada con las capas superiores de armónicos."
+        }
+      ]
+    },
+    {
+      "id": "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Mid Harmonic Layer",
+      "description": "Capa de armonicos medios que genera frecuencias en el rango de 200 a 800 Hz, tipicamente afinadas en relaciones de quinta o tercera respecto a la fundamental del dron. Este elemento añade definicion tonal y claridad espectral al sonido base, haciendo que el dron sea percibido como un acorde vivo en lugar de un simple tono. El ligero detuning controlado entre instancias crea la caracteristica batida de amplitud que otorga al sonido ambiental su sensacion de respiracion organica.",
+      "params": "Frecuencia: 200-800Hz, Detune: -100ct/+100ct, Amplitud: 0-100%, Spread Estereo: 0-100%, Forma de onda: Sine/Triangle, Fase Relativa: 0-360, Unison Voces: 1-4",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "1a2b0011-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "idRef": "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "description": "Envia la capa de armonicos medios al mezclador de capas para su integracion en la textura dron final del modulo."
+        }
+      ]
+    },
+    {
+      "id": "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "High Shimmer Layer",
+      "description": "Capa de brillos de alta frecuencia en el rango de 2kHz a 8kHz que añade presencia aerea y cristalina al dron. Estas frecuencias altas, muy atenuadas en amplitud, crean una aureola espectral que hace que el sonido ambiental parezca extenderse en el espacio mas alla de los altavoces. El uso de formas de onda ligeramente enriquecidas en armonicos, como la diente de sierra suavizada, garantiza una mezcla que es brillante sin ser agresiva ni fatigante en escuchas prolongadas.",
+      "params": "Frecuencia: 2kHz-8kHz, Amplitud: 0-30%, Forma de onda: Sine/Soft-Saw, Spread Amplio: 0-100%, Detune: -200ct/+200ct, Low Cut Interno: 1kHz, Brillo: 0-10",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "1a2b0012-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "idRef": "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+          "description": "Envia la capa de brillos de alta frecuencia al mezclador interno para ser sumada con el cuerpo armonico principal del drone."
+        }
+      ]
+    },
+    {
+      "id": "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Drone Layer Mixer",
+      "description": "Punto de mezcla interna que consolida todas las capas oscilatorias del nucleo de dron en una unica señal coherente antes de su envio al exterior. Este elemento gestiona los niveles relativos de cada capa garantizando que la jerarquia espectral sea siempre correcta: graves dominantes, medios de soporte y brillos de presencia. Incluye un control de nivel maestro y un panoramizador para el posicionamiento final del bloque de dron en el campo estereo de la mezcla ambiental.",
+      "params": "Nivel Sub: 0-100%, Nivel Mid: 0-100%, Nivel Shimmer: 0-100%, Ganancia Maestra: -24dB/+6dB, Pan Global: L-R, Stereo Width: 0-200%, Limiter Suave: On/Off",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de control externo para modulacion del nivel maestro del dron desde el modulo de modulacion espacial del sistema ambiental."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida estereo del dron compuesto hacia el banco de filtros espectrales y el procesador de efectos espaciales del sistema."
+      },
+      "sendTo": []
+    }
+  ]
+}

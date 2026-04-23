@@ -1,0 +1,67 @@
+{
+  "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9012",
+  "name": "Ambient FX Master",
+  "description": "Unidad maestra de efectos espaciales y salida final del sintetizador ambiental. Este modulo combina reverberacion de alta densidad de largo decay, delay con sincronizacion temporal y un ecualizador parametrico final para entregar el paisaje sonoro ambiental completamente formado y listo para su distribucion o grabacion. Es el ultimo eslabon de la cadena de señal donde el sonido adquiere su dimension espacial definitiva: la sensacion de estar inmerso en un espacio acustico de proporciones arquitectonicas o en un entorno natural vasto e indefinido.",
+  "elements": [
+    {
+      "id": "5e6f0001-9c0d-1e2f-3a4b-5c6d7e8f9012",
+      "name": "FX Audio Input",
+      "description": "Nodo de entrada del rack de efectos finales que recibe la señal audio procesada espectralmente desde el banco de filtros. Incluye control de nivel de entrada con medicion de picos para asegurar que las etapas de reverberacion y delay reciban una señal con suficiente nivel de trabajo pero sin riesgo de saturacion. La entrada admite señales estereo con control de anchura de imagen que permite preparar el sonido antes de su inmersion en los algoritmos de espacializacion avanzada de la etapa final.",
+      "params": "Input Trim: -12/+6dB, Width Pre-FX: 0-200%, Medidor: Peak/LUFS, Gate Suave: -80/-20dB, Fase Izq/Der: Normal/Inv, Buffer Size: 64-2048, Latency Comp: On/Off",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de audio del procesador espectral hacia el rack de efectos finales para la adiccion de dimension espacial al paisaje ambiental."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "5e6f0010-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "idRef": "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "description": "Envia la señal de entrada hacia el procesador de reverberacion para comenzar la construccion del espacio acustico inmersivo final."
+        }
+      ]
+    },
+    {
+      "id": "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012",
+      "name": "Shimmer Reverb Proc",
+      "description": "Procesador de reverberacion tipo shimmer que añade regeneracion de señal con pitch shifting en el lazo de realimentacion creando un efecto de eco que asciende en tono armonicamente hacia el infinito. Este algoritmo es iconico en la musica ambiental electronica y es responsable de transformar cualquier sonido en una textura eterea y celestial. El control de decaimiento extremadamente largo, de hasta 30 segundos, permite crear espacios acusticos que trascienden cualquier arquitectura real, situando al oyente en un entorno sonic completamente imaginario.",
+      "params": "Decaimiento: 0.5-30s, Tamaño: 0-100%, Damping HF: 0-100%, Shimmer Amount: 0-100%, Pitch Shift: +7st/+12st, Pre-Delay: 0-500ms, Dry/Wet: 0-100%, Freeze: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "5e6f0011-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "idRef": "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "description": "Envia la señal con reverb shimmer hacia el delay atmosferico para añadir repeticiones espaciales que aumenten la profundidad tridimensional."
+        }
+      ]
+    },
+    {
+      "id": "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012",
+      "name": "Atmospheric Delay",
+      "description": "Delay de tipo atmosferico con filtracion interna de realimentacion que genera repeticiones que se oscurecen progresivamente en el tiempo, simulando la absorcion del aire en espacios de gran volumen. Este elemento añade profundidad y movimiento temporal al paisaje sonoro ambiental creando ecos que percibimos como reflexiones de un espacio natural enorme. Su integracion con la reverberacion shimmer multiplica la complejidad espacial resultante, creando capas de espacio que se superponen de forma organica y musical.",
+      "params": "Delay Time: 100-2000ms, Feedback: 0-95%, LP Feedback: 200Hz-8kHz, HP Feedback: 20-500Hz, Sync Tempo: On/Off, Ping-Pong: On/Off, Dry/Wet: 0-80%, Mod Rate: 0-5Hz",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "5e6f0012-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "idRef": "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012",
+          "description": "Envia la señal con delay atmosferico hacia la etapa de salida final para aplicar la ganancia y ecualizacion maestra del sintetizador ambiental."
+        }
+      ]
+    },
+    {
+      "id": "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012",
+      "name": "Master Output Stage",
+      "description": "Etapa de salida maestra con ecualizacion parametrica de alta fidelidad y limitador final de proteccion. Este ultimo nodo de la cadena asegura que el sintetizador ambiental entregue siempre una señal impecable dentro de los estandares de nivel de la industria. El ecualizador de tres bandas permite realizar los ajustes tonales finales necesarios para que el sonido se integre correctamente en cualquier mezcla o instalacion sonora. El limitador brickwall garantiza que bajo ninguna circunstancia se supere el nivel de 0 dBFS.",
+      "params": "EQ Low: +/-12dB@80Hz, EQ Mid: +/-12dB@1kHz, EQ High: +/-12dB@8kHz, Master Vol: -inf/0dB, Limiter Ceiling: -0.1dBFS, Stereo Width: 0-200%, Metering: LUFS/Peak/RMS",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida maestra estereo final del sintetizador ambiental electronico hacia buses de mezcla, sistemas de grabacion o instalaciones de reproduccion en vivo."
+      },
+      "sendTo": []
+    }
+  ]
+}

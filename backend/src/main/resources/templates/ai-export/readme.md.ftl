@@ -20,7 +20,7 @@ Use the following prompt to get the best results. Make sure to **choose your tar
 > 3. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
 > 
 > **Task:**
-> Generate a complete, runnable **[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]** program that implements the synthesizer described in the model. 
+> Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model. 
 > 
 > **Requirements:**
 > - Strictly respect the stereo/mono flags.

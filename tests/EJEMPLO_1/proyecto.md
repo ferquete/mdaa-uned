@@ -1,3 +1,0 @@
-# Sintetizador Pro Max
-
-Este proyecto representa la culminación técnica de la ingeniería de audio modular avanzada, diseñada específicamente para entornos de producción profesional que requieren una fidelidad sonora sin precedentes y una flexibilidad de ruteo que desafía los límites convencionales de la síntesis sustractiva y aditiva moderna. A través de este modelo, exploramos la interconexión profunda entre generadores de señales de alta precisión, procesadores de filtrado dinámico multietapa, matrices de modulación extremadamente complejas y racks de efectos finales que garantizan una salida sonora pulida. 

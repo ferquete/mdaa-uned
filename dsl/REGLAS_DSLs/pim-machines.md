@@ -100,10 +100,10 @@ Las aristas establecen la conexión entre nodos.
 | `type` | Tipo de señal: `"audio"` o `"modification"`. |
 
 ### 2.1. Reglas de Conectividad
-- **Señal `audio`**: Solo puede conectar salidas de audio (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` solo pueden apuntar a conexiones conceptuales (sendTo) en los modelos CIM.
-- **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` solo pueden apuntar a elementos/nodos de control en los modelos CIM.
+- **Señal `audio`**: Solo puede conectar salidas de sonido (como `output_1`) con entradas de sonido (`input_x`). Sus `ids_references` podrán ser tanto ids de elementos como de conexiones de los modelos de máquinas CIM asociados a la máquina PIM (los elementos de dentro de las máuinas referenciadas por `ids_cim_reference`).
+- **Señal `modification`**: Solo puede conectar salidas de control con parámetros donde `isModifiable` sea `true`. Sus `ids_references` podrán ser tanto ids de elementos como de conexiones de los modelos de máquinas CIM asociados a la máquina PIM (los elementos de dentro de las máuinas referenciadas por `ids_cim_reference`).
 - **Cascada de Integridad**: Al desactivar `isModifiable` en un parámetro, el sistema de diseño visual **borrará automáticamente** todas las aristas que tengan ese parámetro como destino para mantener la coherencia del modelo.
-- **Prohibición**: No se pueden modificar parámetros de configuración (`stereo`).
+- **Prohibición**: No se pueden modificar el parámetro `stereo` de ningún nodo, por lo que no podrán recibir aristas de ningún tipo.
 
 ---
 

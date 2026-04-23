@@ -107,7 +107,12 @@ const treeData = computed<TreeNodeType[]>(() => [
           };
         })
       },
-      { id: 'implementacion', text: 'Implementación', icon: 'fa-solid fa-code' },
+      { 
+        id: 'implementacion', 
+        text: 'Implementación', 
+        icon: 'fa-solid fa-code',
+        disabled: pimStore.machines.length === 0
+      },
     ]
   }
 ])

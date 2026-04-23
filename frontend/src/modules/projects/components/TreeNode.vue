@@ -10,6 +10,7 @@ interface TreeNodeType {
   showAdd?: boolean
   canDelete?: boolean
   canEdit?: boolean
+  disabled?: boolean
 }
 
 const props = defineProps<{
@@ -30,12 +31,14 @@ const isSelected = computed(() => props.node.id === props.selectedId)
 const isOpen = ref(props.node.open ?? true)
 
 const toggle = () => {
+  if (props.node.disabled) return
   if (props.node.children?.length) {
     isOpen.value = !isOpen.value
   }
 }
 
 const handleSelect = () => {
+  if (props.node.disabled) return
   emit('select', props.node)
 }
 
@@ -64,8 +67,11 @@ const lineLeft = computed(() => `calc(${props.level * 1}rem - 0.5rem)`)
   <div class="tree-node w-full">
     <!-- Node Content -->
     <div 
-      class="tree-node-content group flex items-center py-1.5 px-2 rounded-md transition-colors cursor-pointer w-full relative"
-      :class="[isSelected ? 'bg-geist-accents-2' : 'hover:bg-geist-accents-1']"
+      class="tree-node-content group flex items-center py-1.5 px-2 rounded-md transition-colors w-full relative"
+      :class="[
+        isSelected ? 'bg-geist-accents-2' : 'hover:bg-geist-accents-1',
+        node.disabled ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer'
+      ]"
       @click="handleSelect()"
     >
       <!-- Vertical guide line (Trunk) -->

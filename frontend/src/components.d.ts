@@ -52,6 +52,7 @@ declare module 'vue' {
     PimMachineModal: typeof import('./modules/pim/components/PimMachineModal.vue')['default']
     PimMachineNode: typeof import('./modules/pim/components/PimMachineNode.vue')['default']
     PimNodeModal: typeof import('./modules/pim/components/PimNodeModal.vue')['default']
+    PimPruneConfirmModal: typeof import('./modules/pim/components/PimPruneConfirmModal.vue')['default']
     PimRelationModal: typeof import('./modules/pim/components/PimRelationModal.vue')['default']
     PimRelationsMachineNode: typeof import('./modules/pim/components/PimRelationsMachineNode.vue')['default']
     PimRelationsVisualEditor: typeof import('./modules/pim/components/PimRelationsVisualEditor.vue')['default']

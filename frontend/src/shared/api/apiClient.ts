@@ -56,6 +56,30 @@ class ApiClient {
     return await response.json();
   }
 
+  /**
+   * Realiza una petición GET y devuelve el cuerpo como un Blob (para descargas binarias).
+   */
+  async getBlob(endpoint: string, options: RequestInit = {}): Promise<Blob> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const headers = new Headers(options.headers || {});
+    
+    if (keycloak.token) {
+      headers.set('Authorization', `Bearer ${keycloak.token}`);
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      method: 'GET',
+      headers
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: No se pudo descargar el archivo.`);
+    }
+
+    return await response.blob();
+  }
+
   /** Petición GET */
   get<T>(endpoint: string, options?: RequestInit) {
     return this.request<T>(endpoint, { ...options, method: 'GET' });

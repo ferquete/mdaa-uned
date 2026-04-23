@@ -100,12 +100,25 @@ const availableCimComponents = computed(() => {
       const cimDoc = analysisStore.parsedDocs[machine.id]
       if (cimDoc && Array.isArray(cimDoc.elements)) {
         cimDoc.elements.forEach((el: any) => {
-          // Solo elementos (Nodos) - Representan la identidad del componente en Análisis
+          // 1. Elemento CIM (Nodo)
           components.push({ 
             id: el.id, 
-            name: `[${cimDoc.name}] ${el.name}`, 
-            type: el.type === 'oscillator' || el.type === 'noise' || el.type === 'sample' ? 'g' : 'mod' 
+            name: `[${cimDoc.name}] Elemento: ${el.name}`, 
+            type: 'el' 
           })
+
+          // 2. Conexiones CIM (Aristas internas - sendTo)
+          if (Array.isArray(el.sendTo)) {
+            el.sendTo.forEach((st: any) => {
+              const targetEl = cimDoc.elements.find((e: any) => e.id === st.idRef)
+              const targetName = targetEl ? targetEl.name : 'Unknown'
+              components.push({
+                id: st.id,
+                name: `[${cimDoc.name}] Conexión: ${el.name} -> ${targetName}`,
+                type: 'edge'
+              })
+            })
+          }
         })
       }
     }

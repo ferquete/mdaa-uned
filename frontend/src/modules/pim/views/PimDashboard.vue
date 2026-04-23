@@ -11,6 +11,7 @@ import PimEditor from '../components/PimEditor.vue'
 import PimVisualEditor from '../components/PimVisualEditor.vue'
 import PimMachineModal from '../components/PimMachineModal.vue'
 import PimRelationsVisualEditor from '../components/PimRelationsVisualEditor.vue'
+import apiClient from '@/shared/api/apiClient'
 
 const analysisStore = useAnalysisMachinesStore()
 const store = usePimStore()
@@ -59,6 +60,22 @@ const handleExport = () => {
   }
 }
 
+const handleExportAi = async () => {
+  try {
+    const blob = await apiClient.getBlob(`/api/v1/projects/${projectId.value}/export-ai`);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `project-ai-export-${projectId.value}.zip`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error: any) {
+    console.error('Error al exportar para IA:', error);
+  }
+}
+
 const setMode = (mode: '2D' | 'JSON' | 'FORM') => {
   if (mode === 'JSON' || mode === '2D') {
     // Proteger cambio de modo si hay cambios sin guardar en el editor gráfico
@@ -83,10 +100,8 @@ const handleAddMachine = () => {
 
 const handleConfirmPimSave = async (name: string, description: string, cimReferences: string[]) => {
   if (isMachineSelected.value) {
-    // Editar existente
     await store.updateMachine(store.selectedMachine!.id, name, description, cimReferences)
   } else {
-    // Nueva máquina
     await store.addMachine(projectId.value, name, description, cimReferences)
   }
   showPimModal.value = false
@@ -116,8 +131,10 @@ const confirmDelete = async () => {
         :show-form-mode="false"
         :show-info="false"
         :description="isMachineSelected ? store.parsedDocs[store.selectedMachine!.id]?.description : store.parsedPimRelations.description"
+        :show-ai-export="analysisStore.selectedNodeId === 'diseno'"
         @set-mode="setMode"
         @export="handleExport"
+        @export-ai="handleExportAi"
         @add-machine="handleAddMachine"
         @edit-basic="showPimModal = true"
         @delete="handleDeleteRequest"

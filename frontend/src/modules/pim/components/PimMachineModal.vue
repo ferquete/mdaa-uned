@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 
 interface Props {
   show: boolean
@@ -67,6 +67,17 @@ const handleConfirm = () => {
     emit('confirm', name.value, description.value, selectedCimIds.value)
   }
 }
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && props.show && isValid.value) {
+    // Evitar que el Enter se procese en textareas (permite saltos de línea)
+    if ((e.target as HTMLElement).tagName === 'TEXTAREA') return
+    handleConfirm()
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 // Mapeo de IDs de máquinas de análisis a sus nombres
 const availableCimMachines = computed(() => {

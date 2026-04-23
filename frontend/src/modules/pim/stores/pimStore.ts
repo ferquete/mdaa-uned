@@ -139,13 +139,23 @@ export const usePimStore = defineStore('pim', () => {
     try {
       // Sincronizar el nombre y descripción DENTRO del JSON antes de guardar
       const currentDoc = parsedDocs.value[machineId] || { nodes: [], edges: [] };
-      const updatedDoc: PimMachineDocument = {
+      
+      // Identificar máquinas CIM eliminadas
+      const oldCimReferences = currentDoc.ids_cim_reference || [];
+      const removedCimIds = oldCimReferences.filter(id => !cimReferences.includes(id));
+
+      let updatedDoc: PimMachineDocument = {
         ...currentDoc,
-        id: currentDoc.id || crypto.randomUUID(), // Asegurar que tenga ID de negocio
+        id: currentDoc.id || crypto.randomUUID(),
         name,
         description,
         ids_cim_reference: cimReferences
       };
+
+      // Si se han eliminado máquinas, podar sus referencias en todo el documento
+      if (removedCimIds.length > 0) {
+        updatedDoc = pruneMachineReferences(updatedDoc, removedCimIds);
+      }
 
       const updated = await apiClient.put<PimMachine>(`/api/v1/pim-machines/${machineId}`, {
         name,
@@ -313,6 +323,44 @@ export const usePimStore = defineStore('pim', () => {
     } catch (err: any) {
       return { success: false, message: err.message };
     }
+  }
+
+  /**
+   * Poda recursivamente todas las referencias que pertenezcan a máquinas CIM eliminadas.
+   */
+  function pruneMachineReferences(doc: PimMachineDocument, removedCimIds: string[]): PimMachineDocument {
+    // 1. Obtener todos los IDs de elementos y conexiones que pertenecen a las máquinas eliminadas
+    const forbiddenIds = new Set<string>();
+    analysisStore.machines.forEach(m => {
+      const parsed = analysisStore.parsedDocs[m.id];
+      if (parsed?.id && removedCimIds.includes(parsed.id)) {
+        parsed.elements?.forEach((el: any) => {
+          forbiddenIds.add(el.id);
+          el.sendTo?.forEach((st: any) => forbiddenIds.add(st.id));
+        });
+      }
+    });
+
+    if (forbiddenIds.size === 0) return doc;
+
+    // 2. Función recursiva para limpiar arrays ids_references
+    const cleanObject = (obj: any) => {
+      if (!obj || typeof obj !== 'object') return;
+
+      if (Array.isArray(obj.ids_references)) {
+        const initialLen = obj.ids_references.length;
+        obj.ids_references = obj.ids_references.filter((refId: string) => !forbiddenIds.has(refId));
+        if (obj.ids_references.length < initialLen) {
+          console.log(`[PIM Store] Limpiadas ${initialLen - obj.ids_references.length} referencias huérfanas.`);
+        }
+      }
+
+      Object.values(obj).forEach(val => cleanObject(val));
+    };
+
+    const newDoc = JSON.parse(JSON.stringify(doc));
+    cleanObject(newDoc);
+    return newDoc;
   }
 
   /**

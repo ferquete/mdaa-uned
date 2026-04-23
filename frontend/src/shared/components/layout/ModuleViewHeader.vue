@@ -20,6 +20,7 @@ interface Props {
   showInfo?: boolean
   description?: string
   graphLabel?: string
+  showAiExport?: boolean
 }
 
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   (e: 'delete'): void
   (e: 'add-subnode', type: 'el'): void
   (e: 'add-machine'): void
+  (e: 'export-ai'): void
 }>()
 
 const { runWithGuard } = useUnsavedChanges()
@@ -158,6 +160,17 @@ const handleEditBasic = () => {
         >
           <i class="fa-solid fa-download group-hover:scale-110 transition-transform"></i>
           Exportar
+        </button>
+
+        <!-- Export for AI Button -->
+        <button 
+          v-if="showAiExport"
+          @click="emit('export-ai')"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-geist-border bg-geist-bg text-[10px] uppercase font-bold hover:bg-geist-accents-2 text-geist-accents-5 hover:text-geist-fg transition-all shadow-sm group"
+          title="Exportar para IA (ZIP con reglas y todos los JSON)"
+        >
+          <i class="fa-solid fa-robot group-hover:scale-110 transition-transform text-geist-success"></i>
+          Exportar IA
         </button>
 
         <div v-if="description" class="w-px h-4 bg-geist-border mx-2"></div>

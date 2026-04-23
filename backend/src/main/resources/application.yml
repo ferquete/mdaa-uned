@@ -4,7 +4,7 @@ server:
 spring:
   application:
     name: backend
-  
+
   # R2DBC MariaDB Configuration
   r2dbc:
     url: r2dbc:mariadb://${MARIADB_HOST:localhost}:${MARIADB_PORT:3306}/${MARIADB_DB:basedb}

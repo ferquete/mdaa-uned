@@ -286,6 +286,7 @@ const validateInternal = (val: string) => {
             if (doc?.id === cimId) {
               doc.elements?.forEach((e: any) => {
                 activeCimElements.add(e.id)
+                // Indexar también las conexiones internas (sendTo) como elementos válidos para referenciar
                 e.sendTo?.forEach((s: any) => activeCimConnections.add(s.id))
               })
             }
@@ -299,8 +300,8 @@ const validateInternal = (val: string) => {
         
         if (Array.isArray(obj.ids_references)) {
           obj.ids_references.forEach((refId: string) => {
-            if (refId && !activeCimElements.has(refId)) {
-              manualErrors.push({ message: `Negocio: El elemento CIM '${refId}' no pertenece a las máquinas vinculadas en ids_cim_reference.` })
+            if (refId && !activeCimElements.has(refId) && !activeCimConnections.has(refId)) {
+              manualErrors.push({ message: `Negocio: El elemento o conexión CIM '${refId}' no pertenece a las máquinas vinculadas en ids_cim_reference.` })
             }
           })
         }
@@ -327,18 +328,12 @@ const validateInternal = (val: string) => {
         // pero el validador cruzado de validate.ts sí podrá hacerlo.
       })
 
-      // Validar tipos de referencia en Edges (si estamos en vista de máquina PIM técnica)
+      // Validación de tipos de referencia en Edges (si estamos en vista de máquina PIM técnica)
       if (parsed.edges) {
         parsed.edges.forEach((edge: any, idx: number) => {
           (edge.ids_references || []).forEach((refId: string) => {
-            if (edge.type === 'audio') {
-              if (activeCimElements.has(refId) && !activeCimConnections.has(refId)) {
-                manualErrors.push({ message: `Arista ${idx} (audio): '${refId}' es un elemento, pero las señales audio deben referenciar conexiones conceptuales.` })
-              }
-            } else if (edge.type === 'modification') {
-              if (activeCimConnections.has(refId) && !activeCimElements.has(refId)) {
-                manualErrors.push({ message: `Arista ${idx} (mod): '${refId}' es una conexión, pero las modulaciones deben referenciar elementos conceptuales.` })
-              }
+            if (!activeCimElements.has(refId) && !activeCimConnections.has(refId)) {
+               manualErrors.push({ message: `Arista ${idx}: El elemento CIM '${refId}' no pertenece a las máquinas vinculadas.` })
             }
           })
         })

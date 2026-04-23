@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BaseModal from '@/shared/components/BaseModal.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 
 interface Option {
   id: string
@@ -29,15 +29,7 @@ const localDescription = ref('')
 const selectedRefs = ref<string[]>([])
 
 const filteredComponents = computed(() => {
-  if (!props.edgeType) return props.availableCimComponents
-  
-  return props.availableCimComponents.filter(opt => {
-    if (props.edgeType === 'audio') {
-      return opt.type === 'edge'
-    } else {
-      return opt.type === 'el'
-    }
-  })
+  return props.availableCimComponents
 })
 
 watch(() => props.show, (isShowing) => {
@@ -62,6 +54,16 @@ const handleConfirm = () => {
   emit('confirm', localDescription.value.trim(), selectedRefs.value)
 }
 
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && props.show) {
+    if ((e.target as HTMLElement).tagName === 'TEXTAREA') return
+    handleConfirm()
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
+
 const getIcon = (type: string) => {
   switch (type) {
     case 'el': return 'fa-cube text-node-generator'
@@ -72,7 +74,7 @@ const getIcon = (type: string) => {
 </script>
 
 <template>
-  <BaseModal :show="show" :title="title" @close="emit('close')">
+  <BaseModal :show="show" :title="title" maxWidth="max-w-xl" @close="emit('close')">
     <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
 
       <!-- Cabecera Informativa -->
@@ -85,7 +87,7 @@ const getIcon = (type: string) => {
             Tipo de Señal: {{ edgeType === 'audio' ? 'Audio' : 'Modulación' }}
           </p>
           <p class="text-[9px] text-geist-accents-5">
-            {{ edgeType === 'audio' ? 'Solo puedes referenciar conexiones de señal CIM.' : 'Solo puedes referenciar elementos de control CIM.' }}
+            Puedes seleccionar tanto elementos como conexiones CIM de las máquinas vinculadas.
           </p>
         </div>
       </div>
@@ -112,7 +114,7 @@ const getIcon = (type: string) => {
       <!-- Referencias CIM -->
       <div class="space-y-3">
         <div class="flex items-center gap-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-geist-accents-5">Referencias CIM Disponibles</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-geist-accents-5">Elementos y aristas de las máquinas de análisis asociadas</label>
           <div class="h-px flex-1 bg-geist-border opacity-30"></div>
         </div>
 
@@ -143,7 +145,7 @@ const getIcon = (type: string) => {
                 <span class="text-[8px] font-mono opacity-40 ml-2">{{ opt.id.substring(0, 8) }}...</span>
               </div>
               <span class="text-[8px] uppercase tracking-tighter opacity-60 font-mono">
-                {{ opt.type === 'el' ? 'Elemento CIM' : 'Conexión CIM' }}
+                {{ opt.type === 'el' ? 'Elemento' : 'Conexión' }}
               </span>
             </div>
 

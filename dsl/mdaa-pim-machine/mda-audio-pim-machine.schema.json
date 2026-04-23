@@ -239,7 +239,11 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
         "description": { "type": "string", "maxLength": 600 },
-        "ids_references": { "type": "array", "items": { "type": "string" } },
+        "ids_references": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "Lista de IDs de elementos o conexiones CIM asociados a esta arista."
+        },
         "sourceNode": { "type": "string" },
         "sourceParam": { "type": "string" },
         "targetNode": { "type": "string" },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, onMounted, onUnmounted } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
 import { PIM_NODE_METADATA, PIM_MODIFIABLE_PARAMS } from '../utils/pim-node-metadata'
 import { usePimStore } from '../stores/pimStore'
@@ -309,6 +309,16 @@ async function syncNodeData(nodeId: string | undefined) {
   validateAll()
 }
 
+// --- Soporte para tecla Escape ---
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    emit('close')
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
+
 watch(() => props.nodeId, syncNodeData, { immediate: true })
 
 const addOther = () => {
@@ -398,21 +408,11 @@ const showPort = (pName: string) => {
                     <i class="fa-solid fa-copy text-[10px]"></i>
                     Replicar
                 </button>
-                <button @click="showDeleteConfirm = !showDeleteConfirm" class="flex items-center justify-center gap-2 py-2 rounded-lg border border-geist-error/30 text-geist-error hover:bg-geist-error hover:text-white transition-all text-[9px] font-bold uppercase" :class="{ 'bg-geist-error text-white': showDeleteConfirm }">
+                <button @click="confirmDeleteNode" class="flex items-center justify-center gap-2 py-2 rounded-lg border border-geist-error/30 text-geist-error hover:bg-geist-error hover:text-white transition-all text-[9px] font-bold uppercase">
                     <i class="fa-solid fa-trash-can text-[10px]"></i>
                     Eliminar
                 </button>
             </div>
-            
-            <transition name="slide-down">
-                <div v-if="showDeleteConfirm" class="p-3 bg-geist-error/5 rounded-lg border border-geist-error/20 flex flex-col gap-2">
-                    <span class="text-[8px] text-geist-error text-center font-bold">¿CONFIRMAR ELIMINACIÓN DEFINITIVA?</span>
-                    <div class="flex gap-2">
-                        <button @click="showDeleteConfirm = false" class="flex-1 py-1.5 bg-geist-accents-2 text-[9px] font-bold rounded hover:bg-geist-accents-3">CANCELAR</button>
-                        <button @click="confirmDeleteNode" class="flex-1 py-1.5 bg-geist-error text-white text-[9px] font-bold rounded hover:bg-geist-error-600 shadow-sm">SÍ, BORRAR</button>
-                    </div>
-                </div>
-            </transition>
         </div>
 
         <div class="h-px bg-geist-border opacity-50"></div>

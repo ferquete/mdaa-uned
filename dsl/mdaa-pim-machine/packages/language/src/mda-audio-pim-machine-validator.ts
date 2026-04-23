@@ -166,7 +166,7 @@ export class MdaAudioPimMachineValidator {
                 accept('error', `No se puede aplicar una modificación a un parámetro de salida.`, { node: edge, property: 'type' });
             }
             if (isConfig) {
-                accept('error', `No se puede aplicar una modificación a parámetros de configuración base (stereo).`, { node: edge, property: 'type' });
+                accept('error', `No se puede aplicar una modificación al parámetro 'stereo'.`, { node: edge, property: 'type' });
             }
         }
     }

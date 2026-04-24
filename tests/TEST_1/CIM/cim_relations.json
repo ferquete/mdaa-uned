@@ -1,5 +1,5 @@
 {
-  "description": "Este proyecto define un sintetizador de musica electronica ambiental completo. Las interconexiones entre maquinas establecen un flujo de señal que va desde la generacion tonal pura del nucleo de dron y las texturas de ruido, pasando por el conformado espectral del banco de filtros, hasta la espacializacion final en el rack de efectos maestro. El modulo de modulacion espacial inyecta señales de control lentas y organicas en los generadores y el filtro espectral, creando un sistema que evoluciona de forma autonoma y convincente a lo largo del tiempo.",
+  "description": "Arquitectura de síntesis modular avanzada para paisajes sonoros etéreos y evolutivos. El sistema utiliza un enfoque multicanal para drones armónicos, texturas de ruido orgánico y filtrado dinámico, orquestado por un motor de modulación espacial. Bloques clave: **Drone Core**: 3 osciladores con micro-desafinación. **Texture Gen**: Ruido rosa y browniano granular. **Spectral Filter**: Filtros Ladder y ecualización. **FX Master**: Reverb de 8s y delay atmosférico. Diseño basado en el paradigma MDA con modelos CIM y PIM validados para una producción profesional.",
   "relations": [
     {
       "id": "aa001001-bbbb-cccc-dddd-ee1122334455",

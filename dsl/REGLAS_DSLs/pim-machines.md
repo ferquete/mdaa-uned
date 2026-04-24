@@ -94,9 +94,9 @@ Las aristas establecen la conexión entre nodos.
 | Atributo | Descripción |
 | :--- | :--- |
 | `sourceNode` | UUID del nodo de origen. |
-| `sourceParam`| UUID del parámetro de salida del nodo origen. |
+| `sourceParam`| Nombre de la propiedad/puerto de salida del nodo origen (ej: `output_1`). |
 | `targetNode` | UUID del nodo de destino. |
-| `targetParam`| UUID del parámetro de entrada del nodo destino. |
+| `targetParam`| Nombre de la propiedad/puerto de entrada del nodo destino (ej: `input_1`, `cutoff`). |
 | `type` | Tipo de señal: `"audio"` o `"modification"`. |
 
 ### 2.1. Reglas de Conectividad

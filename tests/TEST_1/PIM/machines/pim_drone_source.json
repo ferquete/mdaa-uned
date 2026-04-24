@@ -163,20 +163,14 @@
         "ids_references": [
           "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
         ],
-        "initialValue": true,
-        "description": "Modo estereo activo para el oscilador medio que contribuye a la imagen espacial del dron."
+        "initialValue": false,
+        "description": "El oscilador opera en mono, el posicionamiento se define mediante el parametro pan."
       },
       "output_1": {
         "id": "a1000019-0000-0000-0000-000000000001",
         "ids_references": [],
         "isExternalOutput": false,
-        "description": "Salida canal izquierdo del oscilador medio hacia el mezclador de capas interno."
-      },
-      "output_2": {
-        "id": "a1000020-0000-0000-0000-000000000001",
-        "ids_references": [],
-        "isExternalOutput": false,
-        "description": "Salida canal derecho del oscilador medio hacia el mezclador de capas interno."
+        "description": "Salida del oscilador medio hacia el mezclador de capas interno."
       }
     },
     {
@@ -255,20 +249,14 @@
         "ids_references": [
           "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
         ],
-        "initialValue": true,
-        "description": "Modo estereo activo para el oscilador shimmer que contribuye a la anchura espectral del dron."
+        "initialValue": false,
+        "description": "El oscilador shimmer opera en mono para un control preciso de su ubicacion en el mezclador."
       },
       "output_1": {
         "id": "a1000029-0000-0000-0000-000000000001",
         "ids_references": [],
         "isExternalOutput": false,
-        "description": "Salida izquierda del oscilador shimmer hacia el mezclador de capas del dron."
-      },
-      "output_2": {
-        "id": "a1000030-0000-0000-0000-000000000001",
-        "ids_references": [],
-        "isExternalOutput": false,
-        "description": "Salida derecha del oscilador shimmer hacia el mezclador de capas del dron."
+        "description": "Salida del oscilador shimmer hacia el mezclador de capas del dron."
       }
     },
     {
@@ -328,9 +316,9 @@
         "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
       ],
       "sourceNode": "a1000002-0000-0000-0000-000000000001",
-      "sourceParam": "a1000010-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
       "targetNode": "a1000031-0000-0000-0000-000000000001",
-      "targetParam": "a1000033-0000-0000-0000-000000000001",
+      "targetParam": "input_1",
       "type": "audio"
     },
     {
@@ -340,9 +328,9 @@
         "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
       ],
       "sourceNode": "a1000011-0000-0000-0000-000000000001",
-      "sourceParam": "a1000019-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
       "targetNode": "a1000031-0000-0000-0000-000000000001",
-      "targetParam": "a1000034-0000-0000-0000-000000000001",
+      "targetParam": "input_2",
       "type": "audio"
     },
     {
@@ -352,9 +340,9 @@
         "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
       ],
       "sourceNode": "a1000021-0000-0000-0000-000000000001",
-      "sourceParam": "a1000029-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
       "targetNode": "a1000031-0000-0000-0000-000000000001",
-      "targetParam": "a1000035-0000-0000-0000-000000000001",
+      "targetParam": "input_3",
       "type": "audio"
     }
   ]

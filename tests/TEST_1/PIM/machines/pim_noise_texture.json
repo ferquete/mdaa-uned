@@ -69,20 +69,14 @@
         "ids_references": [
           "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
         ],
-        "initialValue": true,
-        "description": "Modo estereo activo para el ruido rosa para una distribucion espacial amplia y envolvente."
+        "initialValue": false,
+        "description": "El generador de ruido rosa opera en mono."
       },
       "output_1": {
         "id": "b2000008-0000-0000-0000-000000000002",
         "ids_references": [],
         "isExternalOutput": false,
-        "description": "Salida izquierda del ruido rosa hacia el mezclador de texturas del modulo."
-      },
-      "output_2": {
-        "id": "b2000009-0000-0000-0000-000000000002",
-        "ids_references": [],
-        "isExternalOutput": false,
-        "description": "Salida derecha del ruido rosa hacia el mezclador de texturas del modulo."
+        "description": "Salida del ruido rosa hacia el mezclador de texturas."
       }
     },
     {
@@ -136,20 +130,14 @@
         "ids_references": [
           "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
         ],
-        "initialValue": true,
-        "description": "Modo estereo activo para el ruido browniano permitiendo una textura grave amplia y difusa."
+        "initialValue": false,
+        "description": "El generador de ruido browniano opera en mono."
       },
       "output_1": {
         "id": "b2000016-0000-0000-0000-000000000002",
         "ids_references": [],
         "isExternalOutput": false,
-        "description": "Salida izquierda del ruido browniano hacia el mezclador de texturas del modulo."
-      },
-      "output_2": {
-        "id": "b2000017-0000-0000-0000-000000000002",
-        "ids_references": [],
-        "isExternalOutput": false,
-        "description": "Salida derecha del ruido browniano hacia el mezclador de texturas del modulo."
+        "description": "Salida del ruido browniano hacia el mezclador de texturas."
       }
     },
     {
@@ -203,9 +191,9 @@
         "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
       ],
       "sourceNode": "b2000002-0000-0000-0000-000000000002",
-      "sourceParam": "b2000008-0000-0000-0000-000000000002",
+      "sourceParam": "output_1",
       "targetNode": "b2000018-0000-0000-0000-000000000002",
-      "targetParam": "b2000020-0000-0000-0000-000000000002",
+      "targetParam": "input_1",
       "type": "audio"
     },
     {
@@ -215,9 +203,9 @@
         "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
       ],
       "sourceNode": "b2000010-0000-0000-0000-000000000002",
-      "sourceParam": "b2000016-0000-0000-0000-000000000002",
+      "sourceParam": "output_1",
       "targetNode": "b2000018-0000-0000-0000-000000000002",
-      "targetParam": "b2000021-0000-0000-0000-000000000002",
+      "targetParam": "input_2",
       "type": "audio"
     }
   ]

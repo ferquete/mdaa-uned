@@ -12,21 +12,21 @@ Use the following prompt to get the best results. Make sure to **choose your tar
 
 ### Suggested Prompt
 
-> I am attaching a ZIP file exported from an MDA-Audio design tool. 
-> 
-> **Instructions:**
-> 1. Read `INSTRUCTIONS.md` to understand the architecture and your specific task.
-> 2. Use `resolved/RESOLVED_GRAPH.json` as your primary source for the synthesis graph (it has all names already resolved).
-> 3. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
-> 
-> **Task:**
-> Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model. 
-> 
-> **Requirements:**
-> - Strictly respect the stereo/mono flags.
-> - Implement all modulation edges ("modification" type) connecting LFOs/Envelopes to parameters.
-> - Use the `initialValue` from the model for all parameters.
-> - Comment the code using the node names from the model.
+I am attaching a ZIP file exported from an MDA-Audio design tool. 
+
+**Instructions:**
+1. Read `INSTRUCTIONS.md` to understand the architecture and your specific task.
+2. Use `resolved/RESOLVED_GRAPH.json` as your primary source for the synthesis graph (it has all names already resolved).
+3. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
+ 
+**Task:**
+Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model. 
+ 
+**Requirements:**
+- Strictly respect the stereo/mono flags.
+- Implement all modulation edges ("modification" type) connecting LFOs/Envelopes to parameters.
+- Use the `initialValue` from the model for all parameters.
+- Comment the code using the node names from the model.
 
 ---
 

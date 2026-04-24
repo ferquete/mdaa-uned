@@ -328,9 +328,25 @@ const validateInternal = (val: string) => {
         // pero el validador cruzado de validate.ts sí podrá hacerlo.
       })
 
-      // Validación de tipos de referencia en Edges (si estamos en vista de máquina PIM técnica)
+      // Validación de Edges (Integridad Referencial de Parámetros)
       if (parsed.edges) {
         parsed.edges.forEach((edge: any, idx: number) => {
+          const sNode = parsed.nodes?.find((n: any) => n.id === edge.sourceNode)
+          const tNode = parsed.nodes?.find((n: any) => n.id === edge.targetNode)
+
+          if (sNode) {
+            const hasSParam = !!sNode[edge.sourceParam] || (sNode.others || []).some((p: any) => p.name === edge.sourceParam)
+            if (!hasSParam) {
+              manualErrors.push({ message: `Arista ${idx}: El parámetro origen "${edge.sourceParam}" no existe en el nodo "${sNode.name}"` })
+            }
+          }
+          if (tNode) {
+            const hasTParam = !!tNode[edge.targetParam] || (tNode.others || []).some((p: any) => p.name === edge.targetParam)
+            if (!hasTParam) {
+              manualErrors.push({ message: `Arista ${idx}: El parámetro destino "${edge.targetParam}" no existe en el nodo "${tNode.name}"` })
+            }
+          }
+
           (edge.ids_references || []).forEach((refId: string) => {
             if (!activeCimElements.has(refId) && !activeCimConnections.has(refId)) {
                manualErrors.push({ message: `Arista ${idx}: El elemento CIM '${refId}' no pertenece a las máquinas vinculadas.` })

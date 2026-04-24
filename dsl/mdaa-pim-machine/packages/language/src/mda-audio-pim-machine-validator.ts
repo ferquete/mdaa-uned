@@ -95,40 +95,56 @@ export class MdaAudioPimMachineValidator {
      * Valida la integridad referencial del modelo (nodos y parámetros existentes en las aristas).
      */
     checkModelIntegrity(model: Model, accept: ValidationAcceptor): void {
-        const paramIds = new Set<string>();
-
-        for (const node of model.nodes) {
-            this.collectParamIds(node, paramIds);
-        }
-
         for (const edge of model.edges) {
             const sNodeId = edge.sourceNode.replace(/"/g, '');
-            const sParamId = edge.sourceParam.replace(/"/g, '');
+            const sParamName = edge.sourceParam.replace(/"/g, '');
             const tNodeId = edge.targetNode.replace(/"/g, '');
-            const tParamId = edge.targetParam.replace(/"/g, '');
+            const tParamName = edge.targetParam.replace(/"/g, '');
 
             const sNode = model.nodes.find(n => n.id.replace(/"/g, '') === sNodeId);
             const tNode = model.nodes.find(n => n.id.replace(/"/g, '') === tNodeId);
 
             if (!sNode) {
                 accept('error', `El nodo origen '${sNodeId}' no existe.`, { node: edge, property: 'sourceNode' });
+            } else {
+                // Verificar que el parámetro/puerto existe en el nodo origen
+                const sParam = this.findParamInNode(sNode, sParamName);
+                if (!sParam) {
+                    accept('error', `El parámetro o puerto de salida '${sParamName}' no existe en el nodo '${sNode.name}'.`, { node: edge, property: 'sourceParam' });
+                }
             }
+
             if (!tNode) {
                 accept('error', `El nodo destino '${tNodeId}' no existe.`, { node: edge, property: 'targetNode' });
-            }
-
-            if (!paramIds.has(sParamId)) {
-                accept('error', `El parámetro origen '${sParamId}' no existe en ningún nodo.`, { node: edge, property: 'sourceParam' });
-            }
-            if (!paramIds.has(tParamId)) {
-                accept('error', `El parámetro destino '${tParamId}' no existe en ningún nodo.`, { node: edge, property: 'targetParam' });
-            }
-
-            // Validación de tipos de arista según el parámetro destino
-            if (tNode && paramIds.has(tParamId)) {
-                this.checkEdgeTypeConsistency(edge, tNode, tParamId, accept);
+            } else {
+                // Verificar que el parámetro/puerto existe en el nodo destino
+                const tParam = this.findParamInNode(tNode, tParamName);
+                if (!tParam) {
+                    accept('error', `El parámetro o puerto de entrada '${tParamName}' no existe en el nodo '${tNode.name}'.`, { node: edge, property: 'targetParam' });
+                } else {
+                    // Validación de tipos de arista
+                    this.checkEdgeTypeConsistency(edge, tParamName, accept);
+                }
             }
         }
+    }
+
+    /**
+     * Busca un parámetro o ConnectionPoint en un nodo por su nombre de propiedad.
+     */
+    private findParamInNode(node: any, paramName: string): any {
+        // Buscar en propiedades directas
+        if (node[paramName]) {
+            const val = node[paramName];
+            if (val && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint' || val.$type === 'StereoParameter')) {
+                return val;
+            }
+        }
+        // Buscar en el array 'others'
+        if (node.others && Array.isArray(node.others)) {
+            return node.others.find((p: any) => p.name.replace(/"/g, '') === paramName);
+        }
+        return undefined;
     }
 
     /**
@@ -136,18 +152,9 @@ export class MdaAudioPimMachineValidator {
      * audio -> debe ir a entradas de sonido (input_1..10)
      * modification -> debe ir a parámetros de control
      */
-    private checkEdgeTypeConsistency(edge: Edge, tNode: any, tParamId: string, accept: ValidationAcceptor): void {
+    private checkEdgeTypeConsistency(edge: Edge, tParamName: string, accept: ValidationAcceptor): void {
         const outputNames = ['output_1', 'output_2', 'output'];
         const configNames = ['stereo'];
-
-        let tParamName = '';
-        for (const key in tNode) {
-            const val = tNode[key];
-            if (val && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint') && (val as any).id.replace(/"/g, '') === tParamId) {
-                tParamName = key;
-                break;
-            }
-        }
 
         const isAudioInput = tParamName.startsWith('input_');
         const isOutput = outputNames.includes(tParamName);

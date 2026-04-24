@@ -29,9 +29,13 @@ Common structure for Generators, Modifiers, and Effects.
 - `isExternalInput`/`Output` (Boolean): Defines visibility for `PIM-Relations`.
 
 ## @object Edge (Signal Connection)
-- `sourceNode`/`targetNode` (UUIDv4): Node instance references.
-- `sourceParam`/`targetParam` (UUIDv4): Specific port/parameter references.
-- `type` (Enum): `audio` (PCM bitstream) | `modification` (Control signal/LFO/Env).
+| Property | Description |
+| :--- | :--- |
+| `sourceNode` | UUID del nodo de origen. |
+| `sourceParam`| Nombre de la propiedad/puerto de salida del nodo origen (ej: `output_1`). |
+| `targetNode` | UUID del nodo de destino. |
+| `targetParam`| Nombre de la propiedad/puerto de entrada del nodo destino (ej: `input_1`, `cutoff`). |
+| `type` | Tipo de señal: `"audio"` o `"modification"`. |
 
 ## @dictionary Node_Definitions
 

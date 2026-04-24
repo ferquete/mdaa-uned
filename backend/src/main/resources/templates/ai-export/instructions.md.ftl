@@ -56,6 +56,7 @@ To reconstruct the synthesis graph:
 1. **Start from** `resolved/RESOLVED_GRAPH.json` — it has all UUIDs already resolved to names.
 2. For each PIM machine, read its `nodes` array to instantiate the synthesis objects.
 3. Read `edges` to wire nodes together:
+   - **Connectivity**: `sourceParam` and `targetParam` contain the **property name** of the port (e.g., `output_1`, `input_1`, `cutoff`), not a UUID.
    - `"audio"` edges → connect audio outputs to audio inputs
    - `"modification"` edges → connect control outputs (LFO, envelope) to modulatable parameters
 4. Read `pimRelations` to wire machines together at the inter-machine level.

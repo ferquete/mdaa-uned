@@ -252,9 +252,9 @@
         "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
       ],
       "sourceNode": "c3000002-0000-0000-0000-000000000003",
-      "sourceParam": "c3000010-0000-0000-0000-000000000003",
+      "sourceParam": "output_1",
       "targetNode": "c3000012-0000-0000-0000-000000000003",
-      "targetParam": "c3000018-0000-0000-0000-000000000003",
+      "targetParam": "input_1",
       "type": "audio"
     },
     {
@@ -264,9 +264,9 @@
         "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
       ],
       "sourceNode": "c3000002-0000-0000-0000-000000000003",
-      "sourceParam": "c3000011-0000-0000-0000-000000000003",
+      "sourceParam": "output_2",
       "targetNode": "c3000012-0000-0000-0000-000000000003",
-      "targetParam": "c3000019-0000-0000-0000-000000000003",
+      "targetParam": "input_2",
       "type": "audio"
     },
     {
@@ -276,9 +276,9 @@
         "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
       ],
       "sourceNode": "c3000012-0000-0000-0000-000000000003",
-      "sourceParam": "c3000020-0000-0000-0000-000000000003",
+      "sourceParam": "output_1",
       "targetNode": "c3000022-0000-0000-0000-000000000003",
-      "targetParam": "c3000027-0000-0000-0000-000000000003",
+      "targetParam": "input_1",
       "type": "audio"
     },
     {
@@ -288,9 +288,9 @@
         "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
       ],
       "sourceNode": "c3000012-0000-0000-0000-000000000003",
-      "sourceParam": "c3000021-0000-0000-0000-000000000003",
+      "sourceParam": "output_2",
       "targetNode": "c3000022-0000-0000-0000-000000000003",
-      "targetParam": "c3000028-0000-0000-0000-000000000003",
+      "targetParam": "input_2",
       "type": "audio"
     }
   ]

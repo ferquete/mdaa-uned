@@ -264,20 +264,32 @@
       "stereo": {
         "id": "e5000029-0000-0000-0000-000000000005",
         "ids_references": [],
-        "initialValue": false,
-        "description": "Modo mono del compresor para que el control de ganancia sea identico en ambos canales evitando variaciones de imagen estereo."
+        "initialValue": true,
+        "description": "Modo estereo del compresor para procesar ambos canales de la cadena de efectos."
       },
       "input_1": {
         "id": "e5000030-0000-0000-0000-000000000005",
         "ids_references": [],
         "isExternalInput": false,
-        "description": "Entrada de audio del compresor glue desde la suma de las salidas del delay y la reverberacion del rack de efectos."
+        "description": "Entrada izquierda del compresor glue desde el delay atmosferico."
+      },
+      "input_2": {
+        "id": "e5000030-0000-0000-0000-000000000006",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del compresor glue desde el delay atmosferico."
       },
       "output_1": {
         "id": "e5000031-0000-0000-0000-000000000005",
         "ids_references": [],
         "isExternalOutput": false,
-        "description": "Salida del compresor glue hacia la etapa final de ganancia y paneo maestro del sintetizador ambiental."
+        "description": "Salida izquierda del compresor glue hacia la etapa final."
+      },
+      "output_2": {
+        "id": "e5000031-0000-0000-0000-000000000006",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del compresor glue hacia la etapa final."
       }
     },
     {
@@ -350,9 +362,9 @@
         "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
       ],
       "sourceNode": "e5000002-0000-0000-0000-000000000005",
-      "sourceParam": "e5000010-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
       "targetNode": "e5000012-0000-0000-0000-000000000005",
-      "targetParam": "e5000019-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
       "type": "audio"
     },
     {
@@ -362,9 +374,9 @@
         "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
       ],
       "sourceNode": "e5000002-0000-0000-0000-000000000005",
-      "sourceParam": "e5000011-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
       "targetNode": "e5000012-0000-0000-0000-000000000005",
-      "targetParam": "e5000020-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
       "type": "audio"
     },
     {
@@ -374,9 +386,21 @@
         "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
       ],
       "sourceNode": "e5000012-0000-0000-0000-000000000005",
-      "sourceParam": "e5000021-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
       "targetNode": "e5000023-0000-0000-0000-000000000005",
-      "targetParam": "e5000030-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "e5000092-0000-0000-0000-000000000006",
+      "description": "Canal derecho del delay atmosferico al compresor glue.",
+      "ids_references": [
+        "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000012-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
+      "targetNode": "e5000023-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
       "type": "audio"
     },
     {
@@ -386,9 +410,21 @@
         "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
       ],
       "sourceNode": "e5000023-0000-0000-0000-000000000005",
-      "sourceParam": "e5000031-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
       "targetNode": "e5000032-0000-0000-0000-000000000005",
-      "targetParam": "e5000036-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "e5000093-0000-0000-0000-000000000006",
+      "description": "Conexion derecha del compresor glue a la etapa de ganancia y paneo maestro.",
+      "ids_references": [
+        "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000023-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
+      "targetNode": "e5000032-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
       "type": "audio"
     }
   ]

@@ -289,15 +289,17 @@ public class GraphResolverService {
         List<ResolvedPimEdgeDto> result = new ArrayList<>();
         for (JsonNode edge : edgesNode) {
             String srcNodeId = edge.path("sourceNode").asText("");
-            String srcParamId = edge.path("sourceParam").asText("");
+            String srcParamRaw = edge.path("sourceParam").asText("");
             String tgtNodeId = edge.path("targetNode").asText("");
-            String tgtParamId = edge.path("targetParam").asText("");
+            String tgtParamRaw = edge.path("targetParam").asText("");
 
             String srcNodeName = globalIdToName.getOrDefault(srcNodeId, srcNodeId);
             String tgtNodeName = globalIdToName.getOrDefault(tgtNodeId, tgtNodeId);
 
-            String srcPort = resolvePortKey(srcParamId, portIndex, globalIdToName);
-            String tgtPort = resolvePortKey(tgtParamId, portIndex, globalIdToName);
+            // Si el param ya es un nombre simbólico (no es UUID), lo usamos tal cual.
+            // Si es un UUID (formato antiguo), lo resolvemos.
+            String srcPort = isUuid(srcParamRaw) ? resolvePortKey(srcParamRaw, portIndex, globalIdToName) : srcParamRaw;
+            String tgtPort = isUuid(tgtParamRaw) ? resolvePortKey(tgtParamRaw, portIndex, globalIdToName) : tgtParamRaw;
 
             result.add(ResolvedPimEdgeDto.builder()
                 .sourceNodeName(srcNodeName)
@@ -308,6 +310,11 @@ public class GraphResolverService {
                 .build());
         }
         return result;
+    }
+
+    private boolean isUuid(String value) {
+        if (value == null || value.length() != 36) return false;
+        return value.contains("-");
     }
 
     // ──────────────────────────────────────────────────────────────────────────────

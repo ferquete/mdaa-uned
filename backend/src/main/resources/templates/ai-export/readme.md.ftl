@@ -16,8 +16,10 @@ I am attaching a ZIP file exported from an MDA-Audio design tool.
 
 **Instructions:**
 1. Read `INSTRUCTIONS.md` to understand the architecture and your specific task.
-2. Use `resolved/RESOLVED_GRAPH.json` as your primary source for the synthesis graph (it has all names already resolved).
-3. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
+2. Review the technical constraints in `rules_consolidated.md`.
+3. Use `resolved/RESOLVED_GRAPH.json` as your primary source for the synthesis graph (it has all names already resolved).
+4. Refer to `project_dump.json` if you need to check the raw PIM/CIM definitions.
+5. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
  
 **Task:**
 Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model. 

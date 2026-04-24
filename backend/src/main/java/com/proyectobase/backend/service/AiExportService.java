@@ -77,11 +77,11 @@ public class AiExportService {
                     // ── 1. INSTRUCTIONS.md (Opción A) ──────────────────────────────
                     addInstructionsToZip(zos, project, generatedAt, targetLanguage);
 
-                    // ── 2. Manuales DSL ────────────────────────────────────────────
-                    addDslRulesToZip(zos);
+                    // ── 2. Manuales DSL (Consolidados) ──────────────────────────────
+                    addConsolidatedDslRulesToZip(zos);
 
-                    // ── 3. JSONs brutos del proyecto ───────────────────────────────
-                    addRawProjectJsonsToZip(zos, roots.getT1().getMachinesRelations(),
+                    // ── 3. Super-JSON del Proyecto (Consolidado) ───────────────────
+                    addConsolidatedProjectDumpToZip(zos, roots.getT1().getMachinesRelations(),
                         pimRelationsJson, cimMachines, pimMachines);
 
                     // ── 4. RESOLVED_GRAPH.json (Opción B) ──────────────────────────
@@ -137,34 +137,55 @@ public class AiExportService {
     // Sección 2: Manuales DSL (classpath:REGLAS_DSLs/)
     // ──────────────────────────────────────────────────────────────────────────────
 
-    private void addDslRulesToZip(ZipOutputStream zos) throws IOException {
+    private void addConsolidatedDslRulesToZip(ZipOutputStream zos) throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("classpath:REGLAS_DSLs/*.md");
+        StringBuilder sb = new StringBuilder();
+        sb.append("# Consolidated DSL Reference Manuals\n\n");
+        sb.append("This file contains all the technical rules and grammar definitions for the MDA-Audio system.\n\n");
+
         for (Resource resource : resources) {
-            addEntry(zos, "rules/" + resource.getFilename(),
-                resource.getInputStream().readAllBytes());
+            sb.append("## File: ").append(resource.getFilename()).append("\n\n");
+            sb.append(new String(resource.getInputStream().readAllBytes())).append("\n\n");
+            sb.append("---\n\n");
         }
+        addEntry(zos, "rules_consolidated.md", sb.toString());
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
-    // Sección 3: JSONs brutos del proyecto
+    // Sección 3: Super-JSON consolidado del proyecto
     // ──────────────────────────────────────────────────────────────────────────────
 
-    private void addRawProjectJsonsToZip(ZipOutputStream zos,
+    private void addConsolidatedProjectDumpToZip(ZipOutputStream zos,
             String cimRelationsJson, String pimRelationsJson,
             List<CimMachine> cimMachines, List<PimMachine> pimMachines) throws IOException {
 
-        addEntry(zos, "project/cim-relations.json", cimRelationsJson);
-        addEntry(zos, "project/pim-relations.json", pimRelationsJson);
+        Map<String, Object> dump = new java.util.LinkedHashMap<>();
+        dump.put("cimRelations", parseJson(cimRelationsJson));
+        dump.put("pimRelations", parseJson(pimRelationsJson));
 
+        List<Object> cimList = new java.util.ArrayList<>();
         for (CimMachine m : cimMachines) {
-            String machineName = extractMachineName(m.getMachine(), "cim-" + m.getId());
-            addEntry(zos, "project/cim-machines/" + sanitize(machineName) + ".json", m.getMachine());
+            cimList.add(parseJson(m.getMachine()));
         }
+        dump.put("cimMachines", cimList);
 
+        List<Object> pimList = new java.util.ArrayList<>();
         for (PimMachine m : pimMachines) {
-            String machineName = extractMachineName(m.getMachine(), "pim-" + m.getId());
-            addEntry(zos, "project/pim-machines/" + sanitize(machineName) + ".json", m.getMachine());
+            pimList.add(parseJson(m.getMachine()));
+        }
+        dump.put("pimMachines", pimList);
+
+        String fullJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dump);
+        addEntry(zos, "project_dump.json", fullJson);
+    }
+
+    private Object parseJson(String json) {
+        if (json == null || json.isBlank()) return Map.of();
+        try {
+            return objectMapper.readTree(json);
+        } catch (Exception e) {
+            return Map.of("error", "Invalid JSON", "raw", json);
         }
     }
 

@@ -14,13 +14,11 @@ target language: **${(targetLanguage?has_content)?then(targetLanguage, "specifie
 
 The input you receive is organized in three abstraction layers:
 
-| Layer | Folder | Purpose |
+| Layer | File | Purpose |
 |-------|--------|---------|
-| DSL Reference Manuals | `rules/` | Grammar rules and constraints for understanding the model |
-| CIM Machines | `project/cim-machines/` | **What** each module does (technology-agnostic) |
-| PIM Machines | `project/pim-machines/` | **How** modules are wired (typed nodes + parameter values) |
-| Relations | `project/pim-relations.json` | Inter-machine connections (external ports) |
-| Resolved Graph | `resolved/RESOLVED_GRAPH.json` | Human-readable cross-reference of all the above |
+| DSL Reference Manuals | `rules_consolidated.md` | Consolidated grammar rules and constraints for understanding the model |
+| Project Data | `project_dump.json` | All CIM/PIM machines and relations in a single structured JSON |
+| Resolved Graph | `resolved/RESOLVED_GRAPH.json` | Human-readable cross-reference of all the above (Simplified) |
 | Mapping Examples | `resolved/MAPPING_EXAMPLES.md` | Node-type → target language code snippets |
 
 ---
@@ -30,12 +28,12 @@ The input you receive is organized in three abstraction layers:
 This project uses **MDA (Model-Driven Architecture)** with two levels:
 
 ### CIM (Computation Independent Model)
-- Lives in `project/cim-machines/`
+- Lives in `project_dump.json` (field `cimMachines`)
 - Defines audio modules at a **conceptual level** (no implementation details)
 - Each element has: name, description, params (text), external input/output flags, and internal routing
 
 ### PIM (Platform Independent Model)
-- Lives in `project/pim-machines/`
+- Lives in `project_dump.json` (field `pimMachines`)
 - **Concretizes** the CIM into a **signal flow graph** with:
   - **Typed nodes** (`oscillator`, `lfo`, `frequency_filter`, `reverb`, `delay`, `distortion`,
     `chorus_flanger`, `compressor`, `equalizer`, `mixer`, `gain_pan`, `noise`, `sample`, `envelope`)
@@ -44,7 +42,7 @@ This project uses **MDA (Model-Driven Architecture)** with two levels:
   - **Ports** (`input_1`, `output_1`, etc.) that define connectivity
 
 ### PIM Relations
-- Lives in `project/pim-relations.json`
+- Lives in `project_dump.json` (field `pimRelations`)
 - Connects `isExternalOutput` ports of one PIM machine to `isExternalInput` ports of another
 
 ---

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
-import { useRoute, onBeforeRouteLeave } from 'vue-router'
-import { PanelGroup, Panel, PanelResizeHandle } from 'vue-resizable-panels'
-import ProjectTreeView from '../components/ProjectTreeView.vue'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
-import { usePimStore } from '@/modules/pim/stores/pimStore'
-import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import AnalysisMachinesDashboard from '@/modules/analysis/views/AnalysisMachinesDashboard.vue'
+import { usePimStore } from '@/modules/pim/stores/pimStore'
 import PimDashboard from '@/modules/pim/views/PimDashboard.vue'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import UnsavedChangesModal from '@/shared/components/UnsavedChangesModal.vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import type { Project } from '@/shared/types'
+import { computed, onMounted, ref } from 'vue'
+import { Panel, PanelGroup, PanelResizeHandle } from 'vue-resizable-panels'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import ProjectTreeView from '../components/ProjectTreeView.vue'
 
 const analysisStore = useAnalysisMachinesStore()
 const pimStore = usePimStore()
@@ -166,7 +166,9 @@ onMounted(async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 animate-in fade-in duration-700 delay-200">
                   <div class="p-6 rounded-2xl bg-geist-accents-1 border border-geist-border shadow-sm">
                     <h3 class="text-[10px] uppercase tracking-widest font-bold text-geist-accents-4 mb-4">Descripción</h3>
-                    <p class="text-sm text-geist-fg leading-relaxed whitespace-pre-wrap">{{ currentProject.description || 'Sin descripción disponible.' }}</p>
+                    <p class="text-sm text-geist-fg leading-relaxed whitespace-pre-wrap">
+                      {{ (currentProject.description?.length > 400) ? currentProject.description.substring(0, 400) + '...' : (currentProject.description || 'Sin descripción disponible.') }}
+                    </p>
                   </div>
                   
                   <div class="p-6 rounded-2xl bg-geist-accents-1 border border-geist-border shadow-sm">
@@ -177,8 +179,12 @@ onMounted(async () => {
                         <span class="font-mono text-geist-fg">{{ new Date(currentProject.createdAt).toLocaleDateString() }}</span>
                       </div>
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-geist-accents-5">Máquinas en el Proyecto</span>
+                        <span class="text-geist-accents-5">Máquinas de Análisis</span>
                         <span class="font-mono text-geist-fg">{{ analysisStore.machines.length }}</span>
+                      </div>
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-geist-accents-5">Máquinas de Diseño Conceptual</span>
+                        <span class="font-mono text-geist-fg">{{ pimStore.machines.length }}</span>
                       </div>
                     </div>
                   </div>

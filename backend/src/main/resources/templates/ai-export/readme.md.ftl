@@ -22,10 +22,14 @@ I am attaching a ZIP file exported from an MDA-Audio design tool.
 5. Refer to `resolved/MAPPING_EXAMPLES.md` for target-specific code snippets.
  
 **Task:**
-Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model. 
- 
+<#if targetLanguage?? && (targetLanguage?contains("Pure Data") || targetLanguage?contains("Max/MSP"))>
+Generate a single, valid, and runnable **${targetLanguage}** file (.pd or .maxpat) that implements the synthesizer described in the model.
+<#else>
+Generate a complete, runnable **${(targetLanguage?has_content)?then(targetLanguage, "[CHOOSE: Web Audio API / SuperCollider / Pure Data / Max/MSP]")}** program that implements the synthesizer described in the model.
+</#if> 
 **Requirements:**
 - Strictly respect the stereo/mono flags.
+- **Modular Architecture**: Translate each PIM Machine into a dedicated modular structure (e.g., classes, SynthDefs, or subpatches) to reflect the conceptual design.
 - Implement all modulation edges ("modification" type) connecting LFOs/Envelopes to parameters.
 - Use the `initialValue` from the model for all parameters.
 - Comment the code using the node names from the model.

@@ -7,6 +7,7 @@ import { useExport } from '@/shared/composables/useExport'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
 import { useAnalysisMachinesStore } from '@/modules/analysis/stores/analysisMachinesStore'
 import { usePimStore } from '../stores/pimStore'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
 import PimEditor from '../components/PimEditor.vue'
 import PimVisualEditor from '../components/PimVisualEditor.vue'
 import PimMachineModal from '../components/PimMachineModal.vue'
@@ -16,6 +17,7 @@ import apiClient from '@/shared/api/apiClient'
 
 const analysisStore = useAnalysisMachinesStore()
 const store = usePimStore()
+const projectStore = useProjectStore()
 const { exportToJson } = useExport()
 const { runWithGuard } = useUnsavedChanges()
 const route = useRoute()
@@ -74,8 +76,21 @@ const handleExportAi = async (language: string) => {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
+    
+    // Obtener nombre del proyecto y formatear fecha/hora
+    const project = projectStore.projects.find(p => p.id === projectId.value)
+    const projectName = project?.name || `proyecto-${projectId.value}`
+    const sanitizedName = projectName.toLowerCase().replace(/\s+/g, '-')
     const sanitizedLang = language.split(' ')[0].toLowerCase()
-    link.setAttribute('download', `project-ai-export-${projectId.value}-${sanitizedLang}.zip`);
+    
+    const now = new Date()
+    const timestamp = now.getFullYear() +
+      String(now.getMonth() + 1).padStart(2, '0') +
+      String(now.getDate()).padStart(2, '0') + '_' +
+      String(now.getHours()).padStart(2, '0') +
+      String(now.getMinutes()).padStart(2, '0')
+
+    link.setAttribute('download', `${sanitizedLang}_${sanitizedName}_${timestamp}.zip`);
     document.body.appendChild(link);
     link.click();
     link.remove();

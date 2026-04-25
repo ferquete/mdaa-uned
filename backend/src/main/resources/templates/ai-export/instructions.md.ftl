@@ -123,6 +123,38 @@ The general mapping is:
 
 ---
 
-## 7. Project Description
+## 7. Code Organization Strategy
+
+To maintain consistency with the conceptual design, you MUST encapsulate each PIM Machine into its own logical unit:
+
+<#if targetLanguage?? && targetLanguage?contains("Web Audio")>
+- **Web Audio API**: Create a class or a factory function for each PIM Machine. Each instance should expose internal nodes or an object with named ports (e.g., `this.input`, `this.output`) to facilitate inter-machine connections.
+<#elseif targetLanguage?? && targetLanguage?contains("SuperCollider")>
+- **SuperCollider**: Define a `SynthDef` or a custom class/function for each PIM Machine. Use named arguments for parameters and clearly defined `Out.ar` / `In.ar` buses for connectivity between machines.
+<#elseif targetLanguage?? && (targetLanguage?contains("Pure Data") || targetLanguage?contains("Max/MSP"))>
+- **Visual Languages (Pd/Max)**: Implement each PIM Machine as an **internal subpatch** (`[pd machine_name]` in Pd or `[p machine_name]` in Max). Use `[inlet~]` and `[outlet~]` to represent external ports defined in the model.
+<#else>
+- **General**: Encapsulate each PIM Machine into a modular unit (class, method, or module) corresponding to the best practices of the target language.
+</#if>
+
+---
+
+<#if targetLanguage?? && (targetLanguage?contains("Pure Data") || targetLanguage?contains("Max/MSP"))>
+## 9. Visual Programming Special Instructions (Pd/Max)
+
+Your output must be a single, valid, and runnable file:
+- **Pure Data**: A `.pd` text file.
+- **Max/MSP**: A `.maxpat` JSON file.
+
+### Internal Structure:
+- Each PIM Machine MUST be encapsulated in a subpatch: `[pd machine_name]` (Pd) or `[p machine_name]` (Max).
+- Inside each subpatch, use `[inlet~]` and `[outlet~]` for signal I/O to match the conceptual design's external ports.
+- Layout the objects logically in the canvas.
+- **IMPORTANT**: Provide the full, valid file syntax, not just a description.
+
+---
+</#if>
+
+## ${(targetLanguage?? && (targetLanguage?contains("Pure Data") || targetLanguage?contains("Max/MSP")))?then("10", "9")}. Project Description
 
 ${projectDescription!"(No description provided.)"}

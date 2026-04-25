@@ -416,3 +416,50 @@ const reverb = ctx.createConvolver();
 [freeverb~] // Reverberación clásica
 ```
 </@lang>
+
+---
+
+## Appendix: File Syntax for Visual Languages
+
+If the target is a visual language, use the following syntax to generate the actual file content.
+
+<@lang "Pure Data">
+### Pure Data (.pd) Syntax
+A Pure Data file is a plain text file. Use this structure to encapsulate a PIM Machine:
+
+```pd
+#N canvas 0 0 450 300 10;
+#X obj 50 50 inlet~;
+#X obj 50 100 osc~ 440;
+#X obj 50 150 *~ 0.5;
+#X obj 50 200 outlet~;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+```
+*Note: `#N canvas` defines the window. `#X obj X Y name args` defines objects. `#X connect sourceNode sourceOutlet targetNode targetInlet` defines wires.*
+</@lang>
+
+<@lang "Max/MSP">
+### Max/MSP (.maxpat) Syntax
+A Max file is a JSON structure. Use this as a reference:
+
+```json
+{
+  "patcher": {
+    "fileversion": 1,
+    "appversion": { "major": 8 },
+    "rect": [ 100.0, 100.0, 640.0, 480.0 ],
+    "boxes": [
+      { "box": { "maxclass": "newobj", "text": "inlet~", "id": "obj-1", "patching_rect": [ 50.0, 50.0, 30.0, 30.0 ] } },
+      { "box": { "maxclass": "newobj", "text": "osc~ 440", "id": "obj-2", "patching_rect": [ 50.0, 100.0, 60.0, 20.0 ] } },
+      { "box": { "maxclass": "newobj", "text": "outlet~", "id": "obj-3", "patching_rect": [ 50.0, 200.0, 30.0, 30.0 ] } }
+    ],
+    "lines": [
+      { "patchline": { "source": [ "obj-1", 0 ], "destination": [ "obj-2", 0 ] } },
+      { "patchline": { "source": [ "obj-2", 0 ], "destination": [ "obj-3", 0 ] } }
+    ]
+  }
+}
+```
+</@lang>

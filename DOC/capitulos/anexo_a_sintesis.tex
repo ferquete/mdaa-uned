@@ -1,0 +1,120 @@
+\chapter{Anexo A: Introducción a la Síntesis de Sonido Digital}
+\label{anexo:sintesis}
+
+Este anexo está diseñado como un tutorial introductorio para aquellos lectores que no posean conocimientos previos sobre la síntesis de sonido digital. A lo largo de estas páginas se abordarán los conceptos fundamentales de la teoría del sonido, los componentes básicos de un sintetizador y, finalmente, se presentarán algunos de los lenguajes de programación más utilizados en la actualidad para la implementación de estos sistemas.
+
+\section{Fundamentos Básicos del Sonido}
+
+El sonido, desde una perspectiva física, no es más que una variación de la presión del aire que se propaga en forma de ondas. Cuando estas ondas llegan a nuestro oído, el cerebro las interpreta como sonido. Para entender cómo funciona un sintetizador, primero debemos comprender dos propiedades fundamentales de estas ondas: la amplitud y la frecuencia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagenes/onda_sonora_basica.png}
+    \caption{Representación de una onda sonora básica ilustrando amplitud y frecuencia.}
+    \label{fig:onda_sonora}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Amplitud:} Representa la altura de la onda. En términos perceptuales, la amplitud determina el \textit{volumen} o intensidad del sonido. A mayor amplitud, el sonido percibido es más fuerte.
+    \item \textbf{Frecuencia:} Es la velocidad a la que la onda vibra, es decir, el número de ciclos que completa en un segundo. Se mide en Hercios (Hz). La frecuencia determina el \textit{tono} (altura) del sonido; las frecuencias altas producen sonidos agudos, mientras que las frecuencias bajas generan sonidos graves.
+\end{itemize}
+
+En el ámbito digital, el sonido continuo (analógico) se convierte en una serie de valores numéricos discretos mediante un proceso conocido como muestreo (\textit{sampling}). La síntesis digital de sonido es, por tanto, el proceso de generar estos números mediante algoritmos matemáticos en tiempo real para ser enviados a un altavoz.
+
+\section{Componentes Principales de un Sintetizador}
+
+La mayoría de los sintetizadores modernos, ya sean analógicos o digitales, comparten una arquitectura similar basada en módulos interconectados. El paradigma más común es la \textit{síntesis sustractiva}, donde se genera un sonido armónicamente rico y luego se le sustraen frecuencias para esculpir el timbre final.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/arquitectura_sintetizador.png}
+    \caption{Arquitectura en bloques de un sintetizador sustractivo clásico.}
+    \label{fig:arquitectura_sint}
+\end{figure}
+
+A continuación, detallamos los componentes esenciales:
+
+\subsection{El Oscilador (Oscillator / VCO)}
+El oscilador es el corazón del sintetizador; es la fuente original del sonido. Su función es generar una forma de onda continua a una frecuencia específica (determinada, por ejemplo, por la tecla pulsada en un teclado). Las formas de onda más comunes son:
+\begin{itemize}
+    \item \textbf{Senoidal (Sine):} Un sonido puro, sin armónicos adicionales, similar a un silbido suave.
+    \item \textbf{Cuadrada (Square):} Un sonido hueco y penetrante, muy utilizado en la música de videojuegos clásicos (chiptune).
+    \item \textbf{Diente de sierra (Sawtooth):} Un sonido brillante y rico en armónicos, ideal para cuerdas o metales sintetizados y bajos potentes.
+\end{itemize}
+
+\subsection{El Filtro (Filter / VCF)}
+El filtro toma el sonido crudo del oscilador y altera su timbre eliminando (o atenuando) ciertas frecuencias. El filtro más común es el de \textit{Paso Bajo} (Low Pass Filter), que permite pasar las frecuencias graves y recorta las agudas, haciendo que el sonido sea más oscuro o apagado. El parámetro \textit{Cutoff} (frecuencia de corte) determina el punto exacto donde el filtro empieza a actuar.
+
+\subsection{El Amplificador (Amplifier / VCA)}
+El amplificador controla el volumen general de la señal de audio antes de ser enviada a la salida principal. Si el oscilador genera sonido continuamente, el amplificador actúa como una puerta que se abre y se cierra para permitir que escuchemos el sonido solo cuando deseamos (por ejemplo, al pulsar una tecla).
+
+\subsection{Generador de Envolvente (Envelope / ADSR)}
+Para que un sonido se sienta natural, su volumen (u otros parámetros) debe cambiar con el tiempo. Un piano suena fuerte al golpear la tecla y se desvanece gradualmente. El Generador de Envolvente, comúnmente del tipo ADSR, permite modelar este comportamiento temporal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagenes/adsr_envolvente.png}
+    \caption{Curva de un generador de envolvente ADSR.}
+    \label{fig:adsr}
+\end{figure}
+
+Los cuatro parámetros del ADSR son:
+\begin{itemize}
+    \item \textbf{Ataque (\textit{Attack}):} El tiempo que tarda el sonido en alcanzar su volumen máximo desde que se inicia.
+    \item \textbf{Decaimiento (\textit{Decay}):} El tiempo que tarda en bajar desde el nivel máximo hasta el nivel de sostenimiento.
+    \item \textbf{Sostenimiento (\textit{Sustain}):} El nivel de volumen que se mantiene mientras se sigue pulsando la nota.
+    \item \textbf{Relajación (\textit{Release}):} El tiempo que tarda el sonido en desvanecerse hasta el silencio absoluto una vez que se suelta la nota.
+\end{itemize}
+
+\subsection{Oscilador de Baja Frecuencia (LFO)}
+A diferencia del oscilador principal, el LFO (\textit{Low Frequency Oscillator}) vibra a una velocidad tan lenta (generalmente por debajo de los 20 Hz) que no podemos escucharlo como un tono. En su lugar, se utiliza para automatizar de forma cíclica otros parámetros. Por ejemplo, si conectamos un LFO al volumen, obtendremos un efecto de \textit{trémolo}; si lo conectamos al tono del oscilador, obtendremos un \textit{vibrato}.
+
+\subsection{El Mezclador (Mixer)}
+En arquitecturas complejas con múltiples osciladores o fuentes de sonido (como ruido o \textit{samples} pregrabados), el Mezclador es el componente encargado de sumar todas estas señales en un único bus de audio. Permite ajustar el balance de volumen relativo entre las diferentes fuentes antes de que pasen a la etapa de filtrado o amplificación.
+
+\subsection{Imagen Espacial: Estéreo y Paneo (Pan)}
+En el diseño de sonido, no solo importa el timbre y el volumen, sino también la posición espacial del sonido. 
+\begin{itemize}
+    \item \textbf{Mono vs. Estéreo:} Una señal \textit{mono} (monofónica) contiene un único canal de audio, lo que significa que suena igual en el altavoz izquierdo y en el derecho, percibiéndose en el centro geométrico del oyente. Una señal \textit{estéreo} consta de dos canales independientes (izquierdo y derecho), permitiendo crear amplitud y movimiento espacial.
+    \item \textbf{Paneo (\textit{Panning}):} El control de paneo determina cómo se distribuye una señal mono entre los canales izquierdo y derecho de un sistema estéreo. Al ajustar el paneo, podemos posicionar el sonido en cualquier punto del panorama estéreo (por ejemplo, totalmente a la izquierda, al centro o moviéndose dinámicamente de un lado a otro).
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagenes/paneo_estereo.png}
+    \caption{Representación del campo estéreo y el efecto de paneo.}
+    \label{fig:paneo_estereo}
+\end{figure}
+
+\subsection{Procesadores de Efectos}
+Una vez que el sonido básico ha sido generado y esculpido por osciladores, filtros y envolventes, suele pasar por una cadena de efectos para añadir profundidad, carácter y textura. Los más comunes incluyen:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{imagenes/cadena_efectos.png}
+    \caption{Ejemplo de una cadena de señal (\textit{Signal Chain}) con múltiples procesadores de efectos.}
+    \label{fig:cadena_efectos}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Reverberación (\textit{Reverb}):} Simula el comportamiento acústico de un espacio físico (como una habitación, una sala de conciertos o una catedral). Añade una serie densa de ecos muy rápidos que difuminan el sonido, dándole profundidad y sensación de espacio.
+    \item \textbf{Retardo (\textit{Delay}):} Captura la señal de audio y la repite después de un tiempo determinado (tiempo de \textit{delay}), creando un efecto de eco rítmico. Suelen tener un control de retroalimentación (\textit{feedback}) para determinar cuántas veces se repite el eco.
+    \item \textbf{Distorsión (\textit{Distortion}):} Altera la forma de onda original "recortando" sus picos (clipping) o introduciendo armónicos adicionales. Genera un sonido más agresivo, cálido o áspero, fundamental en guitarras eléctricas y en muchos géneros de música electrónica.
+    \item \textbf{Chorus y Flanger:} Ambos son efectos de modulación temporal. El \textit{Chorus} duplica la señal y retrasa ligeramente la copia modulando su tono sutilmente, creando la ilusión de múltiples voces sonando al unísono. El \textit{Flanger} hace algo similar pero con tiempos de retraso mucho más cortos, provocando un efecto de barrido armónico característico similar al sonido de un avión a reacción.
+    \item \textbf{Compresor (\textit{Compressor}):} Es un procesador de dinámica. Reduce el volumen de los picos más fuertes de la señal (cuando superan un cierto umbral) y permite subir el volumen general. Esto resulta en un sonido más "denso" y controlado, asegurando que ninguna parte suene demasiado fuerte ni demasiado floja.
+    \item \textbf{Ecualizador (\textit{Equalizer / EQ}):} Es un tipo de filtro altamente preciso que permite aumentar o atenuar rangos de frecuencia muy específicos sin afectar al resto del espectro, ideal para esculpir el sonido final y hacer que encaje bien en una mezcla musical.
+\end{itemize}
+
+\section{Lenguajes para el Desarrollo de Sintetizadores}
+
+A medida que la síntesis de sonido se ha trasladado al entorno del \textit{software}, han surgido múltiples lenguajes y entornos de programación especializados en el procesamiento de señales de audio digitales (DSP). A continuación se destacan los más relevantes en la industria y el ámbito académico:
+
+\begin{itemize}
+    \item \textbf{Pure Data (Pd):} Es un lenguaje de programación visual de código abierto. En lugar de escribir líneas de código, el usuario conecta "cajas" (nodos) en la pantalla mediante "cables" (aristas) para crear el flujo de la señal. Es altamente popular en entornos interactivos, instalaciones artísticas y el desarrollo rápido de prototipos debido a su enfoque intuitivo.
+    \item \textbf{Max/MSP:} Es el hermano comercial de Pure Data. Desarrollado por la empresa Cycling '74 (ahora parte de Ableton), ofrece una interfaz gráfica mucho más pulida, integración profunda con la popular estación de trabajo de audio digital \textit{Ableton Live} a través de "Max for Live", y una extensa biblioteca de objetos y extensiones comunitarias.
+    \item \textbf{SuperCollider:} A diferencia de Pd y Max, SuperCollider es un lenguaje basado en texto. Está compuesto por un servidor de audio de alto rendimiento y un lenguaje de programación orientado a objetos. Es extraordinariamente potente y eficiente, siendo el lenguaje predilecto para la síntesis algorítmica, composición generativa y actuaciones de \textit{live coding}.
+    \item \textbf{CSound:} Uno de los lenguajes de programación de audio más antiguos y respetados, desarrollado originalmente en el MIT. Se basa en archivos de texto divididos en una "orquesta" (que define los instrumentos) y una "partitura" (que indica cuándo tocarlos). Ofrece una fidelidad de audio excepcional y una inmensa biblioteca de \textit{opcodes} (funciones).
+    \item \textbf{Web Audio API:} No es un lenguaje independiente, sino una interfaz de programación (API) de alto nivel incorporada en los navegadores web modernos (mediante JavaScript). Permite la síntesis de audio, el enrutamiento complejo y el procesamiento de señales directamente en el navegador sin necesidad de \textit{plugins} adicionales, democratizando el acceso a la creación de audio digital.
+\end{itemize}
+
+El dominio de estos entornos requiere una curva de aprendizaje considerable. Es precisamente aquí donde propuestas arquitectónicas de alto nivel, como las metodologías de \textit{Model-Driven Architecture} y los DSL (como se expone en este proyecto), aportan un valor incalculable al simplificar la transición desde la idea abstracta de un sintetizador hasta su implementación en estos lenguajes específicos.

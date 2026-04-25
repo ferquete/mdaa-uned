@@ -1,1 +1,20 @@
 \chapter{Introducción}
+
+El presente proyecto de investigación tiene como finalidad principal la estructuración del desarrollo de sintetizadores de sonido mediante la aplicación de metodologías \textit{Model-Driven Architecture} (MDA). Para lograrlo, el sistema se fundamenta en las dos capas principales de abstracción que propone MDA: el \textit{Computation Independent Model} (CIM) y el \textit{Platform Independent Model} (PIM).
+
+Con el objetivo de orientar y formalizar estos desarrollos, se han diseñado e implementado múltiples lenguajes de dominio específico o \textit{Domain-Specific Languages} (DSL). Estos lenguajes permiten capturar la semántica y la arquitectura de los sintetizadores en diferentes niveles de abstracción.
+
+Una de las grandes ventajas de esta estructuración basada en modelos estrictos es la capacidad de generar \textit{prompts} altamente estructurados y fáciles de procesar por inteligencias artificiales. Esta integración brinda la posibilidad de iterar de manera continua y eficiente entre las fases de diseño y análisis de los modelos de síntesis de audio, explorando con ello nuevas posibles generaciones del generación del código fuente objetivo.
+
+Para materializar este enfoque conceptual, se ha desarrollado una herramienta integral. Esta plataforma ofrece un entorno completo para la definición visual de los modelos, facilitando el ciclo de vida del desarrollo. Los principales puntos que la herramienta ofrece al usuario final incluyen:
+
+\begin{itemize}
+    \item \textbf{Gestión de modelos CIM y PIM:} Entornos dedicados para la abstracción del dominio de síntesis y la arquitectura técnica del sintetizador. Desarrollo gráfico de los modelos PIM, facilitando su iomplementación abstrayendonos de los aspectos de bajo nivel postulados por los DSL desarrollados.
+    \item \textbf{Lenguajes DSL especializados:} Integración de gramáticas propias que validan la coherencia estructural de las conexiones y flujos de señales que debe tener una aplicación software de estas características.
+    \item \textbf{Exportación asistida por IA:} Capacidad de exportar el contexto del proyecto junto con los manuales de los DSL para guiar a una IA en la generación de código funcional. 
+    \item \textbf{Validación continua:} Verificación en tiempo real para garantizar que los modelos cumplen con las restricciones del dominio antes de su implementación.
+\end{itemize}
+
+En conclusión, los DSL desarrollados constituyen el núcleo de este proyecto de investigación, intentando buscar con ellos una forma de estructurar desarrollos en un ambito muy concreto, como es éste de la creación de software especifico para audio digital. 
+
+Este campo, la creación de software especializado en audio regido por modelos de abstracción, aún es un campo por explorar y que presenta muchas posibilidades de desarrollo, por lo que creo que esta investigación puede ser de utilidad para futuros proyectos en esta área.

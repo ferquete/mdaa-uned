@@ -25,6 +25,8 @@ En el ámbito digital, el sonido continuo (analógico) se convierte en una serie
 
 La mayoría de los sintetizadores modernos, ya sean analógicos o digitales, comparten una arquitectura similar basada en módulos interconectados. El paradigma más común es la \textit{síntesis sustractiva}, donde se genera un sonido armónicamente rico y luego se le sustraen frecuencias para esculpir el timbre final.
 
+En el contexto de esta investigación, esta arquitectura modular se corresponde directamente con el concepto de \textbf{Máquina} definido en nuestro \textit{Computation Independent Model} (CIM). El CIM permite abstraer estas configuraciones complejas en unidades funcionales de alto nivel, facilitando la comprensión del flujo sonoro antes de entrar en detalles de implementación técnica.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{imagenes/arquitectura_sintetizador.png}
@@ -32,7 +34,7 @@ La mayoría de los sintetizadores modernos, ya sean analógicos o digitales, com
     \label{fig:arquitectura_sint}
 \end{figure}
 
-A continuación, detallamos los componentes esenciales:
+A continuación, detallamos los componentes esenciales. Cabe destacar que, en nuestro \textit{Platform Independent Model} (PIM), cada uno de estos componentes se representa mediante un \textbf{Nodo}, cuyas propiedades técnicas (como la frecuencia o el tipo de onda) son configurables a través de los parámetros definidos en el DSL.
 
 \subsection{El Oscilador (Oscillator / VCO)}
 El oscilador es el corazón del sintetizador; es la fuente original del sonido. Su función es generar una forma de onda continua a una frecuencia específica (determinada, por ejemplo, por la tecla pulsada en un teclado). Las formas de onda más comunes son:
@@ -71,6 +73,8 @@ A diferencia del oscilador principal, el LFO (\textit{Low Frequency Oscillator})
 
 \subsection{El Mezclador (Mixer)}
 En arquitecturas complejas con múltiples osciladores o fuentes de sonido (como ruido o \textit{samples} pregrabados), el Mezclador es el componente encargado de sumar todas estas señales en un único bus de audio. Permite ajustar el balance de volumen relativo entre las diferentes fuentes antes de que pasen a la etapa de filtrado o amplificación.
+
+Desde el punto de vista del modelado PIM, el flujo de señales entre osciladores, filtros y mezcladores se define mediante \textbf{Aristas} (o conexiones). Estas aristas no solo representan la ruta del audio, sino que en nuestro sistema validan la compatibilidad entre los puertos de salida y entrada de cada nodo, asegurando que el diseño del sintetizador sea técnicamente viable.
 
 \subsection{Imagen Espacial: Estéreo y Paneo (Pan)}
 En el diseño de sonido, no solo importa el timbre y el volumen, sino también la posición espacial del sonido. 

@@ -1,0 +1,24 @@
+\begin{center}
+    \LARGE \textbf{Resumen}
+\end{center}
+
+
+\subsubsection{Contexto}
+
+Investigación sobre la aplicabilidad de arquitecturas dirigidas por modelos en el análisis, diseño y generación de código fuentes de sintetizadores de sonido software. Estructuración de proyectos de software orientados a la generación automática de aplicaciones que implementen sintetizadores de sonido.
+
+\subsubsection{Descripción del problema}
+
+Cómo estructurar, desde el análisis al diseño, un proyecto software que permita la generación automática de aplicaciones que implementen sintetizadores de sonido, en busca de ofrecer un mecanismo estandarizado tanto para la especificación y el diseño de los sintetizadores como para la generación de aplicaciones y su redefinición iterativa.
+
+\subsubsection{¿Por qué hay un problema?}
+
+La problemática del desarrollo software actual enfocado a la creación de sintetizadores de sonido se intenta abordar desde la creación de lenguajes visuales, no desde el punto de vista de la ingeniería software clásica, en la cual un análisis desemboca en un diseño, que a su vez termina en una implementación, y una iteración constante de redefición de todo ello. Lenguajes visuales tales como Pure Data o Max/MSP, permiten que músicos y \textit{artistas sonoros} puedan crear sintetizadores de sonido de manera visual, pero no ofrecen garantías de que el software sea robusto o eficiente.
+
+\subsubsection{Resumen de la solución aportada}
+
+Siguiendo los principios MDA (Model Driven Architecture) se propone una solución basada en la creación de una serie de DSLs (Domain Specific Languages) que guien y acoten las dos principales fases postuladas por MDA, orientándolas hacia el desarrollo de sintetizadores de sonido en software: la especificación funcional del sintetizador (modelo CIM) y el diseño conceptual del mismo (modelo PIM). Estos modelos estrictos guiados por los DSL desarrollados, permiten acotar el problema, tanto en la generación automática del código fuente como en la redefinición iterativa de su análisis y diseño. 
+
+\subsubsection{¿La solución aportada resuelve el problema?}
+
+La propuesta es mas ambiciosa de lo que este trabajo expone, que no es mas que la estructuración del análisis y diseño de este tipo de software de cara a su generación en código. El problema mas amplio sería la estandarización del desarrollo de sintetizadores de sonido desde el prisma de arquitecturas dirigidas por modelos, de lo cual esta investigación pretende dar una opción viable. 

@@ -1,11 +1,11 @@
 \chapter{Anexo B: El Lenguaje Pure Data (Pd) y su Complejidad Estructural}
 \label{anexo:pure_data}
 
-Pure Data (Pd) es un entorno de programación visual de código abierto desarrollado originalmente por Miller Puckette en los años 90. Es ampliamente utilizado por músicos, artistas visuales e investigadores para la creación interactiva de música por ordenador y obras multimedia. A diferencia de los lenguajes de programación tradicionales basados en texto, Pd permite a los usuarios desarrollar algoritmos conectando objetos gráficos en un "lienzo" o \textit{patch}.
+Pure Data (Pd) es un entorno de programación visual de código abierto desarrollado originalmente por Miller Puckette en los años 90. Es ampliamente utilizado por músicos e investigadores para la creación interactiva de música por ordenador y obras multimedia. A diferencia de los lenguajes de programación tradicionales basados en texto, Pd permite a los usuarios desarrollar algoritmos conectando objetos gráficos en un \textit{lienzo} o, como Pure Data los denomina, \textit{patches}.
 
 \section{Programación Visual en Pure Data}
 
-En Pd, un programa se construye instanciando diferentes cajas u "objetos" y conectándolos mediante "cables". Cada objeto realiza una función específica, como generar una onda matemática, sumar dos números o aplicar un filtro a una señal de audio.
+En Pd, un programa se construye instanciando diferentes cajas u \textit{objetos} y conectándolos mediante \textit{cables}. Cada objeto realiza una función específica, como generar una onda matemática, sumar dos números o aplicar un filtro a una señal de audio.
 
 El flujo de información viaja a través de las conexiones de arriba hacia abajo. Existen dos tipos principales de conexiones:
 \begin{itemize}
@@ -31,7 +31,7 @@ A medida que un sintetizador crece en complejidad, el lienzo visual puede volver
     \item \textbf{Abstracciones:} Consisten en guardar un \textit{patch} en un archivo \texttt{.pd} independiente y luego invocarlo desde otro \textit{patch} simplemente escribiendo su nombre en una caja de objeto. Esto permite la verdadera reutilización de código; por ejemplo, se puede diseñar un oscilador complejo y reutilizarlo múltiples veces instanciando su abstracción.
 \end{itemize}
 
-Desde la perspectiva de las herramientas de generación automática desarrolladas en este proyecto, este concepto de encapsulación es fundamental. Un sub-módulo en Pure Data equivale directamente al concepto arquitectónico de \textbf{"Máquina"} definido en nuestros lenguajes DSL. Del mismo modo, esta misma equivalencia semántica se mapea a \textbf{clases} o \textbf{métodos} cuando el código objetivo es un lenguaje de texto estructurado como JavaScript u otros lenguajes soportados.
+Desde la perspectiva de las herramientas de generación automática desarrolladas en este proyecto, este concepto de encapsulación es fundamental. Un sub-módulo en Pure Data equivale directamente al concepto arquitectónico de \textbf{\textit{Máquina}} definido en nuestros lenguajes DSL. Del mismo modo, esta misma equivalencia semántica se mapea a \textbf{clases} o \textbf{métodos} cuando el código objetivo es un lenguaje de texto estructurado como JavaScript u otros lenguajes soportados.
 
 \section{Entorno Recomendado: Pd-l2ork (Purr Data)}
 
@@ -40,7 +40,9 @@ Aunque existe una versión original o \textit{vanilla} de Pure Data mantenida po
 Esta bifurcación (\textit{fork}) del proyecto original ofrece una interfaz gráfica basada en tecnologías web mucho más amigable, mejoras significativas de usabilidad y un vasto conjunto de librerías y extensiones preinstaladas que facilitan la creación de sintetizadores sin necesidad de compilar dependencias de terceros.
 
 \subsection{Instalación y Configuración Básica}
-Pd-l2ork es multiplataforma y puede descargarse de forma gratuita desde su sitio web oficial o directamente desde su repositorio de lanzamientos (\url{https://github.com/agraef/purr-data/releases}). La instalación sigue el proceso estándar de cualquier aplicación según el sistema operativo (Windows, macOS o Linux).
+Pd-l2ork es multiplataforma y puede descargarse de forma gratuita desde su sitio web oficial  (\url{https://l2ork.bukvic.net/main/make-your-own-l2ork/software/}). La instalación sigue el proceso estándar de cualquier aplicación según el sistema operativo (Windows, macOS o Linux).
+
+
 
 Un detalle crucial y un error extremadamente común entre los principiantes, es intentar hacer sonar un \textit{patch} sin haber activado el motor de audio del programa. Para que cualquier objeto relacionado con la síntesis de sonido (aquellos terminados en \verb|~|) genere salida acústica, es estrictamente necesario activar el procesamiento digital de señales.
 

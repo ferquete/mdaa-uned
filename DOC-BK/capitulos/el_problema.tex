@@ -1,18 +1,14 @@
-\section{El Problema}
+\chapter{El problema}
 
 
-\subsection{Descripción completa del problema planteado}
+\section{Descripción del problema planteado}
 
 El desarrollo de software orientado a la creación de sintetizadores de sonido constituye un dominio altamente especializado que, con frecuencia, se desvía de los paradigmas clásicos de programación. Históricamente, este campo ha carecido de metodologías formales que estructuren el ciclo de vida del desarrollo, priorizando una aproximación directa a la implementación (\textit{bottom-up}) sobre un proceso sistemático de ingeniería. En esto ha pesado mucho el usuario al que los lenguajes desarrollados se dirigen, músicos, ingenieros de sonido, diseñadores de sonido, etc., los cuales no suelen tener conocimientos de programación. Salvo en los casos de lenguajes de propósito general como librerías adaptadas a la síntesis musical en JavaScript o C, u otras enfocadas a la investigación sonora como SuperCollider o Csound, la mayoría de las herramientas disponibles, con éxito de uso, para el desarrollo de sintetizadores de audio son framework visuales, como Pure Data o Max/MSP.
 
 El problema fundamental radica en la ausencia de un flujo de trabajo que permita asentar un análisis sólido, el cual deba desembocar en un diseño arquitectónico que sirva como pilar para la generación del código fuente. Esta carencia metodológica impide la trazabilidad y la iteración efectiva entre las distintas fases del desarrollo. Sin un modelo formal intermedio, resulta extremadamente complejo volver atrás para redefinir el análisis o aplicar cambios en el diseño de forma que se reflejen de manera coherente y automática en el producto final. Esta desconexión entre la intención creativa y la implementación técnica limita la escalabilidad de los proyectos y dificulta la reutilización de componentes lógicos entre diferentes desarrollos.
 
 
-\subsection{Restricciones introducidas al problema genérico}
-
-% TODO: Añadir contenido de restricciones si se requiere
-
-\subsection{Opciones ya existentes para resolver el problema y cuáles son las limitaciones que tienen.}
+\section{Opciones ya existentes para su resolución y limitaciones de las mismas}
 
 Si bien es cierto que es posible utilizar lenguajes de propósito general (como C++ o Rust) para el desarrollo de sintetizadores, lo que permitiría teóricamente aplicar técnicas como las postuladas por \textit{Model-Driven Architecture} (MDA) y ciclos de vida de ingeniería de software tradicionales, este no es un enfoque realista en la práctica. La realidad del sector muestra que los perfiles encargados de la creación de estas herramientas —músicos, artistas sonoros, diseñadores de audio e ingenieros de sonido— no suelen poseer una formación profunda en arquitectura de software o paradigmas de programación complejos. 
 

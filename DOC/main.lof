@@ -1,16 +1,1 @@
 \babel@toc {spanish}{}\relax 
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Representaci^^c3^^b3n de una onda sonora b^^c3^^a1sica ilustrando amplitud y frecuencia.}}{12}{figure.Alph1.1}%
-\contentsline {figure}{\numberline {A.2}{\ignorespaces Arquitectura en bloques de un sintetizador sustractivo cl^^c3^^a1sico.}}{13}{figure.Alph1.2}%
-\contentsline {figure}{\numberline {A.3}{\ignorespaces Curva de un generador de envolvente ADSR.}}{15}{figure.Alph1.3}%
-\contentsline {figure}{\numberline {A.4}{\ignorespaces Representaci^^c3^^b3n del campo est^^c3^^a9reo y el efecto de paneo.}}{17}{figure.Alph1.4}%
-\contentsline {figure}{\numberline {A.5}{\ignorespaces Ejemplo de una cadena de se^^c3^^b1al (\textit {Signal Chain}) con m^^c3^^baltiples procesadores de efectos.}}{18}{figure.Alph1.5}%
-\addvspace {10\p@ }
-\contentsline {figure}{\numberline {B.1}{\ignorespaces Interfaz visual de un \textit {patch} en Pure Data.}}{22}{figure.Alph2.1}%
-\contentsline {figure}{\numberline {B.2}{\ignorespaces Consola principal de Pd-l2ork destacando la casilla DSP.}}{24}{figure.Alph2.2}%

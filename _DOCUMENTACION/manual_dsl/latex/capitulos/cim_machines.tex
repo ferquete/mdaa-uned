@@ -1,0 +1,178 @@
+\chapter{Manual de Referencia Técnica MDA-Audio-CIM-Machine}
+
+Este documento es la especificación técnica completa del lenguaje \textbf{MDA-Audio-CIM-Machine}. Define la estructura de las máquinas de audio en el nivel más abstracto, así como las relaciones de sus elementos internos entre sí, y las entradas y salidas desde el exterior que pueden recibir o enviar. Siguiendo la nomenclatura de \textit{Model-Driven-Architecture} (MDA), este nivel se conoce como \textbf{CIM} (\textit{Computational Independence Model}).
+
+En el CIM no se tiene porqué hablar de implementaciones concretas (osciladores, LFOs, filtros específicos) a bajo nivel, sino de \textbf{elementos} abstractos que capturan la intención del diseño de síntesis de la máquina.
+
+\section{Bases del Modelo}
+
+Una máquina es un conjunto de elementos que trabajan juntos para producir sonido. A su vez, como veremos más adelante, las máquinas cooperan entre sí para intercambiar sonido o valores de modificación (ejemplos: volumen, frecuencia, etc.) entre ellas.
+
+\subsection{Modelo Raíz (\texttt{Document})}
+
+El objeto raíz de un archivo MDA-Audio-CIM identifica a la máquina y contiene sus elementos compositivos.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único de la máquina CIM. & Obligatorio. 36 car. (UUID). \\
+\texttt{name} & STRING & Nombre descriptivo de la máquina. & Obligatorio. 1 a 20 car. \\
+\texttt{description} & STRING & Propósito y contexto de la máquina. & Obligatorio. 10 a 600 car. \\
+\texttt{elements} & ARRAY[Element] & Componentes que representan generadores o procesadores. & Obligatorio. Puede estar vacío. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Documento:}
+\begin{lstlisting}[language=json]
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Oscillator Core",
+  "description": "A fundamental oscillator machine for basic wave generation and shaping.",
+  "elements": [ ... ]
+}
+\end{lstlisting}
+
+\subsection{Interfaz del Elemento (\texttt{Element})}
+
+Todos los bloques funcionales se definen como \texttt{Element}. Todos los campos base son obligatorios.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único del componente. & Obligatorio. 36 car. (UUID). \\
+\texttt{name} & STRING & Nombre del elemento. & Obligatorio. 1 a 20 car. \\
+\texttt{description} & STRING & Descripción funcional. & Obligatorio. 10 a 600 car. \\
+\texttt{params} & STRING & Parámetros modificables. & Obligatorio. 10 a 600 car. \\
+\texttt{externalOutput} & ExternalOutput & Salida externa. & Obligatorio. \\
+\texttt{externalInput} & ExternalInput & Entrada externa. & Obligatorio. \\
+\texttt{sendTo} & ARRAY[SendTo] & Conexiones internas. & Obligatorio. Puede estar vacío. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Elemento:}
+\begin{lstlisting}[language=json]
+{
+  "id": "771e8400-e29b-41d4-a716-446655440111",
+  "name": "Sine Generator",
+  "description": "Generates a pure sine wave at a fixed base frequency.",
+  "params": "frequency: 440Hz, gain: 0.8, phase: 0.0",
+  "externalInput": { "hasExternalInput": false },
+  "externalOutput": {
+    "hasExternalOutput": true,
+    "description": "Audio output of the sine wave."
+  },
+  "sendTo": []
+}
+\end{lstlisting}
+
+\subsubsection{Configuración Externa}
+
+Los subobjetos \texttt{externalOutput} y \texttt{externalInput} definen si el elemento sirve como uno de los puertos de entrada/salida global de la máquina.
+
+\textbf{ExternalOutput / ExternalInput:}
+\begin{itemize}
+    \item \texttt{hasExternalOutput} / \texttt{hasExternalInput} (BOOLEAN): Habilita el puerto.
+    \item \texttt{description} (STRING): Describe la naturaleza del puerto. Máximo 600 caracteres.
+\end{itemize}
+
+\subsection{Objeto de Conexión Interna (\texttt{SendTo})}
+
+Define un vínculo direccional desde un elemento hacia otro dentro de la misma máquina. El elemento referenciado en el campo \texttt{idRef} debe existir dentro del documento.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único de esta conexión. & Obligatorio. 36 car. (UUID). \\
+\texttt{idRef} & REF[Element] & Referencia al elemento de destino. & Obligatorio. Debe existir. \\
+\texttt{description} & STRING & Justificación técnica del vínculo. & Obligatorio. 10 a 600 car. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Conexión:}
+\begin{lstlisting}[language=json]
+{
+  "id": "b22e8400-e29b-41d4-a716-446655440333",
+  "idRef": "c33e8400-e29b-41d4-a716-446655440444",
+  "description": "Route filtered signal to the high pass filter element."
+}
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=IMPORTANTE]
+Un elemento \textbf{no puede referenciarse a sí mismo} en su lista \texttt{sendTo}. El compilador rechaza cualquier auto-referencia como error fatal.
+\end{tcolorbox}
+
+\section{Tipos de Elemento de Audio (\texttt{Element})}
+
+Representan cualquier bloque funcional de señal sonora dentro de la máquina. A este nivel no se especifica el algoritmo de síntesis: eso corresponde al PIM.
+
+Los elementos típicos abarcan:
+\begin{itemize}
+    \item \textbf{Fuentes / Generadores:} Osciladores, samplers, generadores de ruido.
+    \item \textbf{Modificadores / Efectos:} Filtros, reverbs, delays, envolventes ADSR, etc.
+\end{itemize}
+
+El campo \texttt{params} describe en lenguaje natural los parámetros conceptuales del elemento (ej.: \textit{``Frequency, Waveform''} o \textit{``Cutoff, Resonance''}).
+
+\section{Reglas de Validación}
+
+Se aplican las siguientes restricciones para garantizar que el modelo sea procesable:
+
+\subsection{Reglas de Unicidad}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lp{10cm}@{}}
+\toprule
+Alcance & Regla \\ \midrule
+\textbf{Global} & Todos los \texttt{id} de todos los componentes deben ser únicos en el documento entero. \\
+\textbf{Local} & No puede haber dos entradas en el array \texttt{sendTo} de un mismo componente con el mismo \texttt{id}. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Restricciones de Campos}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Entidad & Campo & Restricción \\ \midrule
+\texttt{Document} & \texttt{id} & Exactamente 36 caracteres. \\
+\texttt{Document} & \texttt{name} & Entre 1 y 20 caracteres. \\
+\texttt{Document} & \texttt{description} & Entre 10 y 600 caracteres. \\
+\texttt{Element} & \texttt{id} & Exactamente 36 caracteres. \\
+\texttt{Element} & \texttt{name} & Entre 1 y 20 caracteres. \\
+\texttt{Element} & \texttt{description} & Entre 10 y 600 caracteres. \\
+\texttt{Element} & \texttt{params} & Entre 10 y 600 caracteres. \\
+\texttt{Element} & \texttt{externalDesc} & Máximo 600 caracteres. \\
+\texttt{SendTo} & \texttt{id} & Exactamente 36 caracteres. \\
+\texttt{SendTo} & \texttt{description} & Entre 10 y 600 caracteres. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Restricciones de Conectividad}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lp{10cm}@{}}
+\toprule
+Regla & Descripción \\ \midrule
+\textbf{Sin auto-referencia} & El \texttt{idRef} de un \texttt{SendTo} no puede apuntar al mismo elemento que lo contiene. \\
+\textbf{Referencia válida} & El \texttt{idRef} debe resolver a un \texttt{Element} existente en el documento. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\section{Guía de Uso}
+
+CIM define conceptualmente una máquina de audio, entendiendo esta como un módulo que puede trabajar en solitario o bien en conjunto con otras máquinas (véase el documento de relaciones entre máquinas CIM). Proporciona el marco para que los diseñadores de sonido establezcan las capacidades de entrada/salida y el flujo interno sin preocuparse por la implementación técnica subyacente. Los modelos resultantes son la base para generar las especificaciones PIM detalladas.

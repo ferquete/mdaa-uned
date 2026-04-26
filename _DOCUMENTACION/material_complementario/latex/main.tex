@@ -1,0 +1,90 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{setspace}
+% \usepackage{parskip} % Eliminado para permitir la sangría en la primera línea de los párrafos
+\setlength{\parskip}{0.6em} % Añade espacio vertical entre párrafos
+\setlength{\parindent}{15pt} % Establece la sangría de la primera línea
+\usepackage{bookmark}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\usepackage{tcolorbox}
+
+% Configuración de colores para el código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+% Configuración de estilo para listings
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{black!10},
+    language=Java,
+    upquote=true,
+    extendedchars=true,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1
+}
+
+% Traducción de etiquetas de listings
+\renewcommand{\lstlistingname}{Código}
+\renewcommand{\lstlistlistingname}{Índice de códigos}
+
+
+\geometry{a4paper, margin=25mm}
+\setstretch{1.15}
+
+% Metadata del documento
+\title{MDA Audio: Material Complementario}
+\author{Fernando Real Cisneros \\ \small Generación Automática de Código \\ \small UNED \\ \small Máster Universitario en Investigación en Ingeniería de Software}
+\date{\today}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{4cm}
+    {\Huge \bfseries MDA Audio \par}
+    \vspace{1.5cm}
+    {\Large Material Complementario y Anexos Técnicos \par}
+    \vspace{2cm}
+    {\Large \textbf{Fernando Real Cisneros} \par}
+    \vfill
+    {\large \today \par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\appendix
+\include{capitulos/anexo_a_sintesis}
+\include{capitulos/anexo_b_pure_data}
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+
+\end{document}

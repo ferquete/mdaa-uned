@@ -1,5 +1,7 @@
 # Node & NPM
 node_modules/
+.npm_cache/
+tmp-npm-cache/
 dist/
 build/
 .npm/
@@ -82,6 +84,8 @@ ehthumbs.db
 .GEMINI.md
 GEMINI.md
 Icon\r
+ProyectoBase.code-workspace
+.vscode/
 
 # Docker
 .docker/

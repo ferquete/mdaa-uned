@@ -6,13 +6,25 @@ La solución propuesta postula ver tanto el análisis como el diseño conceptual
 
 De cara a la generación del código resultado, aglutinaremos toda la información estructurada obtenida del análisis y el diseño, le aplicamos una capa de transformación de cara a facilitar su comprensión por modelos IA generalistas, e incluiremos a todo esto infromación suficiente para que esta IA pueda conocer los DSL y su sentido.
 
-Para este artículo, nos cenramos en el camino directo, en pasar de un análisis y diseño a código, y no en el camino contrario (backward-engineering), pero más adelante veremos como esta aproximación ha sido concevida para intentar llegar a ese estadio.
+Para este artículo, nos centramos en el camino directo, en pasar de un análisis y diseño a código, y no en el camino contrario (backward-engineering), pero más adelante veremos como esta aproximación ha sido concevida para intentar llegar a ese estadio.
 
 
 
 \section{Descripción detallada de la solución propuesta}
 
-Para ello, se establecen una serie de DSL a cumplir por cada una de estas 2 fases, 2 definiciones DSL para la fase de análisis y otras 2 para la fase de diseño: 
+Se han establecido una serie de DSL a cumplir por cada una de estas 2 fases, 2 definiciones DSL para la fase de análisis y otras 2 para la fase de diseño: 
+
+\subsubsection*{Lenguajes de Análisis (CIM)}
+\begin{itemize}
+    \item \texttt{mdaa-cim-machine}: Permite la definición conceptual de máquinas de audio, estableciendo su identidad, puertos de comunicación y configuraciones base.
+    \item \texttt{mdaa-cim-relations-machines}: Define las conexiones conceptuales y el flujo de señales abstracto entre las distintas máquinas definidas en el análisis.
+\end{itemize}
+
+\subsubsection*{Lenguajes de Diseño (PIM)}
+\begin{itemize}
+    \item \texttt{mdaa-pim-machine}: Facilita la definición detallada de la arquitectura interna de las máquinas, especificando generadores, modificadores y efectos de audio.
+    \item \texttt{mdaa-pim-relations-machines}: Se encarga de la orquestación de las interconexiones técnicas y vínculos detallados entre los componentes internos de las máquinas.
+\end{itemize}
 
 \subsection{Descripción funcional de la solución aportada}
 \subsection{Detalles del prototipo realizado si fuera necesario}

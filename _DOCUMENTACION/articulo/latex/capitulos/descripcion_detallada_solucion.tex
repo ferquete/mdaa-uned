@@ -1,5 +1,19 @@
-\section{Descripción detallada de la solución propuesta}
+
 \subsection{Descripción de alto nivel de la solución aportada}
+
+
+La solución propuesta postula ver tanto el análisis como el diseño conceptual de un proyecto como una estricta estructuración, enfocada totalmente en el dominio del problema, que en el caso tratado es el desarrollo de software en el ámbito de la generación de sintetizadores de sonido software. No solo partimos de un lenguaje de modelado estríctamente utilizado en la capa de diseño, sino que partimos de una rígida estructuración ya en el propio análisis del problema. Nos apoyamos en los postulados de MDA, pero no al 100\%, al carecer de capa PSM (Modelo Específico de Plataforma), sin embargo sí que seguimos los postulados MDA en cuanto a la división de fases, y si que obligamos a mantener una trazabilidad completa de los modelos generados, ya que las propias definiciones DSL lo exigen.
+
+De cara a la generación del código resultado, aglutinaremos toda la información estructurada obtenida del análisis y el diseño, le aplicamos una capa de transformación de cara a facilitar su comprensión por modelos IA generalistas, e incluiremos a todo esto infromación suficiente para que esta IA pueda conocer los DSL y su sentido.
+
+Para este artículo, nos cenramos en el camino directo, en pasar de un análisis y diseño a código, y no en el camino contrario (backward-engineering), pero más adelante veremos como esta aproximación ha sido concevida para intentar llegar a ese estadio.
+
+
+
+\section{Descripción detallada de la solución propuesta}
+
+Para ello, se establecen una serie de DSL a cumplir por cada una de estas 2 fases, 2 definiciones DSL para la fase de análisis y otras 2 para la fase de diseño: 
+
 \subsection{Descripción funcional de la solución aportada}
 \subsection{Detalles del prototipo realizado si fuera necesario}
 \subsection{Casos de uso aplicados para las pruebas de demostración.}

@@ -7,6 +7,8 @@ El desarrollo de software orientado a la creación de sintetizadores de sonido c
 
 El problema fundamental radica en la ausencia de un flujo de trabajo que permita asentar un análisis sólido, el cual deba desembocar en un diseño arquitectónico que sirva como pilar para la generación del código fuente. Esta carencia metodológica impide la trazabilidad y la iteración efectiva entre las distintas fases del desarrollo. Sin un modelo formal intermedio, resulta extremadamente complejo volver atrás para redefinir el análisis o aplicar cambios en el diseño de forma que se reflejen de manera coherente y automática en el producto final. Esta desconexión entre la intención creativa y la implementación técnica limita la escalabilidad de los proyectos y dificulta la reutilización de componentes lógicos entre diferentes desarrollos.
 
+Por otro lado, el surgimiento de LLMs capaces de generar código de alta calidad ha abierto nuevas posibilidades para el desarrollo de software. Sin embargo, el uso de estos modelos de cara a la generación automática de código también presentan grandes desafíos, como la falta de mecanismos formales para realizar \textit{Backward Engineering} entre los modelos definitorios del código y el propio código generado por la propia IA, y como se puede mantener la trazabilidad entre ambos. Se hace necesario buscar mecanismos que permitan unir la intención del desarrollador con el código generado por la IA, a través de una representación intermedia que sea fácilmente comprensible por el ser humano y que a la vez sea capaz de ser utilizada por la IA para generar el código.
+
 
 \subsection{Restricciones introducidas al problema genérico}
 
@@ -18,6 +20,6 @@ Si bien es cierto que es posible utilizar lenguajes de propósito general (como 
 
 Para estos usuarios, el uso de lenguajes de bajo nivel o marcos de trabajo genéricos supone una barrera de entrada técnica insalvable que asfixia la creatividad. Por ello, la industria ha convergido hacia herramientas de programación visual, que aunque facilitan la implementación inmediata, carecen habitualmente de las capas de abstracción necesarias para realizar un análisis y diseño formal previo e independiente de la implementación final. 
 
-Por todo esto, y tras buscar bastante información al respecto, no he encontrado nada que intente solventar este problema. Lo cual, por un lado hace pensar que quizás sea por la poca utilidad práctica final que pudiera tener este enfoque planteado, pero por otro lo hace interesante para su investigación
+Por todo esto, y tras buscar bastante información al respecto, no he encontrado nada que intente solventar este problema. Lo cual, por un lado hace pensar que quizás sea por la poca utilidad práctica final que pudiera tener este enfoque planteado, pero por otro lo hace interesante para su investigación.
 
 

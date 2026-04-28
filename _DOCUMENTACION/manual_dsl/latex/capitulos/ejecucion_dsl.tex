@@ -1,0 +1,79 @@
+\chapter{Ejecución de los DSL}
+
+En este capítulo se recopila la información de ejecución y validación para cada uno de los lenguajes de dominio específico desarrollados. Esta información se extrae directamente de los archivos \texttt{README.md} de cada proyecto DSL.
+
+\section{DSL CIM Machine}
+
+Este lenguaje permite la definición conceptual de máquinas de audio en el nivel \textit{CIM}. Define la identidad, puertos y configuraciones base de las máquinas.
+
+\subsection{Comandos Principales}
+\begin{itemize}
+    \item \texttt{npm run langium:generate}: Genera el código del lenguaje a partir de la gramática.
+    \item \texttt{npm run build}: Compila los servicios y validadores.
+\end{itemize}
+
+\subsection{Validación de Modelos JSON}
+Se utiliza el script \texttt{validate.ts} para asegurar que los modelos cumplen tanto con la estructura \texttt{JSON} como con las reglas del lenguaje.
+
+\begin{lstlisting}[language=bash]
+# Validar un fichero individual
+node validate.ts examples/valid/valid-1.json
+
+# Validar todos los ficheros de un directorio
+node validate.ts examples/valid
+\end{lstlisting}
+
+\section{DSL CIM Relations}
+
+Este lenguaje define las conexiones conceptuales entre máquinas \textit{CIM}, permitiendo modelar el flujo de señales de audio y modificaciones a nivel abstracto.
+
+\subsection{Comandos Principales}
+\begin{itemize}
+    \item \texttt{npm run langium:generate}: Genera el código del lenguaje.
+    \item \texttt{npm run build}: Compila los servicios de validación.
+\end{itemize}
+
+\subsection{Validación de Modelos JSON}
+Soporta validación interna y validación cruzada referenciando máquinas reales.
+
+\begin{lstlisting}[language=bash]
+# Validacion Interna
+node validate.ts examples/valid
+
+# Validacion Cruzada
+node validate.ts examples/valid examples/machines
+\end{lstlisting}
+
+\section{DSL PIM Machine}
+
+Este lenguaje permite definir máquinas de audio a nivel \textit{PIM}, incluyendo generadores, modificadores y efectos.
+
+\subsection{Comandos Principales}
+\begin{itemize}
+    \item \texttt{npm run langium:generate}: Genera el código TypeScript a partir de la gramática.
+    \item \texttt{npm run build}: Compila el proyecto.
+\end{itemize}
+
+\subsection{Validación de Modelos JSON}
+\begin{lstlisting}[language=bash]
+# Validacion individual o directorio
+node validate.ts examples/valid
+
+# Validacion Cruzada (PIM + Universo CIM)
+node validate.ts examples/valid examples/machines
+\end{lstlisting}
+
+\section{DSL PIM Relations}
+
+DSL para la orquestación de interconexiones técnicas entre máquinas \textit{PIM}. Permite establecer vínculos directos entre puertos de salida externos y parámetros o puertos de entrada.
+
+\subsection{Validación}
+Soporta dos modos: estructural (sintáctica) y cruzada (semántica).
+
+\begin{lstlisting}[language=bash]
+# Validacion Estructural
+node validate.ts <fichero_o_directorio>
+
+# Validacion Cruzada
+node validate.ts <fichero_o_directorio> examples/machines
+\end{lstlisting}

@@ -1,0 +1,10 @@
+\chapter{Introducción}
+
+En este manual se detallan los lenguajes de dominio específico (\textit{DSLs}) utilizados en el ecosistema \textit{MDAA} para el diseño y generación de sintetizadores de audio. Siguiendo el paradigma de \textit{Model-Driven Architecture} (\textit{MDA}), la documentación se divide en dos niveles fundamentales:
+
+\begin{itemize}
+    \item \textbf{CIM} (\textit{Computational Independent Model}): Refleja el diseño de alto nivel. En este nivel se define qué elementos componen una máquina y cómo se relacionan a nivel funcional, sin entrar en detalles de implementación técnica o parámetros específicos de síntesis.
+    \item \textbf{PIM} (\textit{Platform Independent Model}): Representa el diseño conceptual detallado. Es una evolución del \textit{CIM} donde los elementos abstractos se convierten en nodos de síntesis concretos (osciladores, filtros, envolventes) con parámetros técnicos definidos, manteniendo la independencia de la plataforma final de ejecución.
+\end{itemize}
+
+Es importante destacar que el diseño en el nivel \textit{PIM} siempre hará referencia a la estructura definida previamente en el nivel \textit{CIM}, garantizando la trazabilidad desde la idea funcional hasta la especificación técnica.

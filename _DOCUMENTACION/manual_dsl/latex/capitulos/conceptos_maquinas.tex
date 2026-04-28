@@ -1,0 +1,28 @@
+\chapter{Concepto de Máquinas y Relaciones}
+
+Para comprender la arquitectura del sistema, es necesario definir qué consideramos una máquina y cómo interactúan entre sí y con el exterior.
+
+\section{Señales de Sonido y Modificación}
+
+Antes de entrar en el concepto de máquina, debemos distinguir los dos tipos de señales que fluyen por el sistema:
+
+\begin{itemize}
+    \item \textbf{Señal de Sonido}: Es el flujo de audio propiamente dicho (formas de onda). Se encarga de transportar la información que finalmente será audicionada.
+    \item \textbf{Señal de Modificación}: Es una señal de control que no se oye directamente, sino que se utiliza para alterar parámetros de otros elementos (por ejemplo, una señal de un \textit{LFO} que modifica la frecuencia de un oscilador).
+\end{itemize}
+
+\section{El Concepto de Máquina}
+
+Una \textbf{máquina} es un ente funcional generador de sonido, modificador de sonido o ambos. Está compuesta por elementos internos (generadores o modificadores) que colaboran para cumplir su propósito. 
+
+Desde una perspectiva técnica, una máquina recibe señales del exterior y envía al exterior sonido o señales de modificación a través de sus puertos habilitados.
+
+\subsection{Máquinas en el nivel CIM}
+En el nivel \textit{CIM}, la máquina se ve como una caja negra con elementos abstractos. El objetivo es capturar la intención del diseño sin especificar algoritmos.
+
+\subsection{Máquinas en el nivel PIM}
+En el nivel \textit{PIM}, la máquina se descompone en un grafo de nodos técnicos. Cada nodo es una implementación concreta que procesa señales de audio o modificación siguiendo las reglas de la síntesis digital.
+
+\section{Relaciones}
+
+Dentro de cada modelo (\textit{CIM} y \textit{PIM}), las máquinas y sus componentes internos establecen \textbf{relaciones}. Estas relaciones definen el flujo de las señales mencionadas anteriormente, permitiendo construir sistemas complejos a partir de unidades funcionales simples.

@@ -1,1 +1,26 @@
-\section{¿Cómo evaluar las soluciones?}
+\section{¿Cómo evaluar la solución?}
+\label{sec:como_evaluar_la_solucion}
+
+El enfoque propuesto para evaluar la eficacia de la solución se basa en un análisis comparativo entre la generación asistida por modelos estructurados (uso de los DSL a través de la herramienta \textit{MDAA}) y el uso de \textit{prompts} descriptivos convencionales. 
+
+\subsection{Metodología de Evaluación}
+
+La forma más directa de realizar esta evaluación consiste en comparar los resultados de dos escenarios de generación de código mediante Inteligencia Artificial (IA):
+
+\begin{enumerate}
+    \item \textbf{Generación basada en MDAA:} Se proporcionan los ficheros generados por la aplicación utilizando los DSL de análisis y diseño como contexto para la IA.
+    \item \textbf{Generación convencional:} Se proporciona un \textit{prompt} puramente explicativo que describa las funcionalidades deseadas del sintetizador sin el soporte de los modelos propuestos.
+\end{enumerate}
+
+Para estas pruebas, un buen lenguaje objetivo de generación podría ser \textbf{Pure Data}. Su complejidad en materia de generación de código a través de IA lo convierte en el caso de estudio ideal para validar si la estructura aportada por los DSL marca una diferencia significativa.
+
+\subsection{Criterios de Análisis}
+
+En base a la información obtenida en ambos escenarios, se deben comprobar los siguientes parámetros críticos:
+
+\begin{itemize}
+    \item \textbf{Replicabilidad:} Evaluar si múltiples intentos de pasar la misma información a la IA producen resultados consistentes o determinar el grado de similitud entre las distintas versiones generadas.
+    \item \textbf{Grado de Optimización:} Valorar si el resultado es óptimo para el propósito buscado. Aunque este criterio posee una componente subjetiva, permite medir la alineación del código con la intención del diseñador.
+    \item \textbf{Usabilidad Directa:} Determinar si los resultados son usables \enquote{a la primera} o si se requiere de un proceso iterativo de reenvío de \textit{prompts} para obtener algo razonable. Se considera un éxito si el código es ejecutable de inmediato o si solo requiere ajustes menores en detalles triviales.
+\end{itemize}
+

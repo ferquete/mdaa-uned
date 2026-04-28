@@ -2,10 +2,14 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noquoting]{babel}
+\usepackage{csquotes}
 
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{geometry}
+
+% Definición de variables globales
+\newcommand{\urlProyecto}{https://gitlab.com/proyectos\_audio/mdaa}
 \usepackage{titlesec}
 \usepackage{etoolbox}
 \usepackage{setspace}
@@ -90,11 +94,10 @@
 ]
 
 \include{capitulos/introduccion}
-
 \include{capitulos/el_problema}
+\include{capitulos/como_evaluar_la_solucion}
 \include{capitulos/descripcion_detallada_solucion}
 \include{capitulos/evaluacion_comparacion_solucion}
-\include{capitulos/como_evaluar_la_solucion}
 \include{capitulos/conclusiones}
 
 \end{document}

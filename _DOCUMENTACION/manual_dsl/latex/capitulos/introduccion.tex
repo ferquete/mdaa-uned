@@ -1,6 +1,6 @@
 \chapter{Introducción}
 
-En este manual se detallan los lenguajes de dominio específico (\textit{DSLs}) utilizados en el ecosistema \textit{MDAA} para el diseño y generación de sintetizadores de audio. Siguiendo el paradigma de \textit{Model-Driven Architecture} (\textit{MDA}), la documentación se divide en dos niveles fundamentales:
+En este manual se detallan los lenguajes de dominio específico (\textit{DSLs}) desarrollados para el diseño y generación de sintetizadores de audio. Siguiendo el paradigma de \textit{Model-Driven Architecture} (\textit{MDA}), la documentación se divide en dos niveles fundamentales:
 
 \begin{itemize}
     \item \textbf{CIM} (\textit{Computational Independent Model}): Refleja el diseño de alto nivel. En este nivel se define qué elementos componen una máquina y cómo se relacionan a nivel funcional, sin entrar en detalles de implementación técnica o parámetros específicos de síntesis.
@@ -8,3 +8,28 @@ En este manual se detallan los lenguajes de dominio específico (\textit{DSLs}) 
 \end{itemize}
 
 Es importante destacar que el diseño en el nivel \textit{PIM} siempre hará referencia a la estructura definida previamente en el nivel \textit{CIM}, garantizando la trazabilidad desde la idea funcional hasta la especificación técnica.
+
+La estructura del manual se organiza de la siguiente manera:
+
+\begin{itemize}
+    \item \textbf{Conceptos Fundamentales}: Definición de máquinas y flujos de señales.
+    \item \textbf{CIM}: Gramáticas para la definición de la estructura funcional.
+    \item \textbf{PIM}: Gramáticas para la especificación técnica de síntesis.
+    \item \textbf{Aplicación \textit{MDAA}}: Integración con herramientas de \textit{IA},generación de prompts y archivos \textit{JSON}.
+    \item \textbf{Ejecución}: Guía práctica para la compilación y validación de los modelos.
+\end{itemize}
+
+
+\begin{tcolorbox}[colback=blue!5,colframe=blue!75!black,title=Nota informativa]
+    Para esta fase de la investigación, se ha prescindido de la generación de modelos \textit{PSM} (Modelo Específico de Plataforma), ya que sería redundante para la generación de código en el caso de lenguajes visuales como \textit{Max} o \textit{Pure-Data}, pero no se descarta su posible inclusión a futuro.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=red!5,colframe=red!75!black,title=Nota importante]
+    El diseño en el nivel \textit{PIM} siempre hará referencia a la estructura definida previamente en el nivel \textit{CIM}, garantizando la trazabilidad desde la idea funcional hasta la especificación más técnico\-conceptual.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=\textbf{Recomendación}]
+    Debido a la especificidad de la materia, se recomienda consultar el documento disponible en \url{\urlProyecto/\_DOCUMENTACION/material\_complementario/main.pdf}. Este documento, realizado exproceso para lectores no familiarizados con el dominio que abordamos en este artículo, ofrece una visión general sobre la síntesis de sonido digital y \textit{Pure Data}, el lenguaje utilizado en las pruebas.
+\end{tcolorbox}
+
+

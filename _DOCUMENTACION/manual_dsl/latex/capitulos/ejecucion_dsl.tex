@@ -1,10 +1,12 @@
-\chapter{Ejecución de los DSL}
+\chapter{Ejecución y fuentes de los DSL}
 
-En este capítulo se recopila la información de ejecución y validación para cada uno de los lenguajes de dominio específico desarrollados. Esta información se extrae directamente de los archivos \texttt{README.md} de cada proyecto DSL.
+En este capítulo se recopila la información de ejecución y validación para cada uno de los lenguajes de dominio específico desarrollados. Esta información se extrae directamente de los archivos \texttt{README.md} de cada proyecto DSL, que se encunetran el directorio \url{\urlProyecto/\_CODIGO/dsl/*/README.md} (y como siempre, también en el .zip entregado).
+
+Todos los DSL han sido desarrollados con el \textit{Langium}, con miras a ser implementados en json. Los objetos a validar que le pasemos a los scripts de lso DSL deberán estar en formato JSON, siguiendo las reglas establecidas por las respectivas gramáticas.
 
 \section{DSL CIM Machine}
 
-Este lenguaje permite la definición conceptual de máquinas de audio en el nivel \textit{CIM}. Define la identidad, puertos y configuraciones base de las máquinas.
+Su código se encuentra en \url{\urlProyecto/\_CODIGO/dsl/mdaa-cim-machine} (y como siempre, también en el .zip entregado).
 
 \subsection{Comandos Principales}
 \begin{itemize}
@@ -25,7 +27,7 @@ node validate.ts examples/valid
 
 \section{DSL CIM Relations}
 
-Este lenguaje define las conexiones conceptuales entre máquinas \textit{CIM}, permitiendo modelar el flujo de señales de audio y modificaciones a nivel abstracto.
+Su código se encuentra en \url{\urlProyecto/\_CODIGO/dsl/mdaa-cim-relations-machines} (y como siempre, también en el .zip entregado).
 
 \subsection{Comandos Principales}
 \begin{itemize}
@@ -46,7 +48,7 @@ node validate.ts examples/valid examples/machines
 
 \section{DSL PIM Machine}
 
-Este lenguaje permite definir máquinas de audio a nivel \textit{PIM}, incluyendo generadores, modificadores y efectos.
+Su código se encuentra en \url{\urlProyecto/\_CODIGO/dsl/mdaa-pim-machine} (y como siempre, también en el .zip entregado).
 
 \subsection{Comandos Principales}
 \begin{itemize}
@@ -65,7 +67,7 @@ node validate.ts examples/valid examples/machines
 
 \section{DSL PIM Relations}
 
-DSL para la orquestación de interconexiones técnicas entre máquinas \textit{PIM}. Permite establecer vínculos directos entre puertos de salida externos y parámetros o puertos de entrada.
+Su código se encuentra en \url{\urlProyecto/\_CODIGO/dsl/mdaa-pim-relations-machines} (y como siempre, también en el .zip entregado).
 
 \subsection{Validación}
 Soporta dos modos: estructural (sintáctica) y cruzada (semántica).

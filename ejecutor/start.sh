@@ -1,5 +1,7 @@
 #!/bin/bash
-cd ..
+# Moverse a la raíz del proyecto independientemente de dónde se ejecute el script
+cd "$(dirname "$0")/.."
+
 
 # Script para recompilar y arrancar ProyectoBase con Docker
 echo "🚀 Iniciando proceso de despliegue..."

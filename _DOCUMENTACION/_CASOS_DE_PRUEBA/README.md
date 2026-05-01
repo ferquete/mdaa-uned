@@ -46,13 +46,19 @@ Nombre_del_Caso/
 
 El script `instaladorPrueba.py` asocia automáticamente el proyecto al usuario de prueba predeterminado (`test@uned.es`).
 
-### Uso del Script
+### Método Recomendado (Helper Script)
+Utiliza el script disponible en la carpeta `ejecutor` para una carga rápida:
+```bash
+./ejecutor/incluir-test TEST_1
+```
 
+### Método Manual (Python Directo)
 Ejecuta el script pasando como argumento la ruta al directorio del caso que deseas instalar:
 
 ```bash
 python3 _DOCUMENTACION/_CASOS_DE_PRUEBA/instaladorPrueba.py _DOCUMENTACION/_CASOS_DE_PRUEBA/TEST_1
 ```
+
 
 ### ¿Qué hace el script?
 1. Extrae los metadatos de `proyecto.md`.
@@ -63,5 +69,5 @@ python3 _DOCUMENTACION/_CASOS_DE_PRUEBA/instaladorPrueba.py _DOCUMENTACION/_CASO
 
 ---
 
-> [!IMPORTANT]
+> [!CAUTION]
 > El script está configurado para conectarse a `localhost:3306` con las credenciales por defecto (`devuser` / `devpassword`). 

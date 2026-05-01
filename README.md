@@ -79,14 +79,14 @@ Utiliza el script disponible en la carpeta `ejecutor` para una carga rápida:
 
 ---
 
-### Otros Directorios de Documentación
+### Documentación
 
 Todos los subdirectorios incluyen un archivo `main.pdf` con el contenido generado, además de las fuentes LaTeX (`.tex`) para su modificación:
 
-- **articulo**: Contiene el artículo científico que describe la investigación y metodología del proyecto.
+- **articulo**: Contiene el artículo que describe la investigación del proyecto MDAA.
 - **manual_dsl**: Manual técnico detallado de los lenguajes de dominio específico (DSLs) desarrollados.
 - **manual_mdaa**: Guía de usuario y manual de referencia de la aplicación MDAA.
-- **material_complementario**: Recursos adicionales, diagramas y anexos que apoyan la documentación principal.
+- **material_complementario**: Recursos adicionales, diagramas y anexos que apoyan la documentación principal, para dar una pequeña guia de qué es la generación digital de sonido.
 
 ## 💻 Código Fuente (`_CODIGO`)
 
@@ -99,4 +99,3 @@ Esta carpeta contiene el núcleo técnico del sistema:
   - `mdaa-cim-relations-machines`: Definición de conexiones y topología a nivel CIM.
   - `mdaa-pim-machine`: Definición técnica detallada de máquinas a nivel PIM.
   - `mdaa-pim-relations-machines`: Definición de conexiones técnicas a nivel PIM.
-- **docker**: Archivos de configuración Docker específicos para el despliegue de los componentes de código.

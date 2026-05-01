@@ -1,9 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const initOptions = {
-  url: 'http://localhost:8080',
-  realm: 'basedb',
-  clientId: 'vue-frontend',
+  url: import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080',
+  realm: import.meta.env.VITE_KEYCLOAK_REALM || 'basedb',
+  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'vue-frontend',
 };
 
 const keycloak = new Keycloak(initOptions);

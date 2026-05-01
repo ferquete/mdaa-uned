@@ -36,6 +36,19 @@
   },
   "clients": [
     {
+      "clientId": "base-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost/*",
+        "http://localhost:80/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "directAccessGrantsEnabled": true
+    },
+    {
       "clientId": "vue-frontend",
       "enabled": true,
       "publicClient": true,

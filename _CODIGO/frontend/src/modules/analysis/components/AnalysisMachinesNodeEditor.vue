@@ -1,10 +1,21 @@
 <script setup lang="ts">
-import RelationSelector from '@/shared/components/forms/RelationSelector.vue'
+import { ref, watch, computed } from 'vue'
 import { useUnsavedChanges } from '@/shared/composables/useUnsavedChanges'
-import type { CimDocument, CimGenerator, CimModificator } from '@/shared/types'
-import { computed, ref, watch } from 'vue'
+import type { CimDocument } from '@/shared/types'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import { ANALYSIS_RULES } from '../utils/analysisMachinesValidation'
+import RelationSelector from '@/shared/components/forms/RelationSelector.vue'
+import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
+
+interface LocalData {
+  id: string
+  name: string
+  description: string
+  params: string
+  sendTo: Array<{ id: string; idRef: string; description: string }>
+  externalOutput: { hasExternalOutput: boolean; description: string }
+  externalInput: { hasExternalInput: boolean; description: string }
+}
 
 const store = useAnalysisMachinesStore()
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()
@@ -126,7 +137,8 @@ watch([localData, isFormValid], () => {
 
 const toggleSendTo = (idRef: string) => {
   if (!localData.value.sendTo) localData.value.sendTo = []
-  const idx = localData.value.sendTo.findIndex(s => s.idRef === idRef)
+  const idx = localData.value.sendTo.findIndex((s: any) => s.idRef === idRef)
+
   if (idx === -1) {
     localData.value.sendTo.push({ 
       id: crypto.randomUUID(), 

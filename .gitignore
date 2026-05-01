@@ -41,18 +41,18 @@
 
 # LaTeX
 **/*.aux
-**/*.fdb_latexmk
-**/*.fls
+**/*.lof
 **/*.log
+**/*.toc
 **/*.out
 **/*.pdf
-**/*.toc
 **/*.synctex.gz
+**/*.fdb_latexmk
+**/*.fls
 **/*.blg
 **/*.bbl
 **/*.run.xml
 **/*.bcf
-**/*.lof
 **/*.lot
 **/*.nav
 **/*.snm
@@ -72,6 +72,7 @@
 **/*.gls
 **/*.ist
 
+
 # OS & IDEs
 **/.DS_Store
 **/Thumbs.db
@@ -84,11 +85,10 @@
 **/ehthumbs.db
 **/.GEMINI.md
 **/GEMINI.md
-**/.GEMINI.md
-**/GEMINI.md
 **/Icon\r
 **/ProyectoBase.code-workspace
 clave
+
 
 
 # Docker

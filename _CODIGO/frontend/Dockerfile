@@ -1,22 +1,13 @@
-# Stage 1: Build
-FROM node:22-alpine AS build
+# Dockerfile de Desarrollo para Frontend
+FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
-RUN npm run build
 
-# Stage 2: Serve
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-# Fallback para SPA (Vue Router)
-RUN echo 'server { \
-    listen 80; \
-    location / { \
-        root /usr/share/nginx/html; \
-        index index.html index.htm; \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+COPY . .
+
+# Exponer puerto 80
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Ejecutar auditoría de seguridad, comprobación de tipos (para ver referencias no usadas) y arrancar dev
+CMD npm audit || true && npx vue-tsc -b || true && npm run dev -- --host 0.0.0.0 --port 80

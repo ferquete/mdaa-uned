@@ -1,0 +1,333 @@
+{
+  "id": "2b100001-0000-0000-0000-000000000000",
+  "name": "PIM Snare Drum",
+  "description": "Implementacion PIM de la caja electronica. Combina un oscilador de tono medio con una envolvente de amplitud rapida y un generador de ruido blanco con filtrado paso-alto y paso-bajo para emular los resortes de la caja acustica. El balance entre tono y ruido, controlado por el mezclador interno, determina el caracter del snare entre crack snap y cuerpo resonante.",
+  "ids_cim_reference": [
+    "2b000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "2b100002-0000-0000-0000-000000000000",
+      "name": "Snare Tone Osc",
+      "description": "Oscilador sinusoidal o triangular que genera el tono medio resonante de la caja. Afinado en el rango de 200 Hz, aporta el cuerpo del golpe. La forma de onda triangular añade armonicos pares suaves que dan color sin agresividad.",
+      "ids_references": [
+        "2b000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "2b100003-0000-0000-0000-000000000000",
+        "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+        "initialValue": "triangle",
+        "isModifiable": false,
+        "description": "Onda triangular para el tono de la caja, añade armonicos pares suaves que dan cuerpo sin dureza."
+      },
+      "frequency": {
+        "id": "2b100004-0000-0000-0000-000000000000",
+        "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+        "initialValue": 200,
+        "isModifiable": false,
+        "description": "Frecuencia del tono de la caja en 200 Hz, rango tipico del cuerpo resonante del snare electronico."
+      },
+      "pulseWidth": {
+        "id": "2b100005-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso no aplicable a onda triangular."
+      },
+      "gain": {
+        "id": "2b100006-0000-0000-0000-000000000000",
+        "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.7,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia del tono de la caja, modulable por la envolvente de amplitud del snare."
+      },
+      "phase": {
+        "id": "2b100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial en cero para el oscilador del snare."
+      },
+      "pan": {
+        "id": "2b100008-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado para el tono de la caja, el snare tipicamente va al centro de la mezcla."
+      },
+      "stereo": {
+        "id": "2b100009-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "El tono del snare opera en mono."
+      },
+      "output_1": {
+        "id": "2b100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida mono del tono de la caja hacia el mezclador interno del snare."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "2b100021-0000-0000-0000-000000000000",
+      "name": "Snare Amp Env",
+      "description": "Envolvente de amplitud ADR de la caja con ataque instantaneo y decay corto que define el snap y la brevedad del golpe. Controla la ganancia del oscilador de tono para dar forma al caracter percusivo del snare.",
+      "ids_references": [
+        "2b000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "2b100022-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "ADR",
+        "isModifiable": false,
+        "description": "Tipo ADR para la envolvente de amplitud del snare: ataque instantaneo y decay definido."
+      },
+      "attack": {
+        "id": "2b100023-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Ataque instantaneo de la caja para maximo snap desde el primer sample."
+      },
+      "decay": {
+        "id": "2b100024-0000-0000-0000-000000000000",
+        "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.12,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Decay de 120ms del snare. Ajustable para cajas mas cortas y snap o mas largas y resonantes."
+      },
+      "sustain": {
+        "id": "2b100025-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Sustain en cero para envolvente ADR percusiva."
+      },
+      "release": {
+        "id": "2b100026-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.01,
+        "isModifiable": false,
+        "description": "Release muy corto para cierre limpio del golpe de caja."
+      },
+      "delay": {
+        "id": "2b100029-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay."
+      },
+      "hold": {
+        "id": "2b100030-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold."
+      },
+      "curve": {
+        "id": "2b100027-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "exponential",
+        "isModifiable": false,
+        "description": "Curva exponencial del decay de amplitud del snare para shape natural."
+      },
+      "output": {
+        "id": "2b100028-0000-0000-0000-000000000000",
+        "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+        "isExternalOutput": false,
+        "description": "Salida de control de la envolvente de amplitud hacia el parametro gain del oscilador del snare."
+      }
+    },
+    {
+      "type": "noise",
+      "id": "2b100031-0000-0000-0000-000000000000",
+      "name": "Snare Noise Gen",
+      "description": "Generador de ruido blanco que emula el soplido de los resortes de la caja acustica. El ruido es la componente mas importante del caracter del snare electronico y define si suena brillante, sibilante o seco.",
+      "ids_references": [
+        "2b000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "noiseType": {
+        "id": "2b100032-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": "white",
+        "isModifiable": false,
+        "description": "Ruido blanco para el snare, el tipo clasico para emular el soplido de los resortes de la caja acustica."
+      },
+      "amplitude": {
+        "id": "2b100033-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.8,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Amplitud del ruido de la caja. Modulable por la envolvente del ruido para dar shape al decay del soplido."
+      },
+      "gain": {
+        "id": "2b100034-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.6,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia del generador de ruido del snare, modulable por la envolvente para el shape del decay."
+      },
+      "pan": {
+        "id": "2b100035-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado para el ruido del snare."
+      },
+      "stereo": {
+        "id": "2b100036-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": false,
+        "description": "El ruido del snare opera en mono."
+      },
+      "output_1": {
+        "id": "2b100037-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido blanco hacia el filtro que moldea el espectro del ruido del snare."
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "2b100041-0000-0000-0000-000000000000",
+      "name": "Snare Noise Filter",
+      "description": "Filtro paso-alto aplicado al ruido blanco del snare para eliminar las frecuencias graves del ruido y dejar solo la region media-alta caracteristica del soplido de la caja. Elimina las frecuencias por debajo de 2 kHz para evitar que el ruido tape el cuerpo del oscilador.",
+      "ids_references": [
+        "2b000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "2b100042-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": "HPF",
+        "isModifiable": false,
+        "description": "Filtro paso-alto para eliminar los graves del ruido y dejar el caracter sibilante del snare."
+      },
+      "cutoff": {
+        "id": "2b100043-0000-0000-0000-000000000000",
+        "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+        "initialValue": 2000,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Frecuencia de corte del filtro HPF en 2 kHz. Ajustar hacia abajo para un snare mas oscuro o hacia arriba para mas crack."
+      },
+      "resonance": {
+        "id": "2b100044-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Resonancia baja del filtro HPF del snare para que el corte sea suave y musical."
+      },
+      "slope": {
+        "id": "2b100045-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "12dB/oct",
+        "isModifiable": false,
+        "description": "Pendiente de 12 dB por octava para el filtro del ruido del snare."
+      },
+      "stereo": {
+        "id": "2b100046-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "El filtro del ruido del snare opera en mono."
+      },
+      "input_1": {
+        "id": "2b100047-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada del ruido blanco desde el generador de ruido del snare."
+      },
+      "output_1": {
+        "id": "2b100048-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido filtrado hacia el mezclador interno de capas del snare."
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "2b100051-0000-0000-0000-000000000000",
+      "name": "Snare Layer Mix",
+      "description": "Mezclador de dos canales que suma el tono de la caja con el ruido filtrado para formar el sonido completo del snare. La salida mono se envia al mezclador maestro de percusion del sistema.",
+      "ids_references": [
+        "2b000013-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "2b100052-0000-0000-0000-000000000000",
+        "ids_references": ["2b000013-0000-0000-0000-000000000000"],
+        "initialValue": false,
+        "description": "El mezclador del snare opera en mono, la posicion estereo se define en el mezclador maestro."
+      },
+      "input_1": {
+        "id": "2b100053-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 1: tono del oscilador de la caja."
+      },
+      "input_2": {
+        "id": "2b100054-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 2: ruido blanco filtrado del snare."
+      },
+      "output_1": {
+        "id": "2b100055-0000-0000-0000-000000000000",
+        "ids_references": ["2b000013-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida mono de la caja compuesta hacia el mezclador maestro de percusion del sistema."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "2b100090-0000-0000-0000-000000000000",
+      "description": "Modulacion de la amplitud del oscilador del snare por la envolvente de amplitud para dar forma percusiva al tono de la caja.",
+      "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+      "sourceNode": "2b100021-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "2b100002-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "2b100091-0000-0000-0000-000000000000",
+      "description": "Conexion del tono de la caja desde el oscilador hacia la entrada 1 del mezclador interno del snare.",
+      "ids_references": ["2b000011-0000-0000-0000-000000000000"],
+      "sourceNode": "2b100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2b100051-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "2b100092-0000-0000-0000-000000000000",
+      "description": "Conexion del ruido blanco del snare hacia el filtro paso-alto para moldear su espectro antes de la mezcla.",
+      "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+      "sourceNode": "2b100031-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2b100041-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "2b100093-0000-0000-0000-000000000000",
+      "description": "Conexion del ruido blanco filtrado del snare hacia la entrada 2 del mezclador interno de capas de la caja.",
+      "ids_references": ["2b000012-0000-0000-0000-000000000000"],
+      "sourceNode": "2b100041-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2b100051-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

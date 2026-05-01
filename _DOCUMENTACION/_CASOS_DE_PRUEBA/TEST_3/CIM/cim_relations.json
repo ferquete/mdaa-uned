@@ -1,0 +1,11 @@
+{
+  "description": "Sistema de bajo arpejiado sintetico compuesto por la voz generadora del bajo con oscilador y filtro modulado y la maquina de efectos y salida con chorus y compresion final. El bajo filtrado sale de la voz generadora hacia el procesador de efectos de salida.",
+  "relations": [
+    {
+      "id": "3d000001-0000-0000-0000-000000000000",
+      "source": "3a000001-0000-0000-0000-000000000000",
+      "destination": "3b000001-0000-0000-0000-000000000000",
+      "description": "Conecta la salida del bajo arpejiado filtrado desde la voz generadora hacia el procesador de efectos y salida del sintetizador de bajo sintetico."
+    }
+  ]
+}

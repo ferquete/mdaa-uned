@@ -5,17 +5,7 @@ import type { CimDocument } from '@/shared/types'
 import { useAnalysisMachinesStore } from '../stores/analysisMachinesStore'
 import { ANALYSIS_RULES } from '../utils/analysisMachinesValidation'
 import RelationSelector from '@/shared/components/forms/RelationSelector.vue'
-import BaseJSONEditor from '@/shared/components/editors/BaseJSONEditor.vue'
 
-interface LocalData {
-  id: string
-  name: string
-  description: string
-  params: string
-  sendTo: Array<{ id: string; idRef: string; description: string }>
-  externalOutput: { hasExternalOutput: boolean; description: string }
-  externalInput: { hasExternalInput: boolean; description: string }
-}
 
 const store = useAnalysisMachinesStore()
 const { setUnsavedState, clearUnsavedState } = useUnsavedChanges()

@@ -121,7 +121,7 @@ const onEditorMount = (editor: any, monaco: any) => {
   }
 
   // Listener global de cambios en marcadores
-  const disposable = monaco.editor.onDidChangeMarkers(() => {
+  monaco.editor.onDidChangeMarkers(() => {
     getMarkers();
   });
 

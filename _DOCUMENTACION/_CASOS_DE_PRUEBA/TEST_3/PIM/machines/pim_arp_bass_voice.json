@@ -1,0 +1,295 @@
+{
+  "id": "3a100001-0000-0000-0000-000000000000",
+  "name": "PIM Arp Bass Voice",
+  "description": "Implementacion PIM de la voz de bajo arpejiado. Un oscilador en diente de sierra genera el tono base. Una envolvente ADR articula cada nota del arpejio modulando la amplitud. Un LFO sinusoidal sincronizado modula el cutoff del filtro paso-bajo resonante creando el barrido espectral ritmico. La salida filtrada sale externamente hacia la maquina de efectos.",
+  "ids_cim_reference": [
+    "3a000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "3a100002-0000-0000-0000-000000000000",
+      "name": "Saw Bass Osc",
+      "description": "Oscilador de onda diente de sierra para el bajo arpejiado. La onda sawtooth es rica en armonicos, ideal para un bajo sintetico que sera moldeado por el filtro paso-bajo. La frecuencia se fija en la nota del arpejio en curso.",
+      "ids_references": [
+        "3a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "3a100003-0000-0000-0000-000000000000",
+        "ids_references": ["3a000011-0000-0000-0000-000000000000"],
+        "initialValue": "sawtooth",
+        "isModifiable": false,
+        "description": "Onda diente de sierra para el bajo arpejiado, rica en armonicos para un sonido denso antes del filtro."
+      },
+      "frequency": {
+        "id": "3a100004-0000-0000-0000-000000000000",
+        "ids_references": ["3a000011-0000-0000-0000-000000000000"],
+        "initialValue": 110,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Frecuencia del bajo arpejiado en 110 Hz (La 2). El secuenciador externo modifica esta frecuencia por nota del arpejio."
+      },
+      "pulseWidth": {
+        "id": "3a100005-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso no aplicable a onda sawtooth."
+      },
+      "gain": {
+        "id": "3a100006-0000-0000-0000-000000000000",
+        "ids_references": ["3a000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.85,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia del oscilador del bajo, modulada por la envolvente de amplitud para articular cada nota del arpejio."
+      },
+      "phase": {
+        "id": "3a100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial en cero para el oscilador del bajo arpejiado."
+      },
+      "pan": {
+        "id": "3a100008-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado para el bajo, el bajo siempre debe ir al centro de la mezcla."
+      },
+      "stereo": {
+        "id": "3a100009-0000-0000-0000-000000000000",
+        "ids_references": ["3a000011-0000-0000-0000-000000000000"],
+        "initialValue": false,
+        "description": "El oscilador del bajo opera en mono, la amplitud estereo se añade en la etapa de efectos."
+      },
+      "output_1": {
+        "id": "3a100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida mono del oscilador de bajo hacia el filtro paso-bajo resonante."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "3a100021-0000-0000-0000-000000000000",
+      "name": "Arp Note Env",
+      "description": "Envolvente de amplitud que articula cada nota del arpejio. El ataque breve pero no instantaneo da el pop caracteristico del bajo sintetico al inicio de cada nota. El decay y sustain definen si la nota suena larga y sostenida o corta y percusiva.",
+      "ids_references": [
+        "3a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "3a100022-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "ADSR",
+        "isModifiable": false,
+        "description": "ADSR para la envolvente de amplitud del arpejio, permite control completo del shape de cada nota."
+      },
+      "attack": {
+        "id": "3a100023-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.005,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ataque de 5ms para dar el pop inicial de la nota del bajo arpejiado sin que sea instantaneo."
+      },
+      "decay": {
+        "id": "3a100024-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.15,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Decay de 150ms para dar cuerpo a la nota y que no suene demasiado corta en el arpejio."
+      },
+      "sustain": {
+        "id": "3a100025-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.6,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Sustain al 60% para que la nota tenga cuerpo y presencia durante su duracion en el arpejio."
+      },
+      "release": {
+        "id": "3a100026-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.05,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Release de 50ms para un cierre limpio de cada nota del arpejio sin click de cierre."
+      },
+      "delay": {
+        "id": "3a100029-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay."
+      },
+      "hold": {
+        "id": "3a100030-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold."
+      },
+      "curve": {
+        "id": "3a100027-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "exponential",
+        "isModifiable": false,
+        "description": "Curva exponencial para la envolvente del bajo arpejiado, sonido mas natural y musical."
+      },
+      "output": {
+        "id": "3a100028-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": false,
+        "description": "Salida de control de la envolvente de amplitud hacia el parametro gain del oscilador del bajo."
+      }
+    },
+    {
+      "type": "lfo",
+      "id": "3a100031-0000-0000-0000-000000000000",
+      "name": "Filter Sweep LFO",
+      "description": "LFO de onda sinusoidal sincronizado al tempo que modula el cutoff del filtro paso-bajo del bajo arpejiado. La velocidad sincronizada al tempo hace que el barrido espectral se mueva en tiempo musical creando el efecto de wah ritmico caracteristico del bajo sintetico arpejiado.",
+      "ids_references": [
+        "3a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "3a100032-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": "sine",
+        "isModifiable": false,
+        "description": "Onda sinusoidal del LFO para un barrido del filtro suave y musical en el bajo arpejiado."
+      },
+      "rate": {
+        "id": "3a100033-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 2,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Velocidad del LFO en 2 Hz para un barrido del filtro que se mueve dos veces por segundo en el arpejio."
+      },
+      "amplitude": {
+        "id": "3a100034-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.6,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Amplitud del LFO al 60% para un barrido del filtro amplio y expresivo en el bajo arpejiado."
+      },
+      "phase": {
+        "id": "3a100035-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase del LFO en cero para que el barrido comience desde el punto bajo del cutoff."
+      },
+      "sync": {
+        "id": "3a100036-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "initialValue": true,
+        "isModifiable": false,
+        "description": "LFO sincronizado al tempo para que el barrido del filtro sea ritmicamente coherente con el arpejio."
+      },
+      "output": {
+        "id": "3a100037-0000-0000-0000-000000000000",
+        "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": false,
+        "description": "Salida de control del LFO hacia el parametro cutoff del filtro paso-bajo del bajo arpejiado."
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "3a100041-0000-0000-0000-000000000000",
+      "name": "Bass Res Filter",
+      "description": "Filtro paso-bajo resonante de 24 dB por octava que moldea el espectro de la onda diente de sierra. La alta resonancia crea el acento de quinto del filtro analogico clasico. El cutoff es modulado continuamente por el LFO para el barrido espectral ritmico del bajo arpejiado.",
+      "ids_references": [
+        "3a000013-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "3a100042-0000-0000-0000-000000000000",
+        "ids_references": ["3a000013-0000-0000-0000-000000000000"],
+        "initialValue": "LPF",
+        "isModifiable": false,
+        "description": "Filtro paso-bajo para el moldeado espectral del bajo arpejiado."
+      },
+      "cutoff": {
+        "id": "3a100043-0000-0000-0000-000000000000",
+        "ids_references": ["3a000013-0000-0000-0000-000000000000"],
+        "initialValue": 800,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Cutoff base del filtro en 800 Hz. El LFO modula este valor ciclicamente para el barrido espectral ritmico."
+      },
+      "resonance": {
+        "id": "3a100044-0000-0000-0000-000000000000",
+        "ids_references": ["3a000013-0000-0000-0000-000000000000"],
+        "initialValue": 5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Resonancia alta en 5 para el acento caracteristico del filtro analogico en el bajo arpejiado sintetico."
+      },
+      "slope": {
+        "id": "3a100045-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "24dB/oct",
+        "isModifiable": false,
+        "description": "Pendiente de 24 dB por octava para un filtrado contundente y caracteristico del bajo sintetico."
+      },
+      "stereo": {
+        "id": "3a100046-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "El filtro opera en mono, la amplitud estereo se añade en la etapa de efectos."
+      },
+      "input_1": {
+        "id": "3a100047-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada del oscilador de bajo diente de sierra hacia el filtro paso-bajo resonante."
+      },
+      "output_1": {
+        "id": "3a100048-0000-0000-0000-000000000000",
+        "ids_references": ["3a000013-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida del bajo arpejiado filtrado hacia la maquina de efectos Arp FX Output del sintetizador."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "3a100090-0000-0000-0000-000000000000",
+      "description": "Modulacion de la amplitud del oscilador de bajo por la envolvente para articular cada nota del arpejio con el shape deseado.",
+      "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+      "sourceNode": "3a100021-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "3a100002-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "3a100091-0000-0000-0000-000000000000",
+      "description": "Conexion de la salida del oscilador de bajo hacia la entrada del filtro paso-bajo resonante para el conformado espectral.",
+      "ids_references": ["3a000011-0000-0000-0000-000000000000"],
+      "sourceNode": "3a100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "3a100041-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "3a100092-0000-0000-0000-000000000000",
+      "description": "Modulacion del cutoff del filtro paso-bajo por el LFO sincronizado para el barrido espectral ritmico del bajo arpejiado.",
+      "ids_references": ["3a000012-0000-0000-0000-000000000000"],
+      "sourceNode": "3a100031-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "3a100041-0000-0000-0000-000000000000",
+      "targetParam": "cutoff",
+      "type": "modification"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "2a000001-0000-0000-0000-000000000000",
+  "name": "Kick Drum",
+  "description": "Maquina generadora del sonido de bombo electronico. Produce el cuerpo grave caracteristico del bombo mediante un oscilador sinusoidal con descenso rapido de pitch modulado por una envolvente percusiva muy corta. El cuerpo del bombo se complementa con una capa de transiente de ataque generada por ruido blanco filtrado. La combinacion de ambas capas y su mezcla interna define el caracter del golpe entre un bombo profundo tipo kick o un bombo mas seco y punchy estilo 808.",
+  "elements": [
+    {
+      "id": "2a000011-0000-0000-0000-000000000000",
+      "name": "Kick Body Osc",
+      "description": "Oscilador sinusoidal que genera el cuerpo grave del bombo, con pitch inicial alto que cae rapidamente gracias a una envolvente de pitch interna, creando el caracteristico golpe redondo del bombo electronico.",
+      "params": "Frecuencia inicial: 60-200Hz, Frecuencia final: 30-60Hz, Amplitud: 0-100%, Forma de onda: Sine, Duracion de pitch-drop: 10-100ms, Decay: 50-500ms",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2a000011-0000-0000-0000-000000000010",
+          "idRef": "2a000013-0000-0000-0000-000000000000",
+          "description": "Envia la señal del cuerpo del bombo al mezclador interno de capas del kick para su suma con el transiente de ataque."
+        }
+      ]
+    },
+    {
+      "id": "2a000012-0000-0000-0000-000000000000",
+      "name": "Kick Transient",
+      "description": "Generador de transiente de ataque del bombo mediante ruido blanco con un filtro paso-banda y una envolvente de ataque extremadamente corta, de 1 a 10 milisegundos, que aporta el click inicial y la definicion del golpe del bombo.",
+      "params": "Tipo de ruido: Blanco, Frecuencia de filtro: 200-2000Hz, Amplitud: 0-100%, Ataque: 1-10ms, Decay: 5-50ms, Ancho de banda: estrecho",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2a000012-0000-0000-0000-000000000010",
+          "idRef": "2a000013-0000-0000-0000-000000000000",
+          "description": "Envia el transiente de ataque del bombo al mezclador interno de capas del kick para ser sumado con el cuerpo grave sinusoidal."
+        }
+      ]
+    },
+    {
+      "id": "2a000013-0000-0000-0000-000000000000",
+      "name": "Kick Layer Mixer",
+      "description": "Mezclador interno que combina el cuerpo sinusoidal grave con el transiente percusivo de ruido blanco del bombo. Gestiona el balance entre punch y profundidad del golpe antes de enviar la señal compuesta al mezclador maestro de percusion del sistema.",
+      "params": "Nivel cuerpo: 0-100%, Nivel transiente: 0-100%, Ganancia maestra: -24dB a +6dB, Pan: Centro fijo, Limiter: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida del bombo compuesto hacia el mezclador maestro de percusion del sistema de bateria electronica."
+      },
+      "sendTo": []
+    }
+  ]
+}

@@ -1,0 +1,559 @@
+{
+  "id": "4a100001-0000-0000-0000-000000000000",
+  "name": "PIM 80s Bass Core",
+  "description": "Implementacion PIM del nucleo de bajo de los 80s. Utiliza tres osciladores: dos en diente de sierra micro-desafinados para la batida, y un oscilador cuadrado una octava por debajo para el sub-grave. Se mezclan y pasan por un filtro paso-bajo resonante. Dos envolventes ADSR controlan independientemente la amplitud general y el corte del filtro para el acento en cada nota.",
+  "ids_cim_reference": [
+    "4a000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "4a100002-0000-0000-0000-000000000000",
+      "name": "Main Saw 1",
+      "description": "Oscilador principal en diente de sierra. Frecuencia base afinada en 55 Hz.",
+      "ids_references": [
+        "4a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "4a100003-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": "sawtooth",
+        "isModifiable": false,
+        "description": "Forma de onda diente de sierra para riqueza armonica."
+      },
+      "frequency": {
+        "id": "4a100004-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": 55,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia principal (La 1) de 55 Hz."
+      },
+      "pulseWidth": {
+        "id": "4a100005-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "No aplicable."
+      },
+      "gain": {
+        "id": "4a100006-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia modulada por la envolvente de amplitud."
+      },
+      "phase": {
+        "id": "4a100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial 0."
+      },
+      "pan": {
+        "id": "4a100008-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": -0.2,
+        "isModifiable": false,
+        "description": "Ligero pan a la izquierda."
+      },
+      "stereo": {
+        "id": "4a100009-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "Mono."
+      },
+      "output_1": {
+        "id": "4a100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida al mezclador."
+      }
+    },
+    {
+      "type": "oscillator",
+      "id": "4a100011-0000-0000-0000-000000000000",
+      "name": "Main Saw 2",
+      "description": "Segundo oscilador en diente de sierra con micro-desafinacion para batida.",
+      "ids_references": [
+        "4a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "4a100012-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": "sawtooth",
+        "isModifiable": false,
+        "description": "Forma de onda diente de sierra."
+      },
+      "frequency": {
+        "id": "4a100013-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": 55.4,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia principal con ligero detune para engrosar el sonido."
+      },
+      "pulseWidth": {
+        "id": "4a100014-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "No aplicable."
+      },
+      "gain": {
+        "id": "4a100015-0000-0000-0000-000000000000",
+        "ids_references": ["4a000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia modulada por la envolvente de amplitud."
+      },
+      "phase": {
+        "id": "4a100016-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.2,
+        "isModifiable": false,
+        "description": "Fase desplazada para evitar cancelacion inicial."
+      },
+      "pan": {
+        "id": "4a100017-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.2,
+        "isModifiable": false,
+        "description": "Ligero pan a la derecha."
+      },
+      "stereo": {
+        "id": "4a100018-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "Mono."
+      },
+      "output_1": {
+        "id": "4a100019-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida al mezclador."
+      }
+    },
+    {
+      "type": "oscillator",
+      "id": "4a100021-0000-0000-0000-000000000000",
+      "name": "Sub Osc",
+      "description": "Sub-oscilador cuadrado una octava abajo (27.5 Hz) para profundidad extrema.",
+      "ids_references": [
+        "4a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "4a100022-0000-0000-0000-000000000000",
+        "ids_references": ["4a000012-0000-0000-0000-000000000000"],
+        "initialValue": "square",
+        "isModifiable": false,
+        "description": "Onda cuadrada para sub-grave con mas armonicos."
+      },
+      "frequency": {
+        "id": "4a100023-0000-0000-0000-000000000000",
+        "ids_references": ["4a000012-0000-0000-0000-000000000000"],
+        "initialValue": 27.5,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia una octava inferior a la principal."
+      },
+      "pulseWidth": {
+        "id": "4a100024-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Cuadrada simetrica."
+      },
+      "gain": {
+        "id": "4a100025-0000-0000-0000-000000000000",
+        "ids_references": ["4a000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Nivel reducido para no enmascarar los osciladores principales."
+      },
+      "phase": {
+        "id": "4a100026-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial 0."
+      },
+      "pan": {
+        "id": "4a100027-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado para subgrave."
+      },
+      "stereo": {
+        "id": "4a100028-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "Mono."
+      },
+      "output_1": {
+        "id": "4a100029-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida al mezclador."
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "4a100031-0000-0000-0000-000000000000",
+      "name": "Osc Mixer",
+      "description": "Mezclador que suma las señales de los tres osciladores en estéreo.",
+      "ids_references": [
+        "4a000011-0000-0000-0000-000000000000",
+        "4a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "4a100032-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Mantiene el ligero spread estereo de los osciladores."
+      },
+      "input_1": {
+        "id": "4a100033-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada Main Saw 1."
+      },
+      "input_2": {
+        "id": "4a100034-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada Main Saw 2."
+      },
+      "input_3": {
+        "id": "4a100035-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada Sub Osc."
+      },
+      "output_1": {
+        "id": "4a100036-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda al filtro."
+      },
+      "output_2": {
+        "id": "4a100037-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha al filtro."
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "4a100041-0000-0000-0000-000000000000",
+      "name": "80s VCF",
+      "description": "Filtro paso-bajo de estilo analogico (24dB/oct) de alta resonancia.",
+      "ids_references": [
+        "4a000013-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "4a100042-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "initialValue": "LPF",
+        "isModifiable": false,
+        "description": "Paso-bajo."
+      },
+      "cutoff": {
+        "id": "4a100043-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "initialValue": 1500,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia de corte, modulada fuertemente por la Filter Env."
+      },
+      "resonance": {
+        "id": "4a100044-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "initialValue": 4,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Alta resonancia para acento de 80s."
+      },
+      "slope": {
+        "id": "4a100045-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "initialValue": "24dB/oct",
+        "isModifiable": false,
+        "description": "Filtro de polo 4 tipo Ladder."
+      },
+      "stereo": {
+        "id": "4a100046-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Filtra la mezcla estereo de los osciladores."
+      },
+      "input_1": {
+        "id": "4a100047-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada L desde el mezclador."
+      },
+      "input_2": {
+        "id": "4a100048-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada R desde el mezclador."
+      },
+      "output_1": {
+        "id": "4a100049-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida final izquierda del nucleo de bajo 80s hacia la maquina de efectos."
+      },
+      "output_2": {
+        "id": "4a100050-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida final derecha del nucleo de bajo 80s hacia la maquina de efectos."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "4a100051-0000-0000-0000-000000000000",
+      "name": "Amp Env",
+      "description": "Envolvente de amplitud para el cuerpo sostenido del bajo. Controla la ganancia de los tres osciladores.",
+      "ids_references": [],
+      "others": [],
+      "envelopeType": {
+        "id": "4a100052-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "ADSR",
+        "isModifiable": false,
+        "description": "Permite notas sostenidas."
+      },
+      "attack": {
+        "id": "4a100053-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.01,
+        "isModifiable": false,
+        "description": "Ataque casi instantaneo."
+      },
+      "decay": {
+        "id": "4a100054-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.4,
+        "isModifiable": false,
+        "description": "Decay medio-largo."
+      },
+      "sustain": {
+        "id": "4a100055-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.7,
+        "isModifiable": false,
+        "description": "Sustain moderadamente alto."
+      },
+      "release": {
+        "id": "4a100056-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.2,
+        "isModifiable": false,
+        "description": "Release natural."
+      },
+      "delay": {
+        "id": "4a100059-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay para envolvente ADSR."
+      },
+      "hold": {
+        "id": "4a100060-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold para envolvente ADSR."
+      },
+      "curve": {
+        "id": "4a100057-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "linear",
+        "isModifiable": false,
+        "description": "Curva lineal para volumen."
+      },
+      "output": {
+        "id": "4a100058-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Modula la ganancia de los osciladores."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "4a100061-0000-0000-0000-000000000000",
+      "name": "Filter Env",
+      "description": "Envolvente rapida para el barrido descendente inicial del filtro, aportando percusividad y ataque tipo 'zap'.",
+      "ids_references": [
+        "4a000013-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "4a100062-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "ADSR",
+        "isModifiable": false,
+        "description": "Tipo ADSR para sostener el filtro parcialmente abierto."
+      },
+      "attack": {
+        "id": "4a100063-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Ataque instantaneo para barrido inicial."
+      },
+      "decay": {
+        "id": "4a100064-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.1,
+        "isModifiable": false,
+        "description": "Decay muy corto (100ms) para el zap."
+      },
+      "sustain": {
+        "id": "4a100065-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.4,
+        "isModifiable": false,
+        "description": "Sustain bajo para mantener calor en graves sin agudos."
+      },
+      "release": {
+        "id": "4a100066-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.2,
+        "isModifiable": false,
+        "description": "Release acompasa a la envolvente de volumen."
+      },
+      "delay": {
+        "id": "4a100069-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay para envolvente ADSR."
+      },
+      "hold": {
+        "id": "4a100070-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold para envolvente ADSR."
+      },
+      "curve": {
+        "id": "4a100067-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "exponential",
+        "isModifiable": false,
+        "description": "Exponencial para caida mas punzante."
+      },
+      "output": {
+        "id": "4a100068-0000-0000-0000-000000000000",
+        "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+        "isExternalOutput": false,
+        "description": "Modula el cutoff del LPF."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "4a100090-0000-0000-0000-000000000000",
+      "description": "Modulacion del volumen de Saw 1 por la Amp Env.",
+      "ids_references": [],
+      "sourceNode": "4a100051-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "4a100002-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "4a100091-0000-0000-0000-000000000000",
+      "description": "Modulacion del volumen de Saw 2 por la Amp Env.",
+      "ids_references": [],
+      "sourceNode": "4a100051-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "4a100011-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "4a100092-0000-0000-0000-000000000000",
+      "description": "Modulacion del volumen de Sub Osc por la Amp Env.",
+      "ids_references": [],
+      "sourceNode": "4a100051-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "4a100021-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "4a100093-0000-0000-0000-000000000000",
+      "description": "Conexion de Saw 1 al canal 1 del mixer.",
+      "ids_references": [],
+      "sourceNode": "4a100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "4a100031-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "4a100094-0000-0000-0000-000000000000",
+      "description": "Conexion de Saw 2 al canal 2 del mixer.",
+      "ids_references": [],
+      "sourceNode": "4a100011-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "4a100031-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    },
+    {
+      "id": "4a100095-0000-0000-0000-000000000000",
+      "description": "Conexion del Sub Osc al canal 3 del mixer.",
+      "ids_references": [],
+      "sourceNode": "4a100021-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "4a100031-0000-0000-0000-000000000000",
+      "targetParam": "input_3",
+      "type": "audio"
+    },
+    {
+      "id": "4a100096-0000-0000-0000-000000000000",
+      "description": "Conexion del mixer L al filtro L.",
+      "ids_references": [],
+      "sourceNode": "4a100031-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "4a100041-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "4a100097-0000-0000-0000-000000000000",
+      "description": "Conexion del mixer R al filtro R.",
+      "ids_references": [],
+      "sourceNode": "4a100031-0000-0000-0000-000000000000",
+      "sourceParam": "output_2",
+      "targetNode": "4a100041-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    },
+    {
+      "id": "4a100098-0000-0000-0000-000000000000",
+      "description": "Modulacion del cutoff del filtro por la Filter Env.",
+      "ids_references": ["4a000013-0000-0000-0000-000000000000"],
+      "sourceNode": "4a100061-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "4a100041-0000-0000-0000-000000000000",
+      "targetParam": "cutoff",
+      "type": "modification"
+    }
+  ]
+}

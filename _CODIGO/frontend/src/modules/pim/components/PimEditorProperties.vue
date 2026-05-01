@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, ref, onMounted, onUnmounted } from 'vue'
 import { useVueFlow } from '@vue-flow/core'
-import { PIM_NODE_METADATA, PIM_MODIFIABLE_PARAMS } from '../utils/pim-node-metadata'
+import { PIM_NODE_METADATA } from '../utils/pim-node-metadata'
 import { usePimStore } from '../stores/pimStore'
 
 const store = usePimStore()
@@ -26,7 +26,7 @@ const selectedNode = computed(() => {
 })
 
 const nodeType = computed(() => selectedNode.value?.data.type || '')
-const metadata = computed(() => PIM_NODE_METADATA[nodeType.value])
+
 
 // --- Estado local para edición ---
 const localName = ref('')
@@ -38,8 +38,7 @@ const localOthers = ref<any[]>([])
 const localParamRefs = ref<Record<string, string[]>>({})
 const localPorts = ref<Record<string, any>>({})
 
-// Confirmación de borrado de nodo
-const showDeleteConfirm = ref(false)
+
 
 /**
  * Configuración de parámetros por tipo para renderizado dinámico.
@@ -597,7 +596,7 @@ const showPort = (pName: string) => {
         <div class="space-y-6">
           <h4 class="text-[9px] font-bold text-geist-accents-4 uppercase tracking-[0.2em] pl-1">Puertos de Señal</h4>
           
-          <div v-for="(pData, pName) in localPorts" :key="pName">
+          <div v-for="(_, pName) in localPorts" :key="pName">
             <div v-if="showPort(String(pName))" class="p-3 border border-geist-border rounded-xl bg-geist-accents-1/20 space-y-4">
               
               <!-- Fila 1: Label y Flag External -->

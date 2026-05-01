@@ -1,0 +1,37 @@
+{
+  "id": "4b000001-0000-0000-0000-000000000000",
+  "name": "80s Bass FX Out",
+  "description": "Maquina de efectos y salida del sintetizador de bajo profundo estilo 80s. Recibe el bajo filtrado del nucleo y aplica una saturacion suave que emula la compresion de cinta y los circuitos analogicos de los sintetizadores de la epoca, seguida de una reverb corta de sala que añade el ambiente de los grabaciones de los 80s. La salida estereo final produce el sonido completo del bajo sintetico de la decada listo para integrarse en una produccion.",
+  "elements": [
+    {
+      "id": "4b000011-0000-0000-0000-000000000000",
+      "name": "Analog Saturation",
+      "description": "Saturacion suave de tipo soft-clipping que emula el comportamiento no lineal de los circuitos analogicos de los sintetizadores de los 80s. Añade armonicos pares y una compresion natural que calienta el bajo y le da la consistencia de los equipos de la decada, sin ser distorsion evidente sino una sutileza timbrica.",
+      "params": "Drive: 5-30%, Tone: 40-70%, Tipo: Soft-clipping, Nivel de salida: -3dB a 0dB, Headroom: 6dB, Color: Calido",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada del bajo filtrado desde el nucleo generador 80s Bass Core."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "4b000011-0000-0000-0000-000000000010",
+          "idRef": "4b000012-0000-0000-0000-000000000000",
+          "description": "Envia el bajo saturado hacia la reverb corta de sala para el acabado ambiental del bajo estilo 80s."
+        }
+      ]
+    },
+    {
+      "id": "4b000012-0000-0000-0000-000000000000",
+      "name": "Room Reverb 80s",
+      "description": "Reverb de sala corta de 0.3 a 0.8 segundos que añade el ambiente de habitacion de grabacion tipico de las producciones de los anos 80. No es una reverb grande ni espaciosa, sino concreta y corta que da al bajo una sensacion de presencia en el espacio sin que flote o sea excesivamente reverberado, preservando la definicion del bajo en la mezcla.",
+      "params": "Room Size: 0.2-0.4, Damping: 0.6-0.9, Decay: 0.3-0.8s, DryWet: 10-30%, Predelay: 5-15ms, Tipo: Sala pequeña",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida estereo final del sintetizador de bajo profundo estilo 80s lista para mezcla o salida de audio."
+      },
+      "sendTo": []
+    }
+  ]
+}

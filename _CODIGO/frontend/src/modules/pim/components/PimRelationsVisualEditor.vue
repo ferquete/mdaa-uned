@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
-import { VueFlow, useVueFlow, type EdgeTypesObject, type NodeTypesObject, type Connection, type Edge } from '@vue-flow/core'
+import { VueFlow, useVueFlow, type EdgeTypesObject, type NodeTypesObject, type Connection } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { computed, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -28,14 +28,11 @@ const edgeTypes: EdgeTypesObject = {
 }
 
 const { 
-  nodes, 
   edges, 
   onConnect, 
   addEdges, 
   removeEdges, 
-  toObject, 
   fromObject,
-  onEdgeClick,
   onNodeDoubleClick
 } = useVueFlow({
   id: 'pim-relations-flow'

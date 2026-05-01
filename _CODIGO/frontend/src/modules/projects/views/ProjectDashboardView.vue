@@ -20,7 +20,7 @@ const { runWithGuard, hasUnsavedChanges } = useUnsavedChanges()
 
 const currentProject = ref<Project | null>(null)
 
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave((_to, _from, next) => {
   if (hasUnsavedChanges.value) {
     runWithGuard(() => next())
   } else {

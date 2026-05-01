@@ -1,0 +1,11 @@
+{
+  "description": "Sistema de bajo profundo estilo anos 80. El nucleo generador produce el bajo con osciladores y filtro, y la maquina de efectos recibe la señal para aplicar saturacion analogica y reverb de sala antes de la salida final.",
+  "relations": [
+    {
+      "id": "4d000001-0000-0000-0000-000000000000",
+      "source": "4a000001-0000-0000-0000-000000000000",
+      "destination": "4b000001-0000-0000-0000-000000000000",
+      "description": "Conecta la salida del bajo filtrado del nucleo generador hacia la maquina de efectos de saturacion y reverb para el acabado final del bajo sintetico estilo 80s."
+    }
+  ]
+}

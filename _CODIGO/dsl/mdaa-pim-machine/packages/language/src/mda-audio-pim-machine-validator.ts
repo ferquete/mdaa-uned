@@ -61,12 +61,12 @@ export class MdaAudioPimMachineValidator {
      * Valida los campos de cabecera del modelo (id, name, description, references).
      */
     checkModelHeader(model: Model, accept: ValidationAcceptor): void {
-        const id = model.id.replace(/"/g, '');
+        const id = model.id?.replace(/"/g, '') || '';
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID del modelo debe ser un UUID válido de 36 caracteres.', { node: model, property: 'id' });
         }
         
-        const name = model.name.replace(/"/g, '');
+        const name = model.name?.replace(/"/g, '') || '';
         if (!name || name.trim().length === 0) {
             accept('error', 'El nombre no puede ser nulo ni estar vacío.', { node: model, property: 'name' });
         } else if (name.length > 20) {
@@ -74,7 +74,7 @@ export class MdaAudioPimMachineValidator {
         }
 
         if (model.description) {
-            const desc = model.description.replace(/"/g, '');
+            const desc = model.description?.replace(/"/g, '') || '';
             if (desc.length < 20 || desc.length > 610) { // Tolerancia por caracteres de escape
                 accept('error', 'La descripción debe tener entre 20 y 600 caracteres.', { node: model, property: 'description' });
             }
@@ -83,7 +83,7 @@ export class MdaAudioPimMachineValidator {
         if (model.ids_cim_reference) {
             model.ids_cim_reference.forEach((ref, index) => {
                 if (!ref) return;
-                const refId = ref.replace(/"/g, '');
+                const refId = ref?.replace(/"/g, '') || '';
                 if (refId.length !== 36) {
                     accept('error', 'Cada ID de referencia CIM debe tener exactamente 36 caracteres.', { node: model, property: 'ids_cim_reference', index });
                 }
@@ -95,22 +95,27 @@ export class MdaAudioPimMachineValidator {
      * Valida la integridad referencial del modelo (nodos y parámetros existentes en las aristas).
      */
     checkModelIntegrity(model: Model, accept: ValidationAcceptor): void {
-        for (const edge of model.edges) {
-            const sNodeId = edge.sourceNode.replace(/"/g, '');
-            const sParamName = edge.sourceParam.replace(/"/g, '');
-            const tNodeId = edge.targetNode.replace(/"/g, '');
-            const tParamName = edge.targetParam.replace(/"/g, '');
+        if (!model.edges) return;
 
-            const sNode = model.nodes.find(n => n.id.replace(/"/g, '') === sNodeId);
-            const tNode = model.nodes.find(n => n.id.replace(/"/g, '') === tNodeId);
+        for (const edge of model.edges) {
+            const sNodeId = edge.sourceNode?.replace(/"/g, '') || '';
+            const sParamName = edge.sourceParam?.replace(/"/g, '') || '';
+            const tNodeId = edge.targetNode?.replace(/"/g, '') || '';
+            const tParamName = edge.targetParam?.replace(/"/g, '') || '';
+
+            if (!sNodeId || !sParamName || !tNodeId || !tParamName) {
+                continue; // Skip broken edges from failed parses
+            }
+
+            const sNode = model.nodes?.find(n => n.id?.replace(/"/g, '') === sNodeId);
+            const tNode = model.nodes?.find(n => n.id?.replace(/"/g, '') === tNodeId);
 
             if (!sNode) {
                 accept('error', `El nodo origen '${sNodeId}' no existe.`, { node: edge, property: 'sourceNode' });
             } else {
-                // Verificar que el parámetro/puerto existe en el nodo origen
                 const sParam = this.findParamInNode(sNode, sParamName);
                 if (!sParam) {
-                    accept('error', `El parámetro o puerto de salida '${sParamName}' no existe en el nodo '${sNode.name}'.`, { node: edge, property: 'sourceParam' });
+                    accept('error', `El parámetro o puerto de salida '${sParamName}' no existe en el nodo '${sNode.name?.replace(/"/g, '')}'.`, { node: edge, property: 'sourceParam' });
                 }
             }
 
@@ -142,7 +147,7 @@ export class MdaAudioPimMachineValidator {
         }
         // Buscar en el array 'others'
         if (node.others && Array.isArray(node.others)) {
-            return node.others.find((p: any) => p.name.replace(/"/g, '') === paramName);
+            return node.others.find((p: any) => p.name?.replace(/"/g, '') === paramName);
         }
         return undefined;
     }
@@ -177,27 +182,13 @@ export class MdaAudioPimMachineValidator {
         }
     }
 
-    private collectParamIds(node: any, paramIds: Set<string>): void {
-        for (const key in node) {
-            const val = node[key];
-            if (val && typeof val === 'object' && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint')) {
-                paramIds.add((val as any).id.replace(/"/g, ''));
-            } else if (Array.isArray(val)) {
-                val.forEach(item => {
-                    if (item && typeof item === 'object' && (item.$type === 'Parameter' || item.$type === 'ConnectionPoint')) {
-                        paramIds.add((item as any).id.replace(/"/g, ''));
-                    }
-                });
-            }
-        }
-    }
 
     /**
      * Valida los campos comunes de un parámetro de configuración.
      * Incluye consistencia entre modulación y entrada externa.
      */
     checkParameter(param: Parameter, accept: ValidationAcceptor): void {
-        const id = param.id.replace(/"/g, '');
+        const id = param.id?.replace(/"/g, '') || '';
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
@@ -240,13 +231,13 @@ export class MdaAudioPimMachineValidator {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
         }
         
-        const name = param.name?.replace(/"/g, '');
+        const name = param.name?.replace(/"/g, '') || '';
         if (!name || name.trim().length === 0 || name.length > 20) {
             accept('error', 'El nombre del parámetro dinámico debe tener entre 1 y 20 caracteres.', { node: param, property: 'name' });
         }
 
         if (param.initialValue) {
-            const value = param.initialValue.replace(/"/g, '');
+            const value = param.initialValue?.replace(/"/g, '') || '';
             if (value.length === 0 || value.length > 100) {
                 accept('error', 'El valor inicial de initialValue debe ser un String de 1 a 100 caracteres.', { node: param, property: 'initialValue' });
             }
@@ -266,12 +257,12 @@ export class MdaAudioPimMachineValidator {
      * Valida los campos de una arista.
      */
     checkEdge(edge: Edge, accept: ValidationAcceptor): void {
-        const id = edge.id.replace(/"/g, '');
+        const id = edge.id?.replace(/"/g, '') || '';
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID de la arista debe ser un UUID válido.', { node: edge, property: 'id' });
         }
         if (edge.description) {
-            const desc = edge.description.replace(/"/g, '');
+            const desc = edge.description?.replace(/"/g, '') || '';
             if (desc.length > 610) {
                 accept('error', 'La descripción de la arista no puede superar los 600 caracteres.', { node: edge, property: 'description' });
             }
@@ -282,12 +273,12 @@ export class MdaAudioPimMachineValidator {
      * Valida los campos de un punto de conexión.
      */
     checkConnectionPoint(cp: ConnectionPoint, accept: ValidationAcceptor): void {
-        const id = cp.id.replace(/"/g, '');
+        const id = cp.id?.replace(/"/g, '') || '';
         if (!this.uuidRegex.test(id)) {
             accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: cp, property: 'id' });
         }
         if (cp.description) {
-            const desc = cp.description.replace(/"/g, '');
+            const desc = cp.description?.replace(/"/g, '') || '';
             if (desc.length > 610) {
                 accept('error', 'La descripción no puede superar los 600 caracteres.', { node: cp, property: 'description' });
             }
@@ -318,17 +309,18 @@ export class MdaAudioPimMachineValidator {
     // --- COMPROBACIONES DE RANGO ---
 
     checkOscillator(node: OscillatorNode, accept: ValidationAcceptor): void {
-        this.checkRange(node.frequency, 0, 20000, accept);
-        this.checkRange(node.pulseWidth, 0, 1, accept);
-        this.checkRange(node.gain, 0, 1, accept);
-        this.checkRange(node.phase, 0, 6.28318530718, accept); // 2pi
-        this.checkRange(node.pan, -1, 1, accept);
+        if (node.waveform) this.checkRange(node.waveform, 0, 1, accept);
+        if (node.frequency) this.checkRange(node.frequency, 0, 20000, accept);
+        if (node.pulseWidth) this.checkRange(node.pulseWidth, 0, 1, accept);
+        if (node.gain) this.checkRange(node.gain, 0, 1, accept);
+        if (node.phase) this.checkRange(node.phase, 0, 360, accept);
+        if (node.pan) this.checkRange(node.pan, -1, 1, accept);
     }
 
     checkNoise(node: NoiseNode, accept: ValidationAcceptor): void {
-        this.checkRange(node.amplitude, 0, 1, accept);
-        this.checkRange(node.gain, 0, 1, accept);
-        this.checkRange(node.pan, -1, 1, accept);
+        if (node.amplitude) this.checkRange(node.amplitude, 0, 1, accept);
+        if (node.gain) this.checkRange(node.gain, 0, 1, accept);
+        if (node.pan) this.checkRange(node.pan, -1, 1, accept);
     }
 
     checkSample(node: SampleNode, accept: ValidationAcceptor): void {
@@ -339,30 +331,30 @@ export class MdaAudioPimMachineValidator {
         if (isStereo === false) {
             const panVal = this.getRawValue(node.pan);
             if (typeof panVal === 'number' && panVal !== 0) {
-                accept('error', 'Si stereo es false, el parámetro pan debe ser 0 siempre.', { node: node.pan, property: 'initialValue' });
+                if (node.pan) accept('error', 'Si stereo es false, el parámetro pan debe ser 0 siempre.', { node: node.pan, property: 'initialValue' });
             }
         }
     }
 
     checkFilter(node: FrequencyFilterNode, accept: ValidationAcceptor): void {
-        this.checkRange(node.cutoff, 20, 20000, accept);
-        this.checkRange(node.resonance, 0, 10, accept);
+        if (node.cutoff) this.checkRange(node.cutoff, 20, 20000, accept);
+        if (node.resonance) this.checkRange(node.resonance, 0, 10, accept);
     }
 
     checkLFO(node: LFONode, accept: ValidationAcceptor): void {
-        this.checkRange(node.rate, 0.01, 50, accept);
-        this.checkRange(node.amplitude, 0, 1, accept);
-        this.checkRange(node.phase, 0, 360, accept);
+        if (node.rate) this.checkRange(node.rate, 0.01, 50, accept);
+        if (node.amplitude) this.checkRange(node.amplitude, 0, 1, accept);
+        if (node.phase) this.checkRange(node.phase, 0, 360, accept);
     }
 
     checkEnvelope(node: EnvelopeNode, accept: ValidationAcceptor): void {
-        this.checkMin(node.attack, 0, accept);
-        this.checkMin(node.decay, 0, accept);
-        this.checkRange(node.sustain, 0, 1, accept);
-        this.checkMin(node.release, 0, accept);
+        if (node.attack) this.checkMin(node.attack, 0, accept);
+        if (node.decay) this.checkMin(node.decay, 0, accept);
+        if (node.sustain) this.checkRange(node.sustain, 0, 1, accept);
+        if (node.release) this.checkMin(node.release, 0, accept);
         
         const typeVal = this.getRawValue(node.envelopeType);
-        if (typeof typeVal === 'string' && typeVal.replace(/"/g, '') === 'DAHDSR') {
+        if (typeof typeVal === 'string' && typeVal?.replace(/"/g, '') === 'DAHDSR') {
             if (node.delay) this.checkMin(node.delay, 0, accept);
             if (node.hold) this.checkMin(node.hold, 0, accept);
         }
@@ -437,7 +429,8 @@ export class MdaAudioPimMachineValidator {
             accept('error', 'Debe definirse input_1.', { node, property: 'id' });
         }
         if (isStereo) {
-            if (!node.input_2 && node.$type !== 'GainAndPanNode') {
+            const isMonoToStereoEffect = ['ChorusFlangerNode', 'ReverbNode', 'DelayNode'].includes(node.$type as string);
+            if (!node.input_2 && node.$type !== 'GainAndPanNode' && !isMonoToStereoEffect) {
                 accept('error', 'En modo estéreo, debe definirse input_2.', { node, property: 'id' });
             }
         } else {
@@ -532,6 +525,7 @@ export class MdaAudioPimMachineValidator {
     }
 
     private checkRange(param: any, min: number, max: number, accept: ValidationAcceptor): void {
+        if (!param) return;
         const val = this.getRawValue(param);
         if (typeof val === 'number') {
             if (val < min || val > max) {
@@ -541,6 +535,7 @@ export class MdaAudioPimMachineValidator {
     }
 
     private checkMin(param: any, min: number, accept: ValidationAcceptor): void {
+        if (!param) return;
         const val = this.getRawValue(param);
         if (typeof val === 'number') {
             if (val < min) {

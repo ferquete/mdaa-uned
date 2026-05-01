@@ -1,0 +1,176 @@
+{
+  "id": "2c100001-0000-0000-0000-000000000000",
+  "name": "PIM Drum Mixer",
+  "description": "Implementacion PIM del mezclador maestro de percusion. Recibe las señales mono del bombo y la caja, las suma en un bus estereo con control de nivel y pan por canal, y aplica un compresor de bus para cohesion y punch. La salida estereo final del sistema de bateria sale por los puertos externos de esta maquina.",
+  "ids_cim_reference": [
+    "2c000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "mixer",
+      "id": "2c100002-0000-0000-0000-000000000000",
+      "name": "Drum Bus Mixer",
+      "description": "Mezclador de dos canales que recibe el bombo y la caja desde sus respectivas maquinas generadoras y los suma en un bus estereo. Los controles de nivel y pan de cada canal permiten equilibrar la mezcla de percusion.",
+      "ids_references": [
+        "2c000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "2c100003-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": true,
+        "description": "El mezclador maestro opera en estereo para dar amplitud espacial a la bateria electronica."
+      },
+      "input_1": {
+        "id": "2c100004-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000011-0000-0000-0000-000000000000"
+        ],
+        "isExternalInput": true,
+        "description": "Entrada del bombo electronico desde la maquina PIM Kick Drum. Señal mono centrada."
+      },
+      "input_2": {
+        "id": "2c100005-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000011-0000-0000-0000-000000000000"
+        ],
+        "isExternalInput": true,
+        "description": "Entrada de la caja electronica desde la maquina PIM Snare Drum. Señal mono centrada."
+      },
+      "output_1": {
+        "id": "2c100006-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del bus de percusion sumado hacia el compresor de bus maestro."
+      },
+      "output_2": {
+        "id": "2c100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del bus de percusion sumado hacia el compresor de bus maestro."
+      }
+    },
+    {
+      "type": "compressor",
+      "id": "2c100011-0000-0000-0000-000000000000",
+      "name": "Drum Bus Compressor",
+      "description": "Compresor de bus aplicado al conjunto de la bateria electronica para dar cohesion, aumentar el punch percibido y controlar los picos transitorios. El ataque lento permite que los transientes pasen preservando el snap de la percusion antes de que la compresion actue.",
+      "ids_references": [
+        "2c000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "threshold": {
+        "id": "2c100012-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": -12,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Umbral del compresor en -12 dB. Los picos de la bateria que superen este nivel seran comprimidos."
+      },
+      "ratio": {
+        "id": "2c100013-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 4,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ratio de compresion de 4:1 para una compresion moderada que da punch sin destruir la dinamica."
+      },
+      "attack": {
+        "id": "2c100014-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.015,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ataque lento de 15ms del compresor de bus para dejar pasar los transientes del bombo y la caja."
+      },
+      "release": {
+        "id": "2c100015-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.1,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Release de 100ms del compresor de bus para recuperacion musical entre golpes de la bateria."
+      },
+      "makeupGain": {
+        "id": "2c100016-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 4,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Makeup gain de 4 dB para compensar la perdida de volumen por la compresion aplicada al bus."
+      },
+      "stereo": {
+        "id": "2c100017-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "El compresor de bus opera en estereo para procesar el bus de percusion completo."
+      },
+      "input_1": {
+        "id": "2c100018-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del compresor desde el canal L del mezclador de bus de percusion."
+      },
+      "input_2": {
+        "id": "2c100019-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del compresor desde el canal R del mezclador de bus de percusion."
+      },
+      "output_1": {
+        "id": "2c100020-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "isExternalOutput": true,
+        "description": "Salida izquierda estereo final del sistema de bateria electronica hacia la salida de audio principal."
+      },
+      "output_2": {
+        "id": "2c100021-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2c000012-0000-0000-0000-000000000000"
+        ],
+        "isExternalOutput": true,
+        "description": "Salida derecha estereo final del sistema de bateria electronica hacia la salida de audio principal."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "2c100090-0000-0000-0000-000000000000",
+      "description": "Conexion de audio del canal L del mezclador de bus hacia la entrada L del compresor maestro de percusion.",
+      "ids_references": [
+        "2c000011-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2c100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2c100011-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "2c100091-0000-0000-0000-000000000000",
+      "description": "Conexion de audio del canal R del mezclador de bus hacia la entrada R del compresor maestro de percusion.",
+      "ids_references": [
+        "2c000011-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2c100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_2",
+      "targetNode": "2c100011-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

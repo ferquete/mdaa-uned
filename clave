@@ -1,1 +1,27 @@
 glpat-MEziqnCxoaB6-A02LFgDqmM6MQpvOjEKdTozcTJmNA8.01.170z49lna
+
+
+
+
+
+Como se hizo en _DOCUMENTACION/_CASOS_DE_PRUEBA/TEST_1, o sea, un proyecto.md con la definición del proyecto (nombre y descripción según la validación de longitud), y los directorios CIM y PIM con las máquinas y relaciones (leer 
+
+README.md
+ para conocer estructura), quiero completar los directorios TEST 2, 3 y 4. Para hacerlo, a parte de seguir todo lo que las gramáticas dsl obligan (leer 
+
+cim-machines.md
+
+cim-relations-machines.md
+
+pim-machines.md
+
+pim-relations-machines.md
+ para conocer las validaciones), vamos a hacer que cada uno de estos 3 nuevos sintetizadores creen los siguientes sintetizadores:
+
+TEST_2: Un sintetizador que simule sonidos de batería 
+TEST_3: Un sintetizador que sea un sonido de bajo arpejiado
+TEST_4: Un sintetizador que sea un sonido de bajo muy grave, estilo 80s
+
+IMPORTANTE!
+
+Ten siempre muy presente los .md de los dsl, para aplicar fielmente sus validaciones, y ten mucho cuidado con las referencias, estas deben ser correctas siempre.

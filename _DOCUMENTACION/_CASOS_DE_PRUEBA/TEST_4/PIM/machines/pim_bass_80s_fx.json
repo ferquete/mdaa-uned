@@ -1,0 +1,175 @@
+{
+  "id": "4b100001-0000-0000-0000-000000000000",
+  "name": "PIM 80s Bass FX",
+  "description": "Implementacion PIM de la maquina de efectos del bajo de los 80s. Aplica un nodo de distorsion en modo soft-clipping para saturacion analogica y un nodo de reverb configurado como una habitacion pequeña para añadir el ambiente de sala caracteristico. La salida estereo pasa por la cadena de efectos lista para mezcla.",
+  "ids_cim_reference": [
+    "4b000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "distortion",
+      "id": "4b100002-0000-0000-0000-000000000000",
+      "name": "Analog Saturation",
+      "description": "Saturacion de tipo soft-clipping para calentar el sonido y simular comportamiento analogico.",
+      "ids_references": [
+        "4b000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "drive": {
+        "id": "4b100003-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.2,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Drive moderado al 20% para calentar el bajo."
+      },
+      "tone": {
+        "id": "4b100004-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.6,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Tone al 60% para mantener los armonicos superiores generados."
+      },
+      "distType": {
+        "id": "4b100005-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "initialValue": "soft-clipping",
+        "isModifiable": false,
+        "description": "Clipping suave."
+      },
+      "outputLevel": {
+        "id": "4b100006-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.9,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Volumen compensado tras saturar."
+      },
+      "stereo": {
+        "id": "4b100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Procesamiento estereo para el bajo."
+      },
+      "input_1": {
+        "id": "4b100008-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "isExternalInput": true,
+        "description": "Entrada L desde PIM Core."
+      },
+      "input_2": {
+        "id": "4b100009-0000-0000-0000-000000000000",
+        "ids_references": ["4b000011-0000-0000-0000-000000000000"],
+        "isExternalInput": true,
+        "description": "Entrada R desde PIM Core."
+      },
+      "output_1": {
+        "id": "4b100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida L a Reverb."
+      },
+      "output_2": {
+        "id": "4b100011-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida R a Reverb."
+      }
+    },
+    {
+      "type": "reverb",
+      "id": "4b100012-0000-0000-0000-000000000000",
+      "name": "Room Reverb",
+      "description": "Reverb corta de sala para ambiente de 80s.",
+      "ids_references": [
+        "4b000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "roomSize": {
+        "id": "4b100013-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Tamaño pequeño de sala."
+      },
+      "damping": {
+        "id": "4b100014-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.7,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Damping moderado para oscurecer la cola de la reverb."
+      },
+      "decayTime": {
+        "id": "4b100015-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Decay muy corto (500ms)."
+      },
+      "dryWet": {
+        "id": "4b100016-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.2,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Mezcla en un 20% para sutileza."
+      },
+      "stereo": {
+        "id": "4b100017-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Reverb estereo completa."
+      },
+      "input_1": {
+        "id": "4b100018-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada L desde Distorsion."
+      },
+      "input_2": {
+        "id": "4b100019-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada R desde Distorsion."
+      },
+      "output_1": {
+        "id": "4b100020-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida final L del sintetizador."
+      },
+      "output_2": {
+        "id": "4b100021-0000-0000-0000-000000000000",
+        "ids_references": ["4b000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida final R del sintetizador."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "4b100090-0000-0000-0000-000000000000",
+      "description": "Conecta la salida L de distorsion a la reverb L.",
+      "ids_references": [],
+      "sourceNode": "4b100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "4b100012-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "4b100091-0000-0000-0000-000000000000",
+      "description": "Conecta la salida R de distorsion a la reverb R.",
+      "ids_references": [],
+      "sourceNode": "4b100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_2",
+      "targetNode": "4b100012-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

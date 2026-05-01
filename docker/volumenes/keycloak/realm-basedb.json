@@ -14,7 +14,7 @@
   "defaultLocale": "es",
   "accessTokenLifespan": 1200,
   "ssoSessionIdleTimeout": 1200,
-  "ssoSessionMaxLifespan": 1200,
+  "ssoSessionMaxLifespan": 36000,
   "offlineSessionIdleTimeout": 2592000,
   "accessCodeLifespan": 60,
   "smtpServer": {
@@ -48,20 +48,7 @@
       ],
       "directAccessGrantsEnabled": true
     },
-    {
-      "clientId": "vue-frontend",
-      "enabled": true,
-      "publicClient": true,
-      "redirectUris": [
-        "http://localhost:5173/*",
-        "http://localhost:5174/*"
-      ],
-      "webOrigins": [
-        "http://localhost:5173",
-        "http://localhost:5174"
-      ],
-      "directAccessGrantsEnabled": true
-    },
+
     {
       "clientId": "backend-client",
       "enabled": true,

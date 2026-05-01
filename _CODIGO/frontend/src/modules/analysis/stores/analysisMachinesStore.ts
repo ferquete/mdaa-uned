@@ -254,7 +254,7 @@ export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
 
     if (id.startsWith('new-m-')) {
       const parts = id.split('-');
-      const type = parts[3];
+
       const newId = parts.slice(4).join('-');
       return {
         $type: 'Element',

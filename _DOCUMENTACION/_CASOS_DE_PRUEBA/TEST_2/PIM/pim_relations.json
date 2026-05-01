@@ -1,0 +1,17 @@
+{
+  "description": "Red de interconexiones PIM del sintetizador de percusion. Conecta la salida del bombo y la salida de la caja a las entradas del mezclador maestro de percusion para la suma final y compresion de bus del sistema de bateria electronica.",
+  "relations": [
+    {
+      "id": "2d100001-0000-0000-0000-000000000000",
+      "source": "2a100065-0000-0000-0000-000000000000",
+      "destination": "2c100004-0000-0000-0000-000000000000",
+      "description": "Conexion de audio de la salida mono del bombo electronico hacia la entrada 1 del mezclador maestro de percusion del sistema."
+    },
+    {
+      "id": "2d100002-0000-0000-0000-000000000000",
+      "source": "2b100055-0000-0000-0000-000000000000",
+      "destination": "2c100005-0000-0000-0000-000000000000",
+      "description": "Conexion de audio de la salida mono de la caja electronica hacia la entrada 2 del mezclador maestro de percusion del sistema."
+    }
+  ]
+}

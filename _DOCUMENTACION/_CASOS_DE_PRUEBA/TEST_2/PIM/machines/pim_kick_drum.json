@@ -1,0 +1,463 @@
+{
+  "id": "2a100001-0000-0000-0000-000000000000",
+  "name": "PIM Kick Drum",
+  "description": "Implementacion PIM del bombo electronico. Utiliza un oscilador sinusoidal como cuerpo grave con una envolvente de pitch que lo hace descender rapidamente de 150 Hz a 40 Hz, y un generador de ruido blanco filtrado como transiente de ataque. Un LFO de trigger unico dispara la envolvente percusiva del cuerpo. Ambas capas se mezclan internamente y la salida mono se envia al mezclador maestro.",
+  "ids_cim_reference": [
+    "2a000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "2a100002-0000-0000-0000-000000000000",
+      "name": "Kick Body Osc",
+      "description": "Oscilador sinusoidal que genera el cuerpo grave del bombo a 150 Hz inicial, cuya frecuencia desciende rapidamente hasta 40 Hz controlada por la envolvente de pitch. La forma sinusoidal pura garantiza la maxima energia en el sub-grave sin armonicos indeseados.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "2a100003-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": "sine",
+        "isModifiable": false,
+        "description": "Forma sinusoidal fija para el cuerpo del bombo, garantiza maxima energia de sub-grave."
+      },
+      "frequency": {
+        "id": "2a100004-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 150,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Frecuencia inicial del bombo en 150 Hz, modulada hacia 40 Hz por la envolvente de pitch para el caracteristico pitch-drop del kick."
+      },
+      "pulseWidth": {
+        "id": "2a100005-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso no aplicable a onda sinusoidal, mantenido en valor neutro."
+      },
+      "gain": {
+        "id": "2a100006-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.9,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia del oscilador del cuerpo del bombo. Modulable por la envolvente percusiva para el shape del decay."
+      },
+      "phase": {
+        "id": "2a100007-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial en cero para que el bombo comience siempre con la misma forma de onda y sea predecible."
+      },
+      "pan": {
+        "id": "2a100008-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado fijo para el bombo, el sub-grave siempre debe estar en el centro del campo estereo."
+      },
+      "stereo": {
+        "id": "2a100009-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": false,
+        "description": "El bombo opera en mono para maxima compatibilidad y coherencia de fase."
+      },
+      "output_1": {
+        "id": "2a100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida mono del cuerpo del bombo hacia el mezclador interno de capas del kick."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "2a100021-0000-0000-0000-000000000000",
+      "name": "Kick Pitch Env",
+      "description": "Envolvente de tipo ADR que controla el descenso de pitch del oscilador del bombo. El ataque instantaneo y el decay corto crean el caracteristico pitch-drop del kick electronico, modulando la frecuencia del oscilador desde el valor inicial hasta la frecuencia objetivo.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "2a100022-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": "ADR",
+        "isModifiable": false,
+        "description": "Tipo ADR para el pitch-drop del bombo: ataque instantaneo, decay de pitch y release corto."
+      },
+      "attack": {
+        "id": "2a100023-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Ataque instantaneo de la envolvente de pitch para que el descenso comience desde el primer sample."
+      },
+      "decay": {
+        "id": "2a100024-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.06,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Tiempo de decay del pitch-drop en 60ms. Define la velocidad del descenso de frecuencia del bombo."
+      },
+      "sustain": {
+        "id": "2a100025-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Sustain en cero para envolvente ADR, no aplica nivel de sustain sostenido."
+      },
+      "release": {
+        "id": "2a100026-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.01,
+        "isModifiable": false,
+        "description": "Release muy corto de la envolvente de pitch del bombo."
+      },
+      "delay": {
+        "id": "2a100029-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay."
+      },
+      "hold": {
+        "id": "2a100030-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold."
+      },
+      "curve": {
+        "id": "2a100027-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "exponential",
+        "isModifiable": false,
+        "description": "Curva exponencial para el pitch-drop, que suena mas natural y percusivo que la interpolacion lineal."
+      },
+      "output": {
+        "id": "2a100028-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "isExternalOutput": false,
+        "description": "Salida de control de la envolvente de pitch hacia el parametro frequency del oscilador del bombo."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "2a100031-0000-0000-0000-000000000000",
+      "name": "Kick Amp Env",
+      "description": "Envolvente de amplitud ADSR del bombo con ataque instantaneo y decay que define la duracion del golpe. Controla la ganancia del oscilador del cuerpo para dar forma al golpe percusivo del bombo electronico.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "2a100032-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "ADR",
+        "isModifiable": false,
+        "description": "Tipo ADR para la amplitud del bombo: ataque instantaneo, decay controlado del golpe."
+      },
+      "attack": {
+        "id": "2a100033-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Ataque instantaneo de la amplitud para maximo punch desde el primer sample del bombo."
+      },
+      "decay": {
+        "id": "2a100034-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Tiempo de decay de 300ms del bombo. Configurable para bombos cortos tipo clap o profundos tipo 808."
+      },
+      "sustain": {
+        "id": "2a100035-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Sustain en cero para que el bombo sea puramente percusivo sin nivel sostenido."
+      },
+      "release": {
+        "id": "2a100036-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.02,
+        "isModifiable": false,
+        "description": "Release corto de 20ms para cierre limpio del bombo sin click de cierre."
+      },
+      "delay": {
+        "id": "2a100039-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No delay."
+      },
+      "hold": {
+        "id": "2a100040-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "No hold."
+      },
+      "curve": {
+        "id": "2a100037-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "exponential",
+        "isModifiable": false,
+        "description": "Curva exponencial del decay de amplitud para el shape natural del bombo electronico."
+      },
+      "output": {
+        "id": "2a100038-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000011-0000-0000-0000-000000000000"
+        ],
+        "isExternalOutput": false,
+        "description": "Salida de control de la envolvente de amplitud hacia el parametro gain del oscilador del bombo."
+      }
+    },
+    {
+      "type": "noise",
+      "id": "2a100041-0000-0000-0000-000000000000",
+      "name": "Kick Transient Noise",
+      "description": "Generador de ruido blanco para el transiente de ataque del bombo. Aporta el click inicial y la presencia de alta frecuencia que hace que el golpe del bombo sea audible en mezclas densas. Su amplitud muy reducida evita que el ruido tape el cuerpo sinusoidal.",
+      "ids_references": [
+        "2a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "noiseType": {
+        "id": "2a100042-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": "white",
+        "isModifiable": false,
+        "description": "Ruido blanco para el transiente del bombo, con espectro plano que aporta el click caracteristico."
+      },
+      "amplitude": {
+        "id": "2a100043-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.25,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Amplitud reducida del ruido de transiente para que no domine sobre el cuerpo grave del bombo."
+      },
+      "gain": {
+        "id": "2a100044-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 0.3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ganancia del ruido de transiente, modulable por su propia envolvente de amplitud muy corta."
+      },
+      "pan": {
+        "id": "2a100045-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Pan centrado para el transiente del bombo."
+      },
+      "stereo": {
+        "id": "2a100046-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": false,
+        "description": "El ruido transiente opera en mono coherente con el cuerpo del bombo."
+      },
+      "output_1": {
+        "id": "2a100047-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido transiente hacia el filtro paso-banda del transiente del bombo."
+      }
+    },
+    {
+      "type": "frequency_filter",
+      "id": "2a100051-0000-0000-0000-000000000000",
+      "name": "KickTransientFilter",
+      "description": "Filtro paso-banda que moldea el espectro del ruido blanco del transiente del bombo, concentrando la energia en la zona de 500 Hz a 2 kHz donde el click del bombo es mas audible y perceptible en mezcla.",
+      "ids_references": [
+        "2a000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "filterType": {
+        "id": "2a100052-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": "BPF",
+        "isModifiable": false,
+        "description": "Filtro paso-banda para concentrar la energia del transiente en la zona de presencia del bombo."
+      },
+      "cutoff": {
+        "id": "2a100053-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000012-0000-0000-0000-000000000000"
+        ],
+        "initialValue": 1000,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Frecuencia central del filtro paso-banda del transiente en 1 kHz. Ajustable para un click mas agudo o mas redondo."
+      },
+      "resonance": {
+        "id": "2a100054-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 1.5,
+        "isModifiable": false,
+        "description": "Resonancia moderada del filtro que da un leve color al transiente sin que resulte metalico."
+      },
+      "slope": {
+        "id": "2a100055-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": "12dB/oct",
+        "isModifiable": false,
+        "description": "Pendiente de 12 dB por octava para el filtro paso-banda del transiente del bombo."
+      },
+      "stereo": {
+        "id": "2a100056-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": false,
+        "description": "El filtro del transiente opera en mono coherente con el resto del bombo."
+      },
+      "input_1": {
+        "id": "2a100057-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada del ruido blanco desde el generador de transiente del bombo."
+      },
+      "output_1": {
+        "id": "2a100058-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido filtrado hacia el mezclador de capas del bombo."
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "2a100061-0000-0000-0000-000000000000",
+      "name": "Kick Layer Mix",
+      "description": "Mezclador de dos canales que suma el cuerpo sinusoidal del bombo con el transiente de ruido filtrado en una señal mono. La salida se envia externamente al mezclador maestro de percusion del sistema.",
+      "ids_references": [
+        "2a000013-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "2a100062-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000013-0000-0000-0000-000000000000"
+        ],
+        "initialValue": false,
+        "description": "El mezclador del bombo opera en mono ya que todas las capas son mono."
+      },
+      "input_1": {
+        "id": "2a100063-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 1 del mezclador: cuerpo sinusoidal del bombo desde el oscilador principal."
+      },
+      "input_2": {
+        "id": "2a100064-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 2 del mezclador: transiente de ruido blanco filtrado del bombo."
+      },
+      "output_1": {
+        "id": "2a100065-0000-0000-0000-000000000000",
+        "ids_references": [
+          "2a000013-0000-0000-0000-000000000000"
+        ],
+        "isExternalOutput": true,
+        "description": "Salida mono del bombo compuesto hacia el mezclador maestro de percusion del sistema de bateria."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "2a100090-0000-0000-0000-000000000000",
+      "description": "Modulacion del pitch del bombo por la envolvente de pitch para crear el pitch-drop caracteristico del kick electronico.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2a100021-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "2a100002-0000-0000-0000-000000000000",
+      "targetParam": "frequency",
+      "type": "modification"
+    },
+    {
+      "id": "2a100091-0000-0000-0000-000000000000",
+      "description": "Modulacion de la amplitud del oscilador del bombo por la envolvente de amplitud para dar forma percusiva al golpe.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2a100031-0000-0000-0000-000000000000",
+      "sourceParam": "output",
+      "targetNode": "2a100002-0000-0000-0000-000000000000",
+      "targetParam": "gain",
+      "type": "modification"
+    },
+    {
+      "id": "2a100092-0000-0000-0000-000000000000",
+      "description": "Conexion de audio del cuerpo sinusoidal del bombo hacia el canal 1 del mezclador de capas del kick.",
+      "ids_references": [
+        "2a000011-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2a100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2a100061-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "2a100093-0000-0000-0000-000000000000",
+      "description": "Conexion del ruido blanco del transiente hacia el filtro paso-banda para moldear su espectro antes de mezclar.",
+      "ids_references": [
+        "2a000012-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2a100041-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2a100051-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "2a100094-0000-0000-0000-000000000000",
+      "description": "Conexion del ruido transiente filtrado hacia el canal 2 del mezclador de capas del bombo.",
+      "ids_references": [
+        "2a000012-0000-0000-0000-000000000000"
+      ],
+      "sourceNode": "2a100051-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "2a100061-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

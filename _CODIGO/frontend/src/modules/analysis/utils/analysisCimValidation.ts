@@ -33,7 +33,7 @@ export function validateCimRelations(doc: any, validMachines: ValidMachine[] = [
   }
 
   const validUuidMap = new Map(validMachines.map(m => [m.id, m]))
-  const validUuidSet = new Set(validMachines.map(m => m.id))
+
   const seenRelations = new Set<string>()
   const seenIds = new Set<string>()
 

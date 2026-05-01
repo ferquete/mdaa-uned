@@ -96,7 +96,7 @@ watch([localJson, isValid], () => {
   }
 })
 
-const onEditorDidMount = (editor: any, monaco: any) => {
+const onEditorDidMount = () => {
   // Funcionalidad de salto a definición eliminada a petición del usuario
 }
 

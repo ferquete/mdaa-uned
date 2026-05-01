@@ -1,0 +1,49 @@
+{
+  "id": "3a000001-0000-0000-0000-000000000000",
+  "name": "Arp Bass Voice",
+  "description": "Maquina generadora principal del sonido de bajo arpejiado. Produce el tono mediante un oscilador de onda diente de sierra rica en armonicos, con un filtro paso-bajo cuya frecuencia de corte es modulada por un LFO sincronizado al tempo para crear el efecto de apertura y cierre ritmica caracteristico del bajo sintetico en movimiento. Una envolvente de amplitud percusiva define el ataque y la duracion de cada nota del arpejio, dando el caracter pulsante y ritmico del sonido.",
+  "elements": [
+    {
+      "id": "3a000011-0000-0000-0000-000000000000",
+      "name": "Saw Bass Osc",
+      "description": "Oscilador de onda diente de sierra que genera el tono del bajo arpejiado. La forma de onda diente de sierra es rica en armonicos impares y pares, dando al bajo sintetico su densidad caracteristica antes del filtrado. La frecuencia varia segun la nota del arpejio en curso.",
+      "params": "Frecuencia: 40-200Hz, Forma de onda: Sawtooth, Ganancia: 0-100%, Detune fino: -50ct/+50ct, Fase: 0-360, Unison: 1-2 voces",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "3a000011-0000-0000-0000-000000000010",
+          "idRef": "3a000013-0000-0000-0000-000000000000",
+          "description": "Envia la señal del oscilador de bajo hacia el filtro paso-bajo para el conformado espectral dinamico del bajo arpejiado."
+        }
+      ]
+    },
+    {
+      "id": "3a000012-0000-0000-0000-000000000000",
+      "name": "Arp Modulation",
+      "description": "Bloque de modulacion del bajo arpejiado que agrupa el LFO sincronizado para modular el filtro y la envolvente de amplitud para dar el caracter percusivo a cada nota del arpejio. Define el ritmo interno y la textura dinamica del bajo en movimiento.",
+      "params": "LFO Rate: 1-8 Hz sincronizado, LFO Amplitud: 0-100%, Envolvente Ataque: 0-20ms, Envolvente Decay: 50-500ms, Envolvente Sustain: 0-80%, Forma LFO: Sine/Triangle",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "3a000012-0000-0000-0000-000000000010",
+          "idRef": "3a000013-0000-0000-0000-000000000000",
+          "description": "Envia las señales de control del LFO y la envolvente hacia el filtro del bajo para modular el cutoff de forma ritmica y articulada."
+        }
+      ]
+    },
+    {
+      "id": "3a000013-0000-0000-0000-000000000000",
+      "name": "Bass Filter",
+      "description": "Filtro paso-bajo resonante que moldea el espectro de la onda diente de sierra del bajo arpejiado. La modulacion continua del cutoff por el LFO sincronizado crea el efecto de barrido espectral ritmico caracteristico del bajo sintetico arpejiado. La resonancia elevada da el acento caracterstico del filtro analogico.",
+      "params": "Tipo: LPF, Cutoff: 200-4000Hz, Resonancia: 0.5-8, Pendiente: 24dB/oct, Modo: Analogico, Keyfollow: 0-100%",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida del bajo arpejiado filtrado hacia la maquina de efectos de salida del sintetizador de bajo."
+      },
+      "sendTo": []
+    }
+  ]
+}

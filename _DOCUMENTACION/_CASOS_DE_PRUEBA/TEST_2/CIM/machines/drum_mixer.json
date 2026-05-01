@@ -1,0 +1,37 @@
+{
+  "id": "2c000001-0000-0000-0000-000000000000",
+  "name": "Drum Mixer",
+  "description": "Mezclador maestro del sistema de bateria electronica. Recibe las señales individuales de todas las voces percusivas, las suma en un bus estereo y aplica compresion final para dar cohesion, punch y presencia al conjunto de la bateria. Actua como el nucleo de control de nivel y dinamica del sintetizador de percusion, siendo el unico punto de salida de audio del sistema completo hacia una cadena de efectos o salida de audio principal.",
+  "elements": [
+    {
+      "id": "2c000011-0000-0000-0000-000000000000",
+      "name": "Drum Bus Mixer",
+      "description": "Mezclador de multiples canales que suma las señales de bombo, caja y resto de voces percusivas en un bus estereo unificado. Cada canal de entrada dispone de control de nivel y pan independiente. Gestiona el equilibrio general entre todas las voces de la bateria antes de la compresion de bus final.",
+      "params": "Canales activos: 2-8, Nivel por canal: 0-100%, Pan por canal: L-R, Ganancia de bus: -24dB a +6dB, Modo estereo: On/Off",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entradas de audio de las voces percusivas individuales: bombo y caja desde sus respectivas maquinas generadoras."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2c000011-0000-0000-0000-000000000010",
+          "idRef": "2c000012-0000-0000-0000-000000000000",
+          "description": "Envia el bus de percusion sumado al compresor de bus maestro para la dinamica final del sistema de bateria."
+        }
+      ]
+    },
+    {
+      "id": "2c000012-0000-0000-0000-000000000000",
+      "name": "Bus Compressor",
+      "description": "Compresor de bus maestro de percusion que aplica compresion moderada al conjunto de la bateria para dar cohesion, aumentar el punch percibido y controlar los picos transitorios. Los parametros de ataque lento permiten que los transientes pasen antes de que la compresion actue, preservando el snap caracteristico de la bateria electronica.",
+      "params": "Umbral: -20dB a 0dB, Ratio: 2:1 a 8:1, Ataque: 5-30ms, Release: 50-200ms, Makeup gain: 0-12dB, Knee: Suave/Duro",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida estereo final del sistema de bateria, lista para enrutarse hacia una salida de audio o cadena de efectos externa."
+      },
+      "sendTo": []
+    }
+  ]
+}

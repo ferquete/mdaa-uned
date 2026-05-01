@@ -1,4 +1,3 @@
-import { type Ref } from 'vue';
 
 /**
  * Composable para gestionar la exportación de archivos JSON.

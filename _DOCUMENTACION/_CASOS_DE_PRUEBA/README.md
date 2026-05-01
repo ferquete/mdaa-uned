@@ -42,6 +42,29 @@ Nombre_del_Caso/
 
 ---
 
+## 🔍 Validación de Casos de Prueba
+
+Antes de cargar un caso de prueba, es fundamental validar que cumple con las reglas estructurales y semánticas de todos los niveles DSL (CIM y PIM).
+
+Existen dos formas de ejecutar la validación integral:
+
+*   **Opción A (Directa)**: Ejecutar desde este directorio:
+    ```bash
+    ./validate-test.sh <NOMBRE_DEL_TEST>
+    ```
+*   **Opción B (Desde Ejecutor)**: Utilizar el script puente desde la raíz o la carpeta `ejecutor`:
+    ```bash
+    ./ejecutor/validar-test.sh <NOMBRE_DEL_TEST>
+    ```
+
+El script de validación realiza comprobaciones automáticas de:
+1.  **Esquema JSON**: Cumplimiento de la estructura base.
+2.  **Validación Langium**: Reglas de negocio (longitudes, rangos, etc.).
+3.  **Integridad Referencial**: Las relaciones (CIM/PIM) y referencias cruzadas (PIM->CIM) deben apuntar a IDs de máquinas y elementos existentes.
+
+
+---
+
 ## 🚀 Cómo Cargar un Caso de Prueba
 
 El script `instaladorPrueba.py` asocia automáticamente el proyecto al usuario de prueba predeterminado (`test@uned.es`).

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import PimVisualizerJSON from './PimVisualizerJSON.vue'
-import { usePimStore } from '../stores/pimStore'
 
-const store = usePimStore()
 </script>
 
 <template>

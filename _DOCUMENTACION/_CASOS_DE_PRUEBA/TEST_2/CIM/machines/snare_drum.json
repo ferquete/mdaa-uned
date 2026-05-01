@@ -1,0 +1,49 @@
+{
+  "id": "2b000001-0000-0000-0000-000000000000",
+  "name": "Snare Drum",
+  "description": "Maquina generadora del sonido de caja electronica. Combina un oscilador de tono medio con una capa de ruido blanco filtrado para reproducir el caracter caracteristico de la caja entre crack agudo y cuerpo tonico. Una envolvente percusiva de ataque instantaneo y decay corto define el snap del golpe. El balance entre tono y ruido permite configurar desde una caja seca y snap hasta una caja con mas cuerpo resonante.",
+  "elements": [
+    {
+      "id": "2b000011-0000-0000-0000-000000000000",
+      "name": "Snare Tone Osc",
+      "description": "Oscilador de tono medio que genera el cuerpo tonico de la caja electronica, tipicamente en el rango de 150 a 300 Hz. Aporta el golpe resonante que da cuerpo a la caja. Puede afinarse para diferentes registros de caja desde caja alta hasta caja grave estilo latin.",
+      "params": "Frecuencia: 150-300Hz, Amplitud: 0-100%, Forma de onda: Sine/Triangle, Decay tono: 20-150ms, Ganancia: 0-100%, Resonancia: 0-10",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2b000011-0000-0000-0000-000000000010",
+          "idRef": "2b000013-0000-0000-0000-000000000000",
+          "description": "Envia el tono de la caja al mezclador interno de capas del snare para combinarse con la capa de ruido blanco."
+        }
+      ]
+    },
+    {
+      "id": "2b000012-0000-0000-0000-000000000000",
+      "name": "Snare Noise Layer",
+      "description": "Generador de la capa de ruido blanco filtrado que replica el soplido de los resortes de la caja acustica. Un filtro paso-alto en 1kHz y paso-bajo en 8kHz moldea el espectro del ruido. La envolvente de ataque instantaneo y decay ajustable define si el crack es seco y snap o mas largo y sibilante.",
+      "params": "Tipo de ruido: Blanco, Filtro HP: 1kHz-5kHz, Filtro LP: 5kHz-12kHz, Amplitud: 0-100%, Ataque: 0-5ms, Decay: 30-300ms, Color: Brillante/Oscuro",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2b000012-0000-0000-0000-000000000010",
+          "idRef": "2b000013-0000-0000-0000-000000000000",
+          "description": "Envia la capa de ruido blanco filtrado al mezclador interno del snare para la suma final con el tono de la caja."
+        }
+      ]
+    },
+    {
+      "id": "2b000013-0000-0000-0000-000000000000",
+      "name": "Snare Layer Mixer",
+      "description": "Mezclador interno que combina el tono medio del oscilador con la capa de ruido blanco de la caja. El balance entre ambas capas define el caracter del snare. La salida combinada se envia al mezclador maestro de percusion del sistema de bateria electronica.",
+      "params": "Nivel tono: 0-100%, Nivel ruido: 0-100%, Ganancia maestra: -24dB a +6dB, Pan: -100% a +100%, Limiter: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de la caja compuesta hacia el mezclador maestro de percusion del sistema de bateria electronica."
+      },
+      "sendTo": []
+    }
+  ]
+}

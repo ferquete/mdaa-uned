@@ -29,6 +29,7 @@ Para facilitar el trabajo con los casos de prueba, se proporcionan dos scripts p
 
 #### 1. `validar-test.sh`
 Este script realiza una validación integral de un caso de prueba antes de ser procesado o instalado.
+- **Importante**: El directorio del test que se pase como parámetro debe estar ubicado dentro de la carpeta `_DOCUMENTACION/_CASOS_DE_PRUEBA/`.
 - **Funcionamiento**: Actúa como un puente que invoca la validación Langium y las reglas de integridad referencial sobre los archivos JSON del test.
 - **Parámetro**: El nombre del directorio del test (ej: `TEST_1`).
   ```bash
@@ -40,6 +41,7 @@ Este script realiza una validación integral de un caso de prueba antes de ser p
 
 #### 2. `incluir-test.sh`
 Este script automatiza la carga de un caso de prueba en la base de datos MariaDB del entorno Docker.
+- **Importante**: El directorio del test que se pase como parámetro debe estar ubicado dentro de la carpeta `_DOCUMENTACION/_CASOS_DE_PRUEBA/`.
 - **Funcionamiento**: Ejecuta el script Python `instaladorPrueba.py` que lee el archivo `proyecto.md` y los JSON de máquinas/relaciones para insertarlos en las tablas correspondientes.
 - **Parámetro**: El nombre del directorio del test (ej: `TEST_1`).
   ```bash
@@ -117,7 +119,7 @@ Esta carpeta contiene el núcleo técnico del sistema:
 - **frontend**: Aplicación web desarrollada con **Vue 3** y **TypeScript** que permite la edición gráfica y gestión de proyectos MDA.
 - **backend**: Servicio API REST desarrollado con **Java 21** y **Spring Boot 3**, encargado de la lógica de negocio, persistencia y seguridad.
 - **dsl**: Implementación de los 4 lenguajes de dominio específico mediante **Langium**:
-  - `mdaa-cim-machine`: Definición individual de máquinas a nivel CIM.
-  - `mdaa-cim-relations-machines`: Definición de conexiones y topología a nivel CIM.
-  - `mdaa-pim-machine`: Definición técnica detallada de máquinas a nivel PIM.
-  - `mdaa-pim-relations-machines`: Definición de conexiones técnicas a nivel PIM.
+  - [`mdaa-cim-machine`](_CODIGO/dsl/mdaa-cim-machine/README.md): Definición individual de máquinas a nivel CIM.
+  - [`mdaa-cim-relations-machines`](_CODIGO/dsl/mdaa-cim-relations-machines/README.md): Definición de conexiones y topología a nivel CIM.
+  - [`mdaa-pim-machine`](_CODIGO/dsl/mdaa-pim-machine/README.md): Definición técnica detallada de máquinas a nivel PIM.
+  - [`mdaa-pim-relations-machines`](_CODIGO/dsl/mdaa-pim-relations-machines/README.md): Definición de conexiones técnicas a nivel PIM.

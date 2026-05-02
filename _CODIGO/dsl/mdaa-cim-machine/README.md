@@ -2,6 +2,8 @@
 
 Este lenguaje permite la definición conceptual de máquinas de audio en el nivel CIM (Computation Independent Model). Define la identidad, puertos y configuraciones base de las máquinas.
 
+Para una descripción detallada de la gramática, tipos y reglas, consulta la [**Guía Técnica CIM Machines**](../../../_DOCUMENTACION/manual_dsl/markdown/cim-machines.md).
+
 ## Comandos Principales
 
 *   `npm run langium:generate`: Genera el código del lenguaje a partir de la gramática.

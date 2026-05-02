@@ -2,6 +2,8 @@
 
 Este lenguaje define las conexiones conceptuales entre máquinas CIM, permitiendo modelar el flujo de señales de audio y modificaciones a nivel abstracto.
 
+Para una descripción detallada de la gramática y reglas de conexión, consulta la [**Guía Técnica CIM Relations**](../../../_DOCUMENTACION/manual_dsl/markdown/cim-relations-machines.md).
+
 ## Comandos Principales
 
 *   `npm run langium:generate`: Genera el código del lenguaje.

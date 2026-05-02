@@ -119,7 +119,7 @@ Esta carpeta contiene el núcleo técnico del sistema:
 - **frontend**: Aplicación web desarrollada con **Vue 3** y **TypeScript** que permite la edición gráfica y gestión de proyectos MDA.
 - **backend**: Servicio API REST desarrollado con **Java 21** y **Spring Boot 3**, encargado de la lógica de negocio, persistencia y seguridad.
 - **dsl**: Implementación de los 4 lenguajes de dominio específico mediante **Langium**:
-  - [`mdaa-cim-machine`](_CODIGO/dsl/mdaa-cim-machine/README.md): Definición individual de máquinas a nivel CIM.
-  - [`mdaa-cim-relations-machines`](_CODIGO/dsl/mdaa-cim-relations-machines/README.md): Definición de conexiones y topología a nivel CIM.
-  - [`mdaa-pim-machine`](_CODIGO/dsl/mdaa-pim-machine/README.md): Definición técnica detallada de máquinas a nivel PIM.
-  - [`mdaa-pim-relations-machines`](_CODIGO/dsl/mdaa-pim-relations-machines/README.md): Definición de conexiones técnicas a nivel PIM.
+  - [`mdaa-cim-machine`](_CODIGO/dsl/mdaa-cim-machine/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-machines.md)): Definición individual de máquinas a nivel CIM.
+  - [`mdaa-cim-relations-machines`](_CODIGO/dsl/mdaa-cim-relations-machines/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-relations-machines.md)): Definición de conexiones y topología a nivel CIM.
+  - [`mdaa-pim-machine`](_CODIGO/dsl/mdaa-pim-machine/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-machines.md)): Definición técnica detallada de máquinas a nivel PIM.
+  - [`mdaa-pim-relations-machines`](_CODIGO/dsl/mdaa-pim-relations-machines/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-relations-machines.md)): Definición de conexiones técnicas a nivel PIM.

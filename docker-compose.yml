@@ -52,7 +52,6 @@ services:
       - "8080:8080"
     volumes:
       - ./docker/volumenes/keycloak/realm-basedb.json:/opt/keycloak/data/import/realm-basedb.json:ro
-      - ./_CODIGO/docker/volumenes/keycloak/themes:/opt/keycloak/themes
     depends_on:
       - mariadb
     networks:

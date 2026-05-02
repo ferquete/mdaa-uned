@@ -49,6 +49,8 @@ La carpeta `ejecutor` centraliza scripts de automatización para facilitar el fl
 
 - `start.sh`: Levanta toda la infraestructura Docker.
 - `delete-TOTAL-docker.sh`: Detiene y elimina contenedores, volúmenes e imágenes del proyecto para un reset total.
+  > [!CAUTION]
+  > **PELIGRO**: Este script ejecuta `docker system prune` y comandos de borrado masivo. Úsalo **SOLO** si no tienes otros contenedores, imágenes o volúmenes importantes en tu sistema Docker que no pertenezcan a este proyecto, ya que podría borrar datos de otros proyectos.
 ### Scripts de Automatización de Pruebas
 
 Para facilitar el trabajo con los casos de prueba, se proporcionan dos scripts principales en la carpeta `ejecutor/`:
@@ -144,8 +146,8 @@ Esta carpeta contiene el núcleo técnico del sistema:
 
 - **frontend**: Aplicación web desarrollada con **Vue 3** y **TypeScript** que permite la edición gráfica y gestión de proyectos MDA.
 - **backend**: Servicio API REST desarrollado con **Java 21** y **Spring Boot 3**, encargado de la lógica de negocio, persistencia y seguridad.
-- **dsl**: Implementación de los 4 lenguajes de dominio específico mediante **Langium**:
-  - [`mdaa-cim-machine`](_CODIGO/dsl/mdaa-cim-machine/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-machines.md)): Definición individual de máquinas a nivel CIM.
-  - [`mdaa-cim-relations-machines`](_CODIGO/dsl/mdaa-cim-relations-machines/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-relations-machines.md)): Definición de conexiones y topología a nivel CIM.
-  - [`mdaa-pim-machine`](_CODIGO/dsl/mdaa-pim-machine/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-machines.md)): Definición técnica detallada de máquinas a nivel PIM.
-  - [`mdaa-pim-relations-machines`](_CODIGO/dsl/mdaa-pim-relations-machines/README.md) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-relations-machines.md)): Definición de conexiones técnicas a nivel PIM.
+- **dsl**: Implementación de los 4 lenguajes de dominio específico mediante **Langium**. En los archivos **README** se detalla la forma de compilar los lenguajes, ejemplos de uso y el funcionamiento de los validadores, mientras que en las **Guías técnicas** se encuentra la definición funcional y reglas de cada lenguaje:
+  - `mdaa-cim-machine` ([README](_CODIGO/dsl/mdaa-cim-machine/README.md)) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-machines.md)): Definición individual de máquinas a nivel CIM.
+  - `mdaa-cim-relations-machines` ([README](_CODIGO/dsl/mdaa-cim-relations-machines/README.md)) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/cim-relations-machines.md)): Definición de conexiones y topología a nivel CIM.
+  - `mdaa-pim-machine` ([README](_CODIGO/dsl/mdaa-pim-machine/README.md)) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-machines.md)): Definición técnica detallada de máquinas a nivel PIM.
+  - `mdaa-pim-relations-machines` ([README](_CODIGO/dsl/mdaa-pim-relations-machines/README.md)) ([Guía técnica](_DOCUMENTACION/manual_dsl/markdown/pim-relations-machines.md)): Definición de conexiones técnicas a nivel PIM.

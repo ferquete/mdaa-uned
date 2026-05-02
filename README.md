@@ -23,11 +23,33 @@ La carpeta `ejecutor` centraliza scripts de automatización para facilitar el fl
 
 - `start.sh`: Levanta toda la infraestructura Docker.
 - `delete-TOTAL-docker.sh`: Detiene y elimina contenedores, volúmenes e imágenes del proyecto para un reset total.
-- `incluir-test.sh`: Script de conveniencia para cargar un caso de prueba específico en la base de datos.
-- `validar-test.sh`: Ejecuta la validación completa (sintáctica y semántica) de un caso de prueba.
-- `abrir-en-chrome.sh`: Abre automáticamente las URLs de los servicios (frontend, Keycloak, Adminer) en el navegador.
+### Scripts de Automatización de Pruebas
 
-## 📂 Documentación y Pruebas (`_DOCUMENTACION`)
+Para facilitar el trabajo con los casos de prueba, se proporcionan dos scripts principales en la carpeta `ejecutor/`:
+
+#### 1. `validar-test.sh`
+Este script realiza una validación integral de un caso de prueba antes de ser procesado o instalado.
+- **Funcionamiento**: Actúa como un puente que invoca la validación Langium y las reglas de integridad referencial sobre los archivos JSON del test.
+- **Parámetro**: El nombre del directorio del test (ej: `TEST_1`).
+  ```bash
+  ./ejecutor/validar-test.sh TEST_1
+  ```
+- **Resultado esperado**: 
+  - Si es válido: Un mensaje indicando que la validación ha sido exitosa (✅).
+  - Si es inválido: Un listado detallado de errores (sintácticos, rangos fuera de límites o referencias cruzadas rotas) y un mensaje de error (❌).
+
+#### 2. `incluir-test.sh`
+Este script automatiza la carga de un caso de prueba en la base de datos MariaDB del entorno Docker.
+- **Funcionamiento**: Ejecuta el script Python `instaladorPrueba.py` que lee el archivo `proyecto.md` y los JSON de máquinas/relaciones para insertarlos en las tablas correspondientes.
+- **Parámetro**: El nombre del directorio del test (ej: `TEST_1`).
+  ```bash
+  ./ejecutor/incluir-test.sh TEST_1
+  ```
+- **Resultado esperado**:
+  - Un mensaje de éxito (✅ Instalación completada con éxito) y la disponibilidad inmediata del proyecto en la aplicación MDAA para el usuario `test@uned.es`.
+  - En caso de fallo (por falta de conexión a la DB o errores de formato), se mostrará un mensaje descriptivo del error (❌).
+
+---
 
 ### Casos de Prueba (`_CASOS_DE_PRUEBA`)
 

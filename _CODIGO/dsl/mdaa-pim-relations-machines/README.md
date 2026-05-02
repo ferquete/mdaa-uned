@@ -2,6 +2,8 @@
 
 DSL para la orquestación de interconexiones técnicas entre máquinas PIM (Platform Independence Model). Permite establecer vínculos directos entre puertos de salida externos y parámetros o puertos de entrada.
 
+Para una descripción detallada de la lógica de orquestación técnica, consulta la [**Guía Técnica PIM Relations**](../../../_DOCUMENTACION/manual_dsl/markdown/pim-relations-machines.md).
+
 ## Estructura de Proyecto
 
 - `validate.ts`: Script de validación polimórfico.

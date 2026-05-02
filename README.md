@@ -107,10 +107,10 @@ Utiliza el script disponible en la carpeta `ejecutor` para una carga rápida:
 
 Todos los subdirectorios incluyen un archivo `main.pdf` con el contenido generado, además de las fuentes LaTeX (`.tex`) para su modificación:
 
-- **articulo**: Contiene el artículo que describe la investigación del proyecto MDAA.
-- **manual_dsl**: Manual técnico detallado de los lenguajes de dominio específico (DSLs) desarrollados.
-- **manual_mdaa**: Guía de usuario y manual de referencia de la aplicación MDAA.
-- **material_complementario**: Recursos adicionales, diagramas y anexos que apoyan la documentación principal, para dar una pequeña guia de qué es la generación digital de sonido.
+- [**articulo**](_DOCUMENTACION/articulo/main.pdf): Contiene el artículo que describe la investigación del proyecto MDAA.
+- [**manual_dsl**](_DOCUMENTACION/manual_dsl/latex/main.pdf): Manual técnico detallado de los lenguajes de dominio específico (DSLs) desarrollados.
+- [**manual_mdaa**](_DOCUMENTACION/manual_mdaa/main.pdf): Guía de usuario y manual de referencia de la aplicación MDAA.
+- [**material_complementario**](_DOCUMENTACION/material_complementario/main.pdf): Recursos adicionales, diagramas y anexos que apoyan la documentación principal, para dar una pequeña guia de qué es la generación digital de sonido.
 
 ## 💻 Código Fuente (`_CODIGO`)
 

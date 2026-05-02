@@ -2,6 +2,8 @@
 
 Este lenguaje permite definir máquinas de audio a nivel PIM (Platform Independent Model), incluyendo generadores (osciladores, ruido, samples), modificadores (filtros, envolventes, LFOs) y efectos (reverb, delay, etc.).
 
+Para una descripción detallada de todos los componentes y parámetros técnicos, consulta la [**Guía Técnica PIM Machines**](../../../_DOCUMENTACION/manual_dsl/markdown/pim-machines.md).
+
 ## Comandos Principales
 
 Para trabajar con el DSL, sitúate en la raíz del proyecto `dsl/mdaa-pim-machine/` y utiliza los siguientes comandos:

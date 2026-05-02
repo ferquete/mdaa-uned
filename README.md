@@ -57,7 +57,7 @@ La carpeta `ejecutor` centraliza scripts de automatización para facilitar el fl
 - `delete-TOTAL-docker.sh`: Detiene y elimina contenedores, volúmenes e imágenes del proyecto para un reset total.
 
 > [!CAUTION]
-> **PELIGRO**: Este script ejecuta `docker system prune` y comandos de borrado masivo. Úsalo **SOLO** si no tienes otros contenedores, imágenes o volúmenes importantes en tu sistema Docker que no pertenezcan a este proyecto, ya que podría borrar datos de otros proyectos.
+> Este script ejecuta `docker system prune` y comandos de borrado masivo. Úsalo **SOLO** si no tienes otros contenedores, imágenes o volúmenes importantes en tu sistema Docker que no pertenezcan a este proyecto, ya que podría borrar datos de otros proyectos.
 
 ### Scripts de Automatización de Pruebas
 

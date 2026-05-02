@@ -35,8 +35,14 @@ En la raíz y la carpeta `docker` se define la infraestructura necesaria para de
 - **docker-compose.yml (Raíz)**: Orquestador principal que levanta los servicios de:
   - `mariadb`: Base de datos relacional para el backend y Keycloak.
   - `adminer`: Interfaz web para la gestión de la base de datos.
-  - `mailhog`: Servidor SMTP local para pruebas de envío de correos.
+    - **Servidor**: `mariadb`
+    - **Usuario**: `devuser`
+    - **Contraseña**: `devpassword`
+    - **Base de datos**: `basedb`
+  - `mailhog`: Servidor SMTP local para pruebas de envío de correos. Simulará tu correo electronico para que puedas confirmar el registro de nuevos usuarios.
   - `keycloak`: Servidor de gestión de identidad y accesos (IAM).
+    - **Admin User**: `admin`
+    - **Admin Password**: `admin`
   - `backend`: Aplicación Spring Boot (Java).
   - `frontend`: Aplicación Vue.js.
 - **Carpeta docker/**:

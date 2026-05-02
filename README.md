@@ -2,6 +2,32 @@
 
 Este repositorio contiene la implementación completa del proyecto MDAA, una herramienta basada en Arquitectura Dirigida por Modelos para la creación y gestión de sistemas de síntesis de audio.
 
+> [!TIP]
+> ### ⚡ Guía Rápida de Arranque
+> Para poner en marcha el sistema completo en macOS, Linux o Windows (WSL), sigue estos pasos:
+>
+> 1. Asegúrate de tener el motor de **Docker** (Docker Desktop o Docker Engine) en ejecución.
+> 2. Ejecuta el script de inicio desde la raíz del proyecto:
+>    ```bash
+>    ./ejecutor/start.sh
+>    ```
+> 3. Una vez finalizado el arranque, accede a la aplicación en: **[http://localhost](http://localhost)**
+> 4. **Credenciales de prueba**:
+>    - **Usuario**: `test@uned.es`
+>    - **Password**: `11111111`
+>
+> **⚠️ Puertos utilizados**: Asegúrate de que los siguientes puertos estén libres antes de empezar:
+> - `80`: Frontend
+> - `8081`: Backend API
+> - `8080`: Keycloak (Auth)
+> - `3306`: MariaDB (Database)
+> - `8082`: Adminer (DB Management)
+> - `8025 / 1025`: MailHog (Email)
+>
+> **Carga de ejemplos**: Más adelante en la sección de [Casos de Prueba](#casos-de-prueba-casos_de_prueba) se detalla cómo cargar automáticamente proyectos de ejemplo ya creados en el sistema.
+>
+> **Para detener el sistema**: Pulsa `Ctrl+C` en el terminal donde se está ejecutando el script o cierra el terminal.
+
 ## 🐳 Infraestructura Docker
 
 En la raíz y la carpeta `docker` se define la infraestructura necesaria para desplegar el entorno completo:
@@ -107,10 +133,10 @@ Utiliza el script disponible en la carpeta `ejecutor` para una carga rápida:
 
 Todos los subdirectorios incluyen un archivo `main.pdf` con el contenido generado, además de las fuentes LaTeX (`.tex`) para su modificación:
 
-- [**articulo**](_DOCUMENTACION/articulo/main.pdf): Contiene el artículo que describe la investigación del proyecto MDAA.
+- [**articulo**](_DOCUMENTACION/articulo/latex/main.pdf): Contiene el artículo que describe la investigación del proyecto MDAA.
 - [**manual_dsl**](_DOCUMENTACION/manual_dsl/latex/main.pdf): Manual técnico detallado de los lenguajes de dominio específico (DSLs) desarrollados.
-- [**manual_mdaa**](_DOCUMENTACION/manual_mdaa/main.pdf): Guía de usuario y manual de referencia de la aplicación MDAA.
-- [**material_complementario**](_DOCUMENTACION/material_complementario/main.pdf): Recursos adicionales, diagramas y anexos que apoyan la documentación principal, para dar una pequeña guia de qué es la generación digital de sonido.
+- [**manual_mdaa**](_DOCUMENTACION/manual_mdaa/latex/main.pdf): Guía de usuario y manual de referencia de la aplicación MDAA.
+- [**material_complementario**](_DOCUMENTACION/material_complementario/latex/main.pdf): Recursos adicionales, diagramas y anexos que apoyan la documentación principal, para dar una pequeña guia de qué es la generación digital de sonido.
 
 ## 💻 Código Fuente (`_CODIGO`)
 

@@ -1,0 +1,61 @@
+\chapter{Elementos de Diseño}
+
+Cada elemento dentro del diseño conceptual posee propiedades específicas que determinan su comportamiento sonoro y funcional. A continuación se detallan los elementos disponibles organizados por su función principal.
+
+\section{Generadores de Sonido}
+
+Los generadores son los encargados de producir la señal de audio inicial.
+
+\subsection{Oscilador (Oscillator)}
+Genera formas de onda periódicas (senoidal, cuadrada, sierra, etc.) con control de frecuencia, fase y ancho de pulso.
+
+\subsection{Ruido (Noise)}
+Genera señales aleatorias de diferentes tipos (blanco, rosa, marrón) útiles para efectos de percusión o texturas atmosféricas.
+
+\subsection{Sampler (Sample)}
+Permite la reproducción de archivos de audio externos, con opciones de bucle (loop) y control de ganancia.
+
+\section{Modificadores de Parámetros}
+
+Estos elementos no generan audio por sí mismos, sino que producen señales de control para modificar parámetros de otros nodos.
+
+\subsection{LFO (Low Frequency Oscillator)}
+Oscilador de baja frecuencia utilizado para modulaciones cíclicas (vibrato, trémolo, etc.).
+
+\subsection{Envolvente (Envelope)}
+Generador de señales ADSR (Attack, Decay, Sustain, Release) para controlar la evolución temporal de parámetros como el volumen o el corte de filtro.
+
+\section{Modificadores de Sonido y Efectos}
+
+Procesan la señal de audio entrante para alterar su timbre o dinámica.
+
+\subsection{Filtro de Frecuencia (Frequency Filter)}
+Permite el paso de ciertas frecuencias mientras atenúa otras (paso bajo, paso alto, paso banda).
+
+\subsection{Reverberación (Reverb)}
+Simula la acústica de un espacio físico, añadiendo profundidad y persistencia al sonido.
+
+\subsection{Retraso (Delay)}
+Repite la señal de audio tras un intervalo de tiempo definido, creando ecos.
+
+\subsection{Distorsión (Distortion)}
+Altera la forma de onda de la señal para añadir armónicos y saturación.
+
+\subsection{Chorus / Flanger}
+Efectos de modulación basados en el tiempo que añaden grosor y movimiento espacial.
+
+\subsection{Compresor (Compressor)}
+Controla el rango dinámico de la señal, reduciendo el nivel de los picos más altos.
+
+\subsection{Ecualizador (Equalizer)}
+Permite ajustar selectivamente la ganancia de diferentes bandas de frecuencia.
+
+\section{Mezcla y Control Espacial}
+
+Elementos destinados a la gestión de múltiples señales y su posicionamiento.
+
+\subsection{Mezclador (Mixer)}
+Combina hasta 10 señales de entrada en una o dos salidas estéreo.
+
+\subsection{Ganancia y Panoramización (Gain and Pan)}
+Control básico de nivel de salida y posicionamiento en el campo estéreo.

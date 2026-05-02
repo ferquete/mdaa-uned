@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import keycloak from '@/app/plugins/keycloak'
+import { useUserStore } from '@/modules/auth/stores/userStore'
+import { useProjectStore } from '@/modules/projects/stores/projectStore'
+import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
+import type { Project } from '@/shared/types'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import keycloak from '@/app/plugins/keycloak'
-import { useProjectStore } from '@/modules/projects/stores/projectStore'
-import { useUserStore } from '@/modules/auth/stores/userStore'
-import type { Project } from '@/shared/types'
-import GenericAlertModal from '@/shared/components/modals/GenericAlertModal.vue'
 
 // Componentes (Auto-importados por unplugin-vue-components)
 
@@ -114,9 +114,7 @@ const openProject = (id: number) => {
           </div>
           
           <div class="space-y-4 w-full">
-            <p class="text-[10px] uppercase tracking-[0.2em] font-medium text-geist-accents-4">
-              Versión Música Electrónica
-            </p>
+            
             <!-- Animación de Ondas (Integrada) -->
             <div class="w-full max-w-md mx-auto h-24 opacity-60">
               <SoundWaveAnimation />

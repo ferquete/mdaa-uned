@@ -1,6 +1,7 @@
 # Node & NPM
 **/node_modules/
 **/.npm_cache/
+**/.npm-cache
 **/tmp-npm-cache/
 **/dist/
 **/build/

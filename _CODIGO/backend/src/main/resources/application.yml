@@ -1,0 +1,46 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: backend
+
+  # R2DBC MariaDB Configuration
+  r2dbc:
+    url: r2dbc:mariadb://${MARIADB_HOST:localhost}:${MARIADB_PORT:3306}/${MARIADB_DB:basedb}
+    username: ${MARIADB_USER:devuser}
+    password: ${MARIADB_PASSWORD:devpassword}
+
+
+
+  # Security Configuration (OAuth2/Keycloak)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://mdaa-app-fer.spaincentral.azurecontainer.io:8080/realms/mdaa-realm}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:${KEYCLOAK_ISSUER_URI:http://mdaa-app-fer.spaincentral.azurecontainer.io:8080/realms/mdaa-realm}/protocol/openid-connect/certs}
+
+# Keycloak Admin Client Configuration for Registration
+keycloak:
+  auth-server-url: ${KEYCLOAK_URL:http://mdaa-app-fer.spaincentral.azurecontainer.io:8080}
+  realm: ${KEYCLOAK_REALM:mdaa-realm}
+  client-id: ${KEYCLOAK_CLIENT_ID:mdaa-backend}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:super-secret-backend}
+
+# Application Specific Configuration
+app:
+  cors:
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:*}
+  registration:
+    redirect-uri: ${REGISTRATION_REDIRECT_URI:http://localhost:5173/}
+
+# Management Endpoints (Actuator)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

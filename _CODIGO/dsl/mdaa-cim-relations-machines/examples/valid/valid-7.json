@@ -1,0 +1,17 @@
+{
+  "description": "Parallel processing: Dry and Wet signal summation.",
+  "relations": [
+    {
+      "id": "999e8400-e29b-41d4-a716-446655440999",
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Routes unprocessed dry signal to the master summing mixer."
+    },
+    {
+      "id": "aaa18400-e29b-41d4-a716-446655440aaa",
+      "source": "550e8400-e29b-41d4-a716-446655440003",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Routes processed wet signal to the master summing mixer."
+    }
+  ]
+}

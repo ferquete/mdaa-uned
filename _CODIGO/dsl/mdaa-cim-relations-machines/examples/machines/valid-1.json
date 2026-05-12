@@ -1,0 +1,21 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Oscillator Core",
+  "description": "A fundamental oscillator machine for basic wave generation and shaping.",
+  "elements": [
+    {
+      "id": "771e8400-e29b-41d4-a716-446655440111",
+      "name": "Sine Generator",
+      "description": "Generates a pure sine wave at a fixed base frequency.",
+      "params": "frequency: 440Hz, gain: 0.8, phase: 0.0",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Audio output of the sine wave."
+      },
+      "sendTo": []
+    }
+  ]
+}

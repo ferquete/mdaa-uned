@@ -1,0 +1,109 @@
+\documentclass[11pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{csquotes}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+
+% Definición de variables globales
+\newcommand{\urlProyecto}{https://github.com/ferquete/mdaa-uned}
+\newcommand{\urlProyectoManualDsl}{https://github.com/ferquete/mdaa-uned/blob/main/_DOCUMENTACION/manual_dsl/latex/main.pdf}
+\newcommand{\urlProyectoCasosPrueba}{https://github.com/ferquete/mdaa-uned/tree/main/_DOCUMENTACION/_CASOS_DE_PRUEBA}
+\newcommand{\urlProyectoMaterialComplementario}{https://github.com/ferquete/mdaa-uned/blob/main/_DOCUMENTACION/material_complementario/latex/main.pdf}
+\newcommand{\urlProyectoManualMdaa}{https://github.com/ferquete/mdaa-uned/blob/main/_DOCUMENTACION/manual_mdaa/latex/main.pdf}
+\newcommand{\urlProyectoMdaa}{http://mdaa-app.spaincentral.azurecontainer.io/}
+
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\usepackage{setspace}
+
+% Estilo IEEE para secciones
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\thesection.\Alph{subsection}}
+
+\titleformat{\section}
+  {\normalfont\centering\scshape}{\thesection.}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\itshape}{\thesubsection.}{1em}{}
+
+\usepackage{bookmark}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{textcomp}
+
+
+% Configuración de colores para el código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+% Configuración de estilo para listings
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{black!10},
+    language=Java,
+    upquote=true,
+    extendedchars=true,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1
+}
+
+% Traducción de etiquetas de listings
+\renewcommand{\lstlistingname}{Código}
+\renewcommand{\lstlistlistingname}{Índice de códigos}
+
+
+\geometry{
+    a4paper,
+    top=25mm,
+    bottom=25mm,
+    left=20mm,
+    right=20mm,
+    columnsep=7mm
+}
+\setstretch{1.05}
+
+% Metadata del artículo
+\title{MDA Audio: Uso de gramáticas DSL para el análisis, diseño y generación automática de sintetizadores de audio software}
+\author{Fernando Real Cisneros \\ \small Generación Automática de Código \\ \small UNED \\ \small Máster Universitario en Investigación en Ingeniería de Software}
+\date{\today}
+
+
+\begin{document}
+
+\twocolumn[
+  \begin{@twocolumnfalse}
+    \maketitle
+    \input{capitulos/resumen}
+    \vspace{2em}
+  \end{@twocolumnfalse}
+]
+
+\include{capitulos/introduccion}
+\include{capitulos/el_problema}
+\include{capitulos/como_evaluar_la_solucion}
+\include{capitulos/descripcion_detallada_solucion}
+\include{capitulos/evaluacion_comparacion_solucion}
+\include{capitulos/conclusiones}
+
+\end{document}

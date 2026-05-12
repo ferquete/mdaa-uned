@@ -1,0 +1,212 @@
+{
+  "id": "b2000001-0000-0000-0000-000000000002",
+  "name": "PIM Noise Texture",
+  "description": "Implementacion PIM del generador de texturas de ruido ambiental. Instancia un nodo de ruido rosa como fuente principal, un nodo de ruido browniano para el cuerpo grave oscuro, y una cadena de modulacion de amplitud para crear el efecto de dispersion granular. Un mezclador interno combina ambas fuentes texturales antes de la salida hacia el procesador espectral. Toda la arquitectura referencia los elementos CIM de la maquina noise_texture_gen del modelo conceptual.",
+  "ids_cim_reference": [
+    "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+  ],
+  "nodes": [
+    {
+      "type": "noise",
+      "id": "b2000002-0000-0000-0000-000000000002",
+      "name": "Pink Noise Layer",
+      "description": "Generador de ruido rosa para la textura aerea del ambiente. Su espectro equitativo por octavas proporciona una densidad uniforme en toda la gama audible, actuando como pegamento espectral entre las capas tonales del dron y el vacio entre los armonicos. La amplitud reducida garantiza que actue como fondo sin competir con los elementos melodicos.",
+      "ids_references": [
+        "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+      ],
+      "others": [
+        {
+          "id": "b2000002-0000-0000-0000-000000000070",
+          "name": "Spectral Density",
+          "ids_references": [
+            "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+          ],
+          "initialValue": "6.0",
+          "isModifiable": true,
+          "isExternalInput": false,
+          "description": "Densidad espectral del ruido rosa, controla la riqueza del espectro de ruido generado por este nodo."
+        }
+      ],
+      "noiseType": {
+        "id": "b2000003-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": "pink",
+        "isModifiable": false,
+        "description": "Tipo de ruido fijado en rosa para la textura aerea del fondo ambiental del sintetizador."
+      },
+      "amplitude": {
+        "id": "b2000004-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0.3,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Amplitud del ruido rosa. Modulable externamente por el LFO ultra-lento para crear respiracion en la densidad textural."
+      },
+      "gain": {
+        "id": "b2000005-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0.4,
+        "isModifiable": true,
+        "description": "Ganancia de salida del ruido rosa antes de entrar al mezclador de texturas."
+      },
+      "pan": {
+        "id": "b2000006-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Panoramizacion centrada para el ruido rosa, distribuido equitativamente en el campo estereo."
+      },
+      "stereo": {
+        "id": "b2000007-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": false,
+        "description": "El generador de ruido rosa opera en mono."
+      },
+      "output_1": {
+        "id": "b2000008-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido rosa hacia el mezclador de texturas."
+      }
+    },
+    {
+      "type": "noise",
+      "id": "b2000010-0000-0000-0000-000000000002",
+      "name": "Brown Noise Layer",
+      "description": "Generador de ruido browniano para la textura grave oscura del paisaje ambiental. Su concentracion de energia en las frecuencias bajas aporta una sensacion de volumen y masa al sonido ambiental. El movimiento lento y fluido del ruido browniano es percibido como un murmullo oscuro y misterioso que complementa perfectamente la estabilidad tonal de los osciladores del nucleo de dron.",
+      "ids_references": [
+        "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+      ],
+      "others": [],
+      "noiseType": {
+        "id": "b2000011-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": "brownian",
+        "isModifiable": false,
+        "description": "Tipo de ruido browniano para proporcionar la textura grave oscura caracteristica del genero ambiental."
+      },
+      "amplitude": {
+        "id": "b2000012-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "description": "Amplitud del ruido browniano, ajustada para que aporte profundidad grave sin enmascarar las frecuencias medias del dron."
+      },
+      "gain": {
+        "id": "b2000013-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0.35,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Ganancia de salida del ruido browniano. Modulable externamente por la envolvente ambiental del modulador espacial."
+      },
+      "pan": {
+        "id": "b2000014-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Panoramizacion centrada del ruido browniano para mantener la masa grave en el centro de la imagen estereo."
+      },
+      "stereo": {
+        "id": "b2000015-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": false,
+        "description": "El generador de ruido browniano opera en mono."
+      },
+      "output_1": {
+        "id": "b2000016-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del ruido browniano hacia el mezclador de texturas."
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "b2000018-0000-0000-0000-000000000002",
+      "name": "Texture Mix Bus",
+      "description": "Mezclador de dos canales que combina las texturas de ruido rosa y browniano en la señal de salida final del generador de texturas. El balance entre ambas fuentes determina el caracter espectral de la textura: mas rosa para un sonido mas aereo y brillante, mas browniano para un sonido mas oscuro y grave. La salida alimenta el banco de filtros espectrales para el conformado tonico final.",
+      "ids_references": [
+        "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "b2000019-0000-0000-0000-000000000002",
+        "ids_references": [
+          "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo del mezclador de texturas para preservar la imagen espacial amplia de ambas fuentes de ruido."
+      },
+      "output_1": {
+        "id": "b2000022-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida izquierda de la textura de ruido combinada hacia el banco de filtros espectrales del sistema ambiental."
+      },
+      "output_2": {
+        "id": "b2000023-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida derecha de la textura de ruido combinada hacia el banco de filtros espectrales del sistema ambiental."
+      },
+      "input_1": {
+        "id": "b2000020-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 1 del mezclador para la textura de ruido rosa del ambiente."
+      },
+      "input_2": {
+        "id": "b2000021-0000-0000-0000-000000000002",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 2 del mezclador para la textura de ruido browniano grave y oscuro."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "b2000090-0000-0000-0000-000000000002",
+      "description": "Conexion del ruido rosa al canal 1 del mezclador de texturas del generador de ambiente.",
+      "ids_references": [
+        "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+      ],
+      "sourceNode": "b2000002-0000-0000-0000-000000000002",
+      "sourceParam": "output_1",
+      "targetNode": "b2000018-0000-0000-0000-000000000002",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "b2000091-0000-0000-0000-000000000002",
+      "description": "Conexion del ruido browniano al canal 2 del mezclador de texturas del generador de ambiente.",
+      "ids_references": [
+        "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+      ],
+      "sourceNode": "b2000010-0000-0000-0000-000000000002",
+      "sourceParam": "output_1",
+      "targetNode": "b2000018-0000-0000-0000-000000000002",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

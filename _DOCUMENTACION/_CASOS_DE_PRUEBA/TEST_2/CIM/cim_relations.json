@@ -1,0 +1,17 @@
+{
+  "description": "Sistema de bateria electronica modular compuesto por tres maquinas: generador de bombo, generador de caja y mezclador maestro de percusion. El bombo y la caja envian sus señales de audio compuestas al mezclador maestro, que las suma y comprime para producir la salida final del sintetizador de percusion.",
+  "relations": [
+    {
+      "id": "2d000001-0000-0000-0000-000000000000",
+      "source": "2a000001-0000-0000-0000-000000000000",
+      "destination": "2c000001-0000-0000-0000-000000000000",
+      "description": "Conecta la salida del bombo electronico a la primera entrada del mezclador maestro."
+    },
+    {
+      "id": "2d000002-0000-0000-0000-000000000000",
+      "source": "2b000001-0000-0000-0000-000000000000",
+      "destination": "2c000001-0000-0000-0000-000000000000",
+      "description": "Conecta la salida compuesta de la caja electronica hacia la entrada del mezclador maestro de percusion para su integracion en el bus estereo final."
+    }
+  ]
+}

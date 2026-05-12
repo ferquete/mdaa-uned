@@ -1,0 +1,52 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441013",
+  "name": "Edge Mismatch",
+  "description": "Este ejemplo conecta una señal de audio a un parametro que no es una entrada de audio (frequency).",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655442013"],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655443013",
+      "name": "Osc Origen",
+      "description": "Nodo origen.",
+      "ids_references": ["ref"],
+      "others": [],
+      "waveform": { "id": "550e8400-e29b-41d4-a716-446655444060", "ids_references": ["ref"], "initialValue": "sine", "isModifiable": false },
+      "frequency": { "id": "550e8400-e29b-41d4-a716-446655444061", "ids_references": ["ref"], "initialValue": 440, "isModifiable": true },
+      "pulseWidth": { "id": "550e8400-e29b-41d4-a716-446655444062", "ids_references": ["ref"], "initialValue": 0.5, "isModifiable": true },
+      "gain": { "id": "550e8400-e29b-41d4-a716-446655444063", "ids_references": ["ref"], "initialValue": 0.5, "isModifiable": true },
+      "phase": { "id": "550e8400-e29b-41d4-a716-446655444064", "ids_references": ["ref"], "initialValue": 0, "isModifiable": true },
+      "pan": { "id": "550e8400-e29b-41d4-a716-446655444065", "ids_references": ["ref"], "initialValue": 0, "isModifiable": true },
+      "stereo": { "id": "550e8400-e29b-41d4-a716-446655444066", "ids_references": ["ref"], "initialValue": false, "isModifiable": false },
+      "output_1": { "id": "550e8400-e29b-41d4-a716-446655445022", "ids_references": ["ref"] }
+    },
+    {
+      "type": "oscillator",
+      "id": "550e8400-e29b-41d4-a716-446655443014",
+      "name": "Osc Destino",
+      "description": "Nodo destino.",
+      "ids_references": ["ref"],
+      "others": [],
+      "waveform": { "id": "550e8400-e29b-41d4-a716-446655444067", "ids_references": ["ref"], "initialValue": "sine", "isModifiable": false },
+      "frequency": { "id": "550e8400-e29b-41d4-a716-446655444068", "ids_references": ["ref"], "initialValue": 440, "isModifiable": true },
+      "pulseWidth": { "id": "550e8400-e29b-41d4-a716-446655444069", "ids_references": ["ref"], "initialValue": 0.5, "isModifiable": true },
+      "gain": { "id": "550e8400-e29b-41d4-a716-446655444070", "ids_references": ["ref"], "initialValue": 0.5, "isModifiable": true },
+      "phase": { "id": "550e8400-e29b-41d4-a716-446655444071", "ids_references": ["ref"], "initialValue": 0, "isModifiable": true },
+      "pan": { "id": "550e8400-e29b-41d4-a716-446655444072", "ids_references": ["ref"], "initialValue": 0, "isModifiable": true },
+      "stereo": { "id": "550e8400-e29b-41d4-a716-446655444073", "ids_references": ["ref"], "initialValue": false, "isModifiable": false },
+      "output_1": { "id": "550e8400-e29b-41d4-a716-446655445023", "ids_references": ["ref"] }
+    }
+  ],
+  "edges": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655446001",
+      "description": "Error: Conexion audio a parametro de control.",
+      "ids_references": ["ref"],
+      "sourceNode": "550e8400-e29b-41d4-a716-446655443013",
+      "sourceParam": "550e8400-e29b-41d4-a716-446655445022",
+      "targetNode": "550e8400-e29b-41d4-a716-446655443014",
+      "targetParam": "550e8400-e29b-41d4-a716-446655444068",
+      "type": "audio"
+    }
+  ]
+}

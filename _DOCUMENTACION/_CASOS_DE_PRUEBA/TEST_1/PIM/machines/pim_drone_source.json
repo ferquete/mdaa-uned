@@ -1,0 +1,349 @@
+{
+  "id": "a1000001-0000-0000-0000-000000000001",
+  "name": "PIM Drone Source",
+  "description": "Implementacion PIM del nucleo de dron ambiental. Concretiza tres osciladores sinusoidales en relaciones de frecuencia cuidadosamente calculadas para crear un acorde de dron denso y armonicamente rico. Un cuarto oscilador de baja frecuencia actua como modulador del detune para inducir batidas organicas entre los parciales. Las capas se suman en un mezclador interno antes de salir al procesador espectral. Referencia directa a la maquina CIM ambient_drone_core.",
+  "ids_cim_reference": [
+    "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+  ],
+  "nodes": [
+    {
+      "type": "oscillator",
+      "id": "a1000002-0000-0000-0000-000000000001",
+      "name": "Sub Drone Osc",
+      "description": "Oscilador sub-harmonico principal que genera la frecuencia fundamental del dron a 55 Hz. Forma de onda sinusoidal pura para maxima limpieza en el sub-grave. Levemente modulable en frecuencia para simular la deriva organica de los sintetizadores analogicos en circuitos de temperatura variable.",
+      "ids_references": [
+        "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "others": [
+        {
+          "id": "a1000002-0000-0000-0000-000000000050",
+          "name": "Drift Organic",
+          "ids_references": [
+            "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+          ],
+          "initialValue": "3.5",
+          "isModifiable": true,
+          "isExternalInput": false,
+          "description": "Cantidad de deriva organica aleatoria en la frecuencia del oscilador sub-harmonico para simular inestabilidad analogica."
+        }
+      ],
+      "waveform": {
+        "id": "a1000003-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": "sine",
+        "isModifiable": false,
+        "description": "Forma de onda sinusoidal para maxima pureza en las frecuencias sub-harmonicas del dron ambiental."
+      },
+      "frequency": {
+        "id": "a1000004-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 55,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia fundamental del sub-dron en 55 Hz (La 1). Modulable externamente por el LFO ultra-lento del modulador espacial."
+      },
+      "pulseWidth": {
+        "id": "a1000005-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso no aplicable a onda sinusoidal, mantenido en valor neutro."
+      },
+      "gain": {
+        "id": "a1000006-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0.85,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Ganancia del oscilador sub-harmonico. Modulable externamente por la envolvente ambiental para fade-in y fade-out lentos."
+      },
+      "phase": {
+        "id": "a1000007-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial del oscilador sub-harmonico en cero grados para coherencia de fase con las demas capas del dron."
+      },
+      "pan": {
+        "id": "a1000008-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Panoramizacion centrada para el sub-grave, que siempre debe estar en el centro del campo estereo segun las normas de mezcla profesional."
+      },
+      "stereo": {
+        "id": "a1000009-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": false,
+        "description": "El sub-grave opera en mono para garantizar compatibilidad de fase y coherencia en sistemas de reproduccion monofonicos."
+      },
+      "output_1": {
+        "id": "a1000010-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida mono del oscilador sub-harmonico hacia el mezclador interno de capas del dron."
+      }
+    },
+    {
+      "type": "oscillator",
+      "id": "a1000011-0000-0000-0000-000000000001",
+      "name": "Mid Drone Osc L",
+      "description": "Oscilador de frecuencia media para el canal izquierdo del dron, afinado a la quinta justa sobre el fundamental (82.5 Hz). Su ligero detuning respecto al canal derecho crea la caracteristica batida de amplitud que hace respirar al dron de forma organica. La forma de onda sinusoidal garantiza la maxima pureza tonal sin introducir armonicos indeseados.",
+      "ids_references": [
+        "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "others": [],
+      "waveform": {
+        "id": "a1000012-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": "sine",
+        "isModifiable": true,
+        "description": "Forma de onda del oscilador medio izquierdo, modulable para variaciones timbricas durante la evolucion del paisaje sonoro."
+      },
+      "frequency": {
+        "id": "a1000013-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 82.5,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Frecuencia del oscilador medio izquierdo en 82.5 Hz (quinta del fundamental). Modulable para barridos armonicos lentos."
+      },
+      "pulseWidth": {
+        "id": "a1000014-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso en valor neutro, no aplicable a onda sinusoidal."
+      },
+      "gain": {
+        "id": "a1000015-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0.65,
+        "isModifiable": true,
+        "description": "Ganancia del oscilador medio izquierdo, configurada para equilibrio con las capas sub y shimmer."
+      },
+      "phase": {
+        "id": "a1000016-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial del oscilador medio izquierdo."
+      },
+      "pan": {
+        "id": "a1000017-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": -0.4,
+        "isModifiable": true,
+        "description": "Panoramizacion ligeramente a la izquierda para crear anchura estereo natural en la capa media del dron ambiental."
+      },
+      "stereo": {
+        "id": "a1000018-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": false,
+        "description": "El oscilador opera en mono, el posicionamiento se define mediante el parametro pan."
+      },
+      "output_1": {
+        "id": "a1000019-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del oscilador medio hacia el mezclador de capas interno."
+      }
+    },
+    {
+      "type": "oscillator",
+      "id": "a1000021-0000-0000-0000-000000000001",
+      "name": "Shimmer Osc",
+      "description": "Oscilador de alta frecuencia afinado dos octavas sobre el fundamental (220 Hz) para añadir presencia y brillo al dron. Su amplitud muy reducida evita que el shimmer domine la mezcla. La ligera inestabilidad de frecuencia modelada mediante parametros de deriva produce una corona espectral que evoluciona sutilmente con el tiempo, añadiendo vida al techo del espectro.",
+      "ids_references": [
+        "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "others": [
+        {
+          "id": "a1000021-0000-0000-0000-000000000060",
+          "name": "Shimmer Detune",
+          "ids_references": [
+            "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+          ],
+          "initialValue": "7.5",
+          "isModifiable": true,
+          "isExternalInput": false,
+          "description": "Cantidad de desafinacion en centesimas del oscilador shimmer para crear batidos de amplitud con el oscilador medio."
+        }
+      ],
+      "waveform": {
+        "id": "a1000022-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": "triangle",
+        "isModifiable": true,
+        "description": "Onda triangular para el shimmer, que añade el segundo y cuarto armonico de forma suave sin la agresividad de la onda diente de sierra."
+      },
+      "frequency": {
+        "id": "a1000023-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 220,
+        "isModifiable": true,
+        "description": "Frecuencia del oscilador shimmer en 220 Hz (dos octavas sobre el sub-fundamental de 55 Hz)."
+      },
+      "pulseWidth": {
+        "id": "a1000024-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "initialValue": 0.5,
+        "isModifiable": false,
+        "description": "Ancho de pulso en valor neutro para onda triangular."
+      },
+      "gain": {
+        "id": "a1000025-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0.2,
+        "isModifiable": true,
+        "description": "Ganancia muy reducida del shimmer para que actue como presencia aerea sin dominar el equilibrio espectral del dron."
+      },
+      "phase": {
+        "id": "a1000026-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "initialValue": 1.571,
+        "isModifiable": false,
+        "description": "Fase inicial de 90 grados (pi/2) para desplazamiento de fase respecto al oscilador medio y reducir cancelaciones."
+      },
+      "pan": {
+        "id": "a1000027-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": 0.4,
+        "isModifiable": true,
+        "description": "Panoramizacion ligeramente a la derecha del shimmer, opuesto al oscilador medio para crear la mayor anchura estereo posible."
+      },
+      "stereo": {
+        "id": "a1000028-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": false,
+        "description": "El oscilador shimmer opera en mono para un control preciso de su ubicacion en el mezclador."
+      },
+      "output_1": {
+        "id": "a1000029-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida del oscilador shimmer hacia el mezclador de capas del dron."
+      }
+    },
+    {
+      "type": "mixer",
+      "id": "a1000031-0000-0000-0000-000000000001",
+      "name": "Drone Layer Mix",
+      "description": "Mezclador de tres canales que suma las capas sub-harmonica, media y shimmer del dron en una señal estereo coherente. El balance entre capas define el caracter del dron: mas sub para peso y gravedad, mas mid para claridad tonal, mas shimmer para presencia eterea. Su salida estereo externa alimenta el banco de filtros espectrales para el conformado final.",
+      "ids_references": [
+        "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "others": [],
+      "stereo": {
+        "id": "a1000032-0000-0000-0000-000000000001",
+        "ids_references": [
+          "1a2b0004-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo del mezclador de capas del dron para preservar la imagen espacial de los osciladores panoramizados."
+      },
+      "output_1": {
+        "id": "a1000036-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida izquierda maestra del dron compuesto hacia el banco de filtros espectrales del sistema ambiental."
+      },
+      "output_2": {
+        "id": "a1000037-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida derecha maestra del dron compuesto hacia el banco de filtros espectrales del sistema ambiental."
+      },
+      "input_1": {
+        "id": "a1000033-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 1 del mezclador para la capa sub-harmonica mono del dron."
+      },
+      "input_2": {
+        "id": "a1000034-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 2 del mezclador para la capa media estereo del dron."
+      },
+      "input_3": {
+        "id": "a1000035-0000-0000-0000-000000000001",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada 3 del mezclador para la capa shimmer estereo del dron."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "a1000090-0000-0000-0000-000000000001",
+      "description": "Conexion de la salida mono del oscilador sub al canal 1 del mezclador de capas del dron.",
+      "ids_references": [
+        "1a2b0001-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "sourceNode": "a1000002-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
+      "targetNode": "a1000031-0000-0000-0000-000000000001",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "a1000091-0000-0000-0000-000000000001",
+      "description": "Conexion de la salida izquierda del oscilador medio al canal 2 del mezclador de capas del dron.",
+      "ids_references": [
+        "1a2b0002-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "sourceNode": "a1000011-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
+      "targetNode": "a1000031-0000-0000-0000-000000000001",
+      "targetParam": "input_2",
+      "type": "audio"
+    },
+    {
+      "id": "a1000092-0000-0000-0000-000000000001",
+      "description": "Conexion de la salida del oscilador shimmer al canal 3 del mezclador de capas del dron ambiental.",
+      "ids_references": [
+        "1a2b0003-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+      ],
+      "sourceNode": "a1000021-0000-0000-0000-000000000001",
+      "sourceParam": "output_1",
+      "targetNode": "a1000031-0000-0000-0000-000000000001",
+      "targetParam": "input_3",
+      "type": "audio"
+    }
+  ]
+}

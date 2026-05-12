@@ -1,0 +1,93 @@
+{
+  "realm": "basedb",
+  "sslRequired": "none",
+  "enabled": true,
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "verifyEmail": true,
+  "registrationEmailAsUsername": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "es",
+    "en"
+  ],
+  "defaultLocale": "es",
+  "accessTokenLifespan": 1200,
+  "ssoSessionIdleTimeout": 1200,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
+  "smtpServer": {
+    "host": "mailhog",
+    "port": "1025",
+    "from": "no-reply@proyectobase.com",
+    "replyTo": "no-reply@proyectobase.com",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
+  },
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Default user role"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "base-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "directAccessGrantsEnabled": true
+    },
+
+    {
+      "clientId": "backend-client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "super-secret-backend",
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "fullScopeAllowed": true
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-backend-client",
+      "enabled": true,
+      "serviceAccountClientId": "backend-client",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ]
+      }
+    },
+    {
+      "id": "59cd8c60-9936-4f34-8b8a-54d622e4989f",
+      "username": "Test",
+      "enabled": true,
+      "email": "test@uned.es",
+      "firstName": "Usuario",
+      "lastName": "Test",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "11111111",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    }
+  ]
+}

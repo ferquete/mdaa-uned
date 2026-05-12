@@ -1,0 +1,102 @@
+# Node & NPM
+**/node_modules/
+**/.npm_cache/
+**/tmp-npm-cache/
+**/dist/
+**/build/
+**/.npm/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnpm-debug.log*
+## .env files commented by user request
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+
+# Java (Maven/Gradle/Spring)
+**/target/
+**/bin/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/.gradle/
+**/gradle-app.setting
+!**/gradle-wrapper.jar
+**/.m2/
+**/.metadata/
+**/.recommenders/
+**/*.lst
+**/*.swp
+**/*.orig
+**/.settings/
+**/.project
+**/.classpath
+**/.factorypath
+**/.springBeans
+**/.sts4-cache/
+
+# LaTeX
+**/*.aux
+**/*.lof
+**/*.log
+**/*.toc
+**/*.out
+**/*.pdf
+**/*.synctex.gz
+**/*.fdb_latexmk
+**/*.fls
+**/*.blg
+**/*.bbl
+**/*.run.xml
+**/*.bcf
+**/*.lot
+**/*.nav
+**/*.snm
+**/*.vrb
+**/*.dvi
+**/*.ps
+**/_minted*
+**/*.pyg
+**/*.thm
+**/*.pre
+**/*.xdy
+**/*.acn
+**/*.acr
+**/*.alg
+**/*.glg
+**/*.glo
+**/*.gls
+**/*.ist
+
+
+# OS & IDEs
+**/.DS_Store
+**/Thumbs.db
+**/.vscode/
+!**/.vscode/extensions.json
+**/.idea/
+**/*.swp
+**/*.swo
+**/.DS_Store?
+**/ehthumbs.db
+**/.GEMINI.md
+**/GEMINI.md
+GEMINI.md
+**/Icon\r
+**/ProyectoBase.code-workspace
+clave
+
+
+# Docker
+**/.docker/
+
+# Exclusiones específicas
+azure-deploy.yaml
+docker-compose.prod.yml
+ejecutor/incluir-test-azure.sh
+subir.sh
+.gitattributes

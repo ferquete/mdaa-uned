@@ -1,0 +1,17 @@
+{
+  "description": "Dual oscillator filtering setup.",
+  "relations": [
+    {
+      "id": "666e8400-e29b-41d4-a716-446655440666",
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Feed VCO-1 output into primary filter stage."
+    },
+    {
+      "id": "777e8400-e29b-41d4-a716-446655440777",
+      "source": "550e8400-e29b-41d4-a716-446655440006",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Feed VCO-2 output into secondary filter stage."
+    }
+  ]
+}

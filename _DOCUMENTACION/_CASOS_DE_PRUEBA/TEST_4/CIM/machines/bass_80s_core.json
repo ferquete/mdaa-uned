@@ -1,0 +1,52 @@
+{
+  "id": "4a000001-0000-0000-0000-000000000000",
+  "name": "80s Bass Core",
+  "description": "Nucleo generador del bajo profundo estilo anos 80. Dos osciladores de onda diente de sierra con micro-desafinacion entre ellos crean el efecto de batida analogica y engrosamiento caracteristico. Un sub-oscilador una octava por debajo añade la profundidad extreme de sub-grave que define al bajo de los 80s. Los tres osciladores se filtran por un paso-bajo resonante de alta pendiente con envolvente de cutoff para la articulacion de cada nota. Una envolvente de amplitud ADSR sustentada permite notas largas y sostenidas tipicas del sintetizador de bajo de la decada.",
+  "elements": [
+    {
+      "id": "4a000011-0000-0000-0000-000000000000",
+      "name": "Main Saw Oscillators",
+      "description": "Par de osciladores de onda diente de sierra micro-desafinados entre si para crear el engrosamiento y la batida analogica caracteristica del bajo de los sintetizadores de los anos 80. El primero oscila en la frecuencia de nota y el segundo con un detuning de entre 3 y 10 centesimas, produciendo interferencia de fase y riqueza armonica.",
+      "params": "Frecuencia: 40-200Hz, Detuning: 3-10 centesimas, Forma de onda: Sawtooth doble, Ganancia: 0-100%, Spread estereo: 0-50%, Unison: 2 voces",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "4a000011-0000-0000-0000-000000000010",
+          "idRef": "4a000013-0000-0000-0000-000000000000",
+          "description": "Envia la mezcla de los dos osciladores principales al mezclador interno del nucleo para la suma con el sub-oscilador."
+        }
+      ]
+    },
+    {
+      "id": "4a000012-0000-0000-0000-000000000000",
+      "name": "Sub Oscillator",
+      "description": "Sub-oscilador sinusoidal o cuadrado afinado exactamente una octava por debajo de la frecuencia de nota. Añade la profundidad extreme de sub-grave que hace que el bajo de los 80s sea fisicamente perceptible en instalaciones de escucha con buenos altavoces o monitores de subwoofer. Su amplitud se mantiene por debajo de los osciladores principales para no enmascarar el cuerpo armonico.",
+      "params": "Frecuencia: Nota - 1 octava (20-100Hz), Forma de onda: Sine/Square, Amplitud: 0-70%, Fase: 0-180, Low Cut interno: Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "4a000012-0000-0000-0000-000000000010",
+          "idRef": "4a000013-0000-0000-0000-000000000000",
+          "description": "Envia la señal del sub-oscilador al mezclador interno del nucleo para sumarse con los osciladores principales."
+        }
+      ]
+    },
+    {
+      "id": "4a000013-0000-0000-0000-000000000000",
+      "name": "80s Bass Filter",
+      "description": "Filtro paso-bajo resonante de alta pendiente que moldea el espectro del bajo estilo 80s. El cutoff se cierra con una envolvente corta en cada nota para dar el ataque caracteristico del bajo sintetico analogico. La resonancia eleva el acento del filtro dando ese sabor a maquina analogica que define al bajo de los 80s. La sustentacion con el filtro semiabierto da el cuerpo y el calor de los grandes sintetizadores de bajo de la decada.",
+      "params": "Tipo: LPF, Cutoff: 300-3000Hz, Resonancia: 2-8, Pendiente: 24dB/oct, Envolvente cutoff: Ataque 10ms/Decay 100ms/Sustain 40%, Keyfollow: 50%",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de señales de control desde la maquina de efectos para posible modulacion externa del cutoff o resonancia."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida del bajo profundo filtrado hacia la maquina de efectos del sintetizador de bajo estilo 80s."
+      },
+      "sendTo": []
+    }
+  ]
+}

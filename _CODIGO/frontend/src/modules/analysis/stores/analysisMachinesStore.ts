@@ -1,0 +1,448 @@
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import apiClient from '@/shared/api/apiClient';
+import type { CimMachine, CimDocument, Cim } from '@/shared/types';
+
+export const useAnalysisMachinesStore = defineStore('analysisMachines', () => {
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+
+  // Estado del Análisis
+  const machines = ref<CimMachine[]>([]);
+  const parsedDocs = ref<Record<number, CimDocument>>({});
+  const currentCim = ref<Cim | null>(null);
+  const selectedNodeId = ref<string | number | null>('root');
+  const visualizerMode = ref<'2D' | 'JSON' | 'FORM'>('2D');
+  
+  const parsedCimRelations = computed(() => {
+    if (!currentCim.value?.machinesRelations) return { description: '', relations: [] };
+    try {
+      const parsed = JSON.parse(currentCim.value.machinesRelations);
+      if (parsed && Array.isArray(parsed.relations)) {
+        // Asegurar que todas las relaciones tengan un ID (hidratación para datos antiguos)
+        parsed.relations = parsed.relations.map((r: any) => ({
+          ...r,
+          id: r.id || crypto.randomUUID()
+        }));
+      }
+      return parsed;
+    } catch (e) {
+      return { description: '', relations: [] };
+    }
+  });
+
+  const isRawEditing = computed(() => visualizerMode.value === 'JSON');
+  
+  /**
+   * Mapa de IDs de base de datos a sus respectivos IDs de negocio (UUID)
+   */
+  const machineUuids = computed(() => {
+    const map: Record<number, string> = {};
+    machines.value.forEach(m => {
+      const doc = parsedDocs.value[m.id];
+      if (doc?.id) map[m.id] = doc.id;
+    });
+    return map;
+  });
+
+  /**
+   * Parsea los datos de una máquina de string JSON a CimDocument.
+   */
+  function parseMachineData(machineStr: string): CimDocument {
+    try {
+      if (!machineStr || machineStr.trim() === '') {
+        return { $type: 'Document', id: '', name: '', description: '', elements: [] };
+      }
+      const parsed = JSON.parse(machineStr);
+      
+      // Limpiar campos obsoletos que puedan venir de datos antiguos
+      delete parsed.generators;
+      delete parsed.modificators;
+      
+      const fixComponent = (c: any) => ({
+        ...c,
+        sendTo: c.sendTo || [],
+        externalOutput: c.externalOutput || { hasExternalOutput: false, description: '' },
+        externalInput: c.externalInput || { hasExternalInput: false, description: '' }
+      });
+
+      return {
+        $type: parsed.$type || 'Document',
+        id: parsed.id || '',
+        name: parsed.name || '',
+        description: parsed.description || '',
+        elements: (parsed.elements || []).map(fixComponent)
+      } as CimDocument;
+    } catch (err) {
+      console.error('Error parseando datos de máquina:', err);
+      return { $type: 'Document', id: '', name: '', description: '', elements: [] };
+    }
+  }
+
+  /**
+   * Carga las máquinas de un proyecto.
+   */
+  async function fetchMachines(projectId: number) {
+    loading.value = true;
+    try {
+      const data = await apiClient.get<CimMachine[]>(`/api/v1/projects/${projectId}/machines`);
+      machines.value = data;
+      data.forEach(m => {
+        parsedDocs.value[m.id] = parseMachineData(m.machine);
+      });
+      
+      // También cargamos el CIM del proyecto
+      const cimData = await apiClient.get<Cim>(`/api/v1/projects/${projectId}/cim`);
+      currentCim.value = cimData;
+    } catch (err: any) {
+      console.error('Error al cargar máquinas o CIM:', err);
+      machines.value = [];
+      parsedDocs.value = {};
+      currentCim.value = null;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  /**
+   * Actualiza las relaciones entre máquinas del CIM.
+   */
+  async function updateCimRelations(machinesRelations: string) {
+    if (!currentCim.value) return { success: false, message: 'CIM no cargado' };
+    try {
+      const updated = await apiClient.put<Cim>(`/api/v1/cim/${currentCim.value.id}`, { machinesRelations });
+      currentCim.value = updated;
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Añade un nuevo análisis (máquina) al proyecto.
+   */
+  async function addMachine(projectId: number, name: string, description: string) {
+    if (machines.value.length >= 10) return { success: false, message: 'Límite de máquinas alcanzado' };
+
+    try {
+      const newMachine = await apiClient.post<CimMachine>(`/api/v1/projects/${projectId}/machines`, { 
+        name,
+        description
+      });
+      machines.value.push(newMachine);
+      parsedDocs.value[newMachine.id] = parseMachineData(newMachine.machine);
+      selectedNodeId.value = newMachine.id;
+      return { success: true, machine: newMachine };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Actualiza información básica de una máquina.
+   */
+  async function updateMachine(machineId: number, name: string, description: string) {
+    try {
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, { 
+        name,
+        description
+      });
+      
+      const index = machines.value.findIndex(m => m.id === machineId);
+      if (index !== -1) {
+        machines.value[index] = updatedMachine;
+        parsedDocs.value[machineId] = parseMachineData(updatedMachine.machine);
+      }
+      return { success: true, machine: updatedMachine };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  async function deleteMachine(id: number) {
+    try {
+      const machineUuid = machineUuids.value[id];
+      await apiClient.delete(`/api/v1/machines/${id}`);
+      
+      // Limpiar relaciones que involucren a esta máquina ANTES de quitarla del estado local
+      if (machineUuid && currentCim.value) {
+        const relations = JSON.parse(JSON.stringify(parsedCimRelations.value));
+        if (Array.isArray(relations.relations)) {
+          const originalCount = relations.relations.length;
+          relations.relations = relations.relations.filter((r: any) => 
+            r.source !== machineUuid && r.destination !== machineUuid
+          );
+          
+          if (relations.relations.length !== originalCount) {
+             await updateCimRelations(JSON.stringify(relations));
+          }
+        }
+      }
+
+      machines.value = machines.value.filter(m => m.id !== id);
+      delete parsedDocs.value[id];
+      
+      if (Number(selectedNodeId.value) === id) {
+        selectedNodeId.value = 'analisis';
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Obtiene el número de relaciones CIM que involucren a una máquina.
+   */
+  function getMachineRelationsCount(machineId: number): number {
+    const uuid = machineUuids.value[machineId];
+    if (!uuid || !Array.isArray(parsedCimRelations.value.relations)) return 0;
+    return parsedCimRelations.value.relations.filter((r: any) => 
+      r.source === uuid || r.destination === uuid
+    ).length;
+  }
+
+  /**
+   * Selecciona un nodo (máquina o componente).
+   */
+  function selectNode(id: string | number | null) {
+    selectedNodeId.value = id;
+  }
+
+  /**
+   * Prepara un nuevo sub-nodo (componente) con ID único.
+   */
+  function selectNewSubNode(machineId: string | number, type: 'el') {
+    const doc = parsedDocs.value[Number(machineId)];
+    let newId = '';
+    do {
+      newId = crypto.randomUUID();
+      let exists = false;
+      if (doc) {
+        if (doc.elements?.some((e: any) => e.id === newId)) exists = true;
+      }
+      if (!exists) break;
+    } while (true);
+    
+    selectedNodeId.value = `new-m-${machineId}-${type}-${newId}`;
+  }
+
+  /**
+   * Getters computados para el nodo y subnodo seleccionado.
+   */
+  const selectedNode = computed(() => {
+    if (!selectedNodeId.value) return null;
+    if (selectedNodeId.value === 'analisis') {
+      return currentCim.value ? { ...currentCim.value, $type: 'CimCentral' } : null;
+    }
+    if (typeof selectedNodeId.value === 'string') {
+      if (selectedNodeId.value.startsWith('new-m-')) {
+        const machineId = Number(selectedNodeId.value.split('-')[2]);
+        return machines.value.find(m => m.id === machineId) || null;
+      }
+      if (selectedNodeId.value.startsWith('m-')) {
+        const machineId = Number(selectedNodeId.value.split('-')[1]);
+        return machines.value.find(m => m.id === machineId) || null;
+      }
+    }
+    return machines.value.find(m => m.id === selectedNodeId.value) || null;
+  });
+
+  const selectedSubNode = computed(() => {
+    const id = selectedNodeId.value;
+    if (!id || typeof id !== 'string') return null;
+
+    if (id.startsWith('new-m-')) {
+      const parts = id.split('-');
+
+      const newId = parts.slice(4).join('-');
+      return {
+        $type: 'Element',
+        id: newId,
+        name: '',
+        description: '',
+        params: '',
+        externalOutput: { hasExternalOutput: false, description: '' },
+        externalInput: { hasExternalInput: false, description: '' },
+        sendTo: []
+      };
+    }
+
+    if (!id.startsWith('m-')) return null;
+
+    const firstDash = id.indexOf('-');
+    const secondDash = id.indexOf('-', firstDash + 1);
+    const thirdDash = id.indexOf('-', secondDash + 1);
+    
+    if (secondDash === -1 || thirdDash === -1) return null;
+
+    const machineId = Number(id.substring(firstDash + 1, secondDash));
+    const type = id.substring(secondDash + 1, thirdDash);
+    const subId = id.substring(thirdDash + 1);
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return null;
+
+    if (type === 'el') {
+      return doc.elements?.find(e => e.id === subId) || null;
+    }
+    return null;
+  });
+
+  /**
+   * Actualiza datos de componente y persiste.
+   */
+  async function updateSubNodeData(machineId: number, subNodeId: string, type: 'el', data: any, isNew: boolean = false) {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return { success: false, message: 'Documento no encontrado' };
+
+    const sanitizedData = { ...data };
+    delete sanitizedData.inputs;
+    delete sanitizedData.outputs;
+    delete sanitizedData.refs;
+    delete sanitizedData.rels;
+
+    if (!doc.elements) doc.elements = [];
+
+    if (isNew) {
+      doc.elements.push({ ...sanitizedData, $type: 'Element' });
+    } else {
+      const idx = doc.elements.findIndex(e => e.id === subNodeId);
+      if (idx !== -1) doc.elements[idx] = { ...doc.elements[idx], ...sanitizedData };
+    }
+
+    try {
+      const payload = {
+        name: doc.name,
+        description: doc.description,
+        machine: JSON.stringify(doc)
+      };
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) machines.value[machineIdx] = updatedMachine;
+      
+      if (isNew) selectedNodeId.value = `m-${machineId}-${type}-${data.id}`;
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Obtiene los nombres de los nodos que referencian a un sub-nodo específico.
+   */
+  function getSubNodeReferences(machineId: number, subId: string): string[] {
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return [];
+
+    const references: string[] = [];
+    const checkRef = (node: any, targetId: string) => {
+      return node.sendTo?.some((s: any) => s.idRef === targetId);
+    };
+
+    doc.elements?.forEach(e => {
+      if (e.id !== subId && checkRef(e, subId)) references.push(e.name || e.id);
+    });
+
+    return references;
+  }
+
+  /**
+   * Elimina un componente y limpia sus referencias en cascada.
+   */
+  async function deleteSubNode(machineId: number, subId: string, type: 'el') {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    const doc = parsedDocs.value[machineId];
+    if (!doc) return { success: false, message: 'Documento no encontrado' };
+
+    if (type === 'el' && Array.isArray(doc.elements)) {
+      const idx = doc.elements.findIndex(e => e.id === subId);
+      if (idx !== -1) doc.elements.splice(idx, 1);
+    }
+
+    // Limpieza en cascada de referencias
+    const filterSendTo = (arr: any[]) => arr?.filter((s: any) => s.idRef !== subId) || [];
+    
+    doc.elements?.forEach(e => {
+      if (e.sendTo) e.sendTo = filterSendTo(e.sendTo);
+    });
+
+    try {
+      const payload = {
+        name: doc.name,
+        description: doc.description,
+        machine: JSON.stringify(doc)
+      };
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) machines.value[machineIdx] = updatedMachine;
+
+      selectedNodeId.value = machineId;
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Actualiza el JSON raw.
+   */
+  async function updateMachineRawJson(machineId: number, rawJson: string) {
+    const machine = machines.value.find(m => m.id === machineId);
+    if (!machine) return { success: false, message: 'Máquina no encontrada' };
+
+    try {
+      const parsed = JSON.parse(rawJson);
+      const oldDoc = parsedDocs.value[machineId];
+      const payload = {
+        name: parsed.name || oldDoc?.name || '',
+        description: parsed.description || oldDoc?.description || '',
+        machine: rawJson
+      };
+
+      const updatedMachine = await apiClient.put<CimMachine>(`/api/v1/machines/${machineId}`, payload);
+      const machineIdx = machines.value.findIndex(m => m.id === machineId);
+      if (machineIdx !== -1) {
+        machines.value[machineIdx] = updatedMachine;
+        parsedDocs.value[machineId] = parseMachineData(updatedMachine.machine);
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  return {
+    loading,
+    error,
+    machines,
+    parsedDocs,
+    currentCim,
+    parsedCimRelations,
+    machineUuids,
+    selectedNodeId,
+    visualizerMode,
+    isRawEditing,
+    selectedNode,
+    selectedSubNode,
+    fetchMachines,
+    updateCimRelations,
+    addMachine,
+    updateMachine,
+    deleteMachine,
+    selectNode,
+    selectNewSubNode,
+    updateSubNodeData,
+    deleteSubNode,
+    getSubNodeReferences,
+    getMachineRelationsCount,
+    updateMachineRawJson
+  };
+});

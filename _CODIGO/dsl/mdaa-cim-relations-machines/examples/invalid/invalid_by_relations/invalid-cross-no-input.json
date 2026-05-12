@@ -1,0 +1,11 @@
+{
+  "description": "Error: Destination machine has no external input enabled.",
+  "relations": [
+    {
+      "id": "333e8400-e29b-41d4-a716-446655440333",
+      "source": "550e8400-e29b-41d4-a716-446655440000",
+      "destination": "550e8400-e29b-41d4-a716-446655440000",
+      "description": "This fails two ways: self-reference AND Oscillator ...0000 has no input."
+    }
+  ]
+}

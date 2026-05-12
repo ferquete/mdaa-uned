@@ -1,0 +1,13 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655550002",
+  "name": "Machine Not Found",
+  "description": "Falla porque referencia un ID de maquina que no existe en el sistema.",
+  "machines": [
+    {
+      "id": "NON-EXISTENT-UUID-0000-0000-0000-000000000000",
+      "name": "Ghost Machine",
+      "description": "No existe en disco."
+    }
+  ],
+  "relations": []
+}

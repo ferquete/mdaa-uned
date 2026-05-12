@@ -1,0 +1,11 @@
+{
+  "description": "Invalid source/destination length.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440055",
+      "source": "Machine-ID-That-Is-Way-Too-Long-Beyond-Thirty-Six-Characters-Limit",
+      "destination": "MainMixer",
+      "description": "Source ID exceeds 36 characters."
+    }
+  ]
+}

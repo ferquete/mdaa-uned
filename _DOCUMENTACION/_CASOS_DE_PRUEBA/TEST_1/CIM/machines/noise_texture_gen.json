@@ -1,0 +1,67 @@
+{
+  "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+  "name": "Noise Texture Gen",
+  "description": "Generador de texturas de ruido y granularidad espectral destinado a enriquecer el paisaje sonoro ambiental con componentes aleatorias y evoluciones no periodicas. Este modulo produce diferentes tipologias de ruido coloreado que actuan como aglutinante entre las capas tonales del sistema, aportando esa sensacion de ambiente vivo y presente que caracteriza a las mejores producciones de musica ambiental electronica. Complementa al nucleo de dron aportando movimiento caotico organizado y texturas de alta densidad espectral que evolucionan de forma continua.",
+  "elements": [
+    {
+      "id": "2b3c0001-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Pink Noise Source",
+      "description": "Fuente de ruido rosa que proporciona una distribucion espectral con igual energia por octava, emulando el espectro del ruido encontrado en la naturaleza. Este elemento es el componente textural principal del generador, aportando una base de brillo difuso y suave que llena el espectro de forma equilibrada sin que ninguna frecuencia resulte dominante, siendo ideal para crear la sensacion de espacio aereo en composiciones de musica ambiental de larga duracion y escucha contemplativa.",
+      "params": "Amplitud: 0-100%, Filtro HP Interno: 20-500Hz, Filtro LP Interno: 2kHz-20kHz, Densidad Espectral: 0-10, Seed Aleatorio: 0-9999, Estereo: Mono/Dual, Gain: -inf/+6dB",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2b3c0010-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "idRef": "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "description": "Envia el ruido rosa generado hacia el mezclador de texturas para su integracion con las demas fuentes de ruido del modulo."
+        }
+      ]
+    },
+    {
+      "id": "2b3c0002-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Brownian Noise Src",
+      "description": "Fuente de ruido browniano o ruido rojo que produce una señal con alta concentracion de energia en las frecuencias bajas y una caida de 6dB por octava hacia las frecuencias altas. Este tipo de ruido proporciona una textura grave oscura y misteriosa, perfecta para crear atmósferas profundas y submarinas en composiciones de musica ambiental introspectiva. Su movimiento aleatorio y lento tiene una naturaleza fluida que complementa perfectamente el caracter estatico de las capas de dron tonico.",
+      "params": "Amplitud: 0-100%, Velocidad de Deriva: 0.001-1Hz, Gain Bajo: -6/+12dB, Suavizado: 0-1000ms, Correlacion: 0-1, LP Corte: 100-2000Hz, Invertir Fase: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2b3c0011-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "idRef": "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "description": "Envia el ruido browniano hacia el mezclador de texturas para añadir profundidad grave y movimiento oscuro a la mezcla."
+        }
+      ]
+    },
+    {
+      "id": "2b3c0003-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Grain Scatter Unit",
+      "description": "Unidad de dispersion granular que fragmenta señales de ruido en diminutas particulas sonoras llamadas granos y las redistribuye en el tiempo y el espacio estereo. Cada grano tiene un envelope individual controlable que determina su contorno de amplitud. Esta tecnica de sintesis granular produce texturas muy ricas y en continua evolucion que son casi imposibles de obtener con metodos convencionales, siendo una de las señas de identidad de los sintetizadores ambientales de alta gama utilizados en musica cinematica.",
+      "params": "Tamaño Grano: 10-500ms, Densidad: 1-200 granos/s, Spread Temporal: 0-1000ms, Spread Estereo: 0-100%, Pitch Grano: -12/+12st, Randomizacion: 0-100%, Envelope Grano: Attack/Release",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de audio externa para usar como fuente de material granular procedente del nucleo de dron u otras fuentes sonoras del sistema."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "2b3c0012-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "idRef": "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+          "description": "Envia la textura granular procesada hacia el mezclador de texturas para su integracion en la salida del generador."
+        }
+      ]
+    },
+    {
+      "id": "2b3c0004-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Texture Mix Output",
+      "description": "Punto de mezcla y salida del generador de texturas que combina las fuentes de ruido y la dispersion granular en una señal estereo coherente. Este elemento controla el balance entre los distintos tipos de ruido para moldear el caracter final de la textura: desde fondos tenues de sala hasta tormentas de particulas densas y envolventes. Su salida de alta calidad esta lista para ser procesada por el banco de filtros espectrales donde se dara forma final al color tonico de las texturas.",
+      "params": "Mix Pink: 0-100%, Mix Brown: 0-100%, Mix Grain: 0-100%, Master Level: -inf/0dB, Stereo Enhance: 0-200%, Noise Gate: -80/-30dB, Soft Limiter: On/Off",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de la textura de ruido combinada hacia el banco de filtros espectrales para el conformado tonico final del ambiente."
+      },
+      "sendTo": []
+    }
+  ]
+}

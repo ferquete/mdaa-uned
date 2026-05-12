@@ -1,0 +1,328 @@
+\section{Manual de Referencia Técnica MDA-Audio-PIM}
+
+Este documento constituye la especificación técnica completa del lenguaje \textbf{MDA-Audio-PIM-Machines}. Define todos los nodos, parámetros, reglas de conectividad y restricciones de validación que rigen la gramática. Hay que ver el modelo que especifica este lenguaje como una concretización del modelo CIM, ya con nomenclatura tecnológica orientada a la implementación del sistema de sonido, pero sin llegar a atarse a ningún lenguaje de programación o tecnología específica. Una máquina PIM no es más que una concretización de N máquinas CIM, por lo que es fundamental que el modelo PIM sea coherente con el modelo CIM del que se deriva.
+
+\section{Bases del Modelo}
+
+El lenguaje MDA-Audio-PIM-Machine define un grafo dirigido de audio y control. Todos los elementos del grafo (nodos, aristas y parámetros) comparten una estructura base.
+
+\subsection{Modelo Raíz (\texttt{Model})}
+
+El objeto raíz de un archivo MDA-Audio-PIM-Machine contiene la identificación global y los contenedores de nodos y aristas.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único de la máquina PIM. & Obligatorio. UUIDv4. \\
+\texttt{name} & STRING & Nombre descriptivo. & Máximo 20 car. \\
+\texttt{description} & STRING & Información general. & Máximo 600 car. \\
+\texttt{ids\_cim\_ref} & ARRAY & Lista de IDs de máquinas CIM vinculadas. & Obligatorio. \\
+\texttt{nodes} & ARRAY[Node] & Nodos de audio y control. & Obligatorio. \\
+\texttt{edges} & ARRAY[Edge] & Contenedor de conexiones (aristas). & Obligatorio. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Estructura Raíz:}
+\begin{lstlisting}[language=json]
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "name": "Full Technical Test",
+  "description": "Descripcion de hasta 600 caracteres...",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [...],
+  "edges": [...]
+}
+\end{lstlisting}
+
+\subsection{Interfaces Base}
+
+\subsubsection{Elementos Principales (Nodos y Aristas)}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único universal. & Obligatorio. UUIDv4. \\
+\texttt{description} & STRING & Información textual del propósito. & Opcional. Máx 600 car. \\
+\texttt{ids\_references} & ARRAY & Referencias a elementos del modelo CIM. & Obligatorio. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Estructura de Parámetro de Configuración (\texttt{Parameter})}
+
+Cualquier propiedad de configuración de un nodo (excepto el listado \texttt{others}) es un objeto de tipo \texttt{Parameter}.
+
+\begin{itemize}
+    \item \texttt{id}: Identificador único del parámetro (UUID).
+    \item \texttt{ids\_references}: Referencias a elementos del modelo CIM.
+    \item \texttt{initialValue}: Valor inicial del parámetro (tipo \textit{any}).
+    \item \texttt{isModifiable}: Indica si acepta modulaciones de otros nodos. Siempre \texttt{true} por defecto.
+    \item \texttt{isExternalInput}: Flag de externalización. Solo puede ser \texttt{true} si \texttt{isModifiable} es \texttt{true}.
+    \item \texttt{description}: Descripción opcional del propósito.
+\end{itemize}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Regla de Integridad Semántica]
+Un parámetro que no sea modulable internamente (\texttt{isModifiable: false}) \textbf{no puede} ser una entrada externa (\texttt{isExternalInput: true}).
+\end{tcolorbox}
+
+\subsubsection{Estructura de Parámetro Dinámico (\texttt{OthersParameter})}
+
+Todos los nodos disponen de un array \texttt{others} para parámetros customizados.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Campo & Tipo & Descripción \\ \midrule
+\texttt{id} & UUID & Identificador único. \\
+\texttt{name} & STRING & Obligatorio. 1 a 20 caracteres. \\
+\texttt{initialValue} & STRING & Obligatorio. 1 a 100 caracteres. \\
+\texttt{isModifiable} & BOOLEAN & Indica si acepta modulaciones. \\
+\texttt{isExternalInput} & BOOLEAN & Flag de externalización. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Puntos de Conexión (\texttt{ConnectionPoint})}
+
+Puertos de entrada o salida de audio y control de los nodos.
+
+\begin{itemize}
+    \item \texttt{id}: Identificador único (UUID).
+    \item \texttt{ids\_references}: Referencias conceptuales al modelo CIM.
+    \item \texttt{isExternalInput/Output}: Determina si la señal puede cruzar los límites de la máquina.
+\end{itemize}
+
+\section{Definición de Aristas (\texttt{Edges})}
+
+Las aristas establecen la conexión entre nodos.
+
+\begin{itemize}
+    \item \textbf{Señal \texttt{audio}:} Conecta salidas de sonido con entradas de sonido.
+    \item \textbf{Señal \texttt{modification}:} Conecta salidas de control con parámetros modulables.
+    \item \textbf{Cascada de Integridad:} Al desactivar \texttt{isModifiable} en un parámetro, el sistema borra automáticamente todas las aristas con ese destino.
+    \item \textbf{Prohibición:} No se puede modificar el parámetro \texttt{stereo} de ningún nodo.
+\end{itemize}
+
+\section{Diccionario de Nodos}
+
+\subsection{Generadores de Audio (\texttt{AudioGeneratorNode})}
+
+Todos cuentan con el fragmento \texttt{AudioOutputFields}: \texttt{stereo} (parámetro estructural), \texttt{output\_1} y \texttt{output\_2} (si \texttt{stereo} es true).
+
+\subsubsection{Oscilador (\texttt{oscillator})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{waveform} & STRING/Matrix & \texttt{sine, square, sawtooth, triangle, pulse, matrix} & Forma de la onda. \\
+\texttt{frequency} & NUMBER & 0 - 20,000 & Frecuencia en Hz. \\
+\texttt{pulseWidth} & NUMBER & 0 - 1 & Ancho de pulso (para \texttt{pulse}). \\
+\texttt{gain} & NUMBER & 0 - 1 & Ganancia inicial. \\
+\texttt{phase} & NUMBER & 0 - 2$\pi$ (6.283) & Fase inicial. \\
+\texttt{pan} & NUMBER & -1 a 1 & Posicionamiento estéreo. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Ruido (\texttt{noise})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{noiseType} & STRING & \texttt{white, pink, brownian} & Color del ruido. \\
+\texttt{amplitude} & NUMBER & 0 - 1 & Amplitud de la señal. \\
+\texttt{gain} & NUMBER & 0 - 1 & Ganancia de salida. \\
+\texttt{pan} & NUMBER & -1 a 1 & Posicionamiento estéreo. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Sample (\texttt{sample})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{file} & STRING & Ruta de archivo & Path al recurso de audio. \\
+\texttt{loop} & BOOLEAN & \texttt{true, false} & Indica si el sample se repite. \\
+\texttt{gain} & NUMBER & 0 - 1 & Ganancia de salida. \\
+\texttt{pan} & NUMBER & -1 a 1 & Paneo (0 si \texttt{stereo} es false). \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Modificadores de Parámetro (\texttt{ParameterModifierNode})}
+
+\subsubsection{LFO (\texttt{lfo})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{waveform} & STRING/Matrix & \texttt{sine, square, sawtooth, triangle, pulse, matrix} & Onda del modulador. \\
+\texttt{rate} & NUMBER & 0.01 - 50 & Velocidad en Hz. \\
+\texttt{amplitude} & NUMBER & 0 - 1 & Profundidad modulación. \\
+\texttt{phase} & NUMBER & 0 - 360 & Fase en grados. \\
+\texttt{sync} & BOOLEAN & \texttt{true, false} & Sincro con el tempo. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Envolvente (\texttt{envelope})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{envType} & STRING & \texttt{ADSR, ADR, AR, DAHDSR} & Arquitectura envolvente. \\
+\texttt{attack} & NUMBER & $\ge$ 0 & Tiempo de ataque. \\
+\texttt{decay} & NUMBER & $\ge$ 0 & Tiempo de caída. \\
+\texttt{sustain} & NUMBER & 0 - 1 & Nivel de sostenido. \\
+\texttt{release} & NUMBER & $\ge$ 0 & Tiempo de relajación. \\
+\texttt{delay} & NUMBER & $\ge$ 0 & Retraso (DAHDSR). \\
+\texttt{hold} & NUMBER & $\ge$ 0 & Mantenimiento (DAHDSR). \\
+\texttt{curve} & STRING & \texttt{linear, exponential, logarithmic} & Curva interpolación. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Modificadores de Sonido / Efectos (\texttt{SoundModifierNode})}
+
+\subsubsection{Filtro de Frecuencia (\texttt{frequency\_filter})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{filterType} & STRING & \texttt{LPF, HPF, BPF, Notch} & Tipo de filtro. \\
+\texttt{cutoff} & NUMBER & 20 - 20,000 & Frecuencia de corte (Hz). \\
+\texttt{resonance} & NUMBER & 0 - 10 & Resonancia (Q). \\
+\texttt{slope} & STRING & \texttt{12dB, 24dB, 48dB} & Pendiente atenuación. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Reverb (\texttt{reverb})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{roomSize} & NUMBER & 0 - 1 & Tamaño del espacio. \\
+\texttt{damping} & NUMBER & 0 - 1 & Absorción altas frec. \\
+\texttt{decayTime} & NUMBER & $\ge$ 0 & Tiempo reverberación. \\
+\texttt{dryWet} & NUMBER & 0 - 1 & Mezcla señal seca/procesada. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Delay / Eco (\texttt{delay})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{delayTime} & NUMBER & $\ge$ 0 & Tiempo de retraso. \\
+\texttt{feedback} & NUMBER & 0 - 1 & Retroalimentación. \\
+\texttt{lpCutoff} & NUMBER & 20 - 20,000 & Filtro paso bajo interno. \\
+\texttt{hpCutoff} & NUMBER & 20 - 20,000 & Filtro paso alto interno. \\
+\texttt{dryWet} & NUMBER & 0 - 1 & Mezcla señal seca/procesada. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Distorsión (\texttt{distortion})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{drive} & NUMBER & 0 - 1 & Cantidad saturación. \\
+\texttt{tone} & NUMBER & 0 - 1 & Control de brillo. \\
+\texttt{distType} & STRING & \texttt{soft, hard, bitcrush} & Algoritmo distorsión. \\
+\texttt{outLevel} & NUMBER & 0 - 1 & Volumen final salida. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Chorus / Flanger (\texttt{chorus\_flanger})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{rate} & NUMBER & $\ge$ 0 & Velocidad modulación. \\
+\texttt{depth} & NUMBER & 0 - 1 & Profundidad efecto. \\
+\texttt{feedback} & NUMBER & 0 - 1 & Retroalimentación. \\
+\texttt{mix} & NUMBER & 0 - 1 & Mezcla final. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Compresor (\texttt{compressor})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{threshold} & NUMBER & Valor en dB & Umbral de activación. \\
+\texttt{ratio} & NUMBER & $\ge$ 1 & Relación compresión. \\
+\texttt{attack} & NUMBER & $\ge$ 0 & Rapidez ataque. \\
+\texttt{release} & NUMBER & $\ge$ 0 & Tiempo relajación. \\
+\texttt{makeup} & NUMBER & $\ge$ 0 & Compensación volumen. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Ecualizador Paramétrico (\texttt{equalizer})}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{3cm}p{4cm}@{}}
+\toprule
+Parámetro & Tipo & Rango / Valores & Descripción \\ \midrule
+\texttt{bandFreq} & NUMBER & 20 - 20,000 & Frecuencia central banda. \\
+\texttt{bandwidth} & NUMBER & Valor Q & Ancho de banda. \\
+\texttt{gain} & NUMBER & Valor dB & Realce o atenuación. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Nodos de Mezcla y Nivel}
+
+\subsubsection{Mezclador (\texttt{mixer})}
+
+Suma dinámica de entre 2 y 10 señales de audio. Entradas \texttt{input\_1} a \texttt{input\_10}.
+
+\subsubsection{Ganancia y Paneo (\texttt{gain\_pan})}
+
+Control de amplitud y posición. Entrada fija \texttt{input\_1}. \texttt{pan} de -1 a 1.
+
+\section{Apéndice Técnico de Restricciones}
+
+\subsection{Formato de Matriz (\texttt{Matrix})}
+
+\begin{itemize}
+    \item \textbf{Tamaño:} Variable entre 4x4 y 1000x1000 elementos.
+    \item \textbf{Estructura:} Estrictamente cuadrada (filas == columnas).
+    \item \textbf{Contenido:} Solo valores binarios (0 o 1).
+\end{itemize}

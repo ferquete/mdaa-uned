@@ -1,0 +1,78 @@
+\chapter{Exportación e Integración de Modelos}
+
+\section{Exportación Avanzada de Contexto}
+
+La aplicación \textit{MDAA} no solo permite almacenar internamente las definiciones de modelos, sino que proporciona mecanismos para exportar el contexto íntegro del proyecto, a un formato optimizado para ser procesado por una Inteligencia Artificial.
+
+\begin{tcolorbox}[colback=purple!5,colframe=purple!75!black,title=Futuras Versiones: IA Local Integrada]
+Actualmente, el sistema prepara la información para ser procesada por herramientas de IA externas. Sin embargo, en futuras versiones de la aplicación \textit{MDAA}, se integrará un modelo de IA local (tipo \textit{LLM}) capaz de:
+\begin{itemize}
+    \item \textbf{Generación Directa:} Procesar estos paquetes internamente sin salir de la plataforma.
+    \item \textbf{Transformación entre Modelos:} Realizar automáticamente el paso de un modelo \textit{CIM} a un \textit{PIM} o viceversa.
+    \item \textbf{Regeneración de DSL:} Crear o actualizar los ficheros \textit{JSON} de los lenguajes de dominio de forma automática basándose en descripciones en lenguaje natural.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{imagenes/08_exportacion/01_pantallaExportarParaIA.png}
+    \caption{Interfaz general de la herramienta de exportación contextual.}
+\end{figure}
+
+La opción de ``Exportación para IA'' accesible desde las herramientas globales, compila todos los artefactos lógicos de diseño y análisis del proyecto activo en un paquete unificado y estructurado.
+
+\subsection{Generación del Paquete de Modelos}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagenes/08_exportacion/02_composicionNombreDefaultDelZip.png}
+    \caption{Composición y denominación del archivo comprimido exportado.}
+\end{figure}
+
+Al iniciar la exportación, el sistema genera automáticamente un archivo comprimido (\texttt{.zip}). El nombre de este fichero se construye combinando el nombre del proyecto con una marca de tiempo, garantizando la trazabilidad y la preservación del versionado histórico.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagenes/08_exportacion/03_estructuraFicherosEnElZipExportarParaIA.png}
+    \caption{Inspección del contenido y jerarquía de directorios dentro del paquete exportado.}
+\end{figure}
+
+Dentro de este paquete, la información no se presenta como un bloque monolítico, sino que preserva la estructura semántica original. Se crean directorios separados para los modelos \textit{CIM} y \textit{PIM}, incluyendo dentro de ellos los ficheros \textit{JSON} que definen tanto las relaciones globales como las configuraciones detalladas de cada máquina. Esta organización permite que los motores de transformación de \textit{Model-Driven Architecture} puedan parsear y generar el código final de los sintetizadores de forma automatizada y sin ambigüedades.
+
+\section{Análisis de los Ficheros de Exportación}
+
+El paquete \textit{ZIP} generado se conforma a partir de un conjunto de plantillas \textit{FreeMarker} (\texttt{.ftl}) ubicadas en el código fuente del \textit{backend}, específicamente en la ruta:
+\begin{center}
+    \texttt{\_CODIGO/backend/src/main/resources/templates/ai-export}
+\end{center}
+
+Los ficheros resultantes en el paquete están diseñados para ser interpretados por una IA:
+
+\begin{description}
+    \item[\texttt{instructions.md}:] Es el documento director. Contiene las instrucciones exactas para que la IA comprenda el contexto del proyecto, el lenguaje objetivo seleccionado y las reglas de mapeo entre los nodos \textit{PIM} y las funciones de síntesis reales.
+    \item[\texttt{project\_dump.json}:] Un volcado completo de la base de datos del proyecto en formato legible. Incluye todas las máquinas \textit{CIM} y \textit{PIM}, sus parámetros y las relaciones inter-máquina. Es la fuente de verdad del modelo.
+    \item[\texttt{resolved-graph.json}:] Una versión simplificada del grafo donde todos los identificadores únicos (\textit{UUIDs}) han sido resueltos a nombres de máquinas y puertos, facilitando la interpretación humana y algorítmica del flujo de señal.
+    \item[\texttt{mapping-examples.md}:] Un catálogo de ejemplos de código (\textit{snippets}) que muestran cómo instanciar cada tipo de nodo (osciladores, filtros, etc.) en el lenguaje seleccionado (\textit{Web Audio API}, \textit{SuperCollider}, \textit{Pure Data} o \textit{Max/MSP}).
+\end{description}
+
+\section{Sistema de Plantillas y Generación Dinámica}
+
+La magia detrás de esta exportación reside en el uso de plantillas \textit{FreeMarker} (\texttt{.ftl}) localizadas en el servidor (\texttt{\_CODIGO/backend/src/main/resources/templates/ai-export}). Estas plantillas permiten que el contenido de los ficheros se adapte dinámicamente al lenguaje de programación que el usuario haya escogido en el momento de la exportación.
+
+\subsection{Estructura de las Plantillas}
+
+El sistema utiliza cuatro plantillas principales para conformar el paquete, las cuales se pueden consultar  
+\texttt{\_CODIGO/backend/src/main/resources/templates/ai-export}.
+
+\begin{itemize}
+    \item \textbf{\texttt{instructions.md.ftl}:} Utiliza lógica condicional para incluir bloques de texto específicos según el lenguaje. Por ejemplo, si se elige \textit{Pure Data}, la plantilla añade secciones sobre la sintaxis de archivos \texttt{.pd}.
+    \item \textbf{\texttt{mapping-examples.md.ftl}:} Es la plantilla más compleja. Contiene macros que filtran los ejemplos de código. Solo los ejemplos relevantes para el lenguaje objetivo son incluidos en el fichero final, evitando ruido innecesario para la IA.
+    \item \textbf{\texttt{resolved-graph.json.ftl}:} Genera el grafo de conexiones ya procesado, recorriendo las relaciones del proyecto y traduciendo las referencias de base de datos a un formato de grafo de nodos.
+    \item \textbf{\texttt{readme.md.ftl}:} Genera un archivo de bienvenida con el nombre del proyecto, fecha de generación y una guía rápida de uso del contenido del \textit{ZIP}.
+\end{itemize}
+
+\subsection{Conformación según el Lenguaje}
+
+Cuando el usuario selecciona un lenguaje (ej. \textit{SuperCollider}), el \textit{backend} inyecta esta variable en el motor \textit{FreeMarker}. El resultado es un conjunto de documentos personalizados donde, por ejemplo, los ejemplos de mapeo muestran \texttt{SinOsc.ar} para SuperCollider en lugar de \texttt{osc~} de Pure Data, asegurando que la IA reciba exactamente el contexto que necesita para generar código válido y ejecutable.
+
+

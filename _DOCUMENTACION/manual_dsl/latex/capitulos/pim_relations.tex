@@ -1,0 +1,84 @@
+\section{Manual de Referencia Técnica MDA-Audio-PIM-Relations-Machines}
+
+Este lenguaje, \textbf{MDA-Audio-PIM-Relations-Machines}, permite orquestar las interconexiones entre máquinas PIM. A diferencia del nivel CIM, donde las relaciones son entre máquinas completas, el nivel PIM establece vínculos directos entre puntos de conexión y parámetros específicos.
+
+\section{Estructura del Documento}
+
+El lenguaje utiliza una estructura JSON para definir el grafo de relaciones.
+
+\subsection{Propiedades Raíz}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{5cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{description} & STRING & Propósito de la red de relaciones. & Opcional. 1 a 600 car. \\
+\texttt{relations} & ARRAY & Lista de objetos de relación detallada. & Obligatorio. Puede estar vacío. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Estructura Raíz:}
+\begin{lstlisting}[language=json]
+{
+  "description": "0123456789 (hasta 600 caracteres)",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661001",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-e29b-41d4-a716-446655444004",
+      "description": "Modulacion de amplitud (10 a 300 caracteres)"
+    }
+  ]
+}
+\end{lstlisting}
+
+\subsection{Objeto Relation (Relación PIM)}
+
+Define un vínculo técnico entre un punto de salida y un punto de entrada o parámetro.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único de la relación. & Obligatorio. UUID de 36 car. \\
+\texttt{source} & STRING & ID del \textbf{output} de una máquina PIM. & Obligatorio. Debe ser externo. \\
+\texttt{destination} & STRING & ID del \textbf{input} o \textbf{parámetro}. & Obligatorio. Debe ser externo. \\
+\texttt{description} & STRING & Descripción de la modulación o flujo. & Obligatorio. 10 a 300 car. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Relación Detallada:}
+\begin{lstlisting}[language=json]
+{
+  "id": "550e8400-e29b-41d4-a716-446655661001",
+  "source": "550e8400-e29b-41d4-a716-446655445001",
+  "destination": "550e8400-e29b-41d4-a716-446655444004",
+  "description": "Conexion de oscilador a ganancia del amplificador."
+}
+\end{lstlisting}
+
+\section{Reglas de Validación}
+
+El compilador de PIM Relations aplica las siguientes reglas de integridad:
+
+\begin{enumerate}
+    \item \textbf{Formato UUID Estricto:} Los campos \texttt{id}, \texttt{source} y \texttt{destination} deben tener exactamente 36 caracteres. No se permiten nombres descriptivos; solo identificadores técnicos.
+    \item \textbf{Unicidad de IDs:} El \texttt{id} de cada relación debe ser único en todo el documento.
+    \item \textbf{Restricciones de Texto:}
+    \begin{itemize}
+        \item Descripción del documento: máx. 600 caracteres.
+        \item Descripción de relación: entre 10 y 300 caracteres.
+    \end{itemize}
+\end{enumerate}
+
+\section{Guía de Uso Táctico}
+
+Este lenguaje es el puente final antes de la generación de código de bajo nivel. Mientras que en \textit{CIM Relations} decimos \textit{``La Máquina A se conecta a la B''}, en \textit{PIM Relations} especificamos \textit{``El output\_1 de la instancia 550e8400... se conecta al frequency de la instancia a1b2c3d4...''}.
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=IMPORTANTE]
+Los IDs utilizados en \texttt{source} y \texttt{destination} deben corresponder a identificadores definidos en los archivos \texttt{.json} de máquinas PIM correspondientes, siguiendo las reglas ya expuestas.
+\end{tcolorbox}

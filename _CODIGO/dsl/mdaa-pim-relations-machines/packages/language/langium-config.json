@@ -1,0 +1,16 @@
+{
+    "projectName": "MdaAudioPimRelationsMachines",
+    "languages": [
+        {
+            "id": "mda-audio-pim-relations-machines",
+            "grammar": "src/mda-audio-pim-relations-machines.langium",
+            "fileExtensions": [
+                "mdapimrelationsmachines"
+            ],
+            "textMate": {
+                "out": "syntaxes/mda-audio-pim-relations-machines.tmLanguage.json"
+            }
+        }
+    ],
+    "out": "src/generated"
+}

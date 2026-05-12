@@ -1,0 +1,11 @@
+{
+  "description": "Cross-validation error: Machine ID not found in directory.",
+  "relations": [
+    {
+      "id": "111e8400-e29b-41d4-a716-446655440111",
+      "source": "00000000-0000-0000-0000-000000000000",
+      "destination": "550e8400-e29b-41d4-a716-446655440002",
+      "description": "Fails because source machine 0000...0000 does not exist."
+    }
+  ]
+}

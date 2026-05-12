@@ -1,0 +1,546 @@
+import type { ValidationAcceptor, ValidationChecks } from 'langium';
+import { 
+    MdaAudioPimMachineAstType, Model, Parameter, OthersParameter, ConnectionPoint, Edge, Matrix, OscillatorNode, NoiseNode, SampleNode, 
+    FrequencyFilterNode, LFONode, EnvelopeNode, GainAndPanNode, ReverbNode, DelayNode, DistortionNode, 
+    ChorusFlangerNode, CompressorNode, EqualizerNode, MixerNode, isNumberValue, isStringValue, isBooleanValue, isMatrix 
+} from './generated/ast.js';
+import type { MdaAudioPimMachineServices } from './mda-audio-pim-machine-module.js';
+
+/**
+ * Registra los chequeos de validación del PIM de máquinas de audio.
+ */
+export function registerValidationChecks(services: MdaAudioPimMachineServices) {
+    const registry = services.validation.ValidationRegistry;
+    const validator = services.validation.MdaAudioPimMachineValidator;
+    const checks: ValidationChecks<MdaAudioPimMachineAstType> = {
+        Model: [validator.checkModelHeader, validator.checkModelIntegrity],
+        Parameter: [validator.checkParameter],
+        StereoParameter: [validator.checkStereoParameter],
+        OthersParameter: [validator.checkOthersParameter],
+        ConnectionPoint: [validator.checkConnectionPoint],
+        Edge: [validator.checkEdge],
+        Matrix: [validator.checkMatrix],
+        OscillatorNode: [validator.checkNodeName, validator.checkOscillator, validator.checkAudioOutputs],
+        NoiseNode: [validator.checkNodeName, validator.checkNoise, validator.checkAudioOutputs],
+        SampleNode: [validator.checkNodeName, validator.checkSample, validator.checkAudioOutputs],
+        FrequencyFilterNode: [validator.checkNodeName, validator.checkFilter, validator.checkSoundModifier],
+        LFONode: [validator.checkNodeName, validator.checkLFO],
+        EnvelopeNode: [validator.checkNodeName, validator.checkEnvelope],
+        MixerNode: [validator.checkNodeName, validator.checkMixer],
+        GainAndPanNode: [validator.checkNodeName, validator.checkGainAndPan, validator.checkGainAndPanStructure],
+        ReverbNode: [validator.checkNodeName, validator.checkReverb, validator.checkSoundModifier],
+        DelayNode: [validator.checkNodeName, validator.checkDelay, validator.checkSoundModifier],
+        DistortionNode: [validator.checkNodeName, validator.checkDistortion, validator.checkSoundModifier],
+        ChorusFlangerNode: [validator.checkNodeName, validator.checkChorusFlanger, validator.checkSoundModifier],
+        CompressorNode: [validator.checkNodeName, validator.checkCompressor, validator.checkSoundModifier],
+        EqualizerNode: [validator.checkNodeName, validator.checkEqualizer, validator.checkSoundModifier]
+    };
+    registry.register(checks, validator);
+}
+
+/**
+ * Implementation of custom validations.
+ */
+export class MdaAudioPimMachineValidator {
+
+    private uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    
+    /**
+     * Valida que el nombre del nodo tenga entre 1 y 20 caracteres.
+     */
+    checkNodeName(node: any, accept: ValidationAcceptor): void {
+        const name = node.name?.replace(/"/g, '');
+        if (!name || name.trim().length === 0) {
+            accept('error', 'El nombre del nodo es obligatorio y no puede estar vacío.', { node, property: 'name' });
+        } else if (name.length > 20) {
+            accept('error', 'El nombre del nodo no puede superar los 20 caracteres.', { node, property: 'name' });
+        }
+    }
+
+    /**
+     * Valida los campos de cabecera del modelo (id, name, description, references).
+     */
+    checkModelHeader(model: Model, accept: ValidationAcceptor): void {
+        const id = model.id?.replace(/"/g, '') || '';
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID del modelo debe ser un UUID válido de 36 caracteres.', { node: model, property: 'id' });
+        }
+        
+        const name = model.name?.replace(/"/g, '') || '';
+        if (!name || name.trim().length === 0) {
+            accept('error', 'El nombre no puede ser nulo ni estar vacío.', { node: model, property: 'name' });
+        } else if (name.length > 20) {
+            accept('error', 'El nombre no puede superar los 20 caracteres.', { node: model, property: 'name' });
+        }
+
+        if (model.description) {
+            const desc = model.description?.replace(/"/g, '') || '';
+            if (desc.length < 20 || desc.length > 610) { // Tolerancia por caracteres de escape
+                accept('error', 'La descripción debe tener entre 20 y 600 caracteres.', { node: model, property: 'description' });
+            }
+        }
+
+        if (model.ids_cim_reference) {
+            model.ids_cim_reference.forEach((ref, index) => {
+                if (!ref) return;
+                const refId = ref?.replace(/"/g, '') || '';
+                if (refId.length !== 36) {
+                    accept('error', 'Cada ID de referencia CIM debe tener exactamente 36 caracteres.', { node: model, property: 'ids_cim_reference', index });
+                }
+            });
+        }
+    }
+
+    /**
+     * Valida la integridad referencial del modelo (nodos y parámetros existentes en las aristas).
+     */
+    checkModelIntegrity(model: Model, accept: ValidationAcceptor): void {
+        if (!model.edges) return;
+
+        for (const edge of model.edges) {
+            const sNodeId = edge.sourceNode?.replace(/"/g, '') || '';
+            const sParamName = edge.sourceParam?.replace(/"/g, '') || '';
+            const tNodeId = edge.targetNode?.replace(/"/g, '') || '';
+            const tParamName = edge.targetParam?.replace(/"/g, '') || '';
+
+            if (!sNodeId || !sParamName || !tNodeId || !tParamName) {
+                continue; // Skip broken edges from failed parses
+            }
+
+            const sNode = model.nodes?.find(n => n.id?.replace(/"/g, '') === sNodeId);
+            const tNode = model.nodes?.find(n => n.id?.replace(/"/g, '') === tNodeId);
+
+            if (!sNode) {
+                accept('error', `El nodo origen '${sNodeId}' no existe.`, { node: edge, property: 'sourceNode' });
+            } else {
+                const sParam = this.findParamInNode(sNode, sParamName);
+                if (!sParam) {
+                    accept('error', `El parámetro o puerto de salida '${sParamName}' no existe en el nodo '${sNode.name?.replace(/"/g, '')}'.`, { node: edge, property: 'sourceParam' });
+                }
+            }
+
+            if (!tNode) {
+                accept('error', `El nodo destino '${tNodeId}' no existe.`, { node: edge, property: 'targetNode' });
+            } else {
+                // Verificar que el parámetro/puerto existe en el nodo destino
+                const tParam = this.findParamInNode(tNode, tParamName);
+                if (!tParam) {
+                    accept('error', `El parámetro o puerto de entrada '${tParamName}' no existe en el nodo '${tNode.name}'.`, { node: edge, property: 'targetParam' });
+                } else {
+                    // Validación de tipos de arista
+                    this.checkEdgeTypeConsistency(edge, tParamName, accept);
+                }
+            }
+        }
+    }
+
+    /**
+     * Busca un parámetro o ConnectionPoint en un nodo por su nombre de propiedad.
+     */
+    private findParamInNode(node: any, paramName: string): any {
+        // Buscar en propiedades directas
+        if (node[paramName]) {
+            const val = node[paramName];
+            if (val && (val.$type === 'Parameter' || val.$type === 'ConnectionPoint' || val.$type === 'StereoParameter')) {
+                return val;
+            }
+        }
+        // Buscar en el array 'others'
+        if (node.others && Array.isArray(node.others)) {
+            return node.others.find((p: any) => p.name?.replace(/"/g, '') === paramName);
+        }
+        return undefined;
+    }
+
+    /**
+     * Valida que el tipo de arista coincida con la naturaleza del parámetro destino.
+     * audio -> debe ir a entradas de sonido (input_1..10)
+     * modification -> debe ir a parámetros de control
+     */
+    private checkEdgeTypeConsistency(edge: Edge, tParamName: string, accept: ValidationAcceptor): void {
+        const outputNames = ['output_1', 'output_2', 'output'];
+        const configNames = ['stereo'];
+
+        const isAudioInput = tParamName.startsWith('input_');
+        const isOutput = outputNames.includes(tParamName);
+        const isConfig = configNames.includes(tParamName);
+
+        if (edge.type === '"audio"') {
+            if (!isAudioInput) {
+                accept('error', `Las aristas de tipo 'audio' solo pueden conectar con entradas de sonido (input_x). El parámetro '${tParamName}' no lo es.`, { node: edge, property: 'type' });
+            }
+        } else if (edge.type === '"modification"') {
+            if (isAudioInput) {
+                accept('error', `Las aristas de tipo 'modification' no pueden conectar con entradas de sonido.`, { node: edge, property: 'type' });
+            }
+            if (isOutput) {
+                accept('error', `No se puede aplicar una modificación a un parámetro de salida.`, { node: edge, property: 'type' });
+            }
+            if (isConfig) {
+                accept('error', `No se puede aplicar una modificación al parámetro 'stereo'.`, { node: edge, property: 'type' });
+            }
+        }
+    }
+
+
+    /**
+     * Valida los campos comunes de un parámetro de configuración.
+     * Incluye consistencia entre modulación y entrada externa.
+     */
+    checkParameter(param: Parameter, accept: ValidationAcceptor): void {
+        const id = param.id?.replace(/"/g, '') || '';
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
+        }
+        if (param.description) {
+            const desc = param.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+            }
+        }
+        
+        // Regla semántica de integridad
+        if (param.isModifiable === false && param.isExternalInput === true) {
+            accept('error', 'Integridad: Un parámetro no modulable (isModifiable: false) no puede ser una entrada externa.', { node: param, property: 'isExternalInput' });
+        }
+    }
+
+    /**
+     * Valida los campos de un parámetro stereo (estructural).
+     */
+    checkStereoParameter(param: any, accept: ValidationAcceptor): void {
+        if (!param) return;
+        const id = param.id?.replace(/"/g, '');
+        if (id && !this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
+        }
+        if (param.description) {
+            const desc = param.description.replace(/"/g, '');
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+            }
+        }
+    }
+
+    /**
+     * Valida los campos de un objeto OthersParameter dinamico.
+     */
+    checkOthersParameter(param: OthersParameter, accept: ValidationAcceptor): void {
+        const id = param.id?.replace(/"/g, '');
+        if (id && !this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: param, property: 'id' });
+        }
+        
+        const name = param.name?.replace(/"/g, '') || '';
+        if (!name || name.trim().length === 0 || name.length > 20) {
+            accept('error', 'El nombre del parámetro dinámico debe tener entre 1 y 20 caracteres.', { node: param, property: 'name' });
+        }
+
+        if (param.initialValue) {
+            const value = param.initialValue?.replace(/"/g, '') || '';
+            if (value.length === 0 || value.length > 100) {
+                accept('error', 'El valor inicial de initialValue debe ser un String de 1 a 100 caracteres.', { node: param, property: 'initialValue' });
+            }
+        }
+
+        if (param.description && param.description.length > 610) {
+            accept('error', 'La descripción no puede superar los 600 caracteres.', { node: param, property: 'description' });
+        }
+
+        // Regla semántica de integridad
+        if (param.isModifiable === false && param.isExternalInput === true) {
+            accept('error', 'Integridad: Un parámetro dinámico no modulable no puede ser una entrada externa.', { node: param, property: 'isExternalInput' });
+        }
+    }
+
+    /**
+     * Valida los campos de una arista.
+     */
+    checkEdge(edge: Edge, accept: ValidationAcceptor): void {
+        const id = edge.id?.replace(/"/g, '') || '';
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID de la arista debe ser un UUID válido.', { node: edge, property: 'id' });
+        }
+        if (edge.description) {
+            const desc = edge.description?.replace(/"/g, '') || '';
+            if (desc.length > 610) {
+                accept('error', 'La descripción de la arista no puede superar los 600 caracteres.', { node: edge, property: 'description' });
+            }
+        }
+    }
+
+    /**
+     * Valida los campos de un punto de conexión.
+     */
+    checkConnectionPoint(cp: ConnectionPoint, accept: ValidationAcceptor): void {
+        const id = cp.id?.replace(/"/g, '') || '';
+        if (!this.uuidRegex.test(id)) {
+            accept('error', 'El ID debe ser un UUID válido de 36 caracteres.', { node: cp, property: 'id' });
+        }
+        if (cp.description) {
+            const desc = cp.description?.replace(/"/g, '') || '';
+            if (desc.length > 610) {
+                accept('error', 'La descripción no puede superar los 600 caracteres.', { node: cp, property: 'description' });
+            }
+        }
+    }
+
+    /**
+     * Valida que la matriz sea cuadrada y tenga un tamaño válido (4x4 a 1000x1000).
+     */
+    checkMatrix(matrix: Matrix, accept: ValidationAcceptor): void {
+        const rowCount = matrix.rows.length;
+        if (rowCount < 4 || rowCount > 1000) {
+            accept('error', 'La matriz debe tener entre 4x4 y 1000x1000 elementos.', { node: matrix });
+            return;
+        }
+        matrix.rows.forEach((row, index) => {
+            if (row.values.length !== rowCount) {
+                accept('error', `La matriz debe ser cuadrada. La fila ${index} tiene ${row.values.length} valores, pero hay ${rowCount} filas.`, { node: row });
+            }
+            row.values.forEach((val, vIndex) => {
+                if (val !== 0 && val !== 1) {
+                    accept('error', 'Los valores de la matriz deben ser 0 o 1.', { node: row, property: 'values', index: vIndex });
+                }
+            });
+        });
+    }
+
+    // --- COMPROBACIONES DE RANGO ---
+
+    checkOscillator(node: OscillatorNode, accept: ValidationAcceptor): void {
+        if (node.waveform) this.checkRange(node.waveform, 0, 1, accept);
+        if (node.frequency) this.checkRange(node.frequency, 0, 20000, accept);
+        if (node.pulseWidth) this.checkRange(node.pulseWidth, 0, 1, accept);
+        if (node.gain) this.checkRange(node.gain, 0, 1, accept);
+        if (node.phase) this.checkRange(node.phase, 0, 360, accept);
+        if (node.pan) this.checkRange(node.pan, -1, 1, accept);
+    }
+
+    checkNoise(node: NoiseNode, accept: ValidationAcceptor): void {
+        if (node.amplitude) this.checkRange(node.amplitude, 0, 1, accept);
+        if (node.gain) this.checkRange(node.gain, 0, 1, accept);
+        if (node.pan) this.checkRange(node.pan, -1, 1, accept);
+    }
+
+    checkSample(node: SampleNode, accept: ValidationAcceptor): void {
+        this.checkRange(node.gain, 0, 1, accept);
+        this.checkRange(node.pan, -1, 1, accept);
+
+        const isStereo = this.getRawValue(node.stereo);
+        if (isStereo === false) {
+            const panVal = this.getRawValue(node.pan);
+            if (typeof panVal === 'number' && panVal !== 0) {
+                if (node.pan) accept('error', 'Si stereo es false, el parámetro pan debe ser 0 siempre.', { node: node.pan, property: 'initialValue' });
+            }
+        }
+    }
+
+    checkFilter(node: FrequencyFilterNode, accept: ValidationAcceptor): void {
+        if (node.cutoff) this.checkRange(node.cutoff, 20, 20000, accept);
+        if (node.resonance) this.checkRange(node.resonance, 0, 10, accept);
+    }
+
+    checkLFO(node: LFONode, accept: ValidationAcceptor): void {
+        if (node.rate) this.checkRange(node.rate, 0.01, 50, accept);
+        if (node.amplitude) this.checkRange(node.amplitude, 0, 1, accept);
+        if (node.phase) this.checkRange(node.phase, 0, 360, accept);
+    }
+
+    checkEnvelope(node: EnvelopeNode, accept: ValidationAcceptor): void {
+        if (node.attack) this.checkMin(node.attack, 0, accept);
+        if (node.decay) this.checkMin(node.decay, 0, accept);
+        if (node.sustain) this.checkRange(node.sustain, 0, 1, accept);
+        if (node.release) this.checkMin(node.release, 0, accept);
+        
+        const typeVal = this.getRawValue(node.envelopeType);
+        if (typeof typeVal === 'string' && typeVal?.replace(/"/g, '') === 'DAHDSR') {
+            if (node.delay) this.checkMin(node.delay, 0, accept);
+            if (node.hold) this.checkMin(node.hold, 0, accept);
+        }
+    }
+
+    checkGainAndPan(node: GainAndPanNode, accept: ValidationAcceptor): void {
+        this.checkRange(node.gain, 0, 1, accept);
+        this.checkRange(node.pan, -1, 1, accept);
+    }
+
+    checkReverb(node: ReverbNode, accept: ValidationAcceptor): void {
+        this.checkRange(node.roomSize, 0, 1, accept);
+        this.checkRange(node.damping, 0, 1, accept);
+        this.checkMin(node.decayTime, 0, accept);
+        this.checkRange(node.dryWet, 0, 1, accept);
+    }
+
+    checkDelay(node: DelayNode, accept: ValidationAcceptor): void {
+        this.checkMin(node.delayTime, 0, accept);
+        this.checkRange(node.feedback, 0, 1, accept);
+        this.checkRange(node.lowPassCutoff, 20, 20000, accept);
+        this.checkRange(node.highPassCutoff, 20, 20000, accept);
+        this.checkRange(node.dryWet, 0, 1, accept);
+    }
+
+    checkDistortion(node: DistortionNode, accept: ValidationAcceptor): void {
+        this.checkRange(node.drive, 0, 1, accept);
+        this.checkRange(node.tone, 0, 1, accept);
+        this.checkRange(node.outputLevel, 0, 1, accept);
+    }
+
+    checkChorusFlanger(node: ChorusFlangerNode, accept: ValidationAcceptor): void {
+        this.checkMin(node.rate, 0, accept);
+        this.checkRange(node.depth, 0, 1, accept);
+        this.checkRange(node.feedback, 0, 1, accept);
+        this.checkRange(node.mix, 0, 1, accept);
+    }
+
+    checkCompressor(node: CompressorNode, accept: ValidationAcceptor): void {
+        this.checkMin(node.attack, 0, accept);
+        this.checkMin(node.release, 0, accept);
+        this.checkMin(node.ratio, 1, accept);
+        this.checkMin(node.makeupGain, 0, accept);
+    }
+
+    checkEqualizer(node: EqualizerNode, accept: ValidationAcceptor): void {
+        this.checkRange(node.bandFrequency, 20, 20000, accept);
+        this.checkMin(node.bandwidth, 0, accept);
+    }
+
+    /**
+     * Valida que el número de salidas coincida con el modo stereo.
+     */
+    checkAudioOutputs(node: any, accept: ValidationAcceptor): void {
+        this.internalCheckOutputs(node, accept);
+    }
+
+    /**
+     * Valida la estructura de SoundModifierNode (Filtros y Efectos)
+     */
+    checkSoundModifier(node: any, accept: ValidationAcceptor): void {
+        // El mezclador es dinámico y se valida en checkMixer, saltamos esta validación genérica
+        if (node.$type === 'MixerNode') {
+            return;
+        }
+
+        const isStereo = this.getRawValue(node.stereo);
+        this.internalCheckOutputs(node, accept);
+        
+        // Entradas estándar (1 en mono, 2 en estéreo)
+        if (!node.input_1) {
+            accept('error', 'Debe definirse input_1.', { node, property: 'id' });
+        }
+        if (isStereo) {
+            const isMonoToStereoEffect = ['ChorusFlangerNode', 'ReverbNode', 'DelayNode'].includes(node.$type as string);
+            if (!node.input_2 && node.$type !== 'GainAndPanNode' && !isMonoToStereoEffect) {
+                accept('error', 'En modo estéreo, debe definirse input_2.', { node, property: 'id' });
+            }
+        } else {
+            if (node.input_2) {
+                accept('error', 'En modo mono, no debe definirse input_2.', { node, property: 'input_2' });
+            }
+        }
+    }
+
+    /**
+     * Valida la estructura de GainAndPanNode (entradas y salidas según estéreo)
+     */
+    checkGainAndPanStructure(node: GainAndPanNode, accept: ValidationAcceptor): void {
+        const isStereo = this.getRawValue(node.stereo);
+        this.internalCheckOutputs(node, accept);
+        
+        if (!node.input_1) {
+            accept('error', 'GainAndPan requiere input_1.', { node, property: 'id' });
+        }
+
+        if (isStereo) {
+            if (!(node as any).input_2) {
+                accept('error', `En modo estéreo, ${node.$type} requiere input_2.`, { node, property: 'id' });
+            }
+        } else {
+            // Exceptuamos el Mezclador de esta regla ya que sus entradas son dinámicas e independientes de stereo
+            if (node.$type as string !== 'MixerNode' && (node as any).input_2) {
+                accept('error', `En modo mono, ${node.$type} no debe tener input_2.`, { node, property: 'input_2' as any });
+            }
+        }
+    }
+
+    /**
+     * Valida el Mezclador (entradas variables de forma dinámica)
+     */
+    checkMixer(node: MixerNode, accept: ValidationAcceptor): void {
+        this.internalCheckOutputs(node, accept);
+
+        // Contar y validar consecutividad de inputs
+        let maxInputFound = 0;
+        const foundInputs: number[] = [];
+
+        for (let i = 1; i <= 10; i++) {
+            const inputKey = `input_${i}`;
+            if ((node as any)[inputKey]) {
+                maxInputFound = i;
+                foundInputs.push(i);
+            }
+        }
+
+        if (foundInputs.length < 2) {
+            accept('error', 'El Mezclador debe tener al menos 2 entradas de audio (input_1, input_2).', { node, property: 'name' });
+            return;
+        }
+
+        if (foundInputs.length > 10) {
+            accept('error', 'El Mezclador no puede superar las 10 entradas de audio.', { node, property: 'name' });
+            return;
+        }
+
+        // Verificar que no hay huecos (ej: input_1 y input_3 sin input_2)
+        for (let i = 1; i <= maxInputFound; i++) {
+            if (!foundInputs.includes(i)) {
+                accept('error', `Estructura inválida: falta input_${i} para completar la secuencia hasta input_${maxInputFound}.`, { node, property: 'name' });
+            }
+        }
+    }
+
+
+    private internalCheckOutputs(node: any, accept: ValidationAcceptor): void {
+        const isStereo = this.getRawValue(node.stereo);
+        if (typeof isStereo !== 'boolean') return;
+
+        if (isStereo) {
+            if (!node.output_1) accept('error', 'Falta output_1.', { node });
+            if (!node.output_2) accept('error', 'En estéreo falta output_2.', { node });
+        } else {
+            if (!node.output_1) accept('error', 'Falta output_1.', { node });
+            if (node.output_2) accept('error', 'En mono no debe existir output_2.', { node, property: 'output_2' });
+        }
+    }
+
+    private getRawValue(param: any): any {
+        if (!param) return undefined;
+        const val = param.initialValue;
+        if (typeof val === 'boolean') return val; // Para StereoParameter
+        if (isNumberValue(val)) return val.value;
+        if (isStringValue(val)) return val.value;
+        if (isBooleanValue(val)) return val.value;
+        if (isMatrix(val)) return val;
+        return undefined;
+    }
+
+    private checkRange(param: any, min: number, max: number, accept: ValidationAcceptor): void {
+        if (!param) return;
+        const val = this.getRawValue(param);
+        if (typeof val === 'number') {
+            if (val < min || val > max) {
+                accept('error', `El valor debe estar entre ${min} y ${max}.`, { node: param, property: 'initialValue' });
+            }
+        }
+    }
+
+    private checkMin(param: any, min: number, accept: ValidationAcceptor): void {
+        if (!param) return;
+        const val = this.getRawValue(param);
+        if (typeof val === 'number') {
+            if (val < min) {
+                accept('error', `El valor debe ser como mínimo ${min}.`, { node: param, property: 'initialValue' });
+            }
+        }
+    }
+}

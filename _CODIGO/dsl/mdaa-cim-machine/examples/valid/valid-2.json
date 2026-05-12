@@ -1,0 +1,41 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "name": "Filter Chain",
+  "description": "A series of filters to process audio input with high precision.",
+  "elements": [
+    {
+      "id": "a11e8400-e29b-41d4-a716-446655440222",
+      "name": "Low Pass Filter",
+      "description": "Standard resonant low pass filter with adjustable cutoff.",
+      "params": "cutoff: 1000Hz, resonance: 0.5, slope: 24dB",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Audio input to be filtered."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Filtered audio output."
+      },
+      "sendTo": [
+        {
+          "id": "b22e8400-e29b-41d4-a716-446655440333",
+          "idRef": "c33e8400-e29b-41d4-a716-446655440444",
+          "description": "Route filtered signal to the high pass filter element."
+        }
+      ]
+    },
+    {
+      "id": "c33e8400-e29b-41d4-a716-446655440444",
+      "name": "High Pass Filter",
+      "description": "Post-processing high pass filter for clarity improvement.",
+      "params": "cutoff: 100Hz, resonance: 0.1, slope: 12dB",
+      "externalInput": {
+        "hasExternalInput": true
+      },
+      "externalOutput": {
+        "hasExternalOutput": true
+      },
+      "sendTo": []
+    }
+  ]
+}

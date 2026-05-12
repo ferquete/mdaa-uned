@@ -1,0 +1,27 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655550001",
+  "name": "Invalid Port Direction",
+  "description": "Falla porque intenta conectar un puerto de entrada a un puerto de salida externo, pero los metadatos CIM de la maquina origen no lo permiten (sin hasExternalOutput).",
+  "machines": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Oscillator Core",
+      "description": "Referencia a maquina real sin ports externos configurados para esta prueba."
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Lead Synth",
+      "description": "Referencia a maquina real."
+    }
+  ],
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655660001",
+      "description": "Relacion invalida por falta de puerto externo en origen.",
+      "sourceMachine": "550e8400-e29b-41d4-a716-446655440000",
+      "sourceOutput": "output_1",
+      "targetMachine": "550e8400-e29b-41d4-a716-446655440001",
+      "targetInput": "input_1"
+    }
+  ]
+}

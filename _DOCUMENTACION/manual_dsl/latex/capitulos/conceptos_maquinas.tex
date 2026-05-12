@@ -1,0 +1,60 @@
+\chapter{Concepto de Máquinas y Relaciones}
+
+Para comprender la arquitectura del sistema, es necesario definir qué consideramos una \textit{máquina}, término que introduzco tanto en los DSL de CIM como de PIM, y cómo interactúan entre sí y con el exterior.
+
+\section{Señales de Sonido y Modificación}
+
+Antes de entrar en el concepto de máquina, debemos distinguir los dos tipos de señales que fluyen por el sistema:
+
+\begin{itemize}
+    \item \textbf{Señal de Sonido}: Es el flujo de audio propiamente dicho (formas de onda). Se encarga de transportar la información que finalmente será audicionada.
+    \item \textbf{Señal de Modificación}: Es una señal de control que no se oye directamente, sino que se utiliza para alterar parámetros de otros elementos (por ejemplo, una señal de un \textit{LFO} que modifica la frecuencia de un oscilador).
+\end{itemize}
+
+\section{El Concepto de Máquina}
+
+Una \textbf{máquina} es un ente funcional generador de sonido, modificador de sonido (señal de control) o ambos. Está compuesta por elementos internos (generadores o modificadores) que colaboran para cumplir su propósito. 
+
+Desde una perspectiva técnica, una máquina recibe señales del exterior y envía al exterior sonido o señales de modificación/control a través de sus puertos habilitados.
+
+\subsection{Máquinas en el nivel CIM}
+En el nivel \textit{CIM}, la máquina se ve como una caja negra con elementos abstractos. El objetivo es capturar la intención de lo elicitado como requisito, sin especificaciones técnicas. Como veremos cuando analicemos la aplicación MDAA, en su manual de usuario, en este nivel, aunque la herramienta proporciona un visor gráfico de las máquinas, su definición es puramente textual.
+
+\subsection{Máquinas en el nivel PIM}
+En el nivel \textit{PIM}, la máquina se descompone en un grafo de nodos técnicos. Cada nodo es una implementación concreta que procesa señales de audio o modificación siguiendo las reglas establecidas por los tipos de nodos posibles. Como veremos cuando entremos en la definición del DSL de máquina en PIM, el número de nodos posibles es limitado, y en esta etapa de la aplicación MDAA solo cubrimos los nodos esenciales que todo desarrollo de este tipo pudiera precisar.
+
+\section{Relaciones}
+
+Dentro de cada modelo (\textit{CIM} y \textit{PIM}), las máquinas establecen relaciones en su interior, entre los módulos/modos que las componen, o con otras máquinas a través de los puertos especificados. Estas relaciones, a nivel CIM, serán sin restricciones, simplemente establecemos la relación entre requisitos, pero en los modelos PIM sí que ya serán más estrictas, limitándose a lo que establece como reglas de diseño el DSL.
+
+Para entender esto mejor, en las figuras siguientes se muestran los conceptos en el nivel \textit{CIM} y \textit{PIM}, capturando imágenes de uno de los proyectos de prueba generados por la aplicación MDAA:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/relacionesEntreElementosDeMaquinasCIM.png}
+    \caption{Estructura interna de una máquina en el nivel \textit{CIM}.}
+    \label{fig:maquina_cim}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/relacionesEntreMaquinasCIM.png}
+    \caption{Relaciones entre máquinas en el nivel \textit{CIM}.}
+    \label{fig:relaciones_cim}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/relacionEntreElementosDeMaquinaPIM.png}
+    \caption{Estructura interna de una máquina en el nivel \textit{PIM}.}
+    \label{fig:maquina_pim}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imagenes/relacionesEntreMaquinasPIM.png}
+    \caption{Relaciones entre máquinas en el nivel \textit{PIM}.}
+    \label{fig:relaciones_pim}
+\end{figure}
+
+En las imágenes, ya se puede intuir que en el nivel PIM tenemos una concretización técnica de los conceptos abstractos definidos en el nivel CIM. En PIM ya tenemos una serie de elementos reales pero conceptuales (no concretos de lenguaje o platforma) que se interconectan siguiendo las reglas de diseño establecidas por el DSL. 

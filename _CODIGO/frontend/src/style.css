@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* Estética Geist */
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Paleta Geist Modo Claro */
+  --color-geist-bg: #ffffff;
+  --color-geist-fg: #000000;
+  --color-geist-sidebar: #fafafa;
+  --color-geist-border: #eaeaea;
+  --color-geist-accents-1: #fafafa;
+  --color-geist-accents-2: #eaeaea;
+  --color-geist-accents-3: #999999;
+  --color-geist-accents-4: #888888;
+  --color-geist-accents-5: #666666;
+  --color-geist-accents-6: #444444;
+  --color-geist-accents-7: #333333;
+  --color-geist-accents-8: #111111;
+  
+  --color-geist-success: #059669; /* Verde Esmeralda (Más oscuro para modo claro) */
+  --color-geist-error: #ee0000;   /* Rojo Geist (Más oscuro para modo claro) */
+  --color-geist-warning: #f59e0b; /* Ambar para modo claro */
+
+  /* Tokens semánticos para nodos (Modo Claro) */
+  --color-node-generator: #0070f3;
+  --color-node-modificator: #059669;
+  --color-node-ref: #ee0000;
+  --color-node-rel: #0070f3;
+
+  /* Sombras estándar para modo claro */
+  --shadow-node-generator: 0 2px 10px rgba(0, 112, 243, 0.15);
+  --shadow-node-modificator: 0 2px 10px rgba(5, 150, 105, 0.15);
+  
+  /* Colores propios de Dracula para uso directo */
+  --color-dracula-bg: #282a36;
+  --color-dracula-current: #44475a;
+  --color-dracula-fg: #f8f8f2;
+  --color-dracula-comment: #6272a4;
+  --color-dracula-cyan: #8be9fd;
+  --color-dracula-green: #50fa7b;
+  --color-dracula-orange: #ffb86c;
+  --color-dracula-pink: #ff79c6;
+  --color-dracula-purple: #bd93f9;
+  --color-dracula-red: #ff5555;
+  --color-dracula-yellow: #f1fa8c;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Modo Oscuro Geist (Skills.sh) */
+.dark {
+  --color-geist-bg: #282a36;     /* Dracula Background */
+  --color-geist-fg: #f8f8f2;     /* Dracula Foreground */
+  --color-geist-sidebar: #21222c; /* Dracula Selection Background darker */
+  --color-geist-border: #44475a;  /* Dracula Selection */
+  --color-geist-accents-1: #21222c;
+  --color-geist-accents-2: #44475a;
+  --color-geist-accents-3: #6272a4; /* Dracula Comment */
+  --color-geist-accents-4: #8b96c9; 
+  --color-geist-accents-5: #bd93f9; /* Dracula Purple */
+  --color-geist-accents-6: #ededed;
+  --color-geist-accents-7: #fafafa;
+  --color-geist-accents-8: #ffffff;
+
+  /* Tokens semánticos para nodos (Unificados con Modo Claro según petición) */
+  --color-node-generator: #0070f3;
+  --color-node-modificator: #059669;
+  --color-node-ref: #ee0000;
+  --color-node-rel: #0070f3;
+
+  /* Sobras suavizadas para evitar efecto reflectante */
+  --shadow-node-generator: 0 0 10px rgba(0, 112, 243, 0.35);
+  --shadow-node-modificator: 0 0 10px rgba(5, 150, 105, 0.35);
+
+  --color-geist-success: #50fa7b; /* Dracula Green (Vibrante para modo oscuro) */
+  --color-geist-error: #ff79c6;   /* Dracula Pink para Error cálido */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-geist-bg text-geist-fg font-sans antialiased transition-colors duration-200;
+    margin: 0;
+  }
+
+  /* Personalización de la barra de scroll */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-geist-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-geist-accents-2 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-geist-accents-3;
+  }
+}
+
+@layer components {
+  .geist-input {
+    @apply block w-full px-3 py-2 bg-transparent border-0 border-b border-geist-border text-geist-fg focus:ring-0 focus:border-geist-fg sm:text-sm transition-all duration-200 placeholder:text-geist-accents-4;
+  }
+  
+  .geist-button-primary {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-fg bg-geist-fg text-geist-bg text-sm font-medium rounded-md transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none hover:bg-transparent hover:text-geist-fg;
+  }
+  
+  .geist-button-secondary {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-border bg-transparent text-geist-fg text-sm font-medium rounded-md transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none hover:border-geist-fg;
+  }
+
+  .geist-button-error {
+    @apply inline-flex items-center justify-center px-6 py-2 border border-geist-error bg-geist-error text-white text-sm font-medium rounded-md hover:opacity-90 transition-all duration-200 active:scale-[0.98] disabled:opacity-50;
+  }
+
+  .mda-text {
+    display: inline-block;
+    /* Comienza centrada gracias al contenedor flex justify-center */
+  }
+
+  .audio-text {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    color: var(--color-geist-accents-5); /* Gris oscuro */
+    overflow: hidden;
+    white-space: nowrap;
+    padding-right: 0.1em; /* Evita que la 'o' se corte */
+    filter: blur(15px);
+    animation: 
+      reveal-space 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards,
+      reveal-content 4s ease-out 0.5s forwards;
+  }
+
+  @keyframes reveal-space {
+    to { 
+      max-width: 500px; 
+      margin-left: 0.3em; 
+    }
+  }
+
+  @keyframes reveal-content {
+    to { 
+      opacity: 1; 
+      filter: blur(0); 
+    }
+  }
+
+  /* Transiciones de Página */
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .page-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .page-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

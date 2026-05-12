@@ -1,0 +1,27 @@
+\section{El Problema}
+
+
+\subsection{Descripción del problema}
+
+Se puede afirmar sin lugar a dudas que el dominio de problema ejemplo, desarrollo de software orientado a la creación de sintetizadores de sonido, constituye un ámbito de programación altamente especializado que, con frecuencia, se desvía de los paradigmas clásicos de programación (declarativos u orientados a objetos). Históricamente, este campo ha carecido de metodologías formales que estructuren el ciclo de vida del desarrollo, priorizando una aproximación directa a la implementación sobre un proceso sistemático de ingeniería. En esto ha pesado mucho el usuario al que los lenguajes especializados en este campo se dirigen: músicos, ingenieros de sonido, diseñadores de sonido, etc., los cuales no suelen tener conocimientos de programación o ingeniería de software. Salvo en los casos de lenguajes de propósito general, como librerías adaptadas a la síntesis musical en JavaScript o C, u otras enfocadas a la investigación sonora como SuperCollider o Csound, la mayoría de las herramientas disponibles con más éxito comercial y entre los usuarios para el desarrollo de este tipo de software son frameworks de desarrollo visual, como Pure Data o Max/MSP.
+
+El problema fundamental radica en la ausencia de un flujo de trabajo que permita asentar un análisis sólido, el cual deba desembocar en un diseño arquitectónico que sirva como pilar para la generación del código fuente. Esta carencia metodológica impide la trazabilidad y la iteración efectiva entre las distintas fases del desarrollo. Sin un modelo formal intermedio, resulta extremadamente complejo volver atrás para redefinir el análisis o aplicar cambios en el diseño de forma que se reflejen de manera coherente y automática en el producto final. Esta desconexión entre la intención creativa y la implementación técnica limita la escalabilidad de los proyectos y dificulta la reutilización de componentes lógicos entre diferentes desarrollos.
+
+Por otro lado, el surgimiento de LLMs capaces de generar código de alta calidad ha abierto nuevas posibilidades para el desarrollo de software. Sin embargo, el uso de estos modelos de cara a la generación automática de código también presenta grandes desafíos, como la falta de mecanismos formales para realizar \textit{Backward Engineering} entre los modelos definitorios del código y el propio código generado por la propia IA, y cómo se puede mantener la trazabilidad entre ambos. Se hace necesario buscar mecanismos que permitan unir la intención del desarrollador con el código generado por la IA, a través de una representación intermedia que sea fácilmente comprensible por el ser humano y que a la vez sea capaz de ser utilizada por una IA para generar el código esperado, fiel a lo que se pretende en su análisis y diseño.
+
+Auque ya se dispone de multitud de lenguajes de modelado, como UML, y técnicas muy efectivas de generación de código a partir de los mismos, se hacen demasiado generalistas para poder ser utilizados en ámbitos alejados de la ingeniería de software. 
+
+\subsection{Restricciones introducidas al problema genérico}
+
+En este artículo se abordará la generación de código a través de modelos de los mismos, y su viabilidad funcional, y no tanto en la transformación entre los distintos modelos que analizan y diseñan el código, pero todas las herramientas desarrolladas para este trabajo tienen esa finalidad última: que tanto el análisis como el diseño y la implementación del código sean meros artefactos generados automáticamente a partir de unas especificaciones iniciales, en un proceso iterativo de refinamiento de las mismas, con trazabilidad total entre los distintos modelos generados.
+
+
+\subsection{Estado del arte y trabajos relacionados}
+
+Si bien es cierto que es posible utilizar lenguajes de propósito general (como C++ o Rust) para el desarrollo de sintetizadores de audio digital, lo que permitiría teóricamente aplicar en su desarrollo técnicas como las postuladas por \textit{Model-Driven Architecture} (MDA) y ciclos de vida de ingeniería de software tradicionales, este no es, como ya mencionamos antes, un enfoque realista en la práctica.  
+
+Para los usuarios promedio que desarrollan y utilizan este tipo de software, el uso de lenguajes de bajo nivel o marcos de trabajo genéricos supone una barrera de entrada técnica insalvable que asfixia la creatividad. Por ello, como ya introducimos previamente, la industria ha convergido hacia herramientas de programación visual, que aunque facilitan la implementación inmediata, carecen habitualmente de las capas de abstracción necesarias para realizar un análisis y diseño formal previo e independiente de la implementación final. 
+
+Por todo ello, se hace interesante este dominio de ejemplo, en contraposición a otros más generalistas y bien conocidos por los ingenieros de software, como pudieran ser el desarrollo de aplicaciones de gestión o el de plataformas e-commerce. No parece ser el típico campo de desarrollo en el que se suela aplicar MDA; sin embargo, apoyándose en DSL especificos y el uso de modelo de razonamiento automático, se presta especialmente a ello, abriendo un camino para el desarrollo de este tipo de software que no explorado antes.
+
+

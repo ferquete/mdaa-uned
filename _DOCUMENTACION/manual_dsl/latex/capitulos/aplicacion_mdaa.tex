@@ -1,0 +1,25 @@
+\chapter{Generación de Paquetes para IA}
+
+La aplicación \textit{MDAA} centraliza toda la información de los \textit{DSLs} y los ficheros \texttt{JSON} que implementan las máquinas en sus dos niveles (\textit{CIM} y \textit{PIM}). El objetivo final es consolidar este conocimiento en un paquete usable por una Inteligencia Artificial para la generación o análisis de código de audio.
+
+\section{Proceso de Montaje}
+
+La aplicación escanea el proyecto buscando las definiciones de máquinas y sus relaciones. Utilizando la información de los dos niveles:
+\begin{enumerate}
+    \item Extrae la estructura funcional del \textit{CIM}.
+    \item Extrae la especificación técnica del \textit{PIM}.
+    \item Relaciona ambos niveles para crear un contexto completo del diseño.
+\end{enumerate}
+
+\section{Plantillas y README.md}
+
+Para que la IA pueda interpretar correctamente el proyecto, se genera un fichero \texttt{README.md} estructurado que actúa como guía. Este fichero se construye siguiendo plantillas predefinidas que organizan la información de la siguiente manera:
+
+\begin{itemize}
+    \item \textbf{Visión General}: Resumen del proyecto y su propósito.
+    \item \textbf{Arquitectura CIM}: Descripción de las máquinas conceptuales y sus vínculos.
+    \item \textbf{Detalle PIM}: Especificación técnica de los nodos y parámetros para cada máquina.
+    \item \textbf{Instrucciones de Generación}: Guía para que la IA sepa cómo traducir este modelo a lenguajes como \textit{Pure Data} o \textit{C++}.
+\end{itemize}
+
+El resultado es un paquete comprimido que contiene los esquemas \texttt{JSON} y el \texttt{README.md} maestro, listo para ser procesado por cualquier modelo de lenguaje avanzado.

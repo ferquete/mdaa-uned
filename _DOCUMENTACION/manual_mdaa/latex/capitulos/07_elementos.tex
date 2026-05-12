@@ -1,0 +1,247 @@
+\chapter{Estructura de Nodos y Elementos}
+
+\section{Estructura de Nodos}
+
+La construcción de máquinas conceptuales y de diseño (\textit{CIM} y \textit{PIM}) se fundamenta en la instanciación de elementos (nodos). La aplicación ofrece un sistema interactivo para su creación y manipulación.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/01_crearElementoArrastrandoAEditor.png}
+    \caption{Creación de un elemento arrastrándolo al editor.}
+\end{figure}
+
+Para añadir un nuevo componente al modelo, se utiliza la técnica de ``Arrastrar y Soltar'' (\textit{Drag \& Drop}). El usuario puede seleccionar el tipo de elemento desde la paleta y posicionarlo visualmente en el área de trabajo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/02_formularioCrearElemento.png}
+    \caption{Formulario para definir un nuevo elemento.}
+\end{figure}
+
+Una vez ubicado, se abre un formulario de creación donde se deben especificar las propiedades base del componente, como su identificador dentro del \textit{DSL} y su comportamiento predeterminado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{imagenes/07_elementos/01_estructuraNodo/03_ejemploDeElementoExplicandoPartes.png}
+    \caption{Anatomía visual de un elemento instanciado.}
+\end{figure}
+
+Cada elemento representado en el editor consta de varias partes identificables visualmente: puertos de entrada (situados generalmente a la izquierda), puertos de salida (a la derecha) y el cuerpo central que indica el tipo de procesamiento o control.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{imagenes/07_elementos/01_estructuraNodo/04_botonEliminarElemento.png}
+    \caption{Controles rápidos para eliminar el elemento.}
+\end{figure}
+
+En la interfaz del elemento, existen controles contextuales. El botón de eliminación permite retirar el elemento del modelo, destruyendo también las conexiones asociadas a sus puertos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{imagenes/07_elementos/01_estructuraNodo/05_ejemploElementoConEntradasSalidasAudioYEntradasModificacion.png}
+    \caption{Elemento con entradas/salidas de audio y puertos de modificación.}
+\end{figure}
+
+La semántica de los puertos distingue entre conexiones de señal (audio) y conexiones de control (parámetros). Esto asegura que al diseñar el \textit{PIM}, se respete la lógica de flujo del sintetizador.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{imagenes/07_elementos/01_estructuraNodo/06_ejemploElementoStereoConCirculosEnEntradasSalidasAudioAlEsterior.png}
+    \caption{Indicador visual para elementos con procesamiento estéreo.}
+\end{figure}
+
+Los elementos que procesan señales estereofónicas presentan indicadores visuales específicos en sus puertos de entrada y salida, facilitando la identificación de la topología espacial del sonido.
+
+\subsection{Gestión de Propiedades de los Elementos}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/07_propiedadesDeUnElemento.png}
+    \caption{Panel de propiedades de un elemento.}
+\end{figure}
+
+Al seleccionar un nodo, se despliega su panel de propiedades, permitiendo editar su configuración detallada en tiempo real.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/08_botonesReplicarYEleminarEInformacionBasicaElemento.png}
+    \caption{Opciones de replicación, eliminación e información básica.}
+\end{figure}
+
+El panel de control del elemento incluye accesos rápidos para duplicar el componente (replicar), eliminarlo, y modificar su información básica (nombre, identificador).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/09_propiedadModulableYEsternalizable.png}
+    \caption{Configuración de propiedades modulables y externalizables.}
+\end{figure}
+
+Dentro de las características avanzadas, ciertas propiedades pueden ser marcadas como \textit{Modulables} (pueden ser controladas por señales como LFOs) o \textit{Externalizables} (sus parámetros estarán expuestos en la interfaz de usuario final).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/10_propiedadStereo.png}
+    \caption{Ajuste de la propiedad estéreo del elemento.}
+\end{figure}
+
+La propiedad estéreo se puede activar o desactivar desde este panel, modificando instantáneamente la representación visual del nodo en el grafo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/11_ejemploPropiedadPropiaDeUnElementoDeterminado.png}
+    \caption{Edición de propiedades específicas.}
+\end{figure}
+
+Cada tipo de elemento posee propiedades únicas que determinan su funcionamiento (por ejemplo, el tipo de filtro en un ecualizador, o la forma de onda en un oscilador).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/12_crearPropiedadExtraAElemento.png}
+    \caption{Asignación de propiedades adicionales.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/13_ejemploPropiedadExtraDeElemento.png}
+    \caption{Visualización de una propiedad adicional asignada.}
+\end{figure}
+
+El sistema permite añadir flexibilidad definiendo atributos extra para casos de uso avanzados, los cuales se integrarán en la definición del lenguaje subyacente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/14_propiedadInputElemento.png}
+    \caption{Configuración detallada de un puerto de entrada.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{imagenes/07_elementos/01_estructuraNodo/15_propiedadOutputElemento.png}
+    \caption{Configuración detallada de un puerto de salida.}
+\end{figure}
+
+Tanto las entradas (\textit{Input}) como las salidas (\textit{Output}) pueden configurarse individualmente. Esto incluye la definición de sus dominios de valores, nombres y tipos de señal que aceptan o emiten.
+
+\section{Catálogo de Elementos}
+
+El ecosistema provee una librería completa de módulos para la construcción de la cadena de audio y control. Estos módulos se agrupan en categorías funcionales.
+
+\subsection{Generadores de Audio}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/01_generadoresAudio/01_oscilador.png}
+    \caption{Módulo Oscilador.}
+\end{figure}
+
+Generador básico de señales periódicas. Permite seleccionar formas de onda clásicas (senoidal, cuadrada, diente de sierra) y ajustar su frecuencia fundamental.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/01_generadoresAudio/02_ruido.png}
+    \caption{Módulo de Ruido.}
+\end{figure}
+
+Generador de señales estocásticas. Utilizado frecuentemente para percusiones o efectos atmosféricos, permitiendo configurar la coloración del ruido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/01_generadoresAudio/03_sample.png}
+    \caption{Módulo reproductor de muestras (Sample).}
+\end{figure}
+
+Permite cargar e integrar archivos de audio pregrabados en la cadena de síntesis, con opciones de reproducción en bucle (\textit{loop}) y alteración de tono.
+
+\subsection{Modificadores de Parámetros}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/02_modificadoresParametros/01_lfo.png}
+    \caption{Oscilador de Baja Frecuencia (LFO).}
+\end{figure}
+
+El \textit{LFO} se emplea como fuente de modulación para variar dinámicamente parámetros de otros nodos (como un vibrato sobre el tono o un trémolo sobre el volumen).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/02_modificadoresParametros/02_envolvente.png}
+    \caption{Generador de Envolvente.}
+\end{figure}
+
+Produce señales de control estructuradas en fases (Típicamente \textit{Attack, Decay, Sustain, Release}) disparadas por eventos (como la pulsación de una tecla).
+
+\subsection{Modificadores de Sonido}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/01_filtro.png}
+    \caption{Módulo Filtro.}
+\end{figure}
+
+Elemento central en la síntesis sustractiva. Atenúa rangos específicos de frecuencia. Sus parámetros clave son la frecuencia de corte y la resonancia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/02_ecualizador.png}
+    \caption{Ecualizador paramétrico.}
+\end{figure}
+
+Permite un control espectral fino, ajustando la ganancia en múltiples bandas de frecuencia independientes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/03_compresor.png}
+    \caption{Compresor dinámico.}
+\end{figure}
+
+Módulo encargado de reducir el rango dinámico de la señal, controlando los picos de amplitud según un umbral y un ratio establecidos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/04_reverb.png}
+    \caption{Efecto Reverberación.}
+\end{figure}
+
+Simula el comportamiento acústico de espacios físicos (habitaciones, salas, auditorios) para añadir profundidad a la señal original.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/05_delay.png}
+    \caption{Efecto Retardo (Delay).}
+\end{figure}
+
+Genera repeticiones (\textit{ecos}) de la señal de audio. Permite configurar el tiempo de retraso y la retroalimentación (\textit{feedback}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/06_chorus_flanger.png}
+    \caption{Efectos Chorus y Flanger.}
+\end{figure}
+
+Moduladores temporales que producen ensanchamiento estéreo y alteraciones de fase, útiles para engordar el sonido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/03_modificadoresSonido/07_distorsion.png}
+    \caption{Distorsión armónica.}
+\end{figure}
+
+Añade contenido armónico mediante la saturación no lineal de la señal, modificando drásticamente su timbre.
+
+\subsection{Mezcla y Niveles}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/04_deMezclaYNivel/01_mezclador.png}
+    \caption{Mezclador de señales.}
+\end{figure}
+
+Combina múltiples señales de entrada en una sola salida (mono o estéreo), controlando el nivel relativo de cada contribución.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{imagenes/07_elementos/02_elementos/04_deMezclaYNivel/02_ganancia_pan.png}
+    \caption{Control de Ganancia y Panorama.}
+\end{figure}
+
+Unidad básica para el ajuste de amplitud global y el posicionamiento en el campo estéreo.

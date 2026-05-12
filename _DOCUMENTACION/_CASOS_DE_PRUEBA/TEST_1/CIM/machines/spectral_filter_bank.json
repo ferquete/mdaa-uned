@@ -1,0 +1,55 @@
+{
+  "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+  "name": "Spectral Filter Bank",
+  "description": "Banco de filtros espectrales de alta precision diseñado para esculpir y colorear las señales de audio del sistema ambiental. Este modulo combina multiples tipologias de filtros dispuestos en configuraciones serie y paralelo para lograr un conformado espectral complejo y musical. Es el responsable de transformar las texturas crudas del nucleo generador y del generador de ruido en paisajes sonoros con un color tonico definido y una sensacion espacial convincente. Su arquitectura permite evoluciones lentas del espectro que son la esencia del genero ambiental electronico.",
+  "elements": [
+    {
+      "id": "3c4d0001-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "name": "Spectral Audio Input",
+      "description": "Punto de entrada principal del banco de filtros que recibe las señales de audio combinadas procedentes del nucleo de dron y del generador de texturas. Este elemento incluye una etapa de pre-procesamiento con control de ganancia y un limitador suave de proteccion para asegurar que las etapas de filtrado reciban siempre una señal en el nivel optimo de trabajo, evitando asi la saturacion indeseada de los algoritmos de filtrado que podria artefactar el sonido de forma no musical.",
+      "params": "Input Gain: -12/+12dB, Input Trim: 0-100%, Pre-Limiter: -12/0dBFS, DC Block: On/Off, Fase: Normal/Invertida, Mono Sum: On/Off, Meter RMS: On/Off",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de audio estereo que recibe las señales combinadas del nucleo de dron y del generador de texturas de ruido para su procesamiento espectral."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "3c4d0010-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+          "idRef": "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+          "description": "Envia la señal de entrada pre-procesada hacia el filtro pasa-bajos de frecuencias graves para el conformado del cuerpo espectral."
+        }
+      ]
+    },
+    {
+      "id": "3c4d0002-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "name": "Low Spectral Filter",
+      "description": "Filtro de frecuencias bajas con respuesta Ladder que moldea el contenido grave del sonido ambiental con la calidez analogica caracteristica. Su resonancia suave y controlable en el punto de corte crea un enfasis espectral que puede aportar desde una leve coloracion hasta un acento tonico notable en la frecuencia de corte. La capacidad de modular este parametro a velocidades muy lentas, sincronizadas con el LFO del modulador espacial, es fundamental para crear la sensacion de respiracion y movimiento organico en el ambiente.",
+      "params": "Cutoff LP: 40Hz-2kHz, Resonancia: 0-100%, Slope: 12/24dB, Drive: 0-10, Temperatura: Warm/Cold, Tracking CV: 0-200%, Oversampling: 1x/2x/4x",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "3c4d0011-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+          "idRef": "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+          "description": "Envia la señal filtrada por los graves hacia el filtro de frecuencias medias-altas para continuar el conformado espectral en cadena."
+        }
+      ]
+    },
+    {
+      "id": "3c4d0003-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "name": "High Spectral Filter",
+      "description": "Filtro de paso alto y paso banda para las frecuencias medias-altas y el brillo del sonido ambiental. Este elemento, dispuesto en serie tras el filtro de graves, permite controlar de forma independiente el contenido de altas frecuencias, desde el aire y la presencia hasta los brillos cristalinos. Su modo de paso banda es especialmente util para crear ese efecto de ventana espectral que hace que ciertos rangos de frecuencia sean el foco de atencion del paisaje sonoro, aportando un caracter muy definido y cinematico.",
+      "params": "Cutoff HP: 500Hz-15kHz, Resonancia Q: 0-8, Tipo: HPF/BPF/Notch, Pendiente: 6/12/24dB, Shelf Gain: -12/+6dB, Sweep Rate: 0-100%, Air Band: 8kHz-20kHz",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de modulacion externa para el parametro de cutoff de frecuencia, permitiendo barridos espectrales sincronizados desde el modulador espacial."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de la señal filtrada espectralmente lista para ser procesada en el modulo de efectos espaciales del sistema ambiental."
+      },
+      "sendTo": []
+    }
+  ]
+}

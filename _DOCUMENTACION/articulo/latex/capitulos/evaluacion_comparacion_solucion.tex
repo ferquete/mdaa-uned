@@ -1,0 +1,27 @@
+\section{Evaluación y comparación de la solución}
+
+A continuación, se aplicarán llos criterios de evaluación, previamente definidos, a los cuatro casos de prueba ubicados en el repositorio (cuyos detalles se pueden consultar en el archivo \textit{README.md}\footnote{\href{\urlProyectoCasosPrueba/README.md}{README de Casos de Prueba en GitHub}} correspondiente).
+
+Las pruebas de generación se realizarán utilizando el modelo de IA Gemini PRO. Los códigos a evaluar corresponden al \texttt{.zip} generado para el lenguaje Pure Data a través de la aplicación MDAA. Asimismo, estos cuatro casos de prueba se encuentran, ya cargados bajo el usuario proporcionado, disponibles en el entorno desplegado en Azure\footnote{\url{\urlProyectoMdaa}} ya mencionado previamente (Usuario: \texttt{test@uned.es}, Contraseña: \texttt{11111111}).
+
+A continuación, se presenta una tabla resumen de los resultados obtenidos:
+ 
+\begin{table}[htbp]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{l p{2.5cm} p{2.5cm} p{2.5cm}}
+        \hline
+        \textbf{Caso de Prueba} & \textbf{Replicabilidad} & \textbf{Grado de Calidad} & \textbf{Número de Intentos} \\
+        \hline
+        Electronic Ambient & Muy buena & Correcto & 2 \\
+        Drum Machine & Excelente & Correcto & 1 \\
+        Arpeggio Bass & Muy buena & Correcto & 2 \\
+        80s Deep Bass & Excelente & Correcto & 3 \\
+        \hline
+    \end{tabular}%
+    }
+    \caption{Evaluación de casos de prueba con Gemini PRO para Pure Data}
+    \label{tab:evaluacion_casos}
+\end{table}
+
+De los resultados obtenidos, aunque preliminares y con un sesgo relativamente subjetivo, cabría destacar el apartado de replicabilidad, a través del cual se puede entrever que la solución aportada por MDAA es capaz de generar información suficiente para que los modelos entiendan lo que se persigue. Por otro lado, viendo los resultados obtenidos para el número de intentos, queda claro que, como ya se adelantaba, Pure Data no es un lenguaje óptimo para ser generado por modelos de razonamiento generalistas. Este problema es bien conocido en el ámbito del desarrollo con Pure Data, y proyectos como PatchGen\footnote{\url{https://github.com/AnxiousAnt/PatchGen}} intentan solventarlo, con resultados muy interesantes, a través de entrenar (\textit{fine-tuning}) modelos de poco tamaño, que posibilitan su ejecución en entornos locales, con ejemplos de \textit{patches} desarrollados por la comunidad Pure Data.

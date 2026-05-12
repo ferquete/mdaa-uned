@@ -1,0 +1,37 @@
+{
+  "id": "3b000001-0000-0000-0000-000000000000",
+  "name": "Arp FX Output",
+  "description": "Maquina de procesado de efectos y salida del sintetizador de bajo arpejiado. Recibe la señal del bajo filtrado y aplica un chorus sutil para engrosar el sonido y añadir amplitud espacial sin perder definicion, seguido de un compresor suave que nivela las variaciones de dinamica entre las notas del arpejio y da presencia al bajo en la mezcla. La salida estereo final del sintetizador sale desde esta maquina.",
+  "elements": [
+    {
+      "id": "3b000011-0000-0000-0000-000000000000",
+      "name": "Arp Chorus",
+      "description": "Chorus de tasa muy lenta y profundidad moderada aplicado al bajo arpejiado para engrosar el sonido y añadir una ligera amplitud estereo sin que el efecto sea perceptible como modulacion evidente. Produce la sensacion de que el bajo llena mas el espacio estereo de la mezcla.",
+      "params": "Rate: 0.3-1Hz, Profundidad: 0-30%, Feedback: 0-20%, Mix: 20-60%, Modo: Stereo, Voices: 2",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de la señal de bajo arpejiado filtrado desde la maquina generadora Arp Bass Voice."
+      },
+      "externalOutput": { "hasExternalOutput": false },
+      "sendTo": [
+        {
+          "id": "3b000011-0000-0000-0000-000000000010",
+          "idRef": "3b000012-0000-0000-0000-000000000000",
+          "description": "Envia el bajo con chorus hacia el compresor suave de salida para la dinamica final del sintetizador de bajo arpejiado."
+        }
+      ]
+    },
+    {
+      "id": "3b000012-0000-0000-0000-000000000000",
+      "name": "Arp Output Comp",
+      "description": "Compresor suave de salida que nivela la dinamica entre notas del arpejio y da presencia y cuerpo al bajo sintetico en la mezcla. La compresion suave con ratio bajo permite que el bajo respire y tenga expresividad mientras controla los picos que podrian enmascarar otros instrumentos.",
+      "params": "Umbral: -18dB a 0dB, Ratio: 2:1 a 4:1, Ataque: 10-30ms, Release: 80-200ms, Knee: Suave, Makeup: 0-6dB",
+      "externalInput": { "hasExternalInput": false },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida estereo final del sintetizador de bajo arpejiado lista para integrarse en una mezcla o cadena de audio externa."
+      },
+      "sendTo": []
+    }
+  ]
+}

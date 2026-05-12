@@ -1,0 +1,177 @@
+{
+  "id": "3b100001-0000-0000-0000-000000000000",
+  "name": "PIM Arp FX Output",
+  "description": "Implementacion PIM de la maquina de efectos y salida del bajo arpejiado. Aplica chorus de tasa lenta para engrosar el bajo y añadir amplitud estereo, y un compresor suave de salida para nivelar la dinamica entre notas y dar presencia al bajo en la mezcla. La salida estereo final sale por los puertos externos de esta maquina.",
+  "ids_cim_reference": [
+    "3b000001-0000-0000-0000-000000000000"
+  ],
+  "nodes": [
+    {
+      "type": "chorus_flanger",
+      "id": "3b100002-0000-0000-0000-000000000000",
+      "name": "Arp Bass Chorus",
+      "description": "Chorus de tasa lenta para engrosamiento y amplitud estereo del bajo arpejiado. La profundidad moderada da presencia sin que el efecto sea perceptible como modulacion obvia. Recibe la señal mono del bajo filtrado y produce salida estereo.",
+      "ids_references": [
+        "3b000011-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "rate": {
+        "id": "3b100003-0000-0000-0000-000000000000",
+        "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.5,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Tasa del chorus en 0.5 Hz para un efecto muy lento y suave, apenas perceptible como modulacion."
+      },
+      "depth": {
+        "id": "3b100004-0000-0000-0000-000000000000",
+        "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.2,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Profundidad del chorus al 20% para engrosamiento sutil sin artefactos de pitch notables."
+      },
+      "feedback": {
+        "id": "3b100005-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": 0.1,
+        "isModifiable": false,
+        "description": "Feedback bajo del chorus para evitar el efecto de flanger no deseado en el bajo."
+      },
+      "mix": {
+        "id": "3b100006-0000-0000-0000-000000000000",
+        "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+        "initialValue": 0.35,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Mezcla del chorus al 35% para que el efecto engrose sin dominar la señal original del bajo."
+      },
+      "stereo": {
+        "id": "3b100007-0000-0000-0000-000000000000",
+        "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+        "initialValue": true,
+        "description": "El chorus opera en modo estereo para convertir la señal mono del bajo en estereo con amplitud espacial."
+      },
+      "input_1": {
+        "id": "3b100008-0000-0000-0000-000000000000",
+        "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+        "isExternalInput": true,
+        "description": "Entrada del bajo arpejiado filtrado desde la maquina PIM Arp Bass Voice."
+      },
+      "output_1": {
+        "id": "3b100009-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del chorus del bajo arpejiado hacia el compresor de salida."
+      },
+      "output_2": {
+        "id": "3b100010-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del chorus del bajo arpejiado hacia el compresor de salida."
+      }
+    },
+    {
+      "type": "compressor",
+      "id": "3b100021-0000-0000-0000-000000000000",
+      "name": "Arp Output Comp",
+      "description": "Compresor suave de salida del bajo arpejiado que nivela la dinamica entre las notas del arpejio y da presencia al bajo en la mezcla. Ataque lento para preservar el ataque de cada nota y release musical para permitir que el bajo respire.",
+      "ids_references": [
+        "3b000012-0000-0000-0000-000000000000"
+      ],
+      "others": [],
+      "threshold": {
+        "id": "3b100022-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "initialValue": -16,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Umbral del compresor en -16 dB para que la compresion actue en las notas mas intensas del arpejio."
+      },
+      "ratio": {
+        "id": "3b100023-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "initialValue": 3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ratio de compresion de 3:1 suave para nivelar sin destruir la dinamica expresiva del bajo."
+      },
+      "attack": {
+        "id": "3b100024-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.02,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Ataque de 20ms del compresor para dejar pasar el ataque de cada nota del arpejio antes de comprimir."
+      },
+      "release": {
+        "id": "3b100025-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "initialValue": 0.12,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Release de 120ms para recuperacion musical entre las notas del arpejio del bajo sintetico."
+      },
+      "makeupGain": {
+        "id": "3b100026-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "initialValue": 3,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Makeup gain de 3 dB para compensar la perdida de nivel por la compresion del bajo arpejiado."
+      },
+      "stereo": {
+        "id": "3b100027-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "El compresor de salida opera en estereo vinculado para procesar ambos canales del bajo de forma cohesiva."
+      },
+      "input_1": {
+        "id": "3b100028-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del compresor desde el canal L del chorus del bajo arpejiado."
+      },
+      "input_2": {
+        "id": "3b100029-0000-0000-0000-000000000000",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del compresor desde el canal R del chorus del bajo arpejiado."
+      },
+      "output_1": {
+        "id": "3b100030-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida izquierda estereo final del sintetizador de bajo arpejiado lista para integrarse en una mezcla."
+      },
+      "output_2": {
+        "id": "3b100031-0000-0000-0000-000000000000",
+        "ids_references": ["3b000012-0000-0000-0000-000000000000"],
+        "isExternalOutput": true,
+        "description": "Salida derecha estereo final del sintetizador de bajo arpejiado lista para integrarse en una mezcla."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "3b100090-0000-0000-0000-000000000000",
+      "description": "Conexion de audio del canal L del chorus del bajo arpejiado hacia la entrada L del compresor de salida.",
+      "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+      "sourceNode": "3b100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_1",
+      "targetNode": "3b100021-0000-0000-0000-000000000000",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "3b100091-0000-0000-0000-000000000000",
+      "description": "Conexion de audio del canal R del chorus del bajo arpejiado hacia la entrada R del compresor de salida.",
+      "ids_references": ["3b000011-0000-0000-0000-000000000000"],
+      "sourceNode": "3b100002-0000-0000-0000-000000000000",
+      "sourceParam": "output_2",
+      "targetNode": "3b100021-0000-0000-0000-000000000000",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

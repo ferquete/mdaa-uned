@@ -1,0 +1,41 @@
+{
+  "description": "Arquitectura de síntesis modular avanzada para paisajes sonoros etéreos y evolutivos. El sistema utiliza un enfoque multicanal para drones armónicos, texturas de ruido orgánico y filtrado dinámico, orquestado por un motor de modulación espacial. Bloques clave: **Drone Core**: 3 osciladores con micro-desafinación. **Texture Gen**: Ruido rosa y browniano granular. **Spectral Filter**: Filtros Ladder y ecualización. **FX Master**: Reverb de 8s y delay atmosférico. Diseño basado en el paradigma MDA con modelos CIM y PIM validados para una producción profesional.",
+  "relations": [
+    {
+      "id": "aa001001-bbbb-cccc-dddd-ee1122334455",
+      "source": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "description": "Conecta la salida compuesta del nucleo de dron ambiental hacia la entrada del banco de filtros espectrales para el conformado tonico del sonido base del sintetizador."
+    },
+    {
+      "id": "aa001002-bbbb-cccc-dddd-ee1122334455",
+      "source": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "destination": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "description": "Conecta la salida de texturas de ruido combinadas hacia el banco de filtros espectrales para integrar las componentes granulares y de ruido en el paisaje espectral ambiental."
+    },
+    {
+      "id": "aa001003-bbbb-cccc-dddd-ee1122334455",
+      "source": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "destination": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9012",
+      "description": "Envia la señal filtrada espectralmente desde el banco de filtros hacia el rack de efectos maestro para la adiccion de reverberacion shimmer y delay atmosferico final."
+    },
+    {
+      "id": "aa001004-bbbb-cccc-dddd-ee1122334455",
+      "source": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+      "destination": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "description": "Envia señales de control del LFO ultra-lento y la envolvente ambiental hacia el nucleo de dron para modular el nivel maestro y el detune de las capas oscilatorias de forma organica."
+    },
+    {
+      "id": "aa001005-bbbb-cccc-dddd-ee1122334455",
+      "source": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+      "destination": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "description": "Envia señales de modulacion desde el modulador espacial hacia el banco de filtros para realizar barridos lentos del punto de corte espectral y variaciones del ancho de banda de forma musical."
+    },
+    {
+      "id": "aa001006-bbbb-cccc-dddd-ee1122334455",
+      "source": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+      "destination": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "description": "Conecta la salida del nucleo de dron hacia la unidad de dispersion granular del generador de texturas para usar el dron como fuente de material granulado en las texturas ambientales."
+    }
+  ]
+}

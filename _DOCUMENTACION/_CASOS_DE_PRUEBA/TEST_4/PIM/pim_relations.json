@@ -1,0 +1,17 @@
+{
+  "description": "Red PIM del sintetizador de bajo estilo 80s. Conecta la salida estereo de la maquina core PIM a la entrada estereo de la maquina de efectos.",
+  "relations": [
+    {
+      "id": "4d100001-0000-0000-0000-000000000000",
+      "source": "4a100049-0000-0000-0000-000000000000",
+      "destination": "4b100008-0000-0000-0000-000000000000",
+      "description": "Conexion de audio L desde PIM 80s Bass Core al PIM 80s Bass FX."
+    },
+    {
+      "id": "4d100002-0000-0000-0000-000000000000",
+      "source": "4a100050-0000-0000-0000-000000000000",
+      "destination": "4b100009-0000-0000-0000-000000000000",
+      "description": "Conexion de audio R desde PIM 80s Bass Core al PIM 80s Bass FX."
+    }
+  ]
+}

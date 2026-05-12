@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Reverb Input 2.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661007",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "00000000-0000-0000-0000-000000001008",
+      "description": "Conexion canal derecho a la reverb."
+    }
+  ]
+}

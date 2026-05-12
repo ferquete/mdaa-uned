@@ -1,0 +1,93 @@
+\section{Manual de Referencia Técnica MDA-Audio-CIM-Relations-Machines}
+
+Este documento especifica el lenguaje \textbf{MDA-Audio-CIM-Relations-Machines} de relaciones entre máquinas definidas en el documento de especificación de máquinas CIM. Este documento trabaja al mismo nivel de abstracción (CIM), orquestando la comunicación de alto nivel entre máquinas independientes a escala de proyecto.
+
+En el CIM no se tiene por qué hablar de implementaciones concretas, sino de \textbf{elementos} abstractos que capturan la intención del diseño de síntesis de la máquina.
+
+\section{Estructura del Modelo}
+
+El documento de relaciones define cómo fluye la información entre máquinas mediante una colección de vínculos abstractos.
+
+\subsection{Modelo Raíz (\texttt{Document})}
+
+El objeto raíz contiene la descripción global del sistema de interconexiones.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{5cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{description} & STRING & Propósito general de las interconexiones. & Opcional. 1 a 1000 car. \\
+\texttt{relations} & ARRAY[Relation] & Lista de objetos de relación entre máquinas. & Obligatorio. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Documento:}
+\begin{lstlisting}[language=json]
+{
+  "description": "Simple Lead to Mixer routing.",
+  "relations": [ ... ]
+}
+\end{lstlisting}
+
+\subsection{Objeto de Relación (\texttt{Relation})}
+
+Define un vínculo direccional entre dos máquinas CIM independientes.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llp{4cm}l@{}}
+\toprule
+Atributo & Tipo & Descripción & Restricciones \\ \midrule
+\texttt{id} & STRING & Identificador único de la relación. & Obligatorio. 36 car. \\
+\texttt{source} & STRING & ID de la máquina de origen. & Obligatorio. 36 car. \\
+\texttt{destination} & STRING & ID de la máquina de destino. & Obligatorio. 36 car. \\
+\texttt{description} & STRING & Justificación técnica del vínculo. & Obligatorio. 10 a 1000 car. \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ejemplo de Relación:}
+\begin{lstlisting}[language=json]
+{
+  "id": "111e8400-e29b-41d4-a716-446655440111",
+  "source": "LeadSynth",
+  "destination": "MainMixer",
+  "description": "Routes audio from lead to master mixer."
+}
+\end{lstlisting}
+
+\section{Reglas de Validación}
+
+Para garantizar la integridad del flujo entre máquinas, se aplican las siguientes restricciones:
+
+\subsection{Identidad y Formato}
+\begin{itemize}
+    \item \textbf{Unicidad de IDs:} Cada relación en el array \texttt{relations} debe tener un \texttt{id} único.
+    \item \textbf{Formato UUID:} El campo \texttt{id} debe cumplir con el estándar de 36 caracteres.
+\end{itemize}
+
+\subsection{Restricciones de Texto}
+\begin{itemize}
+    \item \textbf{Descripción Global:} Máximo 1000 caracteres.
+    \item \textbf{Descripción de Relación:} Entre 10 y 1000 caracteres.
+\end{itemize}
+
+\subsection{Interfaces Expuestas y Existencia}
+\begin{itemize}
+    \item \textbf{Existencia:} Los IDs especificados en \texttt{source} y \texttt{destination} deben corresponder a máquinas CIM existentes en el proyecto.
+    \item \textbf{Sin Auto-Relación:} Una máquina no puede conectarse consigo misma. Los campos \texttt{source} y \texttt{destination} deben ser diferentes.
+    \item \textbf{Configuración de Origen (\texttt{source}):} La máquina referenciada como \textbf{origen} DEBE contener al menos un elemento interno configurado con \texttt{hasExternalOutput: true}.
+    \item \textbf{Configuración de Destino (\texttt{destination}):} La máquina referenciada como \textbf{destino} DEBE contener al menos un elemento interno configurado con \texttt{hasExternalInput: true}.
+\end{itemize}
+
+En resumen, las relaciones CIM solo pueden existir si las interfaces individuales de las máquinas están habilitadas para la comunicación externa y si ambas entidades son máquinas distintas y existentes.
+
+\section{Guía de Uso}
+
+Las relaciones CIM expresan dependencias conceptuales (ej.: \textit{La máquina de síntesis de leads alimenta a la máquina de mezcla principal}). No entran en detalles técnicos de canales, puertos específicos o parámetros muy concretos, ya que esa granularidad se define exclusivamente en el nivel \textbf{PIM}.
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=CONSEJO]
+Antes de definir una relación, asegúrese de que la máquina origen expone salidas y la destino acepta entradas en sus respectivos modelos CIM. De lo contrario, el validador bloqueará la creación del flujo.
+\end{tcolorbox}

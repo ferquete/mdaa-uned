@@ -1,0 +1,31 @@
+\section{Cómo evaluar la solución}
+\label{sec:como_evaluar_la_solucion}
+
+En esta fase del proyecto, en la cual se persigue generar código fuente automáticamente, validando o no la hipótesis planteada, el enfoque se centrará en comparar ejemplos desarrollados por la herramienta MDAA\footnote{\href{\urlProyectoManualMdaa}{Manual MDAA en GitHub}}.
+
+\subsection{Metodología de Evaluación}
+
+Se partirá de 4 ejemplos desarrollados en la herramienta MDAA, disponibles en el repositorio de GitHub\footnote{\href{\urlProyectoCasosPrueba}{Casos de prueba en GitHub}}. En ese mismo directorio se encontrará un README.md y una serie de scripts para que puedan ser validados contra los DSL desarrollados, e incluidos en la BD local si se decide cargar la aplicación MDAA localmente.
+
+Como se comenta en el manual de la aplicación MDAA, por cada uno de estos 4 proyectos, se podrá generar un paquete .zip con el formato adecuado para el procesado del mismo por una IA, de cara a la obtención del código fuente objetivo. Dentro de este .zip se encontrará un fichero README.md, el cual tendrá un apartado llamado \textit{Suggested Prompt}, que será el prompt a proporcionar para que la IA trabaje, además de adjuntarle todo el fichero .zip.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{imagenes/prompt1.png}
+    \caption{Ejemplo de puesta a punto de prompt}
+    \label{fig:ejemplo_prompt}
+\end{figure}
+
+Para esta evaluación de resultados, se comparará en base a generación de código en formato Pure Data, ya que es uno de los más complejos de generar por las IA generalistas. En el manual complementario sobre sonido digital\footnote{\href{\urlProyectoMaterialComplementario}{Manual complementario en GitHub}}, se puede encontrar información sobre este formato y el porqué de su complejidad para su generación automática por parte de modelos LLM.
+
+
+\subsection{Criterios de Análisis}
+
+Para la evaluación de la herramienta, en su estado actual, se ha optado por realizar una evaluación cualitativa preliminar y de carácter puramente heurístico. Dado un caso de prueba, se deberían valorar los siguientes aspectos de cara a decidir si la generación es óptima respecto a un desarrollo manual (sin MDAA y sin intervención de IA) equivalente:
+
+\begin{itemize}
+    \item \textbf{Replicabilidad:} Evaluar si múltiples intentos de pasar la misma información al mismo modelo LLM y/o a otros dan resultados parejos. Para ello, si de 10 intentos de generación correctos, en varios chats distintos con memorias separadas, se consigue un sonido casi exacto, se considerará que su replicabilidad es Excelente; si varía pero es consistente con la descripción del proyecto, Muy Buena; si la variación es notablemente visible, pero el resultado es funcional, Buena; si no es consistente con la descripción del proyecto, Mala.
+    \item \textbf{Grado de Calidad:} Valorar si el resultado es óptimo para el propósito buscado. Aunque este criterio es el que más componente subjetiva posee, permite medir la alineación del código con la intención del diseñador. Podrá tener los valores Correcto o Incorrecto. 
+    \item \textbf{Número de Intentos:} Determinar cuántos intentos son necesarios para obtener un resultado válido respecto a los criterios de análisis y diseño de ese proyecto concreto. Se darán por buenos aquellos intentos que solo deban ser modificados ligeramente, por ejemplo, por falta de una conexión de interacción con el usuario (como podría ser la falta de una arista en un botón pulsador hacia un objeto de Pure Data).
+\end{itemize}
+

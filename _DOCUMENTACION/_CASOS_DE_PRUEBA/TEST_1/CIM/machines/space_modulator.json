@@ -1,0 +1,50 @@
+{
+  "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+  "name": "Space Modulator",
+  "description": "Modulo de control y modulacion espacial que inyecta movimiento lento y organico en todos los parametros clave del sintetizador ambiental. Genera envolventes de larguisima duracion y LFOs de frecuencia ultra-baja cuyos ciclos pueden durar desde segundos hasta varios minutos, creando la sensacion de un sonido que respira y evoluciona de forma autonoma. Es el cerebro dinamico del sistema ambiental, proporcionando a cada modulo fuentes de control que transforman un sonido estatico en un paisaje vivo, siendo musicalmente coherentes en todo momento.",
+  "elements": [
+    {
+      "id": "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+      "name": "Ultra Slow LFO",
+      "description": "Oscilador de frecuencia ultra-baja con periodos de 1 segundo a 10 minutos, ideal para modulaciones de largo alcance que crean sensacion de deriva y evolucion autonoma. Este generador es el responsable de que el filtro espectral se abra y cierre suavemente durante minutos, o de que el nivel del dron respire de forma imperceptiblemente lenta. Su sincronizacion con el tempo del proyecto es opcional, siendo igualmente efectivo en modo libre para obtener polirritmos de modulacion no periodicos.",
+      "params": "Rate: 0.001Hz-1Hz, Forma: Sine/Triangle/Ramp/Random, Amplitud: 0-100%, Phase Offset: 0-360, Fade In: 0-60s, Bipolar/Unipolar: true/false, Slew Limiter: 0-5s",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de señal de control de baja frecuencia ultra-lenta para modulacion de filtros, niveles y parametros de sintesis de otras maquinas del sistema ambiental."
+      },
+      "sendTo": []
+    },
+    {
+      "id": "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+      "name": "Ambient ENV Gen",
+      "description": "Generador de envolventes de muy larga duracion especialmente diseñado para el genero ambiental, con tiempos de ataque y release de hasta 30 segundos que permiten fundidos imperceptibles al inicio y final de las texturas. La tipologia DAHDSR garantiza el maximo control sobre la evolucion temporal del sonido, siendo posible programar una secuencia de aumento gradual, mantenimiento estable y desvanecimiento elegante que puede durar varios minutos completos de desarrollo musical sin discontinuidades perceptibles.",
+      "params": "Attack: 0-30s, Hold: 0-60s, Decay: 0-30s, Sustain: 0-100%, Release: 0-30s, Delay Onset: 0-60s, Curva: Linear/Exponential/Logarithmic, Loop: On/Off, Trigger: Gate/Retrig",
+      "externalInput": {
+        "hasExternalInput": true,
+        "description": "Entrada de disparo externo para iniciar el ciclo de la envolvente ambiental desde un secuenciador, controlador MIDI o sistema de automatizacion."
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida del valor de la envolvente ambiental para el control dinamico del nivel maestro, el cutoff espectral o la ganancia del dron a lo largo del tiempo."
+      },
+      "sendTo": []
+    },
+    {
+      "id": "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+      "name": "Random Drift Gen",
+      "description": "Generador de valores de deriva aleatoria controlada (sample-and-hold suavizado) que introduce microimperfecciones intencionales en los parametros de sintesis, emulando el comportamiento organico de los circuitos analogicos reales. Cada ciclo de este generador produce un nuevo valor objetivo al que se llega suavemente mediante un slew limiter ajustable, creando una sensacion de vida e imprevisibilidad que hace que las texturas ambientales nunca suenen iguales en dos escuchas consecutivas del mismo tema musical.",
+      "params": "Rate Muestreo: 0.01-10Hz, Rango Salida: 0-100%, Slew Rate: 0-10s, Seed Fijo: On/Off, Distribucion: Uniforme/Gaussiana, Correlacion: 0-1, Cuantizacion: Off/Steps",
+      "externalInput": {
+        "hasExternalInput": false
+      },
+      "externalOutput": {
+        "hasExternalOutput": true,
+        "description": "Salida de valor aleatorio suavizado para introducir deriva organica en los osciladores del nucleo de dron y otros parametros de color tonico del sistema."
+      },
+      "sendTo": []
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Cross-machine LFO modulation.",
+  "relations": [
+    {
+      "id": "ccc38400-e29b-41d4-a716-446655440ccc",
+      "source": "550e8400-e29b-41d4-a716-446655440006",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Routes modulator LFO from Machine A to Filter cutoff of Machine B (which has external input)."
+    }
+  ]
+}

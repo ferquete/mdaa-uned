@@ -1,0 +1,245 @@
+{
+  "id": "d4000001-0000-0000-0000-000000000004",
+  "name": "PIM Space Modulator",
+  "description": "Implementacion PIM del modulador espacial del sintetizador ambiental. Concretiza un LFO de frecuencia ultra-baja con forma de onda sinusoidal para crear barridos de filtro imperceptiblemente lentos, una envolvente DAHDSR de larguisima duracion para los fundidos de inicio y fin del paisaje sonoro, y un generador de aleatoriedad suavizada que introduce deriva organica en los osciladores. Todas las salidas de control son externas para poder modular las maquinas generadoras y el banco de filtros del sistema ambiental completo.",
+  "ids_cim_reference": [
+    "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+  ],
+  "nodes": [
+    {
+      "type": "lfo",
+      "id": "d4000002-0000-0000-0000-000000000004",
+      "name": "Ultra Slow LFO",
+      "description": "LFO de frecuencia ultra-baja con periodo configurable de hasta 10 minutos. Su onda sinusoidal suave crea transiciones imperceptibles en los parametros de las maquinas que modula, dando la sensacion de que el sonido cambia por si solo sin que el oyente pueda identificar el momento exacto del cambio. Ideal para barridos del filtro espectral y variaciones de amplitud del dron a escala temporal de la composicion completa.",
+      "ids_references": [
+        "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+      ],
+      "others": [
+        {
+          "id": "d4000002-0000-0000-0000-000000000070",
+          "name": "Slew Rate",
+          "ids_references": [
+            "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+          ],
+          "initialValue": "2.5",
+          "isModifiable": false,
+          "isExternalInput": false,
+          "description": "Tasa de suavizado del LFO ultra-lento en segundos para eliminar escalones digitales en la señal de control de baja frecuencia."
+        }
+      ],
+      "waveform": {
+        "id": "d4000003-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": "sine",
+        "isModifiable": false,
+        "description": "Onda sinusoidal para el LFO ultra-lento para garantizar transiciones completamente suaves en todos los parametros modulados."
+      },
+      "rate": {
+        "id": "d4000004-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0.01,
+        "isModifiable": true,
+        "description": "Tasa del LFO en 0.005 Hz equivalente a un ciclo completo cada 200 segundos, creando variaciones imperceptibles en tiempo real."
+      },
+      "amplitude": {
+        "id": "d4000005-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0.6,
+        "isModifiable": true,
+        "description": "Profundidad del LFO ultra-lento en 0.6 para barridos espectrales de rango amplio sin saturar los parametros de destino."
+      },
+      "phase": {
+        "id": "d4000006-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Fase inicial del LFO ultra-lento en cero para iniciar el ciclo de modulacion desde el minimo del rango."
+      },
+      "sync": {
+        "id": "d4000007-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0001-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": false,
+        "isModifiable": false,
+        "description": "Sincronizacion de tempo desactivada para el LFO ultra-lento, operando en modo libre para variaciones no periodicas organicas."
+      },
+      "output": {
+        "id": "d4000008-0000-0000-0000-000000000004",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida de señal de control ultra-lenta para modular el cutoff del banco de filtros espectrales y el gain del nucleo de dron."
+      }
+    },
+    {
+      "type": "envelope",
+      "id": "d4000009-0000-0000-0000-000000000004",
+      "name": "Ambient DAHDSR ENV",
+      "description": "Envolvente de larguisima duracion tipo DAHDSR especificamente disenada para fundidos ambientales de minutos de duracion. El ataque de 15 segundos garantiza que el paisaje sonoro aparezca de forma completamente imperceptible desde el silencio. El release de 20 segundos asegura que la composicion se desvanezca con la misma elegancia con la que aparecio, sin cortes abruptos que rompan la inmersion sonora del oyente.",
+      "ids_references": [
+        "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+      ],
+      "others": [],
+      "envelopeType": {
+        "id": "d4000010-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": "DAHDSR",
+        "isModifiable": false,
+        "description": "Tipo de envolvente DAHDSR para maximo control sobre el ciclo de vida completo del paisaje sonoro ambiental."
+      },
+      "attack": {
+        "id": "d4000011-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 15,
+        "isModifiable": true,
+        "description": "Tiempo de ataque de 15 segundos para un inicio absolutamente suave e imperceptible del paisaje sonoro ambiental."
+      },
+      "decay": {
+        "id": "d4000012-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 5,
+        "isModifiable": true,
+        "description": "Tiempo de caida de 5 segundos desde el pico hasta el nivel de sustain tras el ataque inicial de la envolvente ambiental."
+      },
+      "sustain": {
+        "id": "d4000013-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0.85,
+        "isModifiable": false,
+        "description": "Nivel de sustain en 0.85 para mantener el paisaje sonoro a alta intensidad durante la seccion central de la composicion."
+      },
+      "release": {
+        "id": "d4000014-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 20,
+        "isModifiable": true,
+        "description": "Tiempo de release de 20 segundos para que el paisaje sonoro se desvanezca de forma completamente elegante e imperceptible."
+      },
+      "delay": {
+        "id": "d4000015-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0,
+        "isModifiable": true,
+        "description": "Retardo de inicio de la envolvente ambiental, configurable para programar el momento exacto de inicio del paisaje sonoro."
+      },
+      "hold": {
+        "id": "d4000016-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Tiempo de hold en cero ya que el sustain cumple la funcion de mantenimiento del nivel en la envolvente ambiental."
+      },
+      "curve": {
+        "id": "d4000017-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0002-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": "logarithmic",
+        "isModifiable": false,
+        "description": "Curva logaritmica para una percepcion lineal del volumen en el ataque y el release de la envolvente ambiental segun la psicoacustica."
+      },
+      "output": {
+        "id": "d4000018-0000-0000-0000-000000000004",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida de la envolvente ambiental para controlar el nivel maestro del dron y la amplitud del generador de texturas de ruido."
+      }
+    },
+    {
+      "type": "lfo",
+      "id": "d4000019-0000-0000-0000-000000000004",
+      "name": "Random Drift LFO",
+      "description": "LFO con forma de onda aleatoria suavizada que genera una señal de control impredecible y organica para introducir microderiva en los parametros de los osciladores del dron. El rate lento y la amplitud reducida garantizan que la deriva sea percibida como imperfeccion natural del sistema en lugar de como modulacion intencionada, emulando el comportamiento de los sintetizadores analogicos de alta gama.",
+      "ids_references": [
+        "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+      ],
+      "others": [
+        {
+          "id": "d4000019-0000-0000-0000-000000000071",
+          "name": "Drift Correlation",
+          "ids_references": [
+            "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+          ],
+          "initialValue": "0.75",
+          "isModifiable": false,
+          "isExternalInput": false,
+          "description": "Correlacion temporal del generador de deriva aleatoria para controlar la suavidad de las transiciones entre valores aleatorios."
+        }
+      ],
+      "waveform": {
+        "id": "d4000020-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": "sine",
+        "isModifiable": false,
+        "description": "Onda sinusoidal del LFO de deriva para que la señal de control sea siempre suave sin escalones bruscos en la modulacion."
+      },
+      "rate": {
+        "id": "d4000021-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0.03,
+        "isModifiable": false,
+        "description": "Tasa del LFO de deriva en 0.03 Hz para un ciclo de unos 33 segundos que introduce variaciones lentas y organicas."
+      },
+      "amplitude": {
+        "id": "d4000022-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 0.05,
+        "isModifiable": true,
+        "description": "Amplitud muy reducida del LFO de deriva para que la microderiva sea casi imperceptible pero presente en el sonido del dron."
+      },
+      "phase": {
+        "id": "d4000023-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": 90,
+        "isModifiable": false,
+        "description": "Fase inicial de 90 grados del LFO de deriva para que comience en el valor medio del rango de variacion."
+      },
+      "sync": {
+        "id": "d4000024-0000-0000-0000-000000000004",
+        "ids_references": [
+          "4d5e0003-8b9c-0d1e-2f3a-4b5c6d7e8f90"
+        ],
+        "initialValue": false,
+        "isModifiable": false,
+        "description": "Sincronizacion desactivada para el LFO de deriva organica para mantener su caracter libre y no periodico."
+      },
+      "output": {
+        "id": "d4000025-0000-0000-0000-000000000004",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida de señal de deriva organica para modular la frecuencia y la ganancia de los osciladores del nucleo de dron ambiental."
+      }
+    }
+  ],
+  "edges": []
+}

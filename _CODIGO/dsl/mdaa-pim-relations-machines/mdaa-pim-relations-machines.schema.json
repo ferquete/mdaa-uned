@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MDA Audio PIM Relations Machines Schema",
+  "type": "object",
+  "required": ["relations"],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600,
+      "description": "Propósito de la red de relaciones."
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source", "destination", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 36,
+            "maxLength": 36,
+            "description": "UUID de la relación."
+          },
+          "source": {
+            "type": "string",
+            "minLength": 36,
+            "maxLength": 36,
+            "description": "ID del output de una máquina PIM."
+          },
+          "destination": {
+            "type": "string",
+            "minLength": 36,
+            "maxLength": 36,
+            "description": "ID del input o parámetro de una máquina PIM."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 300,
+            "description": "Descripción de la modulación o flujo."
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

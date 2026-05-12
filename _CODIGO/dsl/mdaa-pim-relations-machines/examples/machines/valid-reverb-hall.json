@@ -1,0 +1,27 @@
+{
+  "id": "550e8400-e29b-41d4-a716-446655441008",
+  "name": "Reverb Hall",
+  "description": "Efecto Reverb vinculado al Oscillator Core CIM.",
+  "ids_cim_reference": ["550e8400-e29b-41d4-a716-446655440000"],
+  "nodes": [
+    {
+      "type": "reverb",
+      "id": "550e8400-e29b-41d4-a716-446655443008",
+      "name": "Hall Reverb",
+      "description": "Simulacion de espacio grande.",
+      "ids_references": ["771e8400-e29b-41d4-a716-446655440111"],
+      "others": [],
+      "roomSize": { "id": "00000000-0000-0000-0000-000000001001", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.8, "isModifiable": true },
+      "damping": { "isModifiable": true, "id": "00000000-0000-0000-0000-000000001002", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.5, "isModifiable": true },
+      "decayTime": { "id": "00000000-0000-0000-0000-000000001003", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 2.5, "isModifiable": true },
+      "dryWet": { "id": "00000000-0000-0000-0000-000000001004", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": 0.3, "isModifiable": true },
+      "stereo": { "id": "00000000-0000-0000-0000-000000001005", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": true, "isModifiable": false },
+      "ping_pong": { "id": "00000000-0000-0000-0000-000000001006", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"], "initialValue": false, "isModifiable": false },
+      "input_1": { "isExternalInput": true, "id": "00000000-0000-0000-0000-000000001007", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] },
+      "input_2": { "isExternalInput": true, "id": "00000000-0000-0000-0000-000000001008", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] },
+      "output_1": { "isExternalOutput": true, "id": "00000000-0000-0000-0000-000000001009", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] },
+      "output_2": { "id": "00000000-0000-0000-0000-000000001010", "ids_references": ["771e8400-e29b-41d4-a716-446655440111"] }
+    }
+  ],
+  "edges": []
+}

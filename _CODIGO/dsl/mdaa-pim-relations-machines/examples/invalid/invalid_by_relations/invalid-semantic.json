@@ -1,0 +1,23 @@
+{
+  "description": "Casos semanticos: validan estructuralmente pero fallan al cruzar con maquinas.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655668001",
+      "source": "550e8400-0000-0000-0000-0dead0000000",
+      "destination": "550e8400-0000-0000-0000-000000001007",
+      "description": "Falla: Source no existe en ninguna maquina."
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655668002",
+      "source": "550e8400-0000-0000-0000-000000000008",
+      "destination": "550e8400-0000-0000-0000-0dead1111111",
+      "description": "Falla: Destination no existe en ninguna maquina."
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655668003",
+      "source": "550e8400-0000-0000-0000-000000000001",
+      "destination": "550e8400-0000-0000-0000-000000001007",
+      "description": "Falla: El source es una Waveform (no tiene isExternalOutput=true)."
+    }
+  ]
+}

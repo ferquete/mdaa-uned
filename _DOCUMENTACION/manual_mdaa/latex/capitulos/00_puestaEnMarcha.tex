@@ -1,0 +1,129 @@
+\chapter{Puesta en Marcha}
+\label{cap:puesta-en-marcha}
+
+Este capítulo describe cómo configurar y poner en marcha el entorno completo del proyecto \texttt{MDAA} (Model-Driven Architecture for Audio). Toda la infraestructura necesaria se gestiona mediante contenedores \texttt{Docker}, lo que permite un despliegue rápido y consistente en diferentes plataformas.
+
+\begin{tcolorbox}[colback=blue!5,colframe=blue!75!black,title=Nota informativa: Acceso Directo y Credenciales]
+Aparte de poder cargarse localmente descargándolo desde \url{\urlProyecto} o desde el archivo \texttt{.zip} de la entrega, el proyecto también puede ser accedido a través de \url{\urlProyectoMdaa}, con las siguientes credenciales:
+\begin{itemize}
+    \item \textbf{Usuario:} \texttt{test@uned.es}
+    \item \textbf{Contraseña:} \texttt{11111111}
+\end{itemize}
+
+Es importante recalcar que este entorno estará accesible en la nube de Azure solo de \textbf{lunes a viernes en horario de 8:00 a 20:00}, hasta que se gasten los créditos de la cuenta \textit{Student} obtenida por ser estudiante de la UNED. Por los cálculos realizados, debería estar \textit{online} al menos 3 meses (mitad de mayo, junio, julio y parte de agosto).
+
+\textbf{Información adicional sobre el servicio cloud:}
+\begin{itemize}
+    \item \textbf{Proyectos precargados:} Al acceder con el usuario de prueba, encontrará todos los casos de prueba ya cargados como proyectos.
+    \item \textbf{Restricciones:} Por seguridad y ahorro de recursos, no se permite el registro de nuevos usuarios en el entorno cloud (el servidor de desarrollo \textit{MailHog} no está disponible).
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=orange!5,colframe=orange!75!black,title=Recomendación: Conceptos de Síntesis de Sonido]
+Si no dispone de experiencia previa en síntesis de sonido digital, se recomienda encarecidamente la lectura del manual ubicado en:
+\begin{description}
+    \item[Ruta Local:] \texttt{\_DOCUMENTACION/material\_complementario/latex/main.pdf}
+    \item[Rep. Remoto:] \footnotesize{\url{\urlProyectoMaterialComplementario}}
+\end{description}
+En este documento encontrará una guía introductoria sobre los fundamentos de la generación digital de sonido, osciladores, envolventes y filtros, lo cual facilitará enormemente la comprensión de los modelos y componentes que se manejan en esta aplicación.
+\end{tcolorbox}
+
+
+
+\section{Repositorio y Estructura del Proyecto}
+
+El código fuente y la documentación técnica de este proyecto están centralizados en el repositorio oficial de GitHub:
+
+\begin{center}
+    \url{\urlProyecto}
+\end{center}
+
+El repositorio se organiza de la siguiente manera para facilitar la navegación y el desarrollo:
+
+\begin{itemize}
+    \item \textbf{\texttt{\_CODIGO/}}: Contiene los subproyectos de la aplicación:
+    \begin{itemize}
+        \item \texttt{frontend/}: Aplicación web en Vue 3 y TypeScript.
+        \item \texttt{backend/}: Servicio API REST en Spring Boot 3.
+        \item \texttt{dsl/}: Implementación de los lenguajes Langium para CIM y PIM.
+    \end{itemize}
+    \item \textbf{\texttt{\_DOCUMENTACION/}}: Carpeta con toda la documentación del proyecto:
+    \begin{itemize}
+        \item \texttt{\_CASOS\_DE\_PRUEBA/}: Definiciones de los tests para validación del sistema.
+        \item \texttt{articulo/}: Artículo de investigación del proyecto.
+        \item \texttt{manual\_dsl/}: Manual técnico de los lenguajes específicos de dominio.
+        \item \texttt{manual\_mdaa/}: Fuentes LaTeX de este manual de usuario.
+        \item \texttt{material\_complementario/}: Recursos adicionales y teoría sobre sonido.
+    \end{itemize}
+    \item \textbf{\texttt{ejecutor/}}: Scripts de automatización para el despliegue y pruebas.
+    \item \textbf{\texttt{docker/}}: Configuraciones de infraestructura, volúmenes y scripts de inicialización de la base de datos.
+\end{itemize}
+
+\section{Guía de Arranque (macOS, Linux, Windows WSL)}
+
+Para poner en marcha el sistema, asegúrese de tener instalado \texttt{Docker Desktop} o \texttt{Docker Engine} y que el motor esté en ejecución. El proyecto ofrece dos alternativas principales para el arranque.
+
+\subsection{Opción 1: Usando el script de inicio}
+
+El proyecto incluye un script de automatización que gestiona el levantamiento de todos los servicios necesarios. Desde la raíz del repositorio, ejecute:
+
+\begin{lstlisting}[language=bash]
+./ejecutor/start.sh
+\end{lstlisting}
+
+\subsection{Opción 2: Usando Docker Compose directamente}
+
+Si prefiere gestionar los servicios manualmente mediante comandos estándar de \texttt{Docker}, puede utilizar los siguientes comandos:
+
+\begin{itemize}
+    \item \textbf{Arranque (segundo plano):} \texttt{docker compose up -d}
+    \item \textbf{Parada:} \texttt{docker compose down}
+    \item \textbf{Visualización de logs:} \texttt{docker compose logs -f}
+\end{itemize}
+
+\section{Acceso a la Aplicación}
+
+Una vez finalizado el proceso de arranque, la aplicación y sus servicios auxiliares estarán disponibles en las siguientes direcciones:
+
+\begin{itemize}
+    \item \textbf{ACCESO APLICACIÓN MDAA:} \url{http://localhost}
+    \item \textbf{Backend API:} \url{http://localhost:8081}
+    \item \textbf{Keycloak (Autenticación):} \url{http://localhost:8080} (Usuario: \texttt{admin}, Clave: \texttt{admin})
+    \item \textbf{Adminer (Gestión DB):} \url{http://localhost:8082} (Servidor: \texttt{mariadb}, Usuario: \texttt{devuser}, Clave: \texttt{devpassword}, BD: \texttt{basedb})
+    \item \textbf{MailHog (Servidor SMTP local):} \url{http://localhost:8025}
+\end{itemize}
+
+\subsection{Credenciales de prueba}
+
+Para acceder inicialmente al sistema, puede utilizar el siguiente usuario preconfigurado:
+\begin{itemize}
+    \item \textbf{Usuario:} \texttt{test@uned.es}
+    \item \textbf{Contraseña:} \texttt{11111111}
+\end{itemize}
+
+\section{Infraestructura Docker}
+
+El sistema MDAA se compone de varios servicios interconectados definidos en el archivo \texttt{docker-compose.yml}:
+
+\begin{description}
+    \item[mariadb:] Base de datos relacional que almacena la persistencia del backend y la configuración de Keycloak.
+    \item[adminer:] Herramienta web para administrar la base de datos.
+    \item[mailhog:] Captura los correos electrónicos enviados por el sistema (como confirmaciones de registro) para que puedan ser visualizados localmente.
+    \item[keycloak:] Servidor de gestión de identidad y accesos (IAM) que securiza la aplicación.
+    \item[backend:] Microservicio desarrollado en \textit{Spring Boot} que implementa la lógica de negocio.
+    \item[frontend:] Interfaz de usuario desarrollada en \textit{Vue.js}.
+\end{description}
+
+\section{Scripts de Automatización de Pruebas}
+
+En la carpeta \texttt{ejecutor/} se encuentran un script para incluir casos de prueba en el sistema como proyectos del usuario \texttt{test@uned.es}. Los casos de prueba deben estar ubicados en \texttt{\_DOCUMENTACION/\_CASOS\_DE\_PRUEBA/} para que funcione, y deben tener la estructura relatada en el \texttt{README.md} de esa misma carpeta.
+
+Para insertar automáticamente un caso de prueba en la base de datos MariaDB:
+
+\begin{lstlisting}[language=bash]
+./ejecutor/incluir-test.sh TEST_1
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=red!5,colframe=red!75!black,title=Nota sobre Reset Total]
+El script \texttt{./ejecutor/delete-TOTAL-docker.sh} permite realizar un reset completo del entorno, eliminando contenedores, imágenes y volúmenes. Use este script con precaución ya que podría afectar a otros proyectos Docker si se ejecuta con parámetros de limpieza global.
+\end{tcolorbox}

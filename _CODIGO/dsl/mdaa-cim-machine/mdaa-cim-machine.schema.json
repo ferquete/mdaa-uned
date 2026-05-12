@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MDAA-CIM-Machine Document",
+  "type": "object",
+  "required": ["id", "name", "description", "elements"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36,
+      "description": "Unique identifier (UUID format expected)"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20,
+      "description": "Human readable name of the document"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 600,
+      "description": "Detailed description of the document"
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Element"
+      }
+    }
+  },
+  "definitions": {
+    "Element": {
+      "type": "object",
+      "required": ["id", "name", "description", "params", "externalOutput", "externalInput", "sendTo"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 600
+        },
+        "params": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 600
+        },
+        "externalOutput": {
+          "type": "object",
+          "required": ["hasExternalOutput"],
+          "properties": {
+            "hasExternalOutput": { "type": "boolean" },
+            "description": { "type": "string", "maxLength": 600 }
+          }
+        },
+        "externalInput": {
+          "type": "object",
+          "required": ["hasExternalInput"],
+          "properties": {
+            "hasExternalInput": { "type": "boolean" },
+            "description": { "type": "string", "maxLength": 600 }
+          }
+        },
+        "sendTo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "idRef", "description"],
+            "properties": {
+              "id": { "type": "string", "minLength": 36, "maxLength": 36 },
+              "idRef": { "type": "string" },
+              "description": { "type": "string", "minLength": 10, "maxLength": 600 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,431 @@
+{
+  "id": "e5000001-0000-0000-0000-000000000005",
+  "name": "PIM Ambient Output",
+  "description": "Implementacion PIM del rack de efectos maestro y salida final del sintetizador ambiental electronico. Concretiza un procesador de reverberacion de alto decay para la espacializacion principal, un delay atmosferico con filtrado de realimentacion, un compresor suave para el control dinamico, y un nodo de ganancia y paneo final para la salida maestra estereo. La cadena completa de efectos transforma el sonido filtrado en un paisaje ambiental completamente inmersivo y de calidad de produccion profesional.",
+  "ids_cim_reference": [
+    "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9012"
+  ],
+  "nodes": [
+    {
+      "type": "reverb",
+      "id": "e5000002-0000-0000-0000-000000000005",
+      "name": "Shimmer Reverb",
+      "description": "Reverberacion de alto decay con tiempo de caida de 8 segundos para crear el espacio acustico inmersivo que define la estetica del sintetizador ambiental. El damping moderado de las altas frecuencias asegura que la cola de reverb sea rica y densa sin volverse excesivamente brillante o metalica. La mezcla dry/wet elevada garantiza que el ambiente sea la caracteristica dominante del sonido final entregado al oyente.",
+      "ids_references": [
+        "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "others": [
+        {
+          "id": "e5000002-0000-0000-0000-000000000070",
+          "name": "PreDelay Time",
+          "ids_references": [
+            "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+          ],
+          "initialValue": "80ms",
+          "isModifiable": true,
+          "isExternalInput": false,
+          "description": "Pre-delay de la reverberacion shimmer para separar el sonido directo del ambiente reverberado y dar sensacion de espacio real."
+        },
+        {
+          "id": "e5000002-0000-0000-0000-000000000071",
+          "name": "Freeze Mode",
+          "ids_references": [
+            "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+          ],
+          "initialValue": "off",
+          "isModifiable": true,
+          "isExternalInput": false,
+          "description": "Modo de congelacion de la reverberacion para sostener infinitamente la cola en momentos de maxima tension del paisaje sonoro ambiental."
+        }
+      ],
+      "roomSize": {
+        "id": "e5000003-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.95,
+        "isModifiable": true,
+        "description": "Tamaño de sala al 95% para emular un espacio acustico de proporciones arquitectonicas enormes como una catedral o caverna."
+      },
+      "damping": {
+        "id": "e5000004-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.35,
+        "isModifiable": true,
+        "description": "Absorcion de altas frecuencias al 35% para una cola de reverb rica pero no metalica, simulando superficies de piedra o madera."
+      },
+      "decayTime": {
+        "id": "e5000005-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 8,
+        "isModifiable": true,
+        "description": "Tiempo de decaimiento de 8 segundos para una cola de reverb excepcionalmente larga que define el caracter ambiental del sintetizador."
+      },
+      "dryWet": {
+        "id": "e5000006-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.65,
+        "isModifiable": true,
+        "isExternalInput": false,
+        "description": "Mezcla seco/mojado al 65% para que el ambiente reverberado sea el elemento dominante de la textura sonora final."
+      },
+      "stereo": {
+        "id": "e5000007-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo activo para la reverberacion que es fundamental para la sensacion de inmersion espacial del sintetizador ambiental."
+      },
+      "input_1": {
+        "id": "e5000008-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada izquierda de audio de la reverberacion desde el banco de filtros espectrales del sistema ambiental."
+      },
+      "input_2": {
+        "id": "e5000009-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": true,
+        "description": "Entrada derecha de audio de la reverberacion desde el banco de filtros espectrales del sistema ambiental."
+      },
+      "output_1": {
+        "id": "e5000010-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda de la reverberacion shimmer hacia el delay atmosferico de la cadena de efectos maestro."
+      },
+      "output_2": {
+        "id": "e5000011-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha de la reverberacion shimmer hacia el delay atmosferico de la cadena de efectos maestro."
+      }
+    },
+    {
+      "type": "delay",
+      "id": "e5000012-0000-0000-0000-000000000005",
+      "name": "Atmospheric Delay",
+      "description": "Delay atmosferico con filtrado de realimentacion que oscurece progresivamente cada repeticion emulando la absorcion del sonido en grandes espacios al aire libre. El tiempo de delay no sincronizado con el tempo refuerza el caracter atemporado del sonido ambiental. Su feedback moderado crea ecos que se funden naturalmente con la reverberacion, multiplicando la complejidad espacial del resultado final.",
+      "ids_references": [
+        "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "others": [
+        {
+          "id": "e5000012-0000-0000-0000-000000000072",
+          "name": "Mod Rate",
+          "ids_references": [
+            "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+          ],
+          "initialValue": "0.15",
+          "isModifiable": false,
+          "isExternalInput": false,
+          "description": "Tasa de modulacion del tiempo de delay para el efecto de chorus sutil integrado en el delay atmosferico que añade movimiento al eco."
+        }
+      ],
+      "delayTime": {
+        "id": "e5000013-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.62,
+        "isModifiable": false,
+        "description": "Tiempo de delay de 620 ms para crear ecos espaciados que no interfieren con el ritmo natural del paisaje sonoro ambiental."
+      },
+      "feedback": {
+        "id": "e5000014-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.55,
+        "isModifiable": true,
+        "description": "Retroalimentacion al 55% para crear multiples ecos que se desvanecen gradualmente sin llegar a la auto-oscilacion indeseada."
+      },
+      "lowPassCutoff": {
+        "id": "e5000015-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 3500,
+        "isModifiable": true,
+        "description": "Filtro pasa-bajos en la realimentacion a 3.5 kHz para que los ecos pierdan brillo progresivamente emulando la absorcion acustica del aire."
+      },
+      "highPassCutoff": {
+        "id": "e5000016-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 80,
+        "isModifiable": false,
+        "description": "Filtro pasa-alto en la realimentacion a 80 Hz para evitar la acumulacion de energia sub-grave en cada repeticion del delay atmosferico."
+      },
+      "dryWet": {
+        "id": "e5000017-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.35,
+        "isModifiable": true,
+        "description": "Mezcla seco/mojado del delay al 35% para que el delay sea un elemento de profundidad y no enmascare la reverberacion principal."
+      },
+      "stereo": {
+        "id": "e5000018-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo del delay para distribuir los ecos en el campo estereo y ampliar la percepcion espacial del ambiente."
+      },
+      "input_1": {
+        "id": "e5000019-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del delay atmosferico desde la salida de la reverberacion shimmer de la cadena de efectos."
+      },
+      "input_2": {
+        "id": "e5000020-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del delay atmosferico desde la salida de la reverberacion shimmer de la cadena de efectos."
+      },
+      "output_1": {
+        "id": "e5000021-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del delay atmosferico hacia el compresor suave de la cadena de efectos maestro."
+      },
+      "output_2": {
+        "id": "e5000022-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del delay atmosferico hacia el compresor suave de la cadena de efectos maestro."
+      }
+    },
+    {
+      "type": "compressor",
+      "id": "e5000023-0000-0000-0000-000000000005",
+      "name": "Glue Compressor",
+      "description": "Compresor suave de tipo glue que cohesiona todos los elementos del paisaje sonoro ambiental en una masa sonora compacta y consistente. Su ratio bajo y tiempos de ataque y release lentos garantizan que el proceso sea completamente transparente e indetectable para el oyente, actuando mas como pegamento que como herramienta de control de dinamica agresiva, lo que es esencial para mantener la naturalidad del ambiente.",
+      "ids_references": [
+        "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "others": [],
+      "threshold": {
+        "id": "e5000024-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": -12,
+        "isModifiable": true,
+        "description": "Umbral del compresor a -12 dBFS para activarse suavemente solo en los momentos de mayor densidad del paisaje ambiental."
+      },
+      "ratio": {
+        "id": "e5000025-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 2,
+        "isModifiable": false,
+        "description": "Ratio de compresion 2:1 para un efecto completamente transparente que solo controla los picos mas extremos del ambiente."
+      },
+      "attack": {
+        "id": "e5000026-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.05,
+        "isModifiable": false,
+        "description": "Tiempo de ataque de 50 ms para que los transitorios suaves del ambiente pasen sin ser afectados por el compresor glue."
+      },
+      "release": {
+        "id": "e5000027-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.3,
+        "isModifiable": false,
+        "description": "Tiempo de release de 300 ms para una reduccion de ganancia que se recupera de forma natural y musical en el contexto ambiental."
+      },
+      "makeupGain": {
+        "id": "e5000028-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 1.5,
+        "isModifiable": true,
+        "description": "Ganancia de compensacion de 1.5 dB para restaurar el nivel de la señal tras la compresion suave del compresor glue ambiental."
+      },
+      "stereo": {
+        "id": "e5000029-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "initialValue": true,
+        "description": "Modo estereo del compresor para procesar ambos canales de la cadena de efectos."
+      },
+      "input_1": {
+        "id": "e5000030-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada izquierda del compresor glue desde el delay atmosferico."
+      },
+      "input_2": {
+        "id": "e5000030-0000-0000-0000-000000000006",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del compresor glue desde el delay atmosferico."
+      },
+      "output_1": {
+        "id": "e5000031-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida izquierda del compresor glue hacia la etapa final."
+      },
+      "output_2": {
+        "id": "e5000031-0000-0000-0000-000000000006",
+        "ids_references": [],
+        "isExternalOutput": false,
+        "description": "Salida derecha del compresor glue hacia la etapa final."
+      }
+    },
+    {
+      "type": "gain_pan",
+      "id": "e5000032-0000-0000-0000-000000000005",
+      "name": "Master Gain Pan",
+      "description": "Etapa final de ganancia y posicionamiento estereo que controla el nivel de salida maestro del sintetizador ambiental y su ubicacion en el campo estereo de la mezcla. Este nodo es el ultimo punto de control antes de que la señal abandone el sintetizador hacia el bus de grabacion o reproduccion. Su ganancia de salida calibrada asegura que el nivel sea optimo para la integracion con cualquier tipo de mezcla profesional.",
+      "ids_references": [
+        "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "others": [],
+      "gain": {
+        "id": "e5000033-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0.8,
+        "isModifiable": true,
+        "isExternalInput": true,
+        "description": "Ganancia maestra de salida del sintetizador ambiental. Modulable externamente por la envolvente DAHDSR del modulador espacial para fundidos lentos."
+      },
+      "pan": {
+        "id": "e5000034-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": 0,
+        "isModifiable": false,
+        "description": "Panoramizacion maestra centrada para el sintetizador ambiental, dejando el posicionamiento final al sistema de mezcla del proyecto."
+      },
+      "stereo": {
+        "id": "e5000035-0000-0000-0000-000000000005",
+        "ids_references": [
+          "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+        ],
+        "initialValue": true,
+        "description": "Modo estereo activo para la etapa de salida maestra del sintetizador ambiental electronico."
+      },
+      "input_1": {
+        "id": "e5000036-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada de audio de la etapa de ganancia y paneo final desde la salida del compresor glue de la cadena de efectos."
+      },
+      "input_2": {
+        "id": "e5000039-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalInput": false,
+        "description": "Entrada derecha del nodo de ganancia y paneo maestro desde la salida del compresor glue."
+      },
+      "output_1": {
+        "id": "e5000037-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida izquierda maestra del sintetizador de musica electronica ambiental hacia el bus de mezcla o sistema de reproduccion."
+      },
+      "output_2": {
+        "id": "e5000038-0000-0000-0000-000000000005",
+        "ids_references": [],
+        "isExternalOutput": true,
+        "description": "Salida derecha maestra del sintetizador de musica electronica ambiental hacia el bus de mezcla o sistema de reproduccion."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e5000090-0000-0000-0000-000000000005",
+      "description": "Conexion en serie de la reverberacion shimmer hacia el delay atmosferico de la cadena de efectos maestro del sintetizador ambiental.",
+      "ids_references": [
+        "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000002-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
+      "targetNode": "e5000012-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "e5000091-0000-0000-0000-000000000005",
+      "description": "Canal derecho de la reverberacion shimmer hacia el delay atmosferico del rack de efectos maestro del sintetizador ambiental.",
+      "ids_references": [
+        "5e6f0002-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000002-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
+      "targetNode": "e5000012-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
+      "type": "audio"
+    },
+    {
+      "id": "e5000092-0000-0000-0000-000000000005",
+      "description": "Conexion del delay atmosferico al compresor glue para la cohesion final del paisaje sonoro ambiental antes de la salida maestra.",
+      "ids_references": [
+        "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000012-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
+      "targetNode": "e5000023-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "e5000092-0000-0000-0000-000000000006",
+      "description": "Canal derecho del delay atmosferico al compresor glue.",
+      "ids_references": [
+        "5e6f0003-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000012-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
+      "targetNode": "e5000023-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
+      "type": "audio"
+    },
+    {
+      "id": "e5000093-0000-0000-0000-000000000005",
+      "description": "Conexion del compresor glue a la etapa de ganancia y paneo maestro final del sintetizador ambiental electronico.",
+      "ids_references": [
+        "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000023-0000-0000-0000-000000000005",
+      "sourceParam": "output_1",
+      "targetNode": "e5000032-0000-0000-0000-000000000005",
+      "targetParam": "input_1",
+      "type": "audio"
+    },
+    {
+      "id": "e5000093-0000-0000-0000-000000000006",
+      "description": "Conexion derecha del compresor glue a la etapa de ganancia y paneo maestro.",
+      "ids_references": [
+        "5e6f0004-9c0d-1e2f-3a4b-5c6d7e8f9012"
+      ],
+      "sourceNode": "e5000023-0000-0000-0000-000000000005",
+      "sourceParam": "output_2",
+      "targetNode": "e5000032-0000-0000-0000-000000000005",
+      "targetParam": "input_2",
+      "type": "audio"
+    }
+  ]
+}

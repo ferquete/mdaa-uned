@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Reverb Decay.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661008",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "00000000-0000-0000-0000-000000001003",
+      "description": "Modulacion del tiempo de decaimiento."
+    }
+  ]
+}

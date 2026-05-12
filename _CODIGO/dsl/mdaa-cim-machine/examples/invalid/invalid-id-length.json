@@ -1,0 +1,6 @@
+{
+  "id": "too-short",
+  "name": "Oscillator",
+  "description": "ID should be exactly 36 chars according to validator.",
+  "elements": []
+}

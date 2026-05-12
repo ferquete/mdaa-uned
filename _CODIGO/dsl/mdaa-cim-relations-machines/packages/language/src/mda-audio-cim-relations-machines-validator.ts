@@ -1,0 +1,90 @@
+import type { ValidationAcceptor, ValidationChecks } from 'langium';
+import type { MdaAudioCimRelationsMachinesAstType, RelationDocument, Relation } from './generated/ast.js';
+import type { MdaAudioCimRelationsMachinesServices } from './mda-audio-cim-relations-machines-module.js';
+
+/**
+ * Registra los chequeos de validación en el DSL de relaciones CIM.
+ */
+export function registerValidationChecks(services: MdaAudioCimRelationsMachinesServices) {
+    const registry = services.validation.ValidationRegistry;
+    const validator = services.validation.MdaAudioCimRelationsMachinesValidator;
+    const checks: ValidationChecks<MdaAudioCimRelationsMachinesAstType> = {
+        RelationDocument: validator.checkRelationDocument,
+        Relation: validator.checkRelation
+    };
+    registry.register(checks, validator);
+}
+
+/**
+ * Validador para asegurar la consistencia y unicidad en las relaciones de máquinas.
+ */
+export class MdaAudioCimRelationsMachinesValidator {
+
+    /**
+     * Valida el documento de relaciones global, asegurando la unicidad de IDs de las relaciones.
+     */
+    checkRelationDocument(doc: RelationDocument, accept: ValidationAcceptor): void {
+        if (doc.description !== undefined && doc.description !== null) {
+            const cleanDesc = doc.description.replace(/^["']|["']$/g, '');
+            if (cleanDesc.length < 1 || cleanDesc.length > 1000) {
+                accept('error', 'El campo description del documento principal debe tener entre 1 y 1000 caracteres.', { node: doc, property: 'description' });
+            }
+        }
+
+        // Validación de unicidad de IDs en las relaciones
+        const ids = new Set<string>();
+        doc.relations.forEach((rel) => {
+            if (rel.id) {
+                const cleanId = rel.id.replace(/^["']|["']$/g, '');
+                if (ids.has(cleanId)) {
+                    accept('error', `ID duplicado detectado: ${cleanId}. Cada relación debe tener un ID único.`, { node: rel, property: 'id' });
+                }
+                ids.add(cleanId);
+            }
+        });
+    }
+
+    /**
+     * Verifica una relación individual asegurando el tamaño de los UUIDs (36 chars) y evitando auto-referencias.
+     */
+    checkRelation(relation: Relation, accept: ValidationAcceptor): void {
+        // Validación del campo id (36 caracteres obligatorios)
+        if (relation.id !== undefined && relation.id !== null) {
+            const cleanId = relation.id.replace(/^["']|["']$/g, '');
+            if (cleanId.length !== 36) {
+                accept('error', 'El campo id debe tener exactamente 36 caracteres.', { node: relation, property: 'id' });
+            }
+        } else {
+            accept('error', 'El campo id es obligatorio en cada relación.', { node: relation, property: 'id' });
+        }
+
+        if (relation.source !== undefined && relation.source !== null) {
+            const cleanSource = relation.source.replace(/^["']|["']$/g, '');
+            if (cleanSource.length !== 36) {
+                accept('error', 'El campo source debe tener exactamente 36 caracteres.', { node: relation, property: 'source' });
+            }
+        }
+        
+        if (relation.destination !== undefined && relation.destination !== null) {
+            const cleanDest = relation.destination.replace(/^["']|["']$/g, '');
+            if (cleanDest.length !== 36) {
+                accept('error', 'El campo destination debe tener exactamente 36 caracteres.', { node: relation, property: 'destination' });
+            }
+        }
+
+        if (relation.source && relation.destination) {
+            const cleanSource = relation.source.replace(/^["']|["']$/g, '');
+            const cleanDest = relation.destination.replace(/^["']|["']$/g, '');
+            if (cleanSource === cleanDest) {
+                accept('error', 'Una máquina no puede tener una relación consigo misma (el origen y el destino deben ser diferentes).', { node: relation, property: 'source' });
+            }
+        }
+
+        if (relation.description !== undefined && relation.description !== null) {
+            const cleanDesc = relation.description.replace(/^["']|["']$/g, '');
+            if (cleanDesc.length < 10 || cleanDesc.length > 1000) {
+                accept('error', 'El campo description en cada relation debe tener entre 10 y 1000 caracteres.', { node: relation, property: 'description' });
+            }
+        }
+    }
+}

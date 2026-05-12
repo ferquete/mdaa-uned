@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MDAA-CIM-Relations-Machines Document",
+  "type": "object",
+  "required": ["relations"],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "description": "General purpose of the interconnections"
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Relation"
+      }
+    }
+  },
+  "definitions": {
+    "Relation": {
+      "type": "object",
+      "required": ["id", "source", "destination", "description"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36,
+          "description": "Unique identifier (UUID format)"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36,
+          "description": "Source machine ID"
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36,
+          "description": "Destination machine ID"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000,
+          "description": "Technical justification of the link"
+        }
+      }
+    }
+  }
+}

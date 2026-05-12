@@ -1,0 +1,17 @@
+{
+  "description": "Duplicate ID test.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655449999",
+      "source": "M1",
+      "destination": "M2",
+      "description": "Relation description for duplication test."
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655449999",
+      "source": "M3",
+      "destination": "M4",
+      "description": "Another relation with same ID."
+    }
+  ]
+}

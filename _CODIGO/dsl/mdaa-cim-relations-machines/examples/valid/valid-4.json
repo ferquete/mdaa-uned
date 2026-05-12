@@ -1,0 +1,11 @@
+{
+  "description": "Bass treatment: Kick-driven sidechain compression.",
+  "relations": [
+    {
+      "id": "555e8400-e29b-41d4-a716-446655440555",
+      "source": "550e8400-e29b-41d4-a716-446655440005",
+      "destination": "550e8400-e29b-41d4-a716-446655440003",
+      "description": "Sidechain trigger from kick drum to bass compressor."
+    }
+  ]
+}

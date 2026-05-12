@@ -1,0 +1,11 @@
+{
+  "description": "Relacion Osc Out a Filter Resonance.",
+  "relations": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655661010",
+      "source": "550e8400-e29b-41d4-a716-446655445001",
+      "destination": "550e8400-0000-0000-0001-000000000003",
+      "description": "Modulacion de la resonancia del filtro."
+    }
+  ]
+}

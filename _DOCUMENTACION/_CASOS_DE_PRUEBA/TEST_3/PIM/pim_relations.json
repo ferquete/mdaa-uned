@@ -1,0 +1,11 @@
+{
+  "description": "Red PIM del bajo arpejiado sintetico. Conecta la salida del filtro de la voz generadora hacia la entrada del chorus del procesador de efectos y salida del sintetizador.",
+  "relations": [
+    {
+      "id": "3d100001-0000-0000-0000-000000000000",
+      "source": "3a100048-0000-0000-0000-000000000000",
+      "destination": "3b100008-0000-0000-0000-000000000000",
+      "description": "Conexion de audio de la salida del filtro del bajo arpejiado hacia la entrada del chorus del procesador de efectos de salida del sintetizador."
+    }
+  ]
+}

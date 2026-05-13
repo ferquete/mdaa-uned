@@ -29,7 +29,7 @@ Este repositorio contiene la implementación completa del proyecto MDAA, una her
 > - `8082`: Adminer (DB Management)
 > - `8025 / 1025`: MailHog (Email)
 >
-> **Carga de ejemplos**: Más adelante en la sección de [Casos de Prueba](#casos-de-prueba-casos_de_prueba) se detalla cómo cargar automáticamente proyectos de ejemplo ya creados en el sistema.
+> **Carga de ejemplos**: Más adelante en la sección de [Casos de Prueba](#casos-de-prueba-_casos_de_prueba) se detalla cómo cargar automáticamente proyectos de ejemplo ya creados en el sistema.
 >
 > **Para detener el sistema**: Pulsa `Ctrl+C` en el terminal donde se está ejecutando el script o cierra el terminal.
 

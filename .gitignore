@@ -98,5 +98,6 @@ clave
 azure-deploy.yaml
 docker-compose.prod.yml
 ejecutor/incluir-test-azure.sh
+README-azure.md
 subir.sh
 .gitattributes

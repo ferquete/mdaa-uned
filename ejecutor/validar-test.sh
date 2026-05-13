@@ -19,5 +19,23 @@ if [ ! -f "$VALIDATE_SCRIPT" ]; then
   exit 1
 fi
 
+# Generar código y compilar cada DSL
+DSL_BASE_DIR="$SCRIPT_DIR/../_CODIGO/dsl"
+DSLS=("mdaa-cim-machine" "mdaa-cim-relations-machines" "mdaa-pim-machine" "mdaa-pim-relations-machines")
+
+echo "================================================================="
+echo "⚙️ GENERANDO Y COMPILANDO DSLs"
+echo "================================================================="
+for dsl in "${DSLS[@]}"; do
+  echo -e "\n🔹 Procesando: $dsl"
+  (cd "$DSL_BASE_DIR/$dsl" && npm install && npm run langium:generate && npm run build)
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Error al generar/compilar $dsl"
+    exit 1
+  fi
+done
+echo -e "\n✅ DSLs compilados correctamente.\n"
+
 # Ejecutar el script de validación pasando el parámetro
 bash "$VALIDATE_SCRIPT" "$1"

@@ -71,6 +71,7 @@ Para facilitar el trabajo con los casos de prueba, se proporcionan dos scripts p
 #### 1. `validar-test.sh`
 Este script realiza una validación integral de un caso de prueba antes de ser procesado o instalado.
 - **Importante**: El directorio del test que se pase como parámetro debe estar ubicado dentro de la carpeta `_DOCUMENTACION/_CASOS_DE_PRUEBA/`.
+- **Requisitos Previos**: Es necesario tener instalado **Node.js** (que incluye `npm` y `npx`) en el sistema para que se puedan instalar las dependencias, generar y compilar los lenguajes DSL localmente.
 - **Funcionamiento**: Actúa como un puente que invoca la validación Langium y las reglas de integridad referencial sobre los archivos JSON del test.
 - **Parámetro**: El nombre del directorio del test (ej: `TEST_1`).
   ```bash

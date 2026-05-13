@@ -15,6 +15,11 @@ Para una descripción detallada de la lógica de orquestación técnica, consult
 
 ## Validación
 
+> **Requisitos Previos:** Para poder ejecutar los comandos de compilación y las validaciones (tanto manualmente como con `validar-test.sh`), es imprescindible tener instalado **Node.js** (que ya incluye `npm` y `npx`) en tu sistema. Además, para poder ejecutar la validación (`validate.ts`) de forma manual, se deberá ejecutar previamente lo siguiente:
+> ```bash
+> npm install && npm run langium:generate && npm run build
+> ```
+
 El validador soporta dos modos:
 
 ### 1. Validación Estructural (Sintáctica)
